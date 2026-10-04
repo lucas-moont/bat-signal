@@ -12,7 +12,8 @@ import {
   userText,
 } from './fixtures/lines'
 
-const replay = (lines: unknown[]): SessionState => lines.reduce(applyTranscriptLine, createSession(SESSION_ID))
+const replay = (lines: unknown[]): SessionState =>
+  lines.reduce(applyTranscriptLine, createSession(SESSION_ID))
 
 beforeEach(resetClock)
 
@@ -60,5 +61,89 @@ describe('messages', () => {
     const s = replay([userText('hi'), assistantText('hello')])
     expect(s.cwd).toBe('/home/bruce/wayne-enterprises')
     expect(s.lastActivityAt).toBe('2026-01-01T00:00:02.000Z')
+  })
+})
+
+describe('tasks', () => {
+  const createTask = (toolUseId: string, id: string, subject: string) => [
+    toolUse(toolUseId, 'TaskCreate', {
+      subject,
+      description: `Do: ${subject}`,
+      activeForm: `Doing ${subject}`,
+    }),
+    toolResult(toolUseId, { task: { id, subject } }),
+  ]
+  const updateTask = (toolUseId: string, input: Record<string, unknown>, result: Record<string, unknown>) => [
+    toolUse(toolUseId, 'TaskUpdate', input),
+    toolResult(toolUseId, { success: true, ...result }),
+  ]
+
+  it('adds a pending task when TaskCreate succeeds', () => {
+    const s = replay(createTask('toolu_1', '1', 'Find the Riddler'))
+    expect(s.tasks).toEqual([
+      {
+        id: '1',
+        subject: 'Find the Riddler',
+        description: 'Do: Find the Riddler',
+        activeForm: 'Doing Find the Riddler',
+        status: 'pending',
+        history: [{ status: 'pending', at: '2026-01-01T00:00:02.000Z' }],
+      },
+    ])
+  })
+
+  it('does not add a task when TaskCreate fails', () => {
+    const s = replay([
+      toolUse('toolu_1', 'TaskCreate', { subject: 'x' }),
+      toolResult('toolu_1', 'Error: invalid', true),
+    ])
+    expect(s.tasks).toEqual([])
+  })
+
+  it('moves a task through its statuses and keeps the history', () => {
+    const s = replay([
+      ...createTask('toolu_1', '1', 'Find the Riddler'),
+      ...updateTask(
+        'toolu_2',
+        { taskId: '1', status: 'in_progress' },
+        { taskId: '1', updatedFields: ['status'], statusChange: { from: 'pending', to: 'in_progress' } },
+      ),
+      ...updateTask(
+        'toolu_3',
+        { taskId: '1', status: 'completed' },
+        { taskId: '1', updatedFields: ['status'], statusChange: { from: 'in_progress', to: 'completed' } },
+      ),
+    ])
+    expect(s.tasks[0]?.status).toBe('completed')
+    expect(s.tasks[0]?.history).toEqual([
+      { status: 'pending', at: '2026-01-01T00:00:02.000Z' },
+      { status: 'in_progress', at: '2026-01-01T00:00:04.000Z' },
+      { status: 'completed', at: '2026-01-01T00:00:06.000Z' },
+    ])
+  })
+
+  it('applies subject and description edits', () => {
+    const s = replay([
+      ...createTask('toolu_1', '1', 'Find the Riddler'),
+      ...updateTask(
+        'toolu_2',
+        { taskId: '1', subject: 'Catch the Riddler', description: 'Before the flood' },
+        { taskId: '1', updatedFields: ['subject', 'description'] },
+      ),
+    ])
+    expect(s.tasks[0]).toMatchObject({ subject: 'Catch the Riddler', description: 'Before the flood' })
+  })
+
+  it('drops deleted tasks', () => {
+    const s = replay([
+      ...createTask('toolu_1', '1', 'Find the Riddler'),
+      ...createTask('toolu_2', '2', 'Call Alfred'),
+      ...updateTask(
+        'toolu_3',
+        { taskId: '1', status: 'deleted' },
+        { taskId: '1', updatedFields: ['status'], statusChange: { from: 'pending', to: 'deleted' } },
+      ),
+    ])
+    expect(s.tasks.map((t) => t.id)).toEqual(['2'])
   })
 })

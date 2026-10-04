@@ -13,7 +13,11 @@ const tick = (): string => new Date((clock += 1000)).toISOString()
 const base = () => ({ sessionId: SESSION_ID, cwd: CWD, timestamp: tick(), uuid: crypto.randomUUID() })
 
 export const aiTitle = (aiTitle: string) => ({ type: 'ai-title', aiTitle, sessionId: SESSION_ID })
-export const customTitle = (customTitle: string) => ({ type: 'custom-title', customTitle, sessionId: SESSION_ID })
+export const customTitle = (customTitle: string) => ({
+  type: 'custom-title',
+  customTitle,
+  sessionId: SESSION_ID,
+})
 
 export const userText = (text: string) => ({
   ...base(),
@@ -38,7 +42,9 @@ export const toolResult = (toolUseId: string, toolUseResult: unknown, isError = 
   type: 'user',
   message: {
     role: 'user',
-    content: [{ type: 'tool_result', tool_use_id: toolUseId, content: 'ok', ...(isError ? { is_error: true } : {}) }],
+    content: [
+      { type: 'tool_result', tool_use_id: toolUseId, content: 'ok', ...(isError ? { is_error: true } : {}) },
+    ],
   },
   toolUseResult,
 })
