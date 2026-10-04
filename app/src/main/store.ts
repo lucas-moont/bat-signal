@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events'
 import { isDeepStrictEqual } from 'node:util'
 import { obj, str } from '../shared/guards'
-import type { SessionSignals, SessionView, StoreSnapshot } from '../shared/types'
+import type { SessionSignals, SessionView, StoreSnapshot, Subagent } from '../shared/types'
 import { deriveAttention } from './model/attention'
 import { applyHookEvent } from './model/hookSignals'
 import {
@@ -19,9 +19,11 @@ type Tail = Pick<TranscriptTailer, 'readNew'>
 
 /** Where the store gets its data; injected so tests can run without disk or processes. */
 export interface StoreSources {
-  locateTranscript(entry: RegistryEntry): Promise<string | null>
+  /** `deep`: also search every project folder, not just the one named after the cwd. */
+  locateTranscript(entry: RegistryEntry, deep: boolean): Promise<string | null>
   tailer(path: string): Tail
-  listSubagentTranscripts(transcriptPath: string): Promise<SubagentTranscript[]>
+  /** Subagent transcripts not in `known` (by agent id), with their meta.json links. */
+  listSubagentTranscripts(transcriptPath: string, known: ReadonlySet<string>): Promise<SubagentTranscript[]>
   clock(): Date
 }
 
@@ -29,7 +31,10 @@ interface LiveSession {
   entry: RegistryEntry
   tracked: TrackedSession
   transcript?: { path: string; tail: Tail }
-  subagentTails: Map<string, Tail>
+  /** Subagent transcripts by agent id; `settled` once read after the subagent finished. */
+  subagentFiles: Map<string, { link: SubagentTranscript; tail: Tail; settled: boolean }>
+  /** While no transcript is found, the folder-by-folder search waits until then (epoch ms). */
+  nextDeepScanAt: number
   /** When the user last looked at this session. */
   seenAt?: string
   /** The read in progress, and the one queued behind it (see readTranscript). */
@@ -72,7 +77,8 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       const session: LiveSession = {
         entry,
         tracked: createSession(entry.sessionId),
-        subagentTails: new Map(),
+        subagentFiles: new Map(),
+        nextDeepScanAt: 0,
       }
       this.sessions.set(entry.sessionId, session)
       added.push(session)
@@ -154,32 +160,47 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
 
   private async readNow(session: LiveSession): Promise<void> {
     if (!session.transcript) {
-      const path = await this.sources.locateTranscript(session.entry)
-      if (!path) return
+      const now = this.sources.clock().getTime()
+      const deep = now >= session.nextDeepScanAt
+      const path = await this.sources.locateTranscript(session.entry, deep)
+      if (!path) {
+        if (deep) session.nextDeepScanAt = now + DEEP_SCAN_EVERY_MS
+        return
+      }
       session.transcript = { path, tail: this.sources.tailer(path) }
     }
     const { lines, restarted } = await session.transcript.tail.readNew()
     if (restarted) {
       session.tracked = createSession(session.entry.sessionId)
-      session.subagentTails.clear() // re-read them from the start against the rebuilt state
+      session.subagentFiles.clear() // re-read them from the start against the rebuilt state
     }
     session.tracked = lines.reduce(applyTranscriptLine, session.tracked)
     await this.readSubagents(session, session.transcript.path)
   }
 
+  /** Reads subagent transcripts, skipping the ones already read to the end after their subagent finished. */
   private async readSubagents(session: LiveSession, transcriptPath: string): Promise<void> {
-    if (!session.tracked.subagents.length) return
-    for (const sub of await this.sources.listSubagentTranscripts(transcriptPath)) {
-      let tail = session.subagentTails.get(sub.agentId)
-      if (!tail) {
-        tail = this.sources.tailer(sub.path)
-        session.subagentTails.set(sub.agentId, tail)
-      }
-      const { lines } = await tail.readNew()
+    const files = session.subagentFiles
+    const settled = (a: Subagent) => [...files.values()].some((f) => f.settled && linksTo(f.link, a))
+    if (!session.tracked.subagents.some((a) => a.status === 'running' || !settled(a))) return
+
+    for (const link of await this.sources.listSubagentTranscripts(transcriptPath, new Set(files.keys()))) {
+      files.set(link.agentId, { link, tail: this.sources.tailer(link.path), settled: false })
+    }
+    for (const file of files.values()) {
+      if (file.settled) continue
+      const { lines } = await file.tail.readNew()
       session.tracked = lines.reduce<TrackedSession>(
-        (s, line) => applySubagentLine(s, sub, line),
+        (s, line) => applySubagentLine(s, file.link, line),
         session.tracked,
       )
+      const subagent = session.tracked.subagents.find((a) => linksTo(file.link, a))
+      file.settled = subagent !== undefined && subagent.status !== 'running'
     }
   }
 }
+
+const DEEP_SCAN_EVERY_MS = 30_000
+
+const linksTo = (link: SubagentTranscript, a: Subagent): boolean =>
+  (link.toolUseId !== undefined && link.toolUseId === a.toolUseId) || link.agentId === a.agentId

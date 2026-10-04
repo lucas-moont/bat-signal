@@ -20,7 +20,8 @@ const CLOCK_TICK_MS = 60_000
 export function startBatcave(win: BrowserWindow): () => void {
   const claudeDir = join(homedir(), '.claude')
   const store = new SessionStore({
-    locateTranscript: (entry) => locateTranscript(join(claudeDir, 'projects'), entry.cwd, entry.sessionId),
+    locateTranscript: (entry, deep) =>
+      locateTranscript(join(claudeDir, 'projects'), entry.cwd, entry.sessionId, deep),
     tailer: (path) => new TranscriptTailer(path),
     listSubagentTranscripts,
     clock: () => new Date(),
