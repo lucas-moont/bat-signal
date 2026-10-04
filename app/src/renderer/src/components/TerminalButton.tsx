@@ -25,7 +25,10 @@ export function TerminalButton({
   const go = async () => {
     if (busy) return
     setBusy(true)
-    const outcome = await batSignal.goToTerminal(sessionId).finally(() => setBusy(false))
+    const outcome = await batSignal
+      .goToTerminal(sessionId)
+      .catch(() => undefined) // the main process went away mid-request: nothing to report
+      .finally(() => setBusy(false))
     if (outcome !== 'copied') return
     setCopied(true)
     clearTimeout(timer.current)
