@@ -8,6 +8,7 @@ import {
   mascotMood,
   orderCases,
   plainPreview,
+  pluginSilent,
   reportCopy,
   watchRow,
   relativeTime,
@@ -350,5 +351,20 @@ describe('watchRow', () => {
 
   it('ignores alerts that belong to other sessions', () => {
     expect(watchRow(s('idle'), [alert('error', { sessionId: 'other' })]).tone).toBe('idle')
+  })
+})
+
+describe('pluginSilent', () => {
+  const busy = { ...session('busy') }
+  const idle = { ...session('idle') }
+
+  it('is silent when a session works and no hook has arrived', () => {
+    expect(pluginSilent({ sessions: [busy], attention: [], hooksHeard: false })).toBe(true)
+  })
+
+  it('is not silent once a hook arrived, when nothing works, or in demos that do not say', () => {
+    expect(pluginSilent({ sessions: [busy], attention: [], hooksHeard: true })).toBe(false)
+    expect(pluginSilent({ sessions: [idle], attention: [], hooksHeard: false })).toBe(false)
+    expect(pluginSilent({ sessions: [busy], attention: [] })).toBe(false)
   })
 })
