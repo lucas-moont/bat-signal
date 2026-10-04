@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { attentionCopy, caseHeader, mascotMood, plainPreview, relativeTime } from '../src/shared/view'
+import { ago, attentionCopy, caseHeader, mascotMood, plainPreview, relativeTime } from '../src/shared/view'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { createSession } from '../src/main/model/sessionReducer'
 
@@ -34,8 +34,12 @@ describe('mascotMood when something happens', () => {
     expect(mascotMood(snapshot([session('busy')], [item(kind)]))).toBe('alarmed')
   })
 
-  it('does not panic over a reply or a wait', () => {
-    expect(mascotMood(snapshot([session('idle')], [item('reply'), item('waiting')]))).toBe('sleeping')
+  it('is alarmed while Claude waits for you', () => {
+    expect(mascotMood(snapshot([session('idle')], [item('waiting')]))).toBe('alarmed')
+  })
+
+  it('does not panic over a finished reply or a quiet task', () => {
+    expect(mascotMood(snapshot([session('idle')], [item('reply'), item('stalled')]))).toBe('sleeping')
   })
 })
 
@@ -173,5 +177,17 @@ describe('plainPreview keeps code and words intact', () => {
     ['A *real* emphasis and a snake_case_name', 'A real emphasis and a snake_case_name'],
   ])('%j → %j', (markdown, expected) => {
     expect(plainPreview(markdown)).toBe(expected)
+  })
+})
+
+describe('ago', () => {
+  const now = new Date('2026-03-10T15:00:00.000Z')
+  it.each([
+    [new Date(now.getTime() - 10_000).toISOString(), 'just now'],
+    [new Date(now.getTime() - 5 * 60_000).toISOString(), '5m ago'],
+    [undefined, ''],
+    ['nonsense', ''],
+  ])('%s → %j', (iso, expected) => {
+    expect(ago(iso, now)).toBe(expected)
   })
 })
