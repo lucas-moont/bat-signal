@@ -52,22 +52,25 @@ export class TranscriptTailer {
    */
   private async readFrom(handle: FileHandle, size: number): Promise<unknown[]> {
     const out: unknown[] = []
-    const buffer = Buffer.allocUnsafe(CHUNK)
-    let carry = Buffer.alloc(0)
+    let pending: Buffer[] = [] // pieces of a line that spans several chunks
     let position = this.offset
     while (position < size) {
-      const { bytesRead } = await handle.read(buffer, 0, Math.min(CHUNK, size - position), position)
+      const chunk = Buffer.allocUnsafe(Math.min(CHUNK, size - position))
+      const { bytesRead } = await handle.read(chunk, 0, chunk.length, position)
       if (bytesRead === 0) break
       position += bytesRead
-      const data = carry.length
-        ? Buffer.concat([carry, buffer.subarray(0, bytesRead)])
-        : buffer.subarray(0, bytesRead)
+      const data = chunk.subarray(0, bytesRead)
       const end = data.lastIndexOf(NEWLINE) + 1
-      if (end > 0) {
-        parseLines(data.subarray(0, end).toString('utf8'), out)
-        this.offset += end
+      if (end === 0) {
+        pending.push(data)
+        continue
       }
-      carry = Buffer.from(data.subarray(end)) // copy: `buffer` is reused by the next read
+      const complete = pending.length
+        ? Buffer.concat([...pending, data.subarray(0, end)])
+        : data.subarray(0, end)
+      parseLines(complete.toString('utf8'), out)
+      this.offset += complete.length
+      pending = end < data.length ? [data.subarray(end)] : []
     }
     return out
   }
