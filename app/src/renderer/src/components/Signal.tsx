@@ -1,9 +1,10 @@
 // The resting form: a Bat-Signal disc in the corner. News lights it and sends a notice card
-// up its beam; a click on either opens the panel.
-import { useEffect, useRef, useState } from 'react'
+// along its beam; a click on either opens the panel.
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
+import type { NoticeLayout } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import { batcave } from '../bridge'
 import { CalmContext, useCalm } from '../calm'
@@ -16,21 +17,25 @@ import './Signal.css'
 /** Pointer travel (px) that turns a press on the disc into a drag instead of a click. */
 const DRAG_THRESHOLD = 4
 
+/** The signal takes clicks only while the pointer is over the disc or a card (see window.ts). */
+const interactive = {
+  onPointerEnter: () => batcave.setInteractive(true),
+  onPointerLeave: () => batcave.setInteractive(false),
+}
+
 /** Turns snapshot changes into the notice card on screen, while the signal is the window showing. */
 function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean) {
   const [queue, setQueue] = useState(emptyQueue)
   const prev = useRef<StoreSnapshot | undefined>(undefined)
-  const listeningRef = useRef(listening)
-  useEffect(() => {
-    listeningRef.current = listening
-  })
 
   // Only a new snapshot can hold news; a change of mode alone must not diff it again.
+  const onSnapshot = useEffectEvent((next: StoreSnapshot) => {
+    const news = diffNotices(prev.current, next)
+    prev.current = next
+    if (listening && news.length) setQueue((q) => enqueue(q, news, Date.now()))
+  })
   useEffect(() => {
-    if (!loaded) return // the empty placeholder is not a state to compare against
-    const news = diffNotices(prev.current, snapshot)
-    prev.current = snapshot
-    if (listeningRef.current && news.length) setQueue((q) => enqueue(q, news, Date.now()))
+    if (loaded) onSnapshot(snapshot) // the empty placeholder is not a state to compare against
   }, [snapshot, loaded])
 
   // Opening the panel silences the cards: the user is looking at everything already.
@@ -54,40 +59,55 @@ function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean
   return { notice: showing?.notice, setHovered }
 }
 
+/**
+ * Which way the card opens, once the window has grown for it. Until then the card is held
+ * back, so its entrance is never clipped by the small disc window.
+ */
+function useStagedNotice(notice: Notice | undefined) {
+  const [staged, setStaged] = useState<{ key: string; layout: NoticeLayout } | null>(null)
+  useEffect(() => {
+    if (!notice) return
+    let live = true
+    void batcave.setNoticeOut(true).then((layout) => live && setStaged({ key: notice.key, layout }))
+    return () => {
+      live = false
+    }
+  }, [notice])
+  return staged && notice?.key === staged.key ? staged.layout : null
+}
+
 export function Signal() {
   const [snapshot, loaded] = useSnapshotState()
   const [settings, , settingsLoaded] = useSettings()
   const calm = useCalm(settings)
   const mode = useWindowMode()
   const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal')
-
-  // The window grows upward before a card comes out and shrinks back once the last has left.
-  const noticeRef = useRef(notice)
-  useEffect(() => {
-    noticeRef.current = notice
-    if (notice) batcave.setNoticeOut(true)
-  }, [notice])
+  const layout = useStagedNotice(notice)
+  // The side the last card opened on, kept while it leaves.
+  const [side, setSide] = useState<NoticeLayout>({ below: false, right: false })
+  if (layout && (layout.below !== side.below || layout.right !== side.right)) setSide(layout)
 
   if (!settingsLoaded) return null
   const needsYou = snapshot.attention.length
+  const shown = layout ? notice : undefined
 
   return (
     <CalmContext value={calm}>
       <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
-        <main className="signal">
+        <main className={`signal${side.below ? ' signal--below' : ''}${side.right ? ' signal--right' : ''}`}>
           {/* One card at a time: the next waits for the last to leave, and the window shrinks
               only when no card follows. */}
           <AnimatePresence
             mode="wait"
             onExitComplete={() => {
-              if (!noticeRef.current) batcave.setNoticeOut(false)
+              if (!notice) void batcave.setNoticeOut(false)
             }}
           >
-            {notice && (
+            {shown && (
               <NoticeCard
-                key={notice.key}
-                notice={notice}
-                onOpen={() => batcave.setMode('panel', notice.sessionId)}
+                key={shown.key}
+                notice={shown}
+                onOpen={() => batcave.setMode('panel', shown.sessionId)}
                 onHover={setHovered}
               />
             )}
@@ -96,7 +116,7 @@ export function Signal() {
             lit={needsYou > 0 || !!notice}
             // Pulsing only while urgent news is out: a pending item can wait for hours, and a
             // transparent window is costly to redraw 8 times a second all that time.
-            pulsing={!!notice && isUrgent(notice.kind)}
+            pulsing={!!shown && isUrgent(shown.kind)}
             count={needsYou}
             onOpen={() => batcave.setMode('panel')}
           />
@@ -115,6 +135,8 @@ function NoticeCard({
   onOpen: () => void
   onHover: (hovered: boolean) => void
 }) {
+  // A card can leave under the pointer (clicked, or silenced): no pointerleave comes then.
+  useEffect(() => () => onHover(false), [onHover])
   return (
     <motion.div
       className="notice-wrap"
@@ -127,8 +149,14 @@ function NoticeCard({
       <button
         className={`notice${isUrgent(notice.kind) ? ' notice--urgent' : ''}`}
         onClick={onOpen}
-        onPointerEnter={() => onHover(true)}
-        onPointerLeave={() => onHover(false)}
+        onPointerEnter={() => {
+          interactive.onPointerEnter()
+          onHover(true)
+        }}
+        onPointerLeave={() => {
+          interactive.onPointerLeave()
+          onHover(false)
+        }}
         title="Open this case"
       >
         <span className="stamp">{notice.stamp}</span>
@@ -164,12 +192,14 @@ function Disc({
       pending.current = { dx: 0, dy: 0, frame: 0 }
     })
   }
+  const release = () => (press.current = null)
 
   return (
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
       aria-label={count ? `Open Batcave: ${count} need${count === 1 ? 's' : ''} you` : 'Open Batcave'}
       title="Open Batcave · drag to move"
+      {...interactive}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId)
         press.current = { x: e.screenX, y: e.screenY }
@@ -184,14 +214,17 @@ function Disc({
         moveBy(dx, dy)
         press.current = { x: e.screenX, y: e.screenY }
       }}
-      onPointerUp={() => (press.current = null)}
+      onPointerUp={release}
+      // A press the system cancels (Alt+Tab, a dialog) must not leave the disc following the pointer.
+      onPointerCancel={release}
+      onLostPointerCapture={release}
       onClick={() => {
         if (!dragged.current) onOpen()
       }}
     >
       {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
-        <BatEmblem size={46} title="" fill={lit ? '#050000' : 'var(--raised)'} />
+        <BatEmblem size={40} title="" fill={lit ? '#050000' : 'var(--raised)'} />
       </span>
       <AnimatePresence>
         {count > 0 && (

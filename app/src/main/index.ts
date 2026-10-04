@@ -21,7 +21,8 @@ function start(): void {
     const next = parseWindowMode(mode)
     if (next) windows.setMode(next, typeof sessionId === 'string' ? sessionId : undefined)
   })
-  ipcMain.on(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
+  ipcMain.handle(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
+  ipcMain.on(IPC.interactive, (_event, on: unknown) => windows.setInteractive(on === true))
   ipcMain.on(IPC.moveSignal, (_event, dx: unknown, dy: unknown) => {
     if (typeof dx === 'number' && typeof dy === 'number') windows.moveSignalBy(dx, dy)
   })

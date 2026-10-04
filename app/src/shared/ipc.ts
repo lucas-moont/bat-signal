@@ -12,5 +12,6 @@ export const IPC = {
   focusCase: 'batcave:focus-case',
   noticeOut: 'batcave:notice-out',
   moveSignal: 'batcave:move-signal',
+  interactive: 'batcave:interactive',
   closeWindow: 'batcave:close-window',
 } as const

@@ -33,6 +33,12 @@ export function parseSettings(raw: unknown): Settings {
 export const applySettingsPatch = (current: Settings, patch: unknown): Settings =>
   parseSettings({ ...current, ...obj(patch) })
 
+/** Which way a notice card opens from the disc: up and left unless the display has no room. */
+export interface NoticeLayout {
+  below: boolean
+  right: boolean
+}
+
 /** Which window shows: the Bat-Signal disc at rest, or the full panel. */
 export type WindowMode = 'signal' | 'panel'
 

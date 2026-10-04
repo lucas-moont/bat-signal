@@ -1,20 +1,17 @@
 import { join } from 'node:path'
-import { BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow, screen } from 'electron'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
-import type { Settings, WindowMode } from '../shared/settings'
+import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
-import { anchoredRect, resolveAnchor, type Anchor } from './windowState'
+import { anchoredRect, cornerOf, noticePlacement, resolveAnchor, type Anchor, type Size } from './windowState'
 
 const MARGIN = 16
 const PANEL = { width: 360, height: 520, minWidth: 300, minHeight: 360 }
-/** The signal window: just the disc, or the disc with a notice card above it. */
-const DISC = { width: 96, height: 96 }
-const NOTICE = { width: 320, height: 230 }
+/** The signal window: just the disc, or the disc with a notice card next to it. */
+const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
 const SAVE_DEBOUNCE_MS = 500
-
-type Size = { width: number; height: number }
 
 interface Place {
   anchor?: Anchor
@@ -32,8 +29,7 @@ function parsePlace(raw: unknown): Place {
   const old = pair(o, 'x', 'y')
   const oldSize = pair(o, 'width', 'height')
   const anchor =
-    pair(obj(o['anchor']), 'x', 'y') ??
-    (old && oldSize ? { x: old.x + oldSize.width, y: old.y + oldSize.height } : undefined)
+    pair(obj(o['anchor']), 'x', 'y') ?? (old && oldSize ? cornerOf({ ...old, ...oldSize }) : undefined)
   const panel = pair(obj(o['panel']), 'width', 'height') ??
     oldSize ?? { width: PANEL.width, height: PANEL.height }
   return { anchor, panel }
@@ -60,8 +56,8 @@ const webPreferences = {
 
 /**
  * Batcave's two windows, both hanging from one corner: the Bat-Signal disc (transparent, the
- * resting form, grows upward when a notice card comes out) and the panel. Only one shows at
- * a time; the main process owns which (the mode) and the corner.
+ * resting form, grows when a notice card comes out) and the panel. Only one shows at a time;
+ * the main process owns which (the mode) and the corner.
  */
 export class BatcaveWindows {
   private readonly panel: BrowserWindow
@@ -71,6 +67,7 @@ export class BatcaveWindows {
   private panelSize: Size
   private noticeOut = false
   private latest?: StoreSnapshot
+  private quitting = false
   private saveTimer?: NodeJS.Timeout
 
   constructor(settings: Settings) {
@@ -92,7 +89,7 @@ export class BatcaveWindows {
       webPreferences,
     })
     this.signal = new BrowserWindow({
-      ...this.rect(DISC),
+      ...this.rect(SIGNAL.disc),
       frame: false,
       transparent: true,
       resizable: false,
@@ -108,7 +105,20 @@ export class BatcaveWindows {
     // The panel is moved and resized by hand: its bottom-right corner becomes the anchor.
     this.panel.on('moved', () => this.followPanel())
     this.panel.on('resized', () => this.followPanel())
-    for (const win of [this.panel, this.signal]) win.on('close', () => this.saveNow())
+    app.on('before-quit', () => {
+      this.quitting = true
+      this.saveNow()
+    })
+    // Alt+F4 on the panel folds it away (with no window left the app would run invisibly);
+    // on the signal it quits, as the close button does.
+    this.panel.on('close', (e) => {
+      if (this.quitting) return
+      e.preventDefault()
+      this.setMode('signal')
+    })
+    this.signal.on('close', () => {
+      if (!this.quitting) app.quit()
+    })
 
     load(this.panel, 'panel')
     load(this.signal, 'signal')
@@ -146,6 +156,9 @@ export class BatcaveWindows {
   /** Shows the panel (optionally on one case) or folds back into the signal. */
   setMode(mode: WindowMode, focusSessionId?: string): void {
     if (mode === 'panel') {
+      // Opening the panel silences the cards; the hidden page may never finish their exit.
+      this.setClickThrough(false)
+      this.noticeOut = false
       if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
       this.panel.setBounds(this.rect(this.panelSize))
       this.panel.show()
@@ -163,21 +176,41 @@ export class BatcaveWindows {
     }
   }
 
-  /** The signal page shows or hides a notice card: grow the window upward, or shrink it back. */
-  setNoticeOut(out: boolean): void {
-    if (out === this.noticeOut) return
-    this.noticeOut = out
-    if (this.current === 'signal') this.placeSignal()
+  /**
+   * The signal page is about to show a card (or has hidden the last one): grow the window
+   * around the disc, or shrink it back. Returns which way the card opens.
+   */
+  setNoticeOut(out: boolean): NoticeLayout {
+    if (out !== this.noticeOut) {
+      this.setClickThrough(out)
+      this.noticeOut = out
+      if (this.current === 'signal') this.placeSignal()
+    }
+    const { below, right } = noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst())
+    return { below, right }
+  }
+
+  /** While a card is out, the page turns clicks back on when the pointer is over the disc or the card. */
+  setInteractive(interactive: boolean): void {
+    if (this.noticeOut) this.signal.setIgnoreMouseEvents(!interactive, { forward: true })
+  }
+
+  /**
+   * While a card is out, clicks on the window's transparent parts fall through to whatever is
+   * underneath. Only then: forwarding the pointer to the page costs ~10% of a core on Windows,
+   * and the disc alone leaves only small transparent corners.
+   */
+  private setClickThrough(on: boolean): void {
+    this.signal.setIgnoreMouseEvents(on, { forward: true })
   }
 
   /** The disc is dragged by hand (a drag region would swallow its clicks). */
   moveSignalBy(dx: number, dy: number): void {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return
-    this.anchor = { x: this.anchor.x + dx, y: this.anchor.y + dy }
+    // Keep the disc itself on screen, so dragging back works at once.
+    const moved = { x: this.anchor.x + dx, y: this.anchor.y + dy }
+    this.anchor = cornerOf(anchoredRect(moved, SIGNAL.disc, displaysPrimaryFirst()))
     this.placeSignal()
-    // Where the window really went (kept on screen) is the corner, so dragging back works at once.
-    const b = this.signal.getBounds()
-    this.anchor = { x: b.x + b.width, y: b.y + b.height }
     this.scheduleSave()
   }
 
@@ -187,13 +220,17 @@ export class BatcaveWindows {
 
   /** The signal window at its current size: the disc, or the disc with a notice card. */
   private placeSignal(): void {
-    this.signal.setBounds(this.rect(this.noticeOut ? NOTICE : DISC))
+    this.signal.setBounds(
+      this.noticeOut
+        ? noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst()).rect
+        : this.rect(SIGNAL.disc),
+    )
   }
 
   private followPanel(): void {
     if (this.current !== 'panel') return
     const b = this.panel.getBounds()
-    this.anchor = { x: b.x + b.width, y: b.y + b.height }
+    this.anchor = cornerOf(b)
     this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()
   }
