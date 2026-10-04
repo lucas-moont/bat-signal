@@ -8,7 +8,9 @@ let base: string
 
 beforeEach(async () => {
   received = []
-  server = new HookServer((event) => received.push(event))
+  server = new HookServer((event) => {
+    received.push(event)
+  })
   const port = await server.listen(0) // any free port
   base = `http://127.0.0.1:${port}`
 })
@@ -84,5 +86,27 @@ describe('HookServer and DNS rebinding', () => {
     const port = new URL(base).port
     expect(await postWithHost(`127.0.0.1:${port}`)).toBe(204)
     expect(await postWithHost(`localhost:${port}`)).toBe(204)
+  })
+})
+
+describe('HookServer with a failing handler', () => {
+  it('keeps serving when the handler throws or rejects', async () => {
+    const failing = new HookServer(async () => {
+      throw new Error('boom')
+    })
+    const port = await failing.listen(0)
+    try {
+      const send = () =>
+        fetch(`http://127.0.0.1:${port}/hook`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: '{}',
+        })
+      expect((await send()).status).toBe(204)
+      expect((await send()).status).toBe(204)
+      await new Promise((r) => setTimeout(r, 10)) // let a stray rejection surface, if any
+    } finally {
+      await failing.close()
+    }
   })
 })
