@@ -5,7 +5,15 @@ import { IPC } from '../shared/ipc'
 import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
-import { anchoredRect, cornerOf, noticePlacement, resolveAnchor, type Anchor, type Size } from './windowState'
+import {
+  anchoredRect,
+  cornerOf,
+  noticePlacement,
+  perchRect,
+  resolveAnchor,
+  type Anchor,
+  type Size,
+} from './windowState'
 
 const MARGIN = 16
 /** A corner companion, not a big-screen app: the panel opens small. */
@@ -14,6 +22,8 @@ const PANEL = { width: 320, height: 440, minWidth: 300, minHeight: 360 }
 const WATCH = { width: 280, minHeight: 56, initialHeight: 160, maxShare: 0.7 }
 /** The signal window: just the disc, or the disc with a notice card next to it. */
 const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
+/** In watch mode the transparent signal window is Bat-Clawd's perch, on the strip's top edge. */
+const PERCH = { width: 88, height: 56 }
 const SAVE_DEBOUNCE_MS = 500
 
 /** What the disc opens: the full panel or the watch strip, whichever was used last. */
@@ -115,6 +125,10 @@ export class BatSignalWindows {
     this.signal.webContents.once('did-finish-load', () => this.setMode(this.current))
     // The panel is moved and resized by hand: its bottom-right corner becomes the anchor.
     this.panel.on('moved', () => this.followPanel())
+    // Bat-Clawd rides along while the strip is dragged.
+    this.panel.on('move', () => {
+      if (this.current === 'watch') this.placePerch()
+    })
     this.panel.on('resized', () => this.followPanel())
     app.on('before-quit', () => {
       this.quitting = true
@@ -187,8 +201,12 @@ export class BatSignalWindows {
         this.panel.setBounds(this.watchRect())
       }
       this.panel.show()
-      if (mode === 'panel') this.panel.focus()
-      this.signal.hide()
+      if (mode === 'panel') {
+        this.panel.focus()
+        this.signal.hide()
+      } else {
+        this.placePerch()
+      }
       if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
       // A notice card opening the panel on one case is not the user picking the panel.
       if (!focusSessionId && mode !== this.lastOpened) {
@@ -197,6 +215,7 @@ export class BatSignalWindows {
       }
     } else {
       this.panel.hide()
+      this.signal.setIgnoreMouseEvents(false) // the perch let every click through; the disc takes them
       this.placeSignal()
       this.signal.showInactive()
     }
@@ -244,6 +263,18 @@ export class BatSignalWindows {
     this.scheduleSave()
   }
 
+  /**
+   * Bat-Clawd on the strip's top edge: the signal window, moved there and made fully click-through
+   * (without forwarding, which would cost CPU). Hidden when the strip has no room above it.
+   */
+  private placePerch(): void {
+    const rect = perchRect(this.panel.getBounds(), PERCH, displaysPrimaryFirst())
+    if (!rect) return this.signal.hide()
+    this.signal.setIgnoreMouseEvents(true)
+    this.signal.setBounds(rect)
+    this.signal.showInactive()
+  }
+
   private watchRect() {
     return this.rect({ width: WATCH.width, height: this.watchHeight })
   }
@@ -268,7 +299,10 @@ export class BatSignalWindows {
     const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
     if (next === this.watchHeight) return
     this.watchHeight = next
-    if (this.current === 'watch') this.panel.setBounds(this.watchRect())
+    if (this.current === 'watch') {
+      this.panel.setBounds(this.watchRect())
+      this.placePerch()
+    }
   }
 
   private followPanel(): void {

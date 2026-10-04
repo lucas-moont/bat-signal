@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { anchoredRect, noticePlacement, resolveAnchor } from '../src/main/windowState'
+import { anchoredRect, noticePlacement, perchRect, resolveAnchor } from '../src/main/windowState'
 
 // Primary display first, as Electron's screen API is queried by the caller.
 const laptop = { workArea: { x: 0, y: 0, width: 1536, height: 816 } }
@@ -71,5 +71,19 @@ describe('signal geometry near edges', () => {
       below: true,
       right: true,
     })
+  })
+})
+
+describe('perch above the watch strip', () => {
+  const size = { width: 72, height: 48 }
+
+  it("stands on the strip's top edge, near its right end", () => {
+    const strip = { x: 1240, y: 500, width: 280, height: 300 }
+    expect(perchRect(strip, size, [laptop])).toEqual({ x: 1438, y: 452, width: 72, height: 48 })
+  })
+
+  it('is left out when the strip touches the top of the screen and there is no roof to stand on', () => {
+    const strip = { x: 1240, y: 20, width: 280, height: 300 }
+    expect(perchRect(strip, size, [laptop])).toBeUndefined()
   })
 })
