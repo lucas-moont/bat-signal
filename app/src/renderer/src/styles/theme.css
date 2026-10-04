@@ -22,7 +22,8 @@
   --ash: #8a817a;
 
   --font-display: 'Anton', 'Impact', sans-serif;
-  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: 'Special Elite', 'Courier New', monospace;
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
 
   --radius: 10px;
