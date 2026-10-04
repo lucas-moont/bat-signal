@@ -72,6 +72,31 @@ export function attentionCopy(item: AttentionItem): CardCopy {
   }
 }
 
+/** How an alert reads in the night report: the case's title, then this sentence. */
+export function reportCopy(item: AttentionItem): { stamp: string; sentence: string } {
+  const { stamp } = attentionCopy(item)
+  switch (item.kind) {
+    case 'permission':
+      return {
+        stamp,
+        sentence: item.detail
+          ? `asks to run ${item.toolName ?? 'a tool'}: ${item.detail}`
+          : `asks to use ${item.toolName ?? 'a tool'}`,
+      }
+    case 'error':
+      return {
+        stamp,
+        sentence: item.detail ? `stopped: ${humanize(item.detail).toLowerCase()}` : 'stopped with an error',
+      }
+    case 'waiting':
+      return { stamp, sentence: 'is waiting for your answer' }
+    case 'reply':
+      return { stamp, sentence: 'finished replying' }
+    case 'stalled':
+      return { stamp, sentence: item.detail ? `has gone quiet on “${item.detail}”` : 'has a task gone quiet' }
+  }
+}
+
 export interface CaseHeader {
   /** Short case number from the session id, e.g. "#b47c0d". */
   number: string
