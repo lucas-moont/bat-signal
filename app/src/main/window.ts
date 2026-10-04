@@ -182,7 +182,7 @@ export class BatSignalWindows {
       } else {
         this.panel.setResizable(false)
         this.panel.setMinimumSize(WATCH.width, WATCH.minHeight)
-        this.panel.setBounds(this.rect({ width: WATCH.width, height: this.watchHeight }))
+        this.panel.setBounds(this.watchRect())
       }
       this.panel.show()
       if (mode === 'panel') this.panel.focus()
@@ -241,6 +241,10 @@ export class BatSignalWindows {
     this.scheduleSave()
   }
 
+  private watchRect() {
+    return this.rect({ width: WATCH.width, height: this.watchHeight })
+  }
+
   private rect(size: Size) {
     return anchoredRect(this.anchor, size, displaysPrimaryFirst())
   }
@@ -258,9 +262,10 @@ export class BatSignalWindows {
   setWatchHeight(height: number): void {
     if (!Number.isFinite(height)) return
     const area = screen.getDisplayNearestPoint(this.anchor).workArea
-    this.watchHeight = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
-    if (this.current === 'watch')
-      this.panel.setBounds(this.rect({ width: WATCH.width, height: this.watchHeight }))
+    const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
+    if (next === this.watchHeight) return
+    this.watchHeight = next
+    if (this.current === 'watch') this.panel.setBounds(this.watchRect())
   }
 
   private followPanel(): void {

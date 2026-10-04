@@ -1,6 +1,6 @@
 // The watch strip: Bat-Signal left in the corner to follow the active sessions. One row per case,
 // the most urgent first; a click on a row goes to that session's terminal.
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import type { PanelLayout } from '@shared/settings'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import { orderCases, watchRow, type WatchRow } from '@shared/view'
@@ -25,12 +25,21 @@ export function WatchStrip({
   useEffect(() => {
     const el = root.current
     if (!el) return
-    const observer = new ResizeObserver(() => batSignal.setWatchHeight(Math.ceil(el.scrollHeight)))
+    let sent = 0
+    const observer = new ResizeObserver(() => {
+      const height = Math.ceil(el.scrollHeight)
+      if (height !== sent) batSignal.setWatchHeight((sent = height)) // the window resize echoes back
+    })
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
   const needsYou = new Set(attention.map((a) => a.sessionId)).size
+  // Snapshots arrive up to ten times a second while sessions work: derive the rows once each.
+  const rows = useMemo(
+    () => orderCases(sessions, attention).map((s) => ({ id: s.sessionId, row: watchRow(s, attention) })),
+    [sessions, attention],
+  )
 
   return (
     <main ref={root} className={`watch watch--${layout}`}>
@@ -61,8 +70,8 @@ export function WatchStrip({
         <p className="watch__nil">No open cases. Start Claude Code in a terminal to follow it here.</p>
       ) : (
         <ul className="watch__rows">
-          {orderCases(sessions, attention).map((s) => (
-            <Row key={s.sessionId} sessionId={s.sessionId} row={watchRow(s, attention)} />
+          {rows.map(({ id, row }) => (
+            <Row key={id} sessionId={id} row={row} />
           ))}
         </ul>
       )}
