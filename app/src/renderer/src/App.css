@@ -79,8 +79,7 @@
     letter-spacing: 2px;
   }
 }
-/* .icon-button resets every property, so this needs the extra weight. */
-.tabs .tabs__settings {
+.tabs__settings {
   margin-left: auto;
 }
 @media (max-width: 310px) {
@@ -101,7 +100,8 @@
   }
 }
 
-.icon-button {
+/* Zero specificity (:where), so any one-class modifier can place or space a button. */
+:where(.icon-button) {
   all: unset;
   display: grid;
   place-items: center;
@@ -133,7 +133,8 @@
 }
 
 /* Go to the terminal: beside each card and in the case detail (see TerminalButton). */
-.terminal-button {
+/* Zero specificity, so a layout can pin it (see .card__terminal, .report__terminal). */
+:where(.terminal-button) {
   position: relative;
   display: inline-flex;
   flex: none;

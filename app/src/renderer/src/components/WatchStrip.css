@@ -1,7 +1,5 @@
 /* The watch strip: a narrow, dense list to leave in the corner. Rows are one or two lines. */
 .watch {
-  --ink-hot: #ec2a2a;
-  --ink-soft: #d4574c;
   display: flex;
   flex-direction: column;
   background: var(--abyss);
@@ -69,7 +67,6 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.watch-row + .watch-row,
 li + li > .watch-row {
   border-top: 1px solid rgb(49 48 47 / 55%);
 }
