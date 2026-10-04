@@ -70,7 +70,8 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   private watcher?: FSWatcher
   private timer?: NodeJS.Timeout
   private debounce?: NodeJS.Timeout
-  private current: RegistryEntry[] = []
+  /** undefined until the first scan, so the first result is always emitted, even when empty. */
+  private current?: RegistryEntry[]
   private running?: Promise<void>
   private dirty = false
 
