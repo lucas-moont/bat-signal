@@ -1,0 +1,17 @@
+{
+  "name": "batcave",
+  "version": "0.2.0",
+  "description": "Reports Claude Code session activity to Batcave, a tiny always-on-top window that watches your sessions.",
+  "author": {
+    "name": "Lucas Monteiro",
+    "url": "https://github.com/lucas-moont"
+  },
+  "homepage": "https://github.com/lucas-moont/batcave",
+  "repository": "https://github.com/lucas-moont/batcave",
+  "license": "MIT",
+  "keywords": [
+    "monitoring",
+    "notifications",
+    "desktop"
+  ]
+}
