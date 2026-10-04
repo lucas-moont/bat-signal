@@ -135,3 +135,13 @@ describe('deriveAttention edge cases', () => {
     expect(deriveAttention([v], NOW)).toEqual([])
   })
 })
+
+describe('deriveAttention: waiting', () => {
+  it('stops showing "waiting for you" once you opened the session after it started', () => {
+    const items = deriveAttention(
+      [view('s1', { waitingSince: '2026-01-01T11:40:00.000Z', seenAt: '2026-01-01T11:41:00.000Z' })],
+      NOW,
+    )
+    expect(items).toEqual([])
+  })
+})
