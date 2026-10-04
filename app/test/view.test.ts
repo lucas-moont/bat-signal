@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { attentionCopy, caseHeader, mascotMood, relativeTime } from '../src/shared/view'
+import { attentionCopy, caseHeader, mascotMood, plainPreview, relativeTime } from '../src/shared/view'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { createSession } from '../src/main/model/sessionReducer'
 
@@ -135,5 +135,23 @@ describe('caseHeader', () => {
 
   it('has no progress without tasks', () => {
     expect(caseHeader(session('idle')).progress).toBeUndefined()
+  })
+})
+
+describe('plainPreview', () => {
+  it.each([
+    ['The **new curve** works and _tells_ the story', 'The new curve works and tells the story'],
+    ['Run `npm test` first', 'Run npm test first'],
+    ['## Summary\n- one\n- two', 'Summary · one · two'],
+    ['See [the docs](https://example.com) now', 'See the docs now'],
+    ['1. first\n2. second', 'first · second'],
+    ['> quoted line', 'quoted line'],
+    ['```ts\nconst x = 1\n```\nDone.', 'const x = 1 · Done.'],
+  ])('%j → %j', (markdown, expected) => {
+    expect(plainPreview(markdown)).toBe(expected)
+  })
+
+  it('keeps plain text as it is, without doubled spaces', () => {
+    expect(plainPreview('Checking   the GCPD files.')).toBe('Checking the GCPD files.')
   })
 })
