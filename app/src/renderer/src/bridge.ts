@@ -9,33 +9,37 @@ import type { BatcaveApi } from '../../preload/index'
 
 const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
+/** A value with listeners: what the main process keeps for real, kept in memory. */
+function observable<T>(initial: T) {
+  let value = initial
+  const listeners = new Set<(v: T) => void>()
+  return {
+    get: async () => value,
+    set: (next: T) => {
+      value = next
+      listeners.forEach((l) => l(value))
+    },
+    current: () => value,
+    on: (callback: (v: T) => void) => {
+      listeners.add(callback)
+      return () => listeners.delete(callback)
+    },
+  }
+}
+
 function standIn(snapshot: () => StoreSnapshot): BatcaveApi {
-  let settings = DEFAULT_SETTINGS
-  const settingsListeners = new Set<(s: Settings) => void>()
-  let mode: WindowMode = 'full'
-  const modeListeners = new Set<(m: WindowMode) => void>()
+  const settings = observable<Settings>(DEFAULT_SETTINGS)
+  const mode = observable<WindowMode>('full')
   return {
     getSnapshot: async () => snapshot(),
     onSnapshot: () => () => undefined,
     markSeen: () => undefined,
-    getSettings: async () => settings,
-    setSettings: (patch) => {
-      settings = applySettingsPatch(settings, patch)
-      settingsListeners.forEach((l) => l(settings))
-    },
-    onSettings: (callback) => {
-      settingsListeners.add(callback)
-      return () => settingsListeners.delete(callback)
-    },
-    getMode: async () => mode,
-    setMode: (next) => {
-      mode = next
-      modeListeners.forEach((l) => l(mode))
-    },
-    onMode: (callback) => {
-      modeListeners.add(callback)
-      return () => modeListeners.delete(callback)
-    },
+    getSettings: settings.get,
+    setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
+    onSettings: settings.on,
+    getMode: mode.get,
+    setMode: mode.set,
+    onMode: mode.on,
     closeWindow: () => window.close(),
   }
 }
