@@ -5,6 +5,7 @@ import type {
   RunStatus,
   SessionSnapshot,
   StoreSnapshot,
+  Task,
   TaskStatus,
 } from './types'
 
@@ -148,3 +149,31 @@ export const RUN_STATUS_LABEL: Record<RunStatus, string> = {
   failed: 'Failed',
   stopped: 'Stopped',
 }
+
+/**
+ * Cases in display order: those that need you first (most urgent first, as the attention list
+ * is ordered), then the ones working, then the rest; the original order breaks ties.
+ */
+export function orderCases(sessions: SessionSnapshot[], attention: AttentionItem[]): SessionSnapshot[] {
+  const urgency = new Map<string, number>()
+  attention.forEach((a, i) => {
+    if (!urgency.has(a.sessionId)) urgency.set(a.sessionId, i)
+  })
+  const rank = (s: SessionSnapshot) =>
+    urgency.get(s.sessionId) ?? (s.status === 'busy' ? attention.length : Infinity)
+  return sessions
+    .map((s, i) => ({ s, i }))
+    .sort((a, b) => rank(a.s) - rank(b.s) || a.i - b.i)
+    .map(({ s }) => s)
+}
+
+/** The last folder of a path, Windows or POSIX. */
+export const folderName = (cwd: string): string => cwd.split(/[\\/]/).filter(Boolean).pop() ?? ''
+
+/** Claude's most recent reply in a session. */
+export const lastReply = (session: SessionSnapshot): string | undefined =>
+  session.messages.findLast((m) => m.role === 'assistant')?.text
+
+/** A task by what is happening right now while in progress, by its subject otherwise. */
+export const taskLabel = (task: Task): string =>
+  task.status === 'in_progress' ? (task.activeForm ?? task.subject) : task.subject

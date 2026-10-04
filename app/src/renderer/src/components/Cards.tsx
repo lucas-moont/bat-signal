@@ -1,6 +1,13 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
-import { attentionCopy, caseHeader, LIVE_STATUS_LABEL, plainPreview, relativeTime } from '@shared/view'
+import {
+  attentionCopy,
+  caseHeader,
+  LIVE_STATUS_LABEL,
+  orderCases,
+  plainPreview,
+  relativeTime,
+} from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
 import { Typewriter } from './Typewriter'
@@ -84,7 +91,7 @@ export function CaseList({
   return (
     <ul className="cards">
       <AnimatePresence>
-        {sessions.map((s, i) => {
+        {orderCases(sessions, attention).map((s, i) => {
           const { number, title, progress } = caseHeader(s)
           const needsYou = attention.some((a) => a.sessionId === s.sessionId)
           const last = s.messages.findLast((m) => m.role === 'assistant')
