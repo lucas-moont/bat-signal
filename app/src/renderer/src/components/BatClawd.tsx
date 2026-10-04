@@ -79,8 +79,8 @@ const POSES: Record<MascotMood, Poses> = {
     { cape: 'trailB', eyes: 'open', eyeColor: 'var(--bone)' },
   ],
   alarmed: [
-    { cape: 'open', eyes: 'open', eyeColor: 'var(--signal-hot)' },
-    { cape: 'open', eyes: 'open', eyeColor: 'rgb(227 18 27 / 18%)' },
+    { cape: 'open', eyes: 'open', eyeColor: 'var(--bone)' },
+    { cape: 'open', eyes: 'open', eyeColor: 'rgb(232 225 217 / 18%)' },
   ],
 }
 
@@ -142,7 +142,7 @@ const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; 
     pose: f % 2 ? b : a,
     transform: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
   }),
-  // Red eyes that blink every so often, and a shiver.
+  // The cape flung open, eyes that blink every so often, and a shiver.
   alarmed: (f, [a, b = a]) => ({
     pose: f % 10 === 9 ? b : a,
     transform: `translateX(${f % 2 ? 0.6 : -0.6}px)`,

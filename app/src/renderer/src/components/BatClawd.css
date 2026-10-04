@@ -20,9 +20,9 @@
   overflow: visible;
 }
 
-/* A near-black cape needs its red edge to read on the pure-black window. */
+/* A black cape: its red edge and lining make it read on the pure-black window. */
 .clawd__cape {
-  fill: #170d0a;
+  fill: #000;
   stroke: var(--signal);
   stroke-width: 0.35;
   stroke-linejoin: round;
@@ -31,7 +31,7 @@
   fill: var(--blood);
 }
 .clawd__seam {
-  fill: #050302;
+  fill: var(--blood);
 }
 
 /* A click sends it up for a short flight: a one-off animation, not a loop. */
