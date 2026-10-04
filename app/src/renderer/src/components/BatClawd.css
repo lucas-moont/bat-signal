@@ -1,0 +1,47 @@
+.clawd {
+  --cowl: #0b0908;
+  --clawd-shade: #b85f42;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+/* Poses and positions come from the shared clock (see ticker.ts); nothing here loops. */
+.clawd__mover {
+  position: absolute;
+  inset: 0;
+}
+.clawd__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.clawd__wing {
+  fill: #2a1712;
+  stroke: var(--signal);
+  stroke-width: 0.4;
+  stroke-linejoin: round;
+}
+
+/* A click sends it up for a short flight: a one-off animation, not a loop. */
+.clawd--hop .clawd__mover {
+  animation: clawd-hop 0.7s var(--ease-out);
+}
+@keyframes clawd-hop {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-9px) rotate(-6deg);
+  }
+  70% {
+    transform: translateY(-3px) rotate(4deg);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

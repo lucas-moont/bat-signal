@@ -1,101 +1,241 @@
 .app {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--line);
+  border: 1px solid #1d1714;
+  overflow: hidden;
+  /* Own stacking context, so the atmosphere can sit behind everything at z-index -1. */
+  isolation: isolate;
 }
 
-/* The header doubles as the title bar of the frameless window: drag it to move. */
-.app-header {
+/* Header: doubles as the title bar of the frameless window. */
+.header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: linear-gradient(var(--smoke), var(--abyss));
-  border-bottom: 1px solid var(--line);
+  gap: 9px;
+  height: 54px;
+  padding: 0 8px 0 14px;
+  background: linear-gradient(180deg, #0c0a09, rgb(0 0 0 / 0%));
   -webkit-app-region: drag;
 }
-
-.app-title {
+.header__title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 26px;
-  letter-spacing: 3px;
+  font-size: 23px;
+  letter-spacing: 3.5px;
   line-height: 1;
   color: var(--signal);
+  text-shadow: 0 0 14px rgb(175 0 6 / 35%);
 }
-
-.app-badge {
-  margin-left: auto;
-  min-width: 22px;
-  padding: 2px 7px;
-  border-radius: 11px;
-  background: var(--signal);
-  color: var(--bone);
-  font-weight: 600;
+/* The needs-you counter, stamped next to the title. */
+.header__count {
+  min-width: 24px;
+  padding: 3px 6px 1px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1;
   text-align: center;
+  color: var(--bone);
+  background: var(--signal);
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--signal-glow);
 }
-
-.session-empty {
-  margin: 24px 16px;
-  color: var(--ash);
-}
-
-.session-list {
-  flex: 1;
-  min-height: 0;
-  list-style: none;
-  margin: 0;
-  padding: 8px;
-  overflow-y: auto;
+/* The mascot gives way first when the window gets narrow; the buttons never do. */
+.header__mascot {
+  margin-left: auto;
   display: grid;
-  align-content: start;
-  gap: 6px;
+  place-items: center;
+  flex: 0 1 66px;
+  min-width: 0;
+  height: 54px;
 }
-
-.session {
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  cursor: pointer;
+.header__mascot .clawd {
+  max-width: 100%;
 }
-
-.session:hover {
-  background: var(--raised);
+/* Asleep, Bat-Clawd hangs from the very top edge of the window. */
+.header__mascot--sleeping {
+  align-items: start;
 }
-
-.session-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.session-title {
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.session-meta {
-  margin-top: 2px;
-  color: var(--ash);
-  font-size: 12px;
-}
-
-.session-dot {
+.header__actions {
   flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ash);
+  display: flex;
+  gap: 2px;
 }
-.session-dot--busy {
+.header__title,
+.header__count,
+.header > svg {
+  flex: none;
+}
+@media (max-width: 330px) {
+  .header {
+    gap: 6px;
+    padding-left: 10px;
+  }
+  .header__title {
+    font-size: 20px;
+    letter-spacing: 2.5px;
+  }
+}
+
+.icon-button {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius);
+  color: var(--ash);
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.icon-button:hover {
+  color: var(--bone);
+  background: var(--surface);
+}
+.icon-button--danger:hover {
+  color: var(--bone);
   background: var(--blood);
 }
-.session-dot--alert {
-  background: var(--signal);
+.icon-button:focus-visible {
+  outline: 1px solid var(--signal);
+}
+
+.tabs {
+  display: flex;
+  gap: 18px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.tabs__tab {
+  all: unset;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ash);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.tabs__tab[aria-selected='true'],
+.tabs__tab:hover {
+  color: var(--bone);
+}
+.tabs__tab:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 2px;
+}
+.tabs__count {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0;
+  color: var(--ash);
+}
+.tabs__underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--signal-hot);
   box-shadow: 0 0 8px var(--signal-glow);
+}
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.stage__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+}
+.stage__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+/* Pill mode: the whole window is a small bar. */
+.pill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 0 12px;
+  background: linear-gradient(180deg, #0f0c0b, #000);
+  border: 1px solid var(--line);
+  border-radius: 30px;
+}
+/* Only the emblem drags the pill, so the rest can open it on hover (see Pill.tsx). */
+.pill__grip {
+  display: grid;
+  place-items: center;
+  padding: 6px 4px;
+  cursor: grab;
+  -webkit-app-region: drag;
+}
+.pill--alert {
+  border-color: var(--signal);
+  box-shadow: inset 0 0 14px -4px var(--signal-glow);
+}
+.pill__count {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--bone);
+}
+.pill--alert .pill__count {
+  color: var(--signal-hot);
+}
+.pill__body {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pill__mascot {
+  margin-left: auto;
+}
+
+/* Click ripple (see ripple.ts): targets clip it and anchor it. */
+.card,
+.row,
+.icon-button,
+.tabs__tab {
+  position: relative;
+  overflow: hidden;
+}
+.rippling::after {
+  content: '';
+  position: absolute;
+  left: var(--rx);
+  top: var(--ry);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: rgb(175 0 6 / 45%);
+  pointer-events: none;
+  animation: ripple 0.45s ease-out forwards;
+}
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(40);
+    opacity: 0;
+  }
 }
