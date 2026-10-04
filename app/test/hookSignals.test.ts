@@ -143,3 +143,9 @@ describe('applyHookEvent: waiting ends when Claude works again', () => {
     },
   )
 })
+
+describe('applyHookEvent: hostile event names', () => {
+  it.each(['toString', 'constructor', 'hasOwnProperty', '__proto__'])('ignores %s', (name) => {
+    expect(applyHookEvent(idle, hook(name), AT)).toBe(idle)
+  })
+})
