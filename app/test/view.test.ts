@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { ago, attentionCopy, caseHeader, mascotMood, plainPreview, relativeTime } from '../src/shared/view'
+import {
+  ago,
+  attentionCopy,
+  caseHeader,
+  folderName,
+  lastReply,
+  mascotMood,
+  orderCases,
+  plainPreview,
+  relativeTime,
+  taskLabel,
+} from '../src/shared/view'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { createSession } from '../src/main/model/sessionReducer'
 
@@ -189,5 +200,57 @@ describe('ago', () => {
     ['nonsense', ''],
   ])('%s → %j', (iso, expected) => {
     expect(ago(iso, now)).toBe(expected)
+  })
+})
+
+describe('orderCases', () => {
+  const s = (id: string, status: SessionSnapshot['status']) => ({ ...session(status), sessionId: id })
+  const needs = (sessionId: string, kind: AttentionItem['kind']): AttentionItem => ({
+    ...item(kind),
+    sessionId,
+  })
+
+  it('puts cases that need you first, most urgent first, then working ones, then the rest', () => {
+    const sessions = [s('quiet', 'idle'), s('busy', 'busy'), s('reply', 'idle'), s('perm', 'busy')]
+    const attention = [needs('perm', 'permission'), needs('reply', 'reply')]
+    expect(orderCases(sessions, attention).map((x) => x.sessionId)).toEqual([
+      'perm',
+      'reply',
+      'busy',
+      'quiet',
+    ])
+  })
+
+  it('keeps the original order among equals', () => {
+    const sessions = [s('a', 'idle'), s('b', 'idle'), s('c', 'idle')]
+    expect(orderCases(sessions, []).map((x) => x.sessionId)).toEqual(['a', 'b', 'c'])
+  })
+})
+
+describe('small case details', () => {
+  it.each([
+    [String.raw`C:\Users\bruce\wayne-enterprises`, 'wayne-enterprises'],
+    ['/home/bruce/gcpd/', 'gcpd'],
+    ['', ''],
+  ])('folderName(%j) → %j', (cwd, expected) => {
+    expect(folderName(cwd)).toBe(expected)
+  })
+
+  it("finds Claude's latest reply", () => {
+    const messages = [
+      { role: 'assistant' as const, text: 'first', at: '' },
+      { role: 'user' as const, text: 'go on', at: '' },
+      { role: 'assistant' as const, text: 'second', at: '' },
+      { role: 'user' as const, text: 'thanks', at: '' },
+    ]
+    expect(lastReply({ ...session('idle'), messages })).toBe('second')
+    expect(lastReply(session('idle'))).toBeUndefined()
+  })
+
+  it('labels a task in progress by what is happening right now', () => {
+    const task = { id: '1', subject: 'Scan Gotham', activeForm: 'Scanning Gotham', history: [] }
+    expect(taskLabel({ ...task, status: 'in_progress' })).toBe('Scanning Gotham')
+    expect(taskLabel({ ...task, status: 'pending' })).toBe('Scan Gotham')
+    expect(taskLabel({ ...task, activeForm: undefined, status: 'in_progress' })).toBe('Scan Gotham')
   })
 })
