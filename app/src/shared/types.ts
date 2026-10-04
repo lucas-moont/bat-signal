@@ -93,11 +93,9 @@ export interface AttentionItem {
 }
 
 /** Everything the window shows about one live session. */
-export interface SessionSnapshot extends SessionState {
+export interface SessionSnapshot extends SessionState, Pick<SessionView, 'status' | 'signals'> {
   pid: number
   name?: string
-  status: LiveStatus
-  signals: SessionSignals
 }
 
 export interface StoreSnapshot {

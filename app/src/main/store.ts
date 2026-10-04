@@ -8,6 +8,7 @@ import {
   applySubagentLine,
   applyTranscriptLine,
   createSession,
+  isTranscriptOf,
   toSessionState,
   type TrackedSession,
 } from './model/sessionReducer'
@@ -191,8 +192,9 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   /** Reads subagent transcripts, skipping the ones already read to the end after their subagent finished. */
   private async readSubagents(session: LiveSession, transcriptPath: string): Promise<void> {
     const files = session.subagentFiles
-    const settled = (a: Subagent) => [...files.values()].some((f) => f.settled && linksTo(f.link, a))
-    if (!session.tracked.subagents.some((a) => a.status === 'running' || !settled(a))) return
+    const alreadyRead = (a: Subagent) =>
+      [...files.values()].some((f) => f.settled && isTranscriptOf(f.link, a))
+    if (!session.tracked.subagents.some((a) => a.status === 'running' || !alreadyRead(a))) return
 
     for (const link of await this.sources.listSubagentTranscripts(transcriptPath, new Set(files.keys()))) {
       files.set(link.agentId, { link, tail: this.sources.tailer(link.path), settled: false })
@@ -204,7 +206,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
         (s, line) => applySubagentLine(s, file.link, line),
         session.tracked,
       )
-      const subagent = session.tracked.subagents.find((a) => linksTo(file.link, a))
+      const subagent = session.tracked.subagents.find((a) => isTranscriptOf(file.link, a))
       file.settled = subagent !== undefined && subagent.status !== 'running'
     }
   }
@@ -212,6 +214,3 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
 
 const DEEP_SCAN_EVERY_MS = 30_000
 const UNLISTED_SIGNALS_TTL_MS = 5 * 60_000
-
-const linksTo = (link: SubagentTranscript, a: Subagent): boolean =>
-  (link.toolUseId !== undefined && link.toolUseId === a.toolUseId) || link.agentId === a.agentId
