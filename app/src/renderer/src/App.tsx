@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { WindowMode } from '@shared/settings'
 import type { AttentionItem } from '@shared/types'
@@ -28,6 +28,16 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const { sessions, attention } = snapshot
+  // What counts as news for the rain: new alerts or new activity, not every snapshot push
+  // (the main process re-sends an unchanged snapshot every minute for the clock).
+  const activity = useMemo(
+    () =>
+      [
+        ...attention.map((a) => `${a.sessionId}:${a.kind}:${a.at}`),
+        ...sessions.map((s) => `${s.sessionId}:${s.status}:${s.lastActivityAt}`),
+      ].join('|'),
+    [attention, sessions],
+  )
   const mood = mascotMood(snapshot)
   // Open on whatever matters: the needs-you list when something is waiting.
   const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
@@ -66,7 +76,7 @@ export function App() {
   return (
     <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
       <main className="app">
-        <Atmosphere rain={settings.rain && !calm} activity={snapshot} />
+        <Atmosphere rain={settings.rain && !calm} activity={activity} />
         <Header
           needsYou={attention.length}
           mood={mood}
