@@ -1,10 +1,10 @@
-# Contribuindo com a Batcaverna
+# Contributing to Batcave
 
-Valeu pelo interesse. O projeto é pequeno e as regras também.
+Thanks for your interest. The project is small, and so are the rules.
 
-## Rodando localmente
+## Running locally
 
-Requisitos: Windows 10/11, Node.js 24+ e Claude Code instalado.
+Requirements: Windows 10/11, Node.js 24+ and Claude Code installed.
 
 ```bash
 cd app
@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-## Antes de abrir um PR
+## Before opening a PR
 
 ```bash
 cd app
@@ -22,22 +22,22 @@ npm run typecheck
 npm test
 ```
 
-O CI roda exatamente esses comandos.
+CI runs exactly these commands.
 
 ## Commits
 
-Usamos [Conventional Commits](https://www.conventionalcommits.org/) em inglês:
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
-- `feat(scope): ...` funcionalidade nova
-- `fix(scope): ...` correção de bug
-- `test(scope): ...` testes
-- `refactor(scope): ...` mudança interna sem mudar comportamento
+- `feat(scope): ...` new feature
+- `fix(scope): ...` bug fix
+- `test(scope): ...` tests
+- `refactor(scope): ...` internal change, same behavior
 - `docs: ...`, `style: ...`, `chore: ...`, `ci: ...`, `perf: ...`
 
-Commits pequenos, um assunto por vez.
+Small commits, one topic each.
 
-## Privacidade
+## Privacy
 
-A Batcaverna lê arquivos do `~/.claude/` do usuário. **Nunca** coloque em issues, PRs ou fixtures de teste trechos reais de transcripts, caminhos pessoais, prompts ou tokens. Os fixtures em `app/test/fixtures/` são sintéticos de propósito.
+Batcave reads files from the user's `~/.claude/` folder. **Never** put real transcript excerpts, personal paths, prompts or tokens in issues, PRs or test fixtures. The fixtures in `app/test/fixtures/` are synthetic on purpose.
 
-Os arquivos `~/.claude/sessions/*.key` guardam segredos e **nunca** devem ser lidos pelo app.
+The `~/.claude/sessions/*.key` files hold secrets and must **never** be read by the app.

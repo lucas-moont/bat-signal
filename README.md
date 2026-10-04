@@ -1,21 +1,21 @@
-# Batcaverna
+# Batcave
 
-> Uma janelinha no canto da tela que vigia suas sessões do **Claude Code** como se fosse o Bat-Computador.
+> A tiny window in the corner of your screen that watches your **Claude Code** sessions like the Bat-Computer.
 
-**Status:** em construção (v0). Veja o [ROADMAP](docs/ROADMAP.md).
+**Status:** under construction (v0). See the [roadmap](docs/ROADMAP.md).
 
-Batcaverna é um app desktop pequeno, sempre por cima das outras janelas, que:
+Batcave is a small desktop app that stays on top of your other windows and:
 
-- avisa quando uma sessão do Claude Code termina de responder;
-- mostra quais sessões estão ativas e o que cada uma está fazendo (tarefas, subagentes, comandos em segundo plano);
-- avisa quando tarefas terminam;
-- junta num painel tudo o que **precisa de você** (pedidos de permissão, Claude esperando resposta, erros);
-- tem um mascote: o Bat-Clawd.
+- tells you when a Claude Code session finishes replying;
+- shows which sessions are active and what each one is doing (tasks, subagents, background commands);
+- tells you when tasks finish;
+- gathers everything that **needs you** in one place (permission prompts, Claude waiting for input, errors);
+- has a mascot: Bat-Clawd.
 
-Visual inspirado nos vermelhos e pretos de *The Batman* (2022).
+The look is inspired by the reds and blacks of *The Batman* (2022).
 
 ---
 
-Projeto de fã, sem afiliação com Warner Bros., DC Comics ou Anthropic.
+Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic.
 
-Licença: [MIT](LICENSE).
+License: [MIT](LICENSE).

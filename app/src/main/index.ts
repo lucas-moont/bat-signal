@@ -38,7 +38,7 @@ function createWindow(): BrowserWindow {
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.setAppUserModelId('com.lucasmoont.batcaverna')
+  app.setAppUserModelId('com.lucasmoont.batcave')
   void app.whenReady().then(() => {
     createWindow()
   })

@@ -1,19 +1,19 @@
-name: Ideia
-description: Sugira uma funcionalidade
+name: Idea
+description: Suggest a feature
 labels: [enhancement]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Qual problema isso resolve?
+      label: What problem does this solve?
     validations:
       required: true
   - type: textarea
     id: idea
     attributes:
-      label: Como você imagina?
+      label: How do you picture it?
   - type: dropdown
     id: version
     attributes:
-      label: Para qual versão?
-      options: [v2, v3, não sei]
+      label: Target version
+      options: [v2, v3, not sure]
