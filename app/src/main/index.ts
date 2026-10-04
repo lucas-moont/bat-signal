@@ -8,7 +8,7 @@ import { BatcaveWindows } from './window'
 function start(): void {
   let settings = settingsFile.load()
   const windows = new BatcaveWindows(settings)
-  const stop = startBatcave((channel, payload) => windows.broadcast(channel, payload))
+  const stop = startBatcave((snapshot) => windows.publish(snapshot))
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
