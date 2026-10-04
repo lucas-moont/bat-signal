@@ -1,0 +1,79 @@
+/*
+ * Batcaverna palette, from The Batman (2022).
+ * - Blacks: frame samples (framethrower.ai) — used only as highlights over pure black.
+ * - --signal: average of the red pixels in the official title logo (measured: #af0006).
+ * - --blood: "Batman 2022" palette on color-hex.com.
+ * - --clawd: Claude Code's own `clawd_body` color, rgb(215,119,87).
+ */
+:root {
+  --abyss: #000000;
+  --smoke: #080808;
+  --surface: #13100e;
+  --raised: #27150e;
+  --line: #31302f;
+
+  --blood: #8b0000;
+  --signal: #af0006;
+  --signal-glow: rgb(175 0 6 / 45%);
+
+  --clawd: #d77757;
+
+  --bone: #e8e1d9;
+  --ash: #8a817a;
+
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+
+  --radius: 10px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--abyss);
+  color: var(--bone);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--bone);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
