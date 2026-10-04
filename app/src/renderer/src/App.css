@@ -44,20 +44,41 @@
   border-radius: 2px;
   box-shadow: 0 0 12px var(--signal-glow);
 }
+/* The mascot gives way first when the window gets narrow; the buttons never do. */
 .header__mascot {
   margin-left: auto;
   display: grid;
   place-items: center;
-  width: 66px;
+  flex: 0 1 66px;
+  min-width: 0;
   height: 54px;
+}
+.header__mascot .clawd {
+  max-width: 100%;
 }
 /* Asleep, Bat-Clawd hangs from the very top edge of the window. */
 .header__mascot--sleeping {
   align-items: start;
 }
 .header__actions {
+  flex: none;
   display: flex;
   gap: 2px;
+}
+.header__title,
+.header__count,
+.header .emblem {
+  flex: none;
+}
+@media (max-width: 330px) {
+  .header {
+    gap: 6px;
+    padding-left: 10px;
+  }
+  .header__title {
+    font-size: 20px;
+    letter-spacing: 2.5px;
+  }
 }
 
 .icon-button {
