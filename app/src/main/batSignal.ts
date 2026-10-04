@@ -94,8 +94,10 @@ function startLive(publish: Publish): () => void {
   ipcMain.handle(
     IPC.goToTerminal,
     async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
+      if (typeof sessionId !== 'string') return undefined
+      // A session that left the snapshot can still be resumed by its id.
       const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
-      return session && goToTerminal(session)
+      return goToTerminal(session ?? { pid: -1, sessionId })
     },
   )
   ipcMain.on(IPC.warmTerminal, warmTerminal)
