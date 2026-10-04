@@ -72,7 +72,8 @@ export class BatSignalWindows {
   private current: WindowMode = 'signal'
   private anchor: Anchor
   private panelSize: Size
-  private open: OpenMode
+  /** What the disc opens: the panel or the strip, whichever the user picked last. */
+  private lastOpened: OpenMode
   private watchHeight: number = WATCH.initialHeight
   private noticeOut = false
   private latest?: StoreSnapshot
@@ -83,7 +84,7 @@ export class BatSignalWindows {
     const place = placeFile.load()
     this.anchor = resolveAnchor(place.anchor, displaysPrimaryFirst(), MARGIN)
     this.panelSize = place.panel
-    this.open = place.open
+    this.lastOpened = place.open
 
     this.panel = new BrowserWindow({
       ...this.rect(this.panelSize),
@@ -146,12 +147,13 @@ export class BatSignalWindows {
 
   /**
    * A new store snapshot. The signal always gets it (it compares snapshots to find news); the
-   * hidden panel gets only the latest one, when it opens, instead of re-rendering for nothing.
+   * panel window, hidden while the disc rests, gets only the latest one when it opens (as panel or
+   * strip) instead of re-rendering for nothing.
    */
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (this.current === 'panel' && !this.panel.isDestroyed())
+    if (this.current !== 'signal' && !this.panel.isDestroyed())
       this.panel.webContents.send(IPC.snapshot, snapshot)
   }
 
@@ -165,7 +167,7 @@ export class BatSignalWindows {
 
   /** Opens what the disc opened last: the panel or the watch strip. */
   reopen(): void {
-    this.setMode(this.open)
+    this.setMode(this.lastOpened)
   }
 
   /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
@@ -188,8 +190,9 @@ export class BatSignalWindows {
       if (mode === 'panel') this.panel.focus()
       this.signal.hide()
       if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
-      if (mode !== this.open) {
-        this.open = mode
+      // A notice card opening the panel on one case is not the user picking the panel.
+      if (!focusSessionId && mode !== this.lastOpened) {
+        this.lastOpened = mode
         this.scheduleSave()
       }
     } else {
@@ -283,6 +286,6 @@ export class BatSignalWindows {
 
   private saveNow(): void {
     clearTimeout(this.saveTimer)
-    placeFile.save({ anchor: this.anchor, panel: this.panelSize, open: this.open })
+    placeFile.save({ anchor: this.anchor, panel: this.panelSize, open: this.lastOpened })
   }
 }
