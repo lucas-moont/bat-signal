@@ -12,6 +12,9 @@ const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 /** Both windows load the same page; the query says which one this is. */
 export const isSignalView = new URLSearchParams(location.search).get('view') === 'signal'
 
+/** The demo flags in the hash, word by word (#demo-watch-report → demo, watch, report). */
+const flags = new Set(location.hash.slice(1).split('-'))
+
 /** A value with listeners: what the main process keeps for real, kept in memory. */
 function observable<T>(initial: T) {
   let value = initial
@@ -39,11 +42,9 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
   // #demo-report opens in the night report theme.
   const settings = observable<Settings>({
     ...DEFAULT_SETTINGS,
-    layout: location.hash.includes('report') ? 'report' : DEFAULT_SETTINGS.layout,
+    layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
   })
-  const mode = observable<WindowMode>(
-    isSignalView ? 'signal' : location.hash.includes('watch') ? 'watch' : 'panel',
-  )
+  const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
   return {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
@@ -68,13 +69,13 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
 
 function pickStandIn(): BatSignalApi {
   const inElectron = navigator.userAgent.includes('Electron')
-  if (inElectron && !location.hash.startsWith('#demo')) {
+  if (inElectron && !flags.has('demo')) {
     console.error('[bat-signal] preload bridge missing: no data source')
     return standIn(EMPTY)
   }
-  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
-  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot())
-  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
+  if (flags.has('quiet')) return standIn(quietDemoSnapshot())
+  if (flags.has('busy')) return standIn(busyDemoSnapshot())
+  if (flags.has('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
   return standIn(demoSnapshot())
 }
 
