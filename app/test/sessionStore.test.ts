@@ -22,6 +22,7 @@ class FakeDisk implements StoreSources {
         const restarted = this.restarts.delete(path)
         if (restarted) read = 0
         const fresh = lines.slice(read)
+        await new Promise((r) => setTimeout(r, 1)) // like real I/O: concurrent reads can interleave here
         read = lines.length
         return { lines: fresh, restarted }
       },
@@ -175,5 +176,14 @@ describe('SessionStore subagents', () => {
     disk.files.set('agent-a1.jsonl', [assistantText('Found it')])
     await store.setLiveSessions([entry()])
     expect(store.snapshot().sessions[0]?.subagents[0]?.lastMessage).toBe('Found it')
+  })
+})
+
+describe('SessionStore concurrent reads', () => {
+  it('applies each transcript line once when a hook and a refresh read at the same time', async () => {
+    await store.setLiveSessions([entry()])
+    disk.append(SESSION_ID, assistantText('once'))
+    await Promise.all([store.refresh(), store.handleHook(hook('PostToolUse')), store.refresh()])
+    expect(store.snapshot().sessions[0]?.messages.map((m) => m.text)).toEqual(['once'])
   })
 })
