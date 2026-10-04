@@ -132,3 +132,14 @@ describe('applyHookEvent: a permission belongs to one tool call', () => {
     expect(s).toBe(idle)
   })
 })
+
+describe('applyHookEvent: waiting ends when Claude works again', () => {
+  const waiting: SessionSignals = { waitingSince: AT }
+
+  it.each(['PostToolUse', 'PostToolUseFailure', 'PermissionRequest', 'Stop', 'StopFailure'])(
+    'clears waiting on %s',
+    (name) => {
+      expect(applyHookEvent(waiting, hook(name, { tool_name: 'Read' }), AT).waitingSince).toBeUndefined()
+    },
+  )
+})
