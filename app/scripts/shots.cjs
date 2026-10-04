@@ -33,6 +33,16 @@ const SHOTS = [
   },
   { name: 'settings', steps: [click('[aria-label=Settings]')] },
   { name: 'all-quiet', hash: 'demo-quiet', steps: [] },
+  // The night report theme, and a case opened in place.
+  { name: 'night-report', hash: 'demo-report', steps: [] },
+  {
+    name: 'night-report-case',
+    hash: 'demo-report',
+    steps: [click('.tabs__tab', 1), later(300, clickText('.case .entry', 'Batmobile'))],
+  },
+  // The watch strip in both themes, cut to its own size.
+  { name: 'watch', hash: 'demo-watch', size: [280, 320], clip: '.watch', steps: [] },
+  { name: 'watch-report', hash: 'demo-watch-report', size: [280, 320], clip: '.watch', steps: [] },
   // The signal window: the lit disc at rest, and the disc sending a notice card up its beam.
   { name: 'signal', view: 'signal', size: [96, 96], steps: [] },
   { name: 'signal-notice', view: 'signal', hash: 'demo-news', size: [320, 230], steps: [] },
@@ -48,7 +58,7 @@ async function clipRect(win, selector, imageWidth) {
     `(() => { const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect(); return { box: { x: r.x, y: r.y, width: r.width, height: r.height }, pageWidth: innerWidth } })()`,
   )
   const k = imageWidth / pageWidth
-  const pad = 8
+  const pad = box.x === 0 ? 0 : 8 // an element flush with the page edge gets no margin to clip
   const y = Math.max(0, box.y - pad / 2)
   return {
     x: Math.round((box.x - pad) * k),
@@ -60,7 +70,7 @@ async function clipRect(win, selector, imageWidth) {
 
 async function shoot(
   win,
-  { name, steps, hash = 'demo', view = 'panel', size = [360, 520], clip, scale = SCALE },
+  { name, steps, hash = 'demo', view = 'panel', size = [320, 440], clip, scale = SCALE },
 ) {
   const [width, height] = size
   win.setContentSize(width * scale, height * scale)

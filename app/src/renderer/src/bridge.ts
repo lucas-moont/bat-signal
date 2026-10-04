@@ -36,7 +36,11 @@ const NEWS_DELAY_MS = 800
 function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
   const snapshot = observable(first)
   if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
-  const settings = observable<Settings>(DEFAULT_SETTINGS)
+  // #demo-report opens in the night report theme.
+  const settings = observable<Settings>({
+    ...DEFAULT_SETTINGS,
+    layout: location.hash.includes('report') ? 'report' : DEFAULT_SETTINGS.layout,
+  })
   const mode = observable<WindowMode>(
     isSignalView ? 'signal' : location.hash.includes('watch') ? 'watch' : 'panel',
   )
