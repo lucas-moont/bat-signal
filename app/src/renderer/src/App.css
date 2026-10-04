@@ -190,6 +190,45 @@
 .pill--alert .pill__count {
   color: var(--signal-hot);
 }
+.pill__body {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .pill__mascot {
   margin-left: auto;
+}
+
+/* Click ripple (see ripple.ts): targets clip it and anchor it. */
+.card,
+.row,
+.icon-button,
+.tabs__tab {
+  position: relative;
+  overflow: hidden;
+}
+.rippling::after {
+  content: '';
+  position: absolute;
+  left: var(--rx);
+  top: var(--ry);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: rgb(175 0 6 / 45%);
+  pointer-events: none;
+  animation: ripple 0.45s ease-out forwards;
+}
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(40);
+    opacity: 0;
+  }
 }
