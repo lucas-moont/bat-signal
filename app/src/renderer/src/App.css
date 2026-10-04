@@ -50,6 +50,7 @@
   padding: 8px;
   overflow-y: auto;
   display: grid;
+  align-content: start;
   gap: 6px;
 }
 
