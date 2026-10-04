@@ -43,3 +43,12 @@ Move from watching to acting, carefully and always with explicit confirmation.
 ## Suggesting ideas
 
 Open an issue using the "Idea" template.
+
+---
+
+## Footnote: ideas for the next brainstorm
+
+Not planned yet. To be explored with a brainstorm and a grilling round before anything is built.
+
+- **Email and calendar.** Connect Bat-Signal to the user's email and calendar: show what is coming up next to the sessions, and notice when a meeting is about to start while a session waits for you.
+- **Automations.** Which routine steps around Claude Code sessions could run on their own (for example, summaries sent somewhere when a long task finishes), and with what safeguards.
