@@ -26,14 +26,14 @@ export function deriveAttention(
 
     if (waitingSince) {
       found.push({ sessionId, kind: 'waiting', at: waitingSince })
-    } else if (lastStopAt && signals.status !== 'busy' && !isAfter(seen[sessionId], lastStopAt)) {
+    } else if (lastStopAt && signals.status !== 'busy' && !seenSince(seen[sessionId], lastStopAt)) {
       found.push({ sessionId, kind: 'reply', at: lastStopAt })
     }
 
     if (signals.status !== 'busy') {
       for (const task of state.tasks) {
         const since = task.history.at(-1)?.at
-        if (task.status === 'in_progress' && since && now.getTime() - Date.parse(since) >= STALLED_AFTER_MS) {
+        if (task.status === 'in_progress' && since && now.getTime() - time(since) >= STALLED_AFTER_MS) {
           found.push({ sessionId, kind: 'stalled', at: since, taskId: task.id, detail: task.subject })
         }
       }
@@ -41,8 +41,11 @@ export function deriveAttention(
     return found
   })
 
-  return items.sort((a, b) => URGENCY[a.kind] - URGENCY[b.kind] || Date.parse(b.at) - Date.parse(a.at))
+  return items.sort((a, b) => URGENCY[a.kind] - URGENCY[b.kind] || time(b.at) - time(a.at))
 }
 
-const isAfter = (a: string | undefined, b: string): boolean =>
-  a !== undefined && Date.parse(a) > Date.parse(b)
+/** Epoch ms, with missing or unparseable times sorting as the oldest. */
+const time = (iso: string | undefined): number => (iso && Date.parse(iso)) || 0
+
+const seenSince = (seenAt: string | undefined, at: string): boolean =>
+  seenAt !== undefined && time(seenAt) >= time(at)
