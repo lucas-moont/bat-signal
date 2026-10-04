@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
-import { relativeTime } from '@shared/view'
+import { relativeTime, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import './Sheets.css'
@@ -63,13 +63,6 @@ function Field({ label, children, mono }: { label: string; children: ReactNode; 
   )
 }
 
-const STATUS_WORD: Record<Task['status'], string> = {
-  pending: 'Pending',
-  in_progress: 'In progress',
-  completed: 'Completed',
-  deleted: 'Deleted',
-}
-
 function TaskBody({ task, now }: { task: Task; now: Date }) {
   return (
     <>
@@ -79,7 +72,7 @@ function TaskBody({ task, now }: { task: Task; now: Date }) {
         <ol className="timeline">
           {[...task.history].reverse().map((h, i) => (
             <li key={`${h.at}:${i}`} className={`timeline__step timeline__step--${h.status}`}>
-              <span className="timeline__what">{STATUS_WORD[h.status]}</span>
+              <span className="timeline__what">{TASK_STATUS_LABEL[h.status]}</span>
               <span className="card__time">{relativeTime(h.at, now)} ago</span>
             </li>
           ))}
@@ -143,7 +136,7 @@ export function DetailSheet({
     if (!task) return null
     return (
       <Sheet
-        kicker={`Task ${task.id} · ${STATUS_WORD[task.status]}`}
+        kicker={`Task ${task.id} · ${TASK_STATUS_LABEL[task.status]}`}
         title={task.subject}
         calm={calm}
         onClose={onClose}

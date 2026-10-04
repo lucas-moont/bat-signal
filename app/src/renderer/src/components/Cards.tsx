@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
-import { attentionCopy, caseHeader, plainPreview, relativeTime } from '@shared/view'
+import { attentionCopy, caseHeader, LIVE_STATUS_LABEL, plainPreview, relativeTime } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
 import { Typewriter } from './Typewriter'
@@ -68,8 +68,6 @@ export function AttentionList({
   )
 }
 
-const STATUS_LABEL = { busy: 'Working', idle: 'Idle', shell: 'Shell' } as const
-
 export function CaseList({
   sessions,
   attention,
@@ -111,7 +109,7 @@ export function CaseList({
                   <span className="case-number">Case {number}</span>
                   <span className={`status status--${status}`}>
                     <Beat beating={status === 'busy' && !calm} className="status__dot" />
-                    {needsYou ? 'Needs you' : STATUS_LABEL[s.status]}
+                    {needsYou ? 'Needs you' : LIVE_STATUS_LABEL[s.status]}
                   </span>
                 </span>
                 <span className="card__title">{title}</span>

@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react'
-import type { AttentionItem, RunStatus, SessionSnapshot, Task } from '@shared/types'
-import { attentionCopy, caseHeader, plainPreview, relativeTime } from '@shared/view'
+import type { AttentionItem, SessionSnapshot } from '@shared/types'
+import {
+  attentionCopy,
+  caseHeader,
+  plainPreview,
+  relativeTime,
+  RUN_STATUS_LABEL,
+  TASK_GLYPH,
+} from '@shared/view'
 import { Icon } from './Icon'
 import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
@@ -8,19 +15,6 @@ import './CaseDetail.css'
 
 export type SheetTarget =
   { kind: 'task'; id: string } | { kind: 'subagent'; id: string } | { kind: 'job'; id: string }
-
-const TASK_GLYPH: Record<Task['status'], string> = {
-  pending: '○',
-  in_progress: '◐',
-  completed: '✓',
-  deleted: '×',
-}
-const RUN_LABEL: Record<RunStatus, string> = {
-  running: 'Running',
-  completed: 'Done',
-  failed: 'Failed',
-  stopped: 'Stopped',
-}
 
 function Section({ title, aside, children }: { title: string; aside?: string; children: ReactNode }) {
   return (
@@ -114,7 +108,7 @@ export function CaseDetail({
                   >
                     <span className="chip">{a.agentType}</span>
                     <span className="row__text">{a.description}</span>
-                    <span className="row__state">{RUN_LABEL[a.status]}</span>
+                    <span className="row__state">{RUN_STATUS_LABEL[a.status]}</span>
                   </button>
                 </li>
               ))}
@@ -132,7 +126,7 @@ export function CaseDetail({
                     onClick={() => onOpen({ kind: 'job', id: j.id })}
                   >
                     <span className="row__text row__text--mono">{j.description ?? j.command}</span>
-                    <span className="row__state">{RUN_LABEL[j.status]}</span>
+                    <span className="row__state">{RUN_STATUS_LABEL[j.status]}</span>
                   </button>
                 </li>
               ))}

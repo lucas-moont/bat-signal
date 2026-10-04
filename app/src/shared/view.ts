@@ -1,5 +1,12 @@
 // Pure presentation rules shared by the window and its tests.
-import type { AttentionItem, SessionSnapshot, StoreSnapshot } from './types'
+import type {
+  AttentionItem,
+  LiveStatus,
+  RunStatus,
+  SessionSnapshot,
+  StoreSnapshot,
+  TaskStatus,
+} from './types'
 
 export type MascotMood = 'sleeping' | 'flying' | 'alarmed'
 
@@ -101,3 +108,24 @@ export function plainPreview(markdown: string): string {
 
 const PREVIEW_READ = 600
 const PREVIEW_MAX = 280
+
+/** How each status reads in the window, so a list row and its drawer always agree. */
+export const LIVE_STATUS_LABEL: Record<LiveStatus, string> = { busy: 'Working', idle: 'Idle', shell: 'Shell' }
+export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
+  pending: 'Pending',
+  in_progress: 'In progress',
+  completed: 'Completed',
+  deleted: 'Deleted',
+}
+export const TASK_GLYPH: Record<TaskStatus, string> = {
+  pending: '○',
+  in_progress: '◐',
+  completed: '✓',
+  deleted: '×',
+}
+export const RUN_STATUS_LABEL: Record<RunStatus, string> = {
+  running: 'Running',
+  completed: 'Done',
+  failed: 'Failed',
+  stopped: 'Stopped',
+}
