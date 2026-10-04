@@ -7,16 +7,8 @@ import { Icon } from './Icon'
 /** How long "Resume command copied" stays up. */
 const NOTE_MS = 2600
 
-export function TerminalButton({
-  sessionId,
-  label,
-  className = '',
-}: {
-  sessionId: string
-  /** Show a word next to the icon (the case detail has room for one). */
-  label?: string
-  className?: string
-}) {
+/** The jump itself, for anything that acts as a terminal button (a button, a watch strip row). */
+export function useTerminalJump(sessionId: string) {
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -35,12 +27,28 @@ export function TerminalButton({
     timer.current = setTimeout(() => setCopied(false), NOTE_MS)
   }
 
+  return { go, busy, copied, warm: batSignal.warmTerminal }
+}
+
+export const COPIED_NOTE = 'No window found. Resume command copied.'
+
+export function TerminalButton({
+  sessionId,
+  label,
+  className = '',
+}: {
+  sessionId: string
+  /** Show a word next to the icon (the case detail has room for one). */
+  label?: string
+  className?: string
+}) {
+  const { go, busy, copied, warm } = useTerminalJump(sessionId)
   return (
     <span className={`terminal-button ${className}`}>
       <button
         className={`icon-button${label ? ' icon-button--labelled' : ''}`}
-        onPointerEnter={batSignal.warmTerminal}
-        onFocus={batSignal.warmTerminal}
+        onPointerEnter={warm}
+        onFocus={warm}
         onClick={go}
         aria-busy={busy}
         aria-label="Go to the terminal"
@@ -51,7 +59,7 @@ export function TerminalButton({
       </button>
       {copied && (
         <span className="terminal-button__note" role="status">
-          No window found. Resume command copied.
+          {COPIED_NOTE}
         </span>
       )}
     </span>
