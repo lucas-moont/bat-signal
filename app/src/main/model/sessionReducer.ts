@@ -222,6 +222,38 @@ const TOOLS: Record<string, ToolHandler> = {
   },
 }
 
+/**
+ * Applies a line from a subagent's own transcript (`<sessionId>/subagents/agent-<id>.jsonl`).
+ * `link` comes from the file name and its `.meta.json`, which may lack the tool_use id.
+ */
+export function applySubagentLine(
+  state: TrackedSession,
+  link: { agentId: string; toolUseId?: string },
+  raw: unknown,
+): TrackedSession {
+  const line = obj(raw)
+  if (line['type'] !== 'assistant') return state
+  const index = state.subagents.findIndex(
+    (a) => (link.toolUseId !== undefined && a.toolUseId === link.toolUseId) || a.agentId === link.agentId,
+  )
+  const content = obj(line['message'])['content']
+  const text = Array.isArray(content)
+    ? content
+        .map(obj)
+        .filter((b) => b['type'] === 'text')
+        .map((b) => str(b['text']) ?? '')
+        .join('\n')
+    : ''
+  if (index < 0 || !text) return state
+  const subagents = [...state.subagents]
+  subagents[index] = {
+    ...subagents[index]!,
+    agentId: subagents[index]!.agentId ?? link.agentId,
+    lastMessage: text,
+  }
+  return { ...state, subagents }
+}
+
 const TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g
 
 function applyTaskNotification(state: TrackedSession, content: string, at: string): TrackedSession {

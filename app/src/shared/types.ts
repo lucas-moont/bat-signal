@@ -21,6 +21,8 @@ export interface Subagent {
   startedAt: string
   endedAt?: string
   summary?: string
+  /** Latest text reply from the subagent's own transcript. */
+  lastMessage?: string
 }
 
 export interface BackgroundJob {
