@@ -1,0 +1,89 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--abyss);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+.intro--leaving {
+  opacity: 0;
+}
+
+/* The searchlight: a cone from the bottom edge sweeping up to the sky. */
+.intro__beam {
+  position: absolute;
+  left: 50%;
+  bottom: -10%;
+  width: 140%;
+  height: 120%;
+  transform: translateX(-50%);
+  background: conic-gradient(
+    from -12deg at 50% 100%,
+    transparent 0deg,
+    rgb(232 225 217 / 10%) 6deg,
+    rgb(232 225 217 / 16%) 12deg,
+    rgb(232 225 217 / 10%) 18deg,
+    transparent 24deg,
+    transparent 360deg
+  );
+  filter: blur(6px);
+  opacity: 0;
+  animation: intro-beam 1.1s var(--ease-out) forwards;
+}
+
+.intro__signal {
+  position: relative;
+  margin-top: -18%;
+  padding: 26px 34px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(232 225 217 / 16%), transparent 72%);
+  opacity: 0;
+  animation: intro-flicker 1s steps(1) 0.25s forwards;
+}
+
+.intro__title {
+  position: absolute;
+  bottom: 22%;
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: 8px;
+  color: var(--signal);
+  text-shadow: 0 0 18px var(--signal-glow);
+  opacity: 0;
+  animation: intro-flicker 0.9s steps(1) 0.45s forwards;
+}
+
+@keyframes intro-beam {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) rotate(-14deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) rotate(0deg);
+  }
+}
+
+/* A neon tube catching: on, off, on, stutter, on. */
+@keyframes intro-flicker {
+  0% {
+    opacity: 0.9;
+  }
+  10% {
+    opacity: 0.1;
+  }
+  22% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.25;
+  }
+  38%,
+  100% {
+    opacity: 1;
+  }
+}
