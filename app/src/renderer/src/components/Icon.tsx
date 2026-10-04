@@ -5,6 +5,7 @@ const PATHS = {
   close: 'm4.5 4.5 7 7m0-7-7 7',
   back: 'M9.5 3.5 5 8l4.5 4.5',
   chevron: 'm6.5 3.5 4.5 4.5-4.5 4.5',
+  terminal: 'M2.5 3.5h11v9h-11z M5 6.5 7 8l-2 1.5 M8.5 10H11',
 }
 
 export type IconName = keyof typeof PATHS

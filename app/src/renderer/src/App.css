@@ -101,6 +101,58 @@
     color 0.15s,
     background 0.15s;
 }
+.icon-button--labelled {
+  width: auto;
+  display: inline-flex;
+  gap: 6px;
+  padding: 0 9px 0 7px;
+  border: 1px solid var(--line);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.icon-button[aria-busy='true'] {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+/* Go to the terminal: beside each card and in the case detail (see TerminalButton). */
+.terminal-button {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.terminal-button__note {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 30;
+  padding: 4px 8px;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--bone);
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.card-slot {
+  position: relative;
+}
+.card-slot > .card {
+  padding-right: 42px;
+}
+.card__terminal {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+.detail__terminal {
+  margin-left: auto;
+}
 .icon-button:hover {
   color: var(--bone);
   background: var(--surface);
