@@ -31,6 +31,9 @@ interface LiveSession {
   subagentTails: Map<string, Tail>
   /** When the user last looked at this session. */
   seenAt?: string
+  /** The read in progress, and the one queued behind it (see readTranscript). */
+  reading?: Promise<void>
+  queued?: Promise<void>
 }
 
 /**
@@ -121,7 +124,22 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
     }
   }
 
-  private async readTranscript(session: LiveSession): Promise<void> {
+  /**
+   * Reads one session at a time: a hook and the refresh timer often ask together, and two
+   * reads interleaving would apply the same lines twice. A request made during a read joins
+   * the single read queued behind it, which starts afterwards and so sees what was appended.
+   */
+  private readTranscript(session: LiveSession): Promise<void> {
+    session.queued ??= (session.reading ?? Promise.resolve())
+      .catch(() => undefined)
+      .then(() => {
+        session.queued = undefined
+        return (session.reading = this.readNow(session))
+      })
+    return session.queued
+  }
+
+  private async readNow(session: LiveSession): Promise<void> {
     if (!session.transcript) {
       const path = await this.sources.locateTranscript(session.entry)
       if (!path) return
