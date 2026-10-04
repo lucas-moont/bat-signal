@@ -1,6 +1,6 @@
 import { app, ipcMain } from 'electron'
 import { IPC } from '../shared/ipc'
-import { applySettingsPatch, type WindowMode } from '../shared/settings'
+import { applySettingsPatch, parseWindowMode } from '../shared/settings'
 import { startBatcave } from './batcave'
 import { settingsFile } from './settings'
 import { BatcaveWindow } from './window'
@@ -15,11 +15,11 @@ function start(): void {
     settings = applySettingsPatch(settings, patch)
     settingsFile.save(settings)
     window.apply(settings)
-    window.win.webContents.send(IPC.settings, settings)
   })
   ipcMain.handle(IPC.getMode, () => window.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown) => {
-    if (mode === 'full' || mode === 'pill') window.setMode(mode as WindowMode)
+    const next = parseWindowMode(mode)
+    if (next) window.setMode(next)
   })
   ipcMain.on(IPC.closeWindow, () => app.quit())
 

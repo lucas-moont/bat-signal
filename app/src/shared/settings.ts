@@ -34,3 +34,6 @@ export const applySettingsPatch = (current: Settings, patch: unknown): Settings 
   parseSettings({ ...current, ...obj(patch) })
 
 export type WindowMode = 'full' | 'pill'
+
+export const parseWindowMode = (raw: unknown): WindowMode | undefined =>
+  raw === 'full' || raw === 'pill' ? raw : undefined

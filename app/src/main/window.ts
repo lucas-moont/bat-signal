@@ -62,9 +62,11 @@ export class BatcaveWindow {
     else void this.win.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
+  /** Applies settings to the window and tells the page, as setMode does for the mode. */
   apply(settings: Settings): void {
     this.win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
     this.win.setOpacity(settings.opacity)
+    this.win.webContents.send(IPC.settings, settings)
   }
 
   /** The single source of truth for the mode; the window only reads it (and asks to change it). */
