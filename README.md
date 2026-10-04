@@ -63,6 +63,8 @@ claude plugin marketplace add lucas-moont/bat-signal
 claude plugin install bat-signal@bat-signal
 ```
 
+Without the plugin, Bat-Signal still lists sessions, their tasks and progress, and notices when a turn ends; with it, it also shows **permission prompts**, **Claude waiting for you** and **errors** the moment they happen. Needs you says so when the plugin is silent.
+
 The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md). Coming from Batcave? See [upgrading](docs/plugin.md#upgrading-from-batcave): the old plugin must be removed first.
 
 Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report theme is in Settings.
