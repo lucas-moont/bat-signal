@@ -38,6 +38,8 @@ interface LiveSession {
   nextDeepScanAt: number
   /** When the user last looked at this session. */
   seenAt?: string
+  /** Its transcript has been read once: until then it is left out of snapshots. */
+  read?: boolean
   /** The read in progress, and the one queued behind it (see readTranscript). */
   reading?: Promise<void>
   queued?: Promise<void>
@@ -52,8 +54,16 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   /** Hook-derived signals, kept apart because hooks can arrive before the registry lists the session. */
   private readonly signals = new Map<string, { signals: SessionSignals; at: number }>()
 
+  /**
+   * Resolves once the first registry listing has been read. Snapshots taken before it are not the
+   * state yet, only part of it, so nothing should treat them as a baseline.
+   */
+  readonly ready: Promise<void>
+  private markReady!: () => void
+
   constructor(private readonly sources: StoreSources) {
     super()
+    this.ready = new Promise((resolve) => (this.markReady = resolve))
   }
 
   /** Mirrors the registry: new sessions are read, known ones keep their state, gone ones are dropped. */
@@ -89,7 +99,19 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       this.sessions.set(entry.sessionId, session)
       added.push(session)
     }
-    await Promise.all(added.map((s) => this.readChanged(s)))
+    try {
+      await Promise.all(
+        added.map(async (s) => {
+          try {
+            await this.readChanged(s)
+          } finally {
+            s.read = true // even an unreadable transcript must not hide the session forever
+          }
+        }),
+      )
+    } finally {
+      this.markReady()
+    }
     if (changed || added.length) this.emit('update')
   }
 
@@ -120,15 +142,15 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   }
 
   snapshot(): StoreSnapshot {
-    const views = [...this.sessions.values()].map(
-      ({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
+    const views = [...this.sessions.values()]
+      .filter((s) => s.read)
+      .map(({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
         state: toSessionState(tracked),
         signals: this.signals.get(entry.sessionId)?.signals ?? {},
         status: entry.status,
         seenAt,
         entry,
-      }),
-    )
+      }))
     return {
       sessions: views.map(({ state, signals, status, entry }) => ({
         ...state,

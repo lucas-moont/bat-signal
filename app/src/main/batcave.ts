@@ -70,14 +70,18 @@ function startLive(publish: Publish): () => void {
 
   let pushTimer: NodeJS.Timeout | undefined
   const schedulePush = () => {
-    pushTimer ??= setTimeout(() => {
+    pushTimer ??= setTimeout(async () => {
+      await store.ready // a snapshot from before the first full read is not news, only half the state
       pushTimer = undefined
       publish(store.snapshot())
     }, PUSH_THROTTLE_MS)
   }
   store.on('update', schedulePush)
 
-  ipcMain.handle(IPC.getSnapshot, () => store.snapshot())
+  ipcMain.handle(IPC.getSnapshot, async () => {
+    await store.ready
+    return store.snapshot()
+  })
   ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
     if (typeof sessionId === 'string') store.markSeen(sessionId)
   })
