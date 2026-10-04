@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
-import { relativeTime, TASK_STATUS_LABEL } from '@shared/view'
+import { relativeTime, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import './Sheets.css'
@@ -149,7 +149,12 @@ export function DetailSheet({
     const agent = session.subagents.find((a) => a.toolUseId === target.id)
     if (!agent) return null
     return (
-      <Sheet kicker={`Subagent · ${agent.status}`} title={agent.description} calm={calm} onClose={onClose}>
+      <Sheet
+        kicker={`Subagent · ${RUN_STATUS_LABEL[agent.status]}`}
+        title={agent.description}
+        calm={calm}
+        onClose={onClose}
+      >
         <SubagentBody agent={agent} now={now} />
       </Sheet>
     )
@@ -158,7 +163,7 @@ export function DetailSheet({
   if (!job) return null
   return (
     <Sheet
-      kicker={`Background · ${job.status}`}
+      kicker={`Background · ${RUN_STATUS_LABEL[job.status]}`}
       title={job.description ?? job.command}
       calm={calm}
       onClose={onClose}
