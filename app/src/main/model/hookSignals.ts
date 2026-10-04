@@ -1,42 +1,28 @@
-import { obj, str } from '../../shared/guards'
+import { obj, str, type Json } from '../../shared/guards'
 import type { SessionSignals } from '../../shared/types'
 
-/**
- * Folds one Claude Code hook payload into a session's live signals.
- * @param at when the event arrived (hook payloads carry no timestamp)
- */
-export function applyHookEvent(signals: SessionSignals, raw: unknown, at: string): SessionSignals {
-  const event = obj(raw)
-  const name = str(event['hook_event_name']) ?? ''
-  if (name === 'PermissionRequest') {
-    const toolName = str(event['tool_name']) ?? 'a tool'
-    return { ...signals, pendingPermission: { toolName, detail: describeInput(event['tool_input']), at } }
-  }
-  const next = ANSWERS_PERMISSION.has(name) ? withoutPermission(signals) : signals
+/** Every hook the plugin subscribes to (plugin/batcave/hooks/hooks.json must list exactly these). */
+export const HOOK_EVENTS = [
+  'SessionStart',
+  'SessionEnd',
+  'UserPromptSubmit',
+  'Stop',
+  'StopFailure',
+  'Notification',
+  'PermissionRequest',
+  'PermissionDenied',
+  'PostToolUse',
+  'SubagentStart',
+  'SubagentStop',
+  'TaskCreated',
+  'TaskCompleted',
+] as const
+export type HookEvent = (typeof HOOK_EVENTS)[number]
 
-  switch (name) {
-    case 'Stop':
-      return { ...next, lastStopAt: at }
-    case 'StopFailure':
-      return { ...next, lastStopAt: at, error: { type: str(event['error_type']) ?? 'unknown', at } }
-    case 'SessionStart':
-      return { status: next.status } // new or cleared conversation: nothing pending carries over
-    case 'Notification': {
-      const type = str(event['notification_type']) ?? ''
-      if (type === 'permission_prompt' && !next.pendingPermission) {
-        // Only the notification text is known; PermissionRequest, when it fires, has the details.
-        return { ...next, pendingPermission: { toolName: str(event['message']) ?? 'a tool', at } }
-      }
-      return WAITING_FOR_USER.has(type) ? { ...next, waitingSince: at } : next
-    }
-    case 'UserPromptSubmit': {
-      const { waitingSince: _w, error: _e, ...rest } = next
-      return rest
-    }
-    default:
-      return next
-  }
-}
+type Handler = (signals: SessionSignals, event: Json, at: string) => SessionSignals
+
+const withoutPermission = ({ pendingPermission: _gone, ...rest }: SessionSignals): SessionSignals => rest
+const keep: Handler = (signals) => signals
 
 // Notification types that mean Claude is blocked on the user (other than a permission dialog).
 const WAITING_FOR_USER = new Set([
@@ -46,17 +32,59 @@ const WAITING_FOR_USER = new Set([
   'elicitation_url_dialog',
 ])
 
-// Events that mean the permission dialog is no longer on screen.
-const ANSWERS_PERMISSION = new Set([
-  'PostToolUse',
-  'PermissionDenied',
-  'UserPromptSubmit',
-  'Stop',
-  'StopFailure',
-  'SessionStart',
-])
+/**
+ * What each hook does to a session's signals. Events mapped to `keep` change nothing here:
+ * they are subscribed so the store re-reads the transcript the moment something happens.
+ */
+const HOOKS: Record<HookEvent, Handler> = {
+  PermissionRequest: (signals, event, at) => ({
+    ...signals,
+    pendingPermission: {
+      toolName: str(event['tool_name']) ?? 'a tool',
+      detail: describeInput(event['tool_input']),
+      at,
+    },
+  }),
+  // The dialog is gone once the tool ran or was denied.
+  PostToolUse: withoutPermission,
+  PermissionDenied: withoutPermission,
 
-const withoutPermission = ({ pendingPermission: _gone, ...rest }: SessionSignals): SessionSignals => rest
+  Notification: (signals, event, at) => {
+    const type = str(event['notification_type']) ?? ''
+    if (type === 'permission_prompt' && !signals.pendingPermission) {
+      // Only the notification text is known; PermissionRequest, when it fires, has the details.
+      return { ...signals, pendingPermission: { toolName: str(event['message']) ?? 'a tool', at } }
+    }
+    return WAITING_FOR_USER.has(type) ? { ...signals, waitingSince: at } : signals
+  },
+
+  UserPromptSubmit: ({ pendingPermission: _p, waitingSince: _w, error: _e, ...rest }) => rest,
+  Stop: (signals, _event, at) => ({ ...withoutPermission(signals), lastStopAt: at }),
+  StopFailure: (signals, event, at) => ({
+    ...withoutPermission(signals),
+    lastStopAt: at,
+    error: { type: str(event['error_type']) ?? 'unknown', at },
+  }),
+  // A new or cleared conversation: nothing pending carries over.
+  SessionStart: () => ({}),
+
+  SessionEnd: keep,
+  SubagentStart: keep,
+  SubagentStop: keep,
+  TaskCreated: keep,
+  TaskCompleted: keep,
+}
+
+/**
+ * Folds one Claude Code hook payload into a session's signals.
+ * Returns the same object when the event changes nothing.
+ * @param at when the event arrived (hook payloads carry no timestamp)
+ */
+export function applyHookEvent(signals: SessionSignals, raw: unknown, at: string): SessionSignals {
+  const event = obj(raw)
+  const handler = HOOKS[str(event['hook_event_name']) as HookEvent] as Handler | undefined
+  return handler ? handler(signals, event, at) : signals
+}
 
 const MAX_DETAIL = 120
 // The input field that best says what a call is about, most telling first.

@@ -3,7 +3,7 @@ import { applyHookEvent } from '../src/main/model/hookSignals'
 import type { SessionSignals } from '../src/shared/types'
 
 const AT = '2026-01-01T12:00:00.000Z'
-const idle: SessionSignals = { status: 'idle' }
+const idle: SessionSignals = {}
 const hook = (hook_event_name: string, fields: Record<string, unknown> = {}) => ({
   session_id: 's1',
   hook_event_name,
@@ -83,7 +83,7 @@ describe('applyHookEvent: turns', () => {
   })
 
   it('clears waiting and errors once you send a prompt', () => {
-    const before: SessionSignals = { status: 'idle', waitingSince: AT, error: { type: 'overloaded', at: AT } }
+    const before: SessionSignals = { waitingSince: AT, error: { type: 'overloaded', at: AT } }
     const s = applyHookEvent(before, hook('UserPromptSubmit', { prompt: 'go on' }), AT)
     expect(s.waitingSince).toBeUndefined()
     expect(s.error).toBeUndefined()
@@ -119,12 +119,11 @@ describe('applyHookEvent: other events', () => {
 
   it('starts from a clean slate when a session starts or is cleared', () => {
     const busy: SessionSignals = {
-      status: 'busy',
       waitingSince: AT,
       error: { type: 'x', at: AT },
       lastStopAt: AT,
     }
-    expect(applyHookEvent(busy, hook('SessionStart', { source: 'clear' }), AT)).toEqual({ status: 'busy' })
+    expect(applyHookEvent(busy, hook('SessionStart', { source: 'clear' }), AT)).toEqual({})
   })
 
   it('returns the same signals for events it does not use', () => {

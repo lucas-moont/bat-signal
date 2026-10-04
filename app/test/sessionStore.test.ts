@@ -85,7 +85,7 @@ describe('SessionStore session lifecycle', () => {
     await store.setLiveSessions([entry({ status: 'busy' })])
     const [session] = store.snapshot().sessions
     expect(session?.messages.map((m) => m.text)).toEqual(['one'])
-    expect(session?.signals.status).toBe('busy')
+    expect(session?.status).toBe('busy')
   })
 
   it('picks up lines appended to the transcript on refresh', async () => {

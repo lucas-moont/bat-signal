@@ -25,11 +25,11 @@ export function SessionList({
         return (
           <li key={s.sessionId} className="session" onClick={() => window.batcave.markSeen(s.sessionId)}>
             <div className="session-top">
-              <span className={`session-dot session-dot--${needs.length ? 'alert' : s.signals.status}`} />
+              <span className={`session-dot session-dot--${needs.length ? 'alert' : s.status}`} />
               <span className="session-title">{s.title ?? s.name ?? s.sessionId.slice(0, 8)}</span>
             </div>
             <div className="session-meta">
-              {s.signals.status}
+              {s.status}
               {s.tasks.length > 0 && ` · tasks ${done}/${s.tasks.length}`}
               {s.subagents.some((a) => a.status === 'running') && ' · subagents running'}
               {needs.map((n) => ` · ${KIND_LABEL[n.kind]}`).join('')}

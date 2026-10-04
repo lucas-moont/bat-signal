@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
-import { str, obj } from '../shared/guards'
-import type { SessionSignals, StoreSnapshot } from '../shared/types'
+import { obj, str } from '../shared/guards'
+import type { SessionSignals, SessionView, StoreSnapshot } from '../shared/types'
 import { deriveAttention } from './model/attention'
 import { applyHookEvent } from './model/hookSignals'
 import {
@@ -12,9 +12,9 @@ import {
 } from './model/sessionReducer'
 import type { RegistryEntry } from './sources/sessionRegistry'
 import type { SubagentTranscript } from './sources/transcriptLocator'
-import type { TailRead } from './sources/transcriptTailer'
+import type { TranscriptTailer } from './sources/transcriptTailer'
 
-type Tail = { readNew(): Promise<TailRead> }
+type Tail = Pick<TranscriptTailer, 'readNew'>
 
 /** Where the store gets its data; injected so tests can run without disk or processes. */
 export interface StoreSources {
@@ -27,9 +27,10 @@ export interface StoreSources {
 interface LiveSession {
   entry: RegistryEntry
   tracked: TrackedSession
-  path?: string
-  tail?: Tail
+  transcript?: { path: string; tail: Tail }
   subagentTails: Map<string, Tail>
+  /** When the user last looked at this session. */
+  seenAt?: string
 }
 
 /**
@@ -38,9 +39,8 @@ interface LiveSession {
  */
 export class SessionStore extends EventEmitter<{ update: [] }> {
   private readonly sessions = new Map<string, LiveSession>()
-  /** Hook-derived signals, kept even before the registry lists the session. */
+  /** Hook-derived signals, kept apart because hooks can arrive before the registry lists the session. */
   private readonly signals = new Map<string, SessionSignals>()
-  private readonly seen: Record<string, string> = {}
 
   constructor(private readonly sources: StoreSources) {
     super()
@@ -53,7 +53,6 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       if (live.has(id)) continue
       this.sessions.delete(id)
       this.signals.delete(id)
-      delete this.seen[id]
     }
 
     const added: LiveSession[] = []
@@ -61,15 +60,15 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       const known = this.sessions.get(entry.sessionId)
       if (known) {
         known.entry = entry
-      } else {
-        const session: LiveSession = {
-          entry,
-          tracked: createSession(entry.sessionId),
-          subagentTails: new Map(),
-        }
-        this.sessions.set(entry.sessionId, session)
-        added.push(session)
+        continue
       }
+      const session: LiveSession = {
+        entry,
+        tracked: createSession(entry.sessionId),
+        subagentTails: new Map(),
+      }
+      this.sessions.set(entry.sessionId, session)
+      added.push(session)
     }
     await Promise.all(added.map((s) => this.readTranscript(s)))
     this.emit('update')
@@ -85,7 +84,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   async handleHook(event: unknown): Promise<void> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
-    const before = this.signals.get(sessionId) ?? { status: 'idle' }
+    const before = this.signals.get(sessionId) ?? {}
     this.signals.set(sessionId, applyHookEvent(before, event, this.sources.clock().toISOString()))
     const session = this.sessions.get(sessionId)
     if (session) await this.readTranscript(session)
@@ -94,48 +93,57 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
 
   /** The user looked at this session: its replies so far no longer need attention. */
   markSeen(sessionId: string): void {
-    this.seen[sessionId] = this.sources.clock().toISOString()
+    const session = this.sessions.get(sessionId)
+    if (!session) return
+    session.seenAt = this.sources.clock().toISOString()
     this.emit('update')
   }
 
   snapshot(): StoreSnapshot {
-    const views = [...this.sessions.values()].map(({ entry, tracked }) => ({
-      state: toSessionState(tracked),
-      signals: { ...this.signals.get(entry.sessionId), status: entry.status },
-      entry,
-    }))
+    const views = [...this.sessions.values()].map(
+      ({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
+        state: toSessionState(tracked),
+        signals: this.signals.get(entry.sessionId) ?? {},
+        status: entry.status,
+        seenAt,
+        entry,
+      }),
+    )
     return {
-      sessions: views.map(({ state, signals, entry }) => ({
+      sessions: views.map(({ state, signals, status, entry }) => ({
         ...state,
         pid: entry.pid,
         name: entry.name,
+        status,
         signals,
       })),
-      attention: deriveAttention(views, this.seen, this.sources.clock()),
+      attention: deriveAttention(views, this.sources.clock()),
     }
   }
 
   private async readTranscript(session: LiveSession): Promise<void> {
-    if (!session.tail) {
+    if (!session.transcript) {
       const path = await this.sources.locateTranscript(session.entry)
       if (!path) return
-      session.path = path
-      session.tail = this.sources.tailer(path)
+      session.transcript = { path, tail: this.sources.tailer(path) }
     }
-    const { lines, restarted } = await session.tail.readNew()
+    const { lines, restarted } = await session.transcript.tail.readNew()
     if (restarted) {
       session.tracked = createSession(session.entry.sessionId)
       session.subagentTails.clear() // re-read them from the start against the rebuilt state
     }
     session.tracked = lines.reduce(applyTranscriptLine, session.tracked)
-    await this.readSubagents(session)
+    await this.readSubagents(session, session.transcript.path)
   }
 
-  private async readSubagents(session: LiveSession): Promise<void> {
-    if (!session.path || !session.tracked.subagents.length) return
-    for (const sub of await this.sources.listSubagentTranscripts(session.path)) {
+  private async readSubagents(session: LiveSession, transcriptPath: string): Promise<void> {
+    if (!session.tracked.subagents.length) return
+    for (const sub of await this.sources.listSubagentTranscripts(transcriptPath)) {
       let tail = session.subagentTails.get(sub.agentId)
-      if (!tail) session.subagentTails.set(sub.agentId, (tail = this.sources.tailer(sub.path)))
+      if (!tail) {
+        tail = this.sources.tailer(sub.path)
+        session.subagentTails.set(sub.agentId, tail)
+      }
       const { lines } = await tail.readNew()
       session.tracked = lines.reduce<TrackedSession>(
         (s, line) => applySubagentLine(s, sub, line),
