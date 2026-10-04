@@ -9,15 +9,17 @@ import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { NightReport } from './components/NightReport'
+import { WatchStrip } from './components/WatchStrip'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
-import { useNow, useSettings, useSnapshot } from './hooks'
+import { useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
 import './App.css'
 
 export function App() {
   const snapshot = useSnapshot()
   const [settings, changeSettings, settingsLoaded] = useSettings()
   const calm = useCalm(settings)
+  const mode = useWindowMode()
   const now = useNow()
 
   const [tab, setTab] = useState<Tab | null>(null)
@@ -48,6 +50,8 @@ export function App() {
   const activeSheet = session && sheet && sheetExists(session, sheet) ? sheet : null
 
   const open = (sessionId: string, target: SheetTarget | null = null) => {
+    // The report opens a case in place, among the case notes.
+    if (report) setTab('cases')
     setOpenCase(sessionId)
     setSheet(target)
     batSignal.markSeen(sessionId)
@@ -76,6 +80,14 @@ export function App() {
   // than flashing an intro or rain the user may have turned off.
   if (!settingsLoaded) return <main className="app" />
 
+  if (mode === 'watch') {
+    return (
+      <CalmContext value={calm}>
+        <WatchStrip sessions={sessions} attention={attention} layout={settings.layout} />
+      </CalmContext>
+    )
+  }
+
   return (
     <CalmContext value={calm}>
       <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
@@ -84,22 +96,22 @@ export function App() {
           <Header
             needsYou={attention.length}
             mood={mood}
-            onSettings={() => setSettingsOpen(true)}
             onFold={fold}
+            onWatch={() => batSignal.setMode('watch')}
             onClose={batSignal.closeWindow}
           />
-          {!report && (
-            <Tabs
-              tab={activeTab}
-              counts={{ needs: attention.length, cases: sessions.length }}
-              onChange={setTab}
-            />
-          )}
+          <Tabs
+            tab={activeTab}
+            counts={{ needs: attention.length, cases: sessions.length }}
+            onChange={setTab}
+            onSettings={() => setSettingsOpen(true)}
+          />
 
           <div className="stage">
             <div className="stage__scroll">
               {report ? (
                 <NightReport
+                  tab={activeTab}
                   sessions={sessions}
                   attention={attention}
                   now={now}

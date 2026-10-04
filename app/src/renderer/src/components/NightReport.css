@@ -8,7 +8,7 @@
   --ink-hot: #ec2a2a;
   --ink-soft: #d4574c;
   position: relative;
-  padding: 12px 12px 28px 0;
+  padding: 8px 10px 20px 0;
   font-family: var(--font-type);
   font-size: 12.5px;
   line-height: 1.6;
@@ -18,7 +18,7 @@
 .report::before {
   content: '';
   position: absolute;
-  top: 62px;
+  top: 40px;
   bottom: 0;
   left: var(--margin);
   width: 1px;
@@ -31,25 +31,20 @@
 }
 
 .report__dateline {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   align-items: baseline;
-  column-gap: 10px;
-  row-gap: 2px;
-  margin: 0 0 14px 14px;
-  padding-bottom: 8px;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px 14px;
+  padding-bottom: 6px;
   border-bottom: 3px double var(--line);
 }
 .report__name {
   margin: 0;
   font: inherit;
-  font-size: 15px;
+  font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--bone);
-}
-.report__tally {
-  justify-self: end;
   color: var(--bone);
 }
 .report__date {
@@ -57,13 +52,29 @@
   letter-spacing: 0.06em;
   color: var(--ash);
 }
-.report__need {
-  justify-self: end;
-  color: var(--bone);
-}
 
-.report__section + .report__section {
-  margin-top: 18px;
+/* Each entry leaves room on the right for its terminal button. */
+.report__line,
+.case {
+  position: relative;
+}
+.report__line > .entry,
+.case > .entry {
+  padding-right: 34px;
+}
+/* .terminal-button sets position: relative; the report pins it to the right of its entry. */
+.report .report__terminal {
+  position: absolute;
+  top: 5px;
+  right: 2px;
+}
+.notes__file {
+  margin: 0;
+  padding: 0 4px 6px calc(var(--margin) + 12px);
+  color: var(--ink);
+}
+.notes__terminal {
+  margin: 0 0 8px calc(var(--margin) + 12px);
 }
 .report__heading {
   margin: 0 0 4px calc(var(--margin) + 12px);
@@ -92,7 +103,7 @@
   display: grid;
   grid-template-columns: var(--margin) 1fr;
   width: 100%;
-  padding: 7px 0;
+  padding: 5px 0;
   cursor: pointer;
   transition: background 0.15s;
 }

@@ -54,7 +54,7 @@
   margin-left: auto;
   display: grid;
   place-items: center;
-  flex: 0 1 66px;
+  flex: 0 1 60px;
   min-width: 0;
   height: 54px;
 }
@@ -69,7 +69,21 @@
 .header__title {
   flex: none;
 }
-@media (max-width: 330px) {
+/* The title bar fits the compact default width (320px) with the mascot; only the minimum drops it. */
+@media (max-width: 360px) {
+  .header {
+    gap: 7px;
+  }
+  .header__title {
+    font-size: 19px;
+    letter-spacing: 2px;
+  }
+}
+/* .icon-button resets every property, so this needs the extra weight. */
+.tabs .tabs__settings {
+  margin-left: auto;
+}
+@media (max-width: 310px) {
   .header {
     gap: 6px;
     padding-left: 10px;
@@ -167,6 +181,7 @@
 
 .tabs {
   display: flex;
+  align-items: center;
   gap: 18px;
   padding: 0 14px;
   border-bottom: 1px solid var(--line);

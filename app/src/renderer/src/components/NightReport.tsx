@@ -16,6 +16,8 @@ import {
   taskLabel,
 } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
+import type { Tab } from './Header'
+import { TerminalButton } from './TerminalButton'
 import { Typewriter } from './Typewriter'
 import './Cards.css'
 import './NightReport.css'
@@ -57,6 +59,7 @@ const quote = (text: string) => {
 }
 
 export function NightReport({
+  tab,
   sessions,
   attention,
   now,
@@ -65,6 +68,8 @@ export function NightReport({
   onOpenAlert,
   onOpenSheet,
 }: {
+  /** Which half of the report: what awaits your signature, or the case notes. */
+  tab: Tab
   sessions: SessionSnapshot[]
   attention: AttentionItem[]
   now: Date
@@ -87,69 +92,64 @@ export function NightReport({
     <article className="report">
       <header className="report__dateline">
         <h2 className="report__name">Night report</h2>
-        <span className="report__tally">
-          {sessions.length} case{sessions.length === 1 ? '' : 's'}
-        </span>
         <span className="report__date">{dateline(now)}</span>
-        {waiting.size > 0 && (
-          <span className="report__need">
-            <span className="pen pen--hot">{waiting.size} need you</span>
-          </span>
-        )}
       </header>
 
-      <section className="report__section" aria-labelledby="report-signature">
-        <h3 id="report-signature" className="report__heading">
-          Awaiting your signature
-        </h3>
-        {attention.length === 0 ? (
-          <p className="report__nil">Nothing awaits your signature. Every case can carry on without you.</p>
-        ) : (
-          <ul className="report__lines">
-            {attention.map((item) => {
-              const { stamp, sentence } = reportCopy(item)
-              return (
-                <li key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`}>
-                  <button className="entry" onClick={() => onOpenAlert(item)}>
-                    <span className="entry__margin">
-                      <span className={`stamp stamp--${INK[item.kind]}`}>{stamp}</span>
-                      <span className="entry__age">{relativeTime(item.at, now)}</span>
-                    </span>
-                    <span className="entry__body">
-                      <strong>{titles.get(item.sessionId) ?? 'An unknown case'}</strong>{' '}
-                      <span className={`pen pen--${INK[item.kind]}`}>{sentence}</span>.
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </section>
-
-      <section className="report__section" aria-labelledby="report-cases">
-        <h3 id="report-cases" className="report__heading">
-          Case notes
-        </h3>
-        {cases.length === 0 ? (
-          <p className="report__nil">
-            No cases open. Start Claude Code in a terminal and its session is filed here.
-          </p>
-        ) : (
-          <ol className="report__lines">
-            {cases.map((s) => (
-              <CaseParagraph
-                key={s.sessionId}
-                session={s}
-                needsYou={waiting.has(s.sessionId)}
-                open={openCase === s.sessionId}
-                onToggle={() => onToggleCase(s.sessionId)}
-                onOpenSheet={(target) => onOpenSheet(s.sessionId, target)}
-              />
-            ))}
-          </ol>
-        )}
-      </section>
+      {tab === 'needs' ? (
+        <section className="report__section" aria-labelledby="report-signature">
+          <h3 id="report-signature" className="report__heading">
+            Awaiting your signature
+          </h3>
+          {attention.length === 0 ? (
+            <p className="report__nil">Nothing awaits your signature. Every case can carry on without you.</p>
+          ) : (
+            <ul className="report__lines">
+              {attention.map((item) => {
+                const { stamp, sentence } = reportCopy(item)
+                return (
+                  <li key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`} className="report__line">
+                    <button className="entry" onClick={() => onOpenAlert(item)}>
+                      <span className="entry__margin">
+                        <span className={`stamp stamp--${INK[item.kind]}`}>{stamp}</span>
+                        <span className="entry__age">{relativeTime(item.at, now)}</span>
+                      </span>
+                      <span className="entry__body">
+                        <strong>{titles.get(item.sessionId) ?? 'An unknown case'}</strong>{' '}
+                        <span className={`pen pen--${INK[item.kind]}`}>{sentence}</span>.
+                      </span>
+                    </button>
+                    <TerminalButton sessionId={item.sessionId} className="report__terminal" />
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </section>
+      ) : (
+        <section className="report__section" aria-labelledby="report-cases">
+          <h3 id="report-cases" className="report__heading">
+            Case notes
+          </h3>
+          {cases.length === 0 ? (
+            <p className="report__nil">
+              No cases open. Start Claude Code in a terminal and its session is filed here.
+            </p>
+          ) : (
+            <ol className="report__lines">
+              {cases.map((s) => (
+                <CaseParagraph
+                  key={s.sessionId}
+                  session={s}
+                  needsYou={waiting.has(s.sessionId)}
+                  open={openCase === s.sessionId}
+                  onToggle={() => onToggleCase(s.sessionId)}
+                  onOpenSheet={(target) => onOpenSheet(s.sessionId, target)}
+                />
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
 
       <footer className="report__end">End of report.</footer>
     </article>
@@ -185,18 +185,14 @@ function CaseParagraph({
             {status}
           </span>
         </span>
+        {/* Only what a glance needs; the case number, folder and last words wait inside. */}
         <span className="entry__body">
-          <strong>{title}.</strong> Case {number}
-          {folder && `, ${folder}`}.{current && ` Now ${taskLabel(current).toLowerCase()}.`}
+          <strong>{title}.</strong>
+          {current && ` Now ${taskLabel(current).toLowerCase()}.`}
           {progress && ` ${progress.done} of ${progress.total} filed.`}
-          {said && (
-            <>
-              {' '}
-              Last word: “<Typewriter text={quote(said)} />”
-            </>
-          )}
         </span>
       </button>
+      <TerminalButton sessionId={session.sessionId} className="report__terminal" />
 
       <AnimatePresence initial={false}>
         {open && (
@@ -207,6 +203,17 @@ function CaseParagraph({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
+            <p className="notes__file">
+              Case {number}
+              {folder && `, ${folder}`}.
+              {said && (
+                <>
+                  {' '}
+                  Last word: “<Typewriter text={quote(said)} />”
+                </>
+              )}
+            </p>
+            <TerminalButton sessionId={session.sessionId} label="Terminal" className="notes__terminal" />
             <Notes session={session} onOpenSheet={onOpenSheet} />
           </motion.div>
         )}

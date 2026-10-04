@@ -7,13 +7,13 @@ import { Icon } from './Icon'
 interface HeaderProps {
   needsYou: number
   mood: MascotMood
-  onSettings: () => void
   onFold: () => void
+  onWatch: () => void
   onClose: () => void
 }
 
 /** Title bar of the frameless window: drag it to move. */
-export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderProps) {
+export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps) {
   return (
     <header className="header">
       {/* The needs-you count hangs off the emblem like a stamp, taking no room in the row. */}
@@ -37,11 +37,16 @@ export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderPr
       </span>
       <h1 className="header__title">BAT-SIGNAL</h1>
       <div className="header__mascot">
-        <BatClawd mood={mood} />
+        <BatClawd mood={mood} size={54} />
       </div>
       <nav className="header__actions">
-        <button className="icon-button" onClick={onSettings} aria-label="Settings" title="Settings">
-          <Icon name="gear" />
+        <button
+          className="icon-button"
+          onClick={onWatch}
+          aria-label="Shrink to the watch strip"
+          title="Shrink to the watch strip"
+        >
+          <Icon name="watch" />
         </button>
         <button
           className="icon-button"
@@ -65,10 +70,12 @@ export function Tabs({
   tab,
   counts,
   onChange,
+  onSettings,
 }: {
   tab: Tab
   counts: Record<Tab, number>
   onChange: (tab: Tab) => void
+  onSettings: () => void
 }) {
   const label: Record<Tab, string> = { needs: 'Needs you', cases: 'Cases' }
   return (
@@ -86,6 +93,15 @@ export function Tabs({
           {tab === t && <motion.span layoutId="tab-underline" className="tabs__underline" />}
         </button>
       ))}
+      {/* Settings are rarely opened: they live here, leaving the title bar its room. */}
+      <button
+        className="icon-button tabs__settings"
+        onClick={onSettings}
+        aria-label="Settings"
+        title="Settings"
+      >
+        <Icon name="gear" />
+      </button>
     </div>
   )
 }
