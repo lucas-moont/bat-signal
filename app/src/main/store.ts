@@ -49,7 +49,7 @@ interface LiveSession {
 export class SessionStore extends EventEmitter<{ update: [] }> {
   private readonly sessions = new Map<string, LiveSession>()
   /** Hook-derived signals, kept apart because hooks can arrive before the registry lists the session. */
-  private readonly signals = new Map<string, SessionSignals>()
+  private readonly signals = new Map<string, { signals: SessionSignals; at: number }>()
 
   constructor(private readonly sources: StoreSources) {
     super()
@@ -64,6 +64,11 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       this.sessions.delete(id)
       this.signals.delete(id)
       changed = true
+    }
+    // Hooks from sessions the registry never lists (headless runs, late SessionEnd) expire.
+    const now = this.sources.clock().getTime()
+    for (const [id, { at }] of this.signals) {
+      if (!live.has(id) && now - at > UNLISTED_SIGNALS_TTL_MS) this.signals.delete(id)
     }
 
     const added: LiveSession[] = []
@@ -97,9 +102,9 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   async handleHook(event: unknown): Promise<void> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
-    const before = this.signals.get(sessionId) ?? {}
+    const before = this.signals.get(sessionId)?.signals ?? {}
     const after = applyHookEvent(before, event, this.sources.clock().toISOString())
-    this.signals.set(sessionId, after)
+    this.signals.set(sessionId, { signals: after, at: this.sources.clock().getTime() })
     const session = this.sessions.get(sessionId)
     const read = session ? await this.readChanged(session) : false
     if (session && (read || after !== before)) this.emit('update')
@@ -117,7 +122,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
     const views = [...this.sessions.values()].map(
       ({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
         state: toSessionState(tracked),
-        signals: this.signals.get(entry.sessionId) ?? {},
+        signals: this.signals.get(entry.sessionId)?.signals ?? {},
         status: entry.status,
         seenAt,
         entry,
@@ -206,6 +211,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
 }
 
 const DEEP_SCAN_EVERY_MS = 30_000
+const UNLISTED_SIGNALS_TTL_MS = 5 * 60_000
 
 const linksTo = (link: SubagentTranscript, a: Subagent): boolean =>
   (link.toolUseId !== undefined && link.toolUseId === a.toolUseId) || link.agentId === a.agentId
