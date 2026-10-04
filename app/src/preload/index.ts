@@ -20,8 +20,13 @@ const api = {
   onSettings: (callback: (settings: Settings) => void) => subscribe(IPC.settings, callback),
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
-  setMode: (mode: WindowMode): void => ipcRenderer.send(IPC.setMode, mode),
+  /** Shows the panel (optionally opened on one case) or folds back into the signal. */
+  setMode: (mode: WindowMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
   onMode: (callback: (mode: WindowMode) => void) => subscribe(IPC.mode, callback),
+  onFocusCase: (callback: (sessionId: string) => void) => subscribe(IPC.focusCase, callback),
+  /** The signal grows upward while a notice card is out. */
+  setNoticeOut: (out: boolean): void => ipcRenderer.send(IPC.noticeOut, out),
+  moveSignalBy: (dx: number, dy: number): void => ipcRenderer.send(IPC.moveSignal, dx, dy),
   closeWindow: (): void => ipcRenderer.send(IPC.closeWindow),
 }
 

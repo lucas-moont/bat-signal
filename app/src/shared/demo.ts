@@ -178,3 +178,9 @@ export function quietDemoSnapshot(now = new Date()): StoreSnapshot {
     attention: [],
   }
 }
+
+/** The night a moment earlier, before the Riddler asked to run something: news for the Bat-Signal demo. */
+export function beforeNewsDemoSnapshot(now = new Date()): StoreSnapshot {
+  const snapshot = demoSnapshot(now)
+  return { ...snapshot, attention: snapshot.attention.filter((a) => a.kind !== 'permission') }
+}

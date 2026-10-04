@@ -3,23 +3,27 @@ import { IPC } from '../shared/ipc'
 import { applySettingsPatch, parseWindowMode } from '../shared/settings'
 import { startBatcave } from './batcave'
 import { settingsFile } from './settings'
-import { BatcaveWindow } from './window'
+import { BatcaveWindows } from './window'
 
 function start(): void {
   let settings = settingsFile.load()
-  const window = new BatcaveWindow(settings)
-  const stop = startBatcave(window.win)
+  const windows = new BatcaveWindows(settings)
+  const stop = startBatcave((channel, payload) => windows.broadcast(channel, payload))
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
     settingsFile.save(settings)
-    window.apply(settings)
+    windows.apply(settings)
   })
-  ipcMain.handle(IPC.getMode, () => window.mode)
-  ipcMain.on(IPC.setMode, (_event, mode: unknown) => {
+  ipcMain.handle(IPC.getMode, () => windows.mode)
+  ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
     const next = parseWindowMode(mode)
-    if (next) window.setMode(next)
+    if (next) windows.setMode(next, typeof sessionId === 'string' ? sessionId : undefined)
+  })
+  ipcMain.on(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
+  ipcMain.on(IPC.moveSignal, (_event, dx: unknown, dy: unknown) => {
+    if (typeof dx === 'number' && typeof dy === 'number') windows.moveSignalBy(dx, dy)
   })
   ipcMain.on(IPC.closeWindow, () => app.quit())
 

@@ -4,115 +4,183 @@ import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import type { Settings, WindowMode } from '../shared/settings'
 import { jsonFile } from './jsonFile'
-import { restoreBounds, type Rect } from './windowState'
+import { anchoredRect, resolveAnchor, type Anchor } from './windowState'
 
-const DEFAULTS = { width: 360, height: 520, minWidth: 300, minHeight: 360, margin: 16 }
-const PILL = { width: 232, height: 60 }
+const MARGIN = 16
+const PANEL = { width: 360, height: 520, minWidth: 300, minHeight: 360 }
+/** The signal window: just the disc, or the disc with a notice card above it. */
+const DISC = { width: 96, height: 96 }
+const NOTICE = { width: 320, height: 230 }
 const SAVE_DEBOUNCE_MS = 500
 
-function parseRect(raw: unknown): Rect | undefined {
-  const o = obj(raw)
-  const [x, y, width, height] = [num(o['x']), num(o['y']), num(o['width']), num(o['height'])]
-  return x === undefined || y === undefined || width === undefined || height === undefined
-    ? undefined
-    : { x, y, width, height }
+interface Place {
+  anchor?: Anchor
+  panel: { width: number; height: number }
 }
 
-const boundsFile = jsonFile('window.json', parseRect)
+/** Reads window.json, including the older { x, y, width, height } of the single window. */
+function parsePlace(raw: unknown): Place {
+  const o = obj(raw)
+  const anchor = obj(o['anchor'])
+  const panel = obj(o['panel'])
+  const [ax, ay] = [num(anchor['x']), num(anchor['y'])]
+  const [pw, ph] = [num(panel['width']), num(panel['height'])]
+  if (ax !== undefined && ay !== undefined && pw !== undefined && ph !== undefined) {
+    return { anchor: { x: ax, y: ay }, panel: { width: pw, height: ph } }
+  }
+  const [x, y, width, height] = [num(o['x']), num(o['y']), num(o['width']), num(o['height'])]
+  if (x !== undefined && y !== undefined && width !== undefined && height !== undefined) {
+    return { anchor: { x: x + width, y: y + height }, panel: { width, height } }
+  }
+  return { panel: { width: PANEL.width, height: PANEL.height } }
+}
+
+const placeFile = jsonFile('window.json', parsePlace)
 
 function displaysPrimaryFirst() {
   const primary = screen.getPrimaryDisplay()
   return [primary, ...screen.getAllDisplays().filter((d) => d.id !== primary.id)]
 }
 
+function load(win: BrowserWindow, view: 'panel' | 'signal'): void {
+  if (process.env['ELECTRON_RENDERER_URL'])
+    void win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=${view}`)
+  else void win.loadFile(join(__dirname, '../renderer/index.html'), { query: { view } })
+}
+
+const webPreferences = {
+  preload: join(__dirname, '../preload/index.js'),
+  sandbox: true,
+  contextIsolation: true,
+}
+
 /**
- * The Batcave window: frameless and remembering its size and place. In pill mode it shrinks
- * to a small bar anchored at the same bottom-right corner, and grows back from there.
+ * Batcave's two windows, both hanging from one corner: the Bat-Signal disc (transparent, the
+ * resting form, grows upward when a notice card comes out) and the panel. Only one shows at
+ * a time; the main process owns which (the mode) and the corner.
  */
-export class BatcaveWindow {
-  readonly win: BrowserWindow
-  private current: WindowMode = 'full'
-  private fullBounds: Rect
+export class BatcaveWindows {
+  readonly panel: BrowserWindow
+  readonly signal: BrowserWindow
+  private current: WindowMode = 'signal'
+  private anchor: Anchor
+  private panelSize: { width: number; height: number }
+  private noticeOut = false
   private saveTimer?: NodeJS.Timeout
 
   constructor(settings: Settings) {
-    this.fullBounds = restoreBounds(boundsFile.load(), displaysPrimaryFirst(), DEFAULTS)
-    this.win = new BrowserWindow({
-      ...this.fullBounds,
-      minWidth: DEFAULTS.minWidth,
-      minHeight: DEFAULTS.minHeight,
+    const place = placeFile.load()
+    this.anchor = resolveAnchor(place.anchor, displaysPrimaryFirst(), MARGIN)
+    this.panelSize = place.panel
+
+    this.panel = new BrowserWindow({
+      ...this.rect(this.panelSize),
+      minWidth: PANEL.minWidth,
+      minHeight: PANEL.minHeight,
       frame: false,
       resizable: true,
       skipTaskbar: true,
       show: false,
       backgroundColor: '#000000',
-      webPreferences: {
-        preload: join(__dirname, '../preload/index.js'),
-        sandbox: true,
-        contextIsolation: true,
-      },
+      // Otherwise Electron reports the never-shown panel as visible and its loops keep running.
+      paintWhenInitiallyHidden: false,
+      webPreferences,
+    })
+    this.signal = new BrowserWindow({
+      ...this.rect(DISC),
+      frame: false,
+      transparent: true,
+      resizable: false,
+      hasShadow: false,
+      skipTaskbar: true,
+      show: false,
+      webPreferences,
     })
     this.apply(settings)
-    this.win.once('ready-to-show', () => this.win.show())
-    this.win.on('moved', () => this.scheduleSave())
-    this.win.on('resized', () => this.scheduleSave())
-    this.win.on('close', () => this.saveNow())
 
-    if (process.env['ELECTRON_RENDERER_URL']) void this.win.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    else void this.win.loadFile(join(__dirname, '../renderer/index.html'))
+    // ready-to-show did not fire for this transparent window in testing; show it once it has loaded.
+    this.signal.webContents.once('did-finish-load', () => {
+      if (this.current === 'signal') this.signal.showInactive()
+    })
+    // The panel is moved and resized by hand: its bottom-right corner becomes the anchor.
+    this.panel.on('moved', () => this.followPanel())
+    this.panel.on('resized', () => this.followPanel())
+    for (const win of [this.panel, this.signal]) win.on('close', () => this.saveNow())
+
+    load(this.panel, 'panel')
+    load(this.signal, 'signal')
   }
 
-  /** Applies settings to the window and tells the page, as setMode does for the mode. */
-  apply(settings: Settings): void {
-    this.win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
-    this.win.setOpacity(settings.opacity)
-    this.win.webContents.send(IPC.settings, settings)
-  }
-
-  /** The single source of truth for the mode; the window only reads it (and asks to change it). */
   get mode(): WindowMode {
     return this.current
   }
 
-  setMode(mode: WindowMode): void {
-    if (mode === this.current) return
-    clearTimeout(this.saveTimer) // a pending save must not record the pill
-    const now = this.win.getBounds()
-    if (mode === 'pill') {
-      this.fullBounds = now
-      this.win.setMinimumSize(PILL.width, PILL.height)
-      this.win.setResizable(false)
-      this.win.setBounds({
-        x: now.x + now.width - PILL.width,
-        y: now.y + now.height - PILL.height,
-        ...PILL,
-      })
-    } else {
-      const { width, height } = this.fullBounds
-      this.win.setResizable(true)
-      this.win.setMinimumSize(DEFAULTS.minWidth, DEFAULTS.minHeight)
-      // Grow from the pill's corner so the window stays where the user moved the pill.
-      const next = { x: now.x + now.width - width, y: now.y + now.height - height, width, height }
-      this.win.setBounds(restoreBounds(next, displaysPrimaryFirst(), DEFAULTS))
+  /** Sends to every page (both windows render the same data). */
+  broadcast(channel: string, payload: unknown): void {
+    for (const win of [this.panel, this.signal])
+      if (!win.isDestroyed()) win.webContents.send(channel, payload)
+  }
+
+  apply(settings: Settings): void {
+    for (const win of [this.panel, this.signal]) {
+      win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
+      win.setOpacity(settings.opacity)
     }
-    this.current = mode
-    if (mode === 'full') this.saveNow() // where the pill was moved is where the window now lives
-    this.win.webContents.send(IPC.mode, mode)
+    this.broadcast(IPC.settings, settings)
+  }
+
+  /** Shows the panel (optionally on one case) or folds back into the signal. */
+  setMode(mode: WindowMode, focusSessionId?: string): void {
+    if (mode === 'panel') {
+      this.panel.setBounds(this.rect(this.panelSize))
+      this.panel.show()
+      this.panel.focus()
+      this.signal.hide()
+      if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+    } else {
+      this.panel.hide()
+      this.signal.setBounds(this.rect(this.noticeOut ? NOTICE : DISC))
+      this.signal.showInactive()
+    }
+    if (mode !== this.current) {
+      this.current = mode
+      this.broadcast(IPC.mode, mode)
+    }
+  }
+
+  /** The signal page shows or hides a notice card: grow the window upward, or shrink it back. */
+  setNoticeOut(out: boolean): void {
+    this.noticeOut = out
+    if (this.current === 'signal') this.signal.setBounds(this.rect(out ? NOTICE : DISC))
+  }
+
+  /** The disc is dragged by hand (a drag region would swallow its clicks). */
+  moveSignalBy(dx: number, dy: number): void {
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return
+    this.anchor = { x: this.anchor.x + dx, y: this.anchor.y + dy }
+    this.signal.setBounds(this.rect(this.noticeOut ? NOTICE : DISC))
+    this.scheduleSave()
+  }
+
+  private rect(size: { width: number; height: number }) {
+    return anchoredRect(this.anchor, size, displaysPrimaryFirst())
+  }
+
+  private followPanel(): void {
+    if (this.current !== 'panel') return
+    const b = this.panel.getBounds()
+    this.anchor = { x: b.x + b.width, y: b.y + b.height }
+    this.panelSize = { width: b.width, height: b.height }
+    this.scheduleSave()
   }
 
   private scheduleSave(): void {
-    if (this.current !== 'full') return
     clearTimeout(this.saveTimer)
     this.saveTimer = setTimeout(() => this.saveNow(), SAVE_DEBOUNCE_MS)
   }
 
-  /** Records the full window's bounds; in pill mode, the full window anchored where the pill is. */
   private saveNow(): void {
     clearTimeout(this.saveTimer)
-    if (this.win.isDestroyed()) return
-    const now = this.win.getBounds()
-    if (this.current === 'full') return boundsFile.save(now)
-    const { width, height } = this.fullBounds
-    boundsFile.save({ x: now.x + now.width - width, y: now.y + now.height - height, width, height })
+    placeFile.save({ anchor: this.anchor, panel: this.panelSize })
   }
 }
