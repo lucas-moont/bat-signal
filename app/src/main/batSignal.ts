@@ -3,8 +3,9 @@ import { join } from 'node:path'
 import { ipcMain } from 'electron'
 import { beforeNewsDemoSnapshot, demoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
-import type { StoreSnapshot } from '../shared/types'
+import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
+import { closeTerminalHost, goToTerminal, warmTerminal } from './sources/windowsTerminal'
 import { SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
 import { TranscriptTailer } from './sources/transcriptTailer'
@@ -40,8 +41,13 @@ function startDemo(publish: Publish): () => void {
   }, DEMO_NEWS_MS)
   ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : beforeNewsDemoSnapshot()))
   ipcMain.on(IPC.markSeen, () => undefined)
+  // The demo's sessions have no terminal: always the resume command.
+  ipcMain.handle(IPC.goToTerminal, (_event, sessionId: unknown) =>
+    goToTerminal({ pid: -1, sessionId: String(sessionId) }),
+  )
   return () => {
     clearTimeout(newsTimer)
+    ipcMain.removeHandler(IPC.goToTerminal)
     ipcMain.removeHandler(IPC.getSnapshot)
     ipcMain.removeAllListeners(IPC.markSeen)
   }
@@ -85,6 +91,14 @@ function startLive(publish: Publish): () => void {
   ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
     if (typeof sessionId === 'string') store.markSeen(sessionId)
   })
+  ipcMain.handle(
+    IPC.goToTerminal,
+    async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
+      const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
+      return session && goToTerminal(session)
+    },
+  )
+  ipcMain.on(IPC.warmTerminal, warmTerminal)
 
   registry.start()
   const refreshTimer = setInterval(() => void store.refresh(), REFRESH_MS)
@@ -97,6 +111,9 @@ function startLive(publish: Publish): () => void {
     clearTimeout(rereadTimer)
     registry.stop()
     void hooks.close()
+    closeTerminalHost()
+    ipcMain.removeAllListeners(IPC.warmTerminal)
+    ipcMain.removeHandler(IPC.goToTerminal)
     ipcMain.removeHandler(IPC.getSnapshot)
     ipcMain.removeAllListeners(IPC.markSeen)
   }
