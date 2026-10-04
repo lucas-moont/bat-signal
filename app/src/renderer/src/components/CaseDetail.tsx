@@ -13,8 +13,7 @@ import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
 import './CaseDetail.css'
 
-export type SheetTarget =
-  { kind: 'task'; id: string } | { kind: 'subagent'; id: string } | { kind: 'job'; id: string }
+export type SheetTarget = { kind: 'task' | 'subagent' | 'job'; id: string }
 
 function Section({ title, aside, children }: { title: string; aside?: string; children: ReactNode }) {
   return (

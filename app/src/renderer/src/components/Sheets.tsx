@@ -8,7 +8,7 @@ import { Icon } from './Icon'
 import './Sheets.css'
 
 /** A drawer that rises from the bottom over a dimmed backdrop. */
-export function Sheet({
+function Sheet({
   title,
   kicker,
   onClose,
@@ -115,6 +115,48 @@ function JobBody({ job, now }: { job: BackgroundJob; now: Date }) {
   )
 }
 
+interface SheetContent {
+  kicker: string
+  title: string
+  body: ReactNode
+}
+
+/** What the drawer shows for a target, or nothing if it is gone from the session. */
+function resolve(session: SessionSnapshot, { kind, id }: SheetTarget, now: Date): SheetContent | undefined {
+  switch (kind) {
+    case 'task': {
+      const task = session.tasks.find((t) => t.id === id)
+      return (
+        task && {
+          kicker: `Task ${task.id} · ${TASK_STATUS_LABEL[task.status]}`,
+          title: task.subject,
+          body: <TaskBody task={task} now={now} />,
+        }
+      )
+    }
+    case 'subagent': {
+      const agent = session.subagents.find((a) => a.toolUseId === id)
+      return (
+        agent && {
+          kicker: `Subagent · ${RUN_STATUS_LABEL[agent.status]}`,
+          title: agent.description,
+          body: <SubagentBody agent={agent} now={now} />,
+        }
+      )
+    }
+    case 'job': {
+      const job = session.background.find((j) => j.id === id)
+      return (
+        job && {
+          kicker: `Background · ${RUN_STATUS_LABEL[job.status]}`,
+          title: job.description ?? job.command,
+          body: <JobBody job={job} now={now} />,
+        }
+      )
+    }
+  }
+}
+
 /** The drawer for a task, subagent or background command of a session. */
 export function DetailSheet({
   session,
@@ -127,41 +169,11 @@ export function DetailSheet({
   now: Date
   onClose: () => void
 }) {
-  if (target.kind === 'task') {
-    const task = session.tasks.find((t) => t.id === target.id)
-    if (!task) return null
-    return (
-      <Sheet
-        kicker={`Task ${task.id} · ${TASK_STATUS_LABEL[task.status]}`}
-        title={task.subject}
-        onClose={onClose}
-      >
-        <TaskBody task={task} now={now} />
-      </Sheet>
-    )
-  }
-  if (target.kind === 'subagent') {
-    const agent = session.subagents.find((a) => a.toolUseId === target.id)
-    if (!agent) return null
-    return (
-      <Sheet
-        kicker={`Subagent · ${RUN_STATUS_LABEL[agent.status]}`}
-        title={agent.description}
-        onClose={onClose}
-      >
-        <SubagentBody agent={agent} now={now} />
-      </Sheet>
-    )
-  }
-  const job = session.background.find((j) => j.id === target.id)
-  if (!job) return null
+  const content = resolve(session, target, now)
+  if (!content) return null
   return (
-    <Sheet
-      kicker={`Background · ${RUN_STATUS_LABEL[job.status]}`}
-      title={job.description ?? job.command}
-      onClose={onClose}
-    >
-      <JobBody job={job} now={now} />
+    <Sheet kicker={content.kicker} title={content.title} onClose={onClose}>
+      {content.body}
     </Sheet>
   )
 }
