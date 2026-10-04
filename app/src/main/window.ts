@@ -25,6 +25,11 @@ const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 
 /** In watch mode the transparent signal window is Bat-Clawd's perch, on the strip's top edge. */
 const PERCH = { width: 88, height: 56 }
 const SAVE_DEBOUNCE_MS = 500
+/**
+ * How often visible windows reassert always-on-top. Windows' screenshot overlay can demote the
+ * window that was active, dropping it behind everything; reasserting is one cheap z-order call.
+ */
+const ON_TOP_EVERY_MS = 3000
 
 /** What the disc opens: the full panel or the watch strip, whichever was used last. */
 type OpenMode = Exclude<WindowMode, 'signal'>
@@ -88,6 +93,7 @@ export class BatSignalWindows {
   private noticeOut = false
   private latest?: StoreSnapshot
   private quitting = false
+  private onTop = true
   private saveTimer?: NodeJS.Timeout
 
   constructor(settings: Settings) {
@@ -130,7 +136,9 @@ export class BatSignalWindows {
       if (this.current === 'watch') this.placePerch()
     })
     this.panel.on('resized', () => this.followPanel())
+    const onTopTimer = setInterval(() => this.keepOnTop(), ON_TOP_EVERY_MS)
     app.on('before-quit', () => {
+      clearInterval(onTopTimer)
       this.quitting = true
       this.saveNow()
     })
@@ -172,11 +180,23 @@ export class BatSignalWindows {
   }
 
   apply(settings: Settings): void {
+    this.onTop = settings.alwaysOnTop
     for (const win of [this.panel, this.signal]) {
       win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
       win.setOpacity(settings.opacity)
     }
     this.broadcast(IPC.settings, settings)
+  }
+
+  private keepOnTop(): void {
+    if (!this.onTop) return
+    // Only the panel window: the signal window is click-through (as the perch) or inactive (as
+    // the disc), and the overlay leaves those alone; toggling it would only redraw a transparent window.
+    const win = this.panel
+    if (win.isDestroyed() || !win.isVisible()) return
+    // Electron skips a repeat of the same level, so drop it and set it again to reach Windows.
+    win.setAlwaysOnTop(false)
+    win.setAlwaysOnTop(true, 'floating')
   }
 
   /** Opens what the disc opened last: the panel or the watch strip. */
@@ -200,11 +220,16 @@ export class BatSignalWindows {
         this.panel.setMinimumSize(WATCH.width, WATCH.minHeight)
         this.panel.setBounds(this.watchRect())
       }
-      this.panel.show()
       if (mode === 'panel') {
+        this.panel.setFocusable(true)
+        this.panel.show()
         this.panel.focus()
         this.signal.hide()
       } else {
+        // The strip never takes the focus: Windows demotes the active window behind everything
+        // after a screenshot, and the strip needs no keyboard (its rows take clicks regardless).
+        this.panel.setFocusable(false)
+        this.panel.showInactive()
         this.placePerch()
       }
       if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
