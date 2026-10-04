@@ -1,14 +1,14 @@
 import { app, ipcMain } from 'electron'
 import { IPC } from '../shared/ipc'
 import { applySettingsPatch, parseWindowMode } from '../shared/settings'
-import { startBatcave } from './batcave'
+import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
-import { BatcaveWindows } from './window'
+import { BatSignalWindows } from './window'
 
 function start(): void {
   let settings = settingsFile.load()
-  const windows = new BatcaveWindows(settings)
-  const stop = startBatcave((snapshot) => windows.publish(snapshot))
+  const windows = new BatSignalWindows(settings)
+  const stop = startBatSignal((snapshot) => windows.publish(snapshot))
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
@@ -34,7 +34,7 @@ function start(): void {
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.setAppUserModelId('com.lucasmoont.batcave')
+  app.setAppUserModelId('com.lucasmoont.bat-signal')
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())
 }

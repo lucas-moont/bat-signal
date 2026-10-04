@@ -32,6 +32,6 @@ const api = {
   closeWindow: (): void => ipcRenderer.send(IPC.closeWindow),
 }
 
-export type BatcaveApi = typeof api
+export type BatSignalApi = typeof api
 
-contextBridge.exposeInMainWorld('batcave', api)
+contextBridge.exposeInMainWorld('batSignal', api)

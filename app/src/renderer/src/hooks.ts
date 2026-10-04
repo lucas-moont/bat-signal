@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
-import { batcave } from './bridge'
+import { batSignal } from './bridge'
 
 const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
@@ -30,19 +30,19 @@ function useBridgedState<T>(
 
 /** The latest store snapshot pushed by the main process, and whether the real one has arrived. */
 export const useSnapshotState = (): [StoreSnapshot, boolean] =>
-  useBridgedState(EMPTY, batcave.getSnapshot, batcave.onSnapshot)
+  useBridgedState(EMPTY, batSignal.getSnapshot, batSignal.onSnapshot)
 
 export const useSnapshot = (): StoreSnapshot => useSnapshotState()[0]
 
 /** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
 export function useSettings(): [Settings, (patch: Partial<Settings>) => void, boolean] {
-  const [settings, loaded] = useBridgedState(DEFAULT_SETTINGS, batcave.getSettings, batcave.onSettings)
-  return [settings, batcave.setSettings, loaded]
+  const [settings, loaded] = useBridgedState(DEFAULT_SETTINGS, batSignal.getSettings, batSignal.onSettings)
+  return [settings, batSignal.setSettings, loaded]
 }
 
 /** Signal or panel: the main process owns it; pages only read it and ask to change it. */
 export const useWindowMode = (): WindowMode =>
-  useBridgedState<WindowMode>('signal', batcave.getMode, batcave.onMode)[0]
+  useBridgedState<WindowMode>('signal', batSignal.getMode, batSignal.onMode)[0]
 
 const NOW_EVERY_MS = 30_000
 

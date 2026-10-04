@@ -1,5 +1,5 @@
 // A made-up Gotham night that exercises every state the window can show. Used for
-// screenshots (BATCAVE_DEMO=1) and when the renderer runs in a plain browser.
+// screenshots (BAT_SIGNAL_DEMO=1) and when the renderer runs in a plain browser.
 import type { SessionSnapshot, StoreSnapshot, Task } from './types'
 
 const ago = (now: Date, minutes: number) => new Date(now.getTime() - minutes * 60_000).toISOString()

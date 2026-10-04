@@ -59,7 +59,7 @@ const webPreferences = {
  * resting form, grows when a notice card comes out) and the panel. Only one shows at a time;
  * the main process owns which (the mode) and the corner.
  */
-export class BatcaveWindows {
+export class BatSignalWindows {
   private readonly panel: BrowserWindow
   private readonly signal: BrowserWindow
   private current: WindowMode = 'signal'

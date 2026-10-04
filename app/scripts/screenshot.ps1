@@ -7,7 +7,7 @@ param(
 
 Add-Type @"
 using System; using System.Runtime.InteropServices;
-public class BatcaveWin {
+public class BatSignalWin {
   [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr v);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int attr, out RECT r, int size);
@@ -16,7 +16,7 @@ public class BatcaveWin {
 }
 "@
 # Per-monitor DPI awareness, so coordinates are real pixels on scaled displays.
-[BatcaveWin]::SetProcessDpiAwarenessContext([IntPtr]-4) | Out-Null
+[BatSignalWin]::SetProcessDpiAwarenessContext([IntPtr]-4) | Out-Null
 Add-Type -AssemblyName System.Drawing
 
 $appDir = Split-Path -Parent $PSScriptRoot
@@ -31,16 +31,16 @@ try {
 
   $hwnd = $win.MainWindowHandle
   # Whole window including the invisible resize borders, and the visible part (DWMWA_EXTENDED_FRAME_BOUNDS = 9).
-  $outer = New-Object BatcaveWin+RECT
-  [BatcaveWin]::GetWindowRect($hwnd, [ref]$outer) | Out-Null
-  $r = New-Object BatcaveWin+RECT
-  [BatcaveWin]::DwmGetWindowAttribute($hwnd, 9, [ref]$r, 16) | Out-Null
+  $outer = New-Object BatSignalWin+RECT
+  [BatSignalWin]::GetWindowRect($hwnd, [ref]$outer) | Out-Null
+  $r = New-Object BatSignalWin+RECT
+  [BatSignalWin]::DwmGetWindowAttribute($hwnd, 9, [ref]$r, 16) | Out-Null
 
   # PrintWindow asks the window to paint itself, so whatever overlaps it on screen doesn't matter.
   $full = New-Object System.Drawing.Bitmap ($outer.R - $outer.L), ($outer.B - $outer.T)
   $g = [System.Drawing.Graphics]::FromImage($full)
   $hdc = $g.GetHdc()
-  [BatcaveWin]::PrintWindow($hwnd, $hdc, 2) | Out-Null # PW_RENDERFULLCONTENT
+  [BatSignalWin]::PrintWindow($hwnd, $hdc, 2) | Out-Null # PW_RENDERFULLCONTENT
   $g.ReleaseHdc($hdc)
 
   $w = $r.R - $r.L; $h = $r.B - $r.T

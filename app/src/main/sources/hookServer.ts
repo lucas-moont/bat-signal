@@ -55,7 +55,7 @@ export class HookServer {
     // A bad event must never take the server down, whether the handler throws or rejects.
     await Promise.resolve()
       .then(() => this.onEvent(event))
-      .catch((err: unknown) => console.warn('[batcave] hook handler failed:', err))
+      .catch((err: unknown) => console.warn('[bat-signal] hook handler failed:', err))
   }
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
 import { mascotMood } from '@shared/view'
-import { batcave } from './bridge'
+import { batSignal } from './bridge'
 import { Atmosphere } from './components/Atmosphere'
 import { BatSignalIntro } from './components/BatSignalIntro'
 import { AttentionList, CaseList } from './components/Cards'
@@ -36,7 +36,7 @@ export function App() {
     [attention, sessions],
   )
   const mood = mascotMood(snapshot)
-  const fold = () => batcave.setMode('signal')
+  const fold = () => batSignal.setMode('signal')
   // Open on whatever matters: the needs-you list when something is waiting.
   const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
   // A case that ends while open simply disappears: no session, no detail.
@@ -47,11 +47,11 @@ export function App() {
   const open = (sessionId: string, target: SheetTarget | null = null) => {
     setOpenCase(sessionId)
     setSheet(target)
-    batcave.markSeen(sessionId)
+    batSignal.markSeen(sessionId)
   }
   // A click on a notice card opens the panel on that case.
   const onFocusCase = useEffectEvent((sessionId: string) => open(sessionId))
-  useEffect(() => batcave.onFocusCase((sessionId) => onFocusCase(sessionId)), [])
+  useEffect(() => batSignal.onFocusCase((sessionId) => onFocusCase(sessionId)), [])
 
   const openAttention = (item: AttentionItem) =>
     open(item.sessionId, item.kind === 'stalled' && item.taskId ? { kind: 'task', id: item.taskId } : null)
@@ -83,7 +83,7 @@ export function App() {
             mood={mood}
             onSettings={() => setSettingsOpen(true)}
             onFold={fold}
-            onClose={batcave.closeWindow}
+            onClose={batSignal.closeWindow}
           />
           <Tabs
             tab={activeTab}

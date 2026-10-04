@@ -1,7 +1,7 @@
-import type { BatcaveApi } from './index'
+import type { BatSignalApi } from './index'
 
 declare global {
   interface Window {
-    batcave: BatcaveApi
+    batSignal: BatSignalApi
   }
 }

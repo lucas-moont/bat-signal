@@ -22,7 +22,7 @@ export function jsonFile<T>(name: string, parse: (raw: unknown) => T) {
       try {
         writeFileSync(path(), JSON.stringify(value, null, 2))
       } catch (err) {
-        console.warn(`[batcave] could not save ${name}:`, err)
+        console.warn(`[bat-signal] could not save ${name}:`, err)
       }
     },
   }
