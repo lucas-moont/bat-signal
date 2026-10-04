@@ -83,3 +83,17 @@ export function noticePlacement(
     right,
   }
 }
+
+/** How far in from the strip's right end Bat-Clawd stands. */
+const PERCH_INSET = 10
+
+/**
+ * Where Bat-Clawd stands watch over the watch strip: on its top edge, near the right end, like a
+ * lookout on a rooftop. Nothing when the strip has no room above it on its display.
+ */
+export function perchRect(strip: Rect, size: Size, displays: { workArea: Rect }[]): Rect | undefined {
+  const area = areaOf({ x: strip.x + strip.width, y: strip.y }, displays)
+  const y = strip.y - size.height
+  if (y < area.y) return undefined
+  return { x: strip.x + strip.width - size.width - PERCH_INSET, y, ...size }
+}
