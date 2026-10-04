@@ -6,7 +6,7 @@ import { batcave } from './bridge'
 import { Atmosphere } from './components/Atmosphere'
 import { BatSignalIntro } from './components/BatSignalIntro'
 import { AttentionList, CaseList } from './components/Cards'
-import { CaseDetail, type SheetTarget } from './components/CaseDetail'
+import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { Pill } from './components/Pill'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
@@ -42,6 +42,8 @@ export function App() {
   const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
   // A case that ends while open simply disappears: no session, no detail.
   const session = openCase ? sessions.find((s) => s.sessionId === openCase) : undefined
+  // A drawer whose task, subagent or job left the session is gone too (and must not eat an Esc).
+  const activeSheet = session && sheet && sheetExists(session, sheet) ? sheet : null
 
   const open = (sessionId: string, target: SheetTarget | null = null) => {
     setOpenCase(sessionId)
@@ -56,12 +58,12 @@ export function App() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
       if (settingsOpen) setSettingsOpen(false)
-      else if (sheet) setSheet(null)
+      else if (activeSheet) setSheet(null)
       else if (openCase) setOpenCase(null)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [settingsOpen, sheet, openCase])
+  }, [settingsOpen, activeSheet, openCase])
 
   // Until the saved settings arrive (one IPC round trip), show the empty dark window rather
   // than flashing an intro or rain the user may have turned off.
@@ -138,11 +140,11 @@ export function App() {
             </AnimatePresence>
 
             <AnimatePresence>
-              {session && sheet && (
+              {session && activeSheet && (
                 <DetailSheet
                   key="sheet"
                   session={session}
-                  target={sheet}
+                  target={activeSheet}
                   now={now}
 
                   onClose={() => setSheet(null)}

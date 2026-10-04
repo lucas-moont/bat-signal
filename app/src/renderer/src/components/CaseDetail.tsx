@@ -16,6 +16,13 @@ import './CaseDetail.css'
 
 export type SheetTarget = { kind: 'task' | 'subagent' | 'job'; id: string }
 
+/** Whether a drawer's target is still part of the session. */
+export function sheetExists(session: SessionSnapshot, { kind, id }: SheetTarget): boolean {
+  if (kind === 'task') return session.tasks.some((t) => t.id === id)
+  if (kind === 'subagent') return session.subagents.some((a) => a.toolUseId === id)
+  return session.background.some((j) => j.id === id)
+}
+
 function Section({ title, aside, children }: { title: string; aside?: string; children: ReactNode }) {
   return (
     <section className="section">
