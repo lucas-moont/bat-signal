@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { isSessionAlive, type ProcessProbe, type RegistryEntry } from '../src/main/sources/sessionRegistry'
+import { CWD, SESSION_ID } from './fixtures/lines'
 
 const entry = (overrides: Partial<RegistryEntry> = {}): RegistryEntry => ({
   pid: 4242,
-  sessionId: '00000000-0000-4000-8000-000000000001',
-  cwd: '/home/bruce/wayne-enterprises',
+  sessionId: SESSION_ID,
+  cwd: CWD,
   procStart: '134355583899737171',
   status: 'idle',
   ...overrides,
@@ -13,7 +14,7 @@ const entry = (overrides: Partial<RegistryEntry> = {}): RegistryEntry => ({
 /** Fake OS: pid → process start time (Windows FILETIME). */
 const probe = (processes: Record<number, string>): ProcessProbe => ({
   isRunning: (pid) => pid in processes,
-  startTime: async (pid) => processes[pid] ?? null,
+  startTimes: async (pids) => new Map(pids.map((pid) => [pid, processes[pid] ?? null])),
 })
 
 describe('isSessionAlive', () => {

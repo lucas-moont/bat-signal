@@ -2,7 +2,9 @@ import { EventEmitter } from 'node:events'
 import { watch, type FSWatcher } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { LiveStatus } from '../../shared/types'
+import { isDeepStrictEqual } from 'node:util'
+import { num, obj, str } from '../../shared/guards'
+import { LIVE_STATUSES, type LiveStatus } from '../../shared/types'
 
 /** One `~/.claude/sessions/<pid>.json` file. */
 export interface RegistryEntry {
@@ -13,45 +15,50 @@ export interface RegistryEntry {
   status: LiveStatus
   name?: string
   startedAt?: number
-  updatedAt?: number
 }
 
 /** The OS boundary: lets tests fake which processes exist. */
 export interface ProcessProbe {
   isRunning(pid: number): boolean
-  /** Process creation time as a Windows FILETIME string, or null if the process is gone. */
-  startTime(pid: number): Promise<string | null>
+  /** Creation time of each pid as a Windows FILETIME string, or null if it is gone. */
+  startTimes(pids: number[]): Promise<Map<number, string | null>>
+}
+
+/** The entries whose process is still the one that wrote them, looked up in one batch. */
+export async function liveEntries(entries: RegistryEntry[], probe: ProcessProbe): Promise<RegistryEntry[]> {
+  const running = entries.filter((e) => probe.isRunning(e.pid))
+  const starts = await probe.startTimes(running.filter((e) => e.procStart).map((e) => e.pid))
+  // A crashed session leaves its file behind, and Windows reuses pids:
+  // only trust the pid if the process started when the file says it did.
+  return running.filter((e) => !e.procStart || starts.get(e.pid) === e.procStart)
 }
 
 export async function isSessionAlive(entry: RegistryEntry, probe: ProcessProbe): Promise<boolean> {
-  if (!probe.isRunning(entry.pid)) return false
-  if (!entry.procStart) return true
-  // A crashed session leaves its file behind, and Windows reuses pids:
-  // only trust the pid if the process started when the file says it did.
-  return (await probe.startTime(entry.pid)) === entry.procStart
+  return (await liveEntries([entry], probe)).length === 1
 }
 
 const ENTRY_FILE = /^\d+\.json$/ // never touch the sibling *.key files: they hold secrets
-const STATUSES: readonly LiveStatus[] = ['busy', 'idle', 'shell']
 
 function parseEntry(text: string): RegistryEntry | null {
-  let raw: Record<string, unknown>
+  let raw
   try {
-    raw = JSON.parse(text) as Record<string, unknown>
+    raw = obj(JSON.parse(text))
   } catch {
     return null
   }
-  const { pid, sessionId, cwd, procStart, status, name, startedAt, updatedAt } = raw
-  if (typeof pid !== 'number' || typeof sessionId !== 'string' || typeof cwd !== 'string') return null
+  const pid = num(raw['pid'])
+  const sessionId = str(raw['sessionId'])
+  const cwd = str(raw['cwd'])
+  if (pid === undefined || !sessionId || !cwd) return null
+  const status = str(raw['status']) as LiveStatus | undefined
   return {
     pid,
     sessionId,
     cwd,
-    procStart: typeof procStart === 'string' ? procStart : undefined,
-    status: STATUSES.includes(status as LiveStatus) ? (status as LiveStatus) : 'idle',
-    name: typeof name === 'string' ? name : undefined,
-    startedAt: typeof startedAt === 'number' ? startedAt : undefined,
-    updatedAt: typeof updatedAt === 'number' ? updatedAt : undefined,
+    procStart: str(raw['procStart']),
+    status: status && LIVE_STATUSES.includes(status) ? status : 'idle',
+    name: str(raw['name']),
+    startedAt: num(raw['startedAt']),
   }
 }
 
@@ -63,19 +70,16 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   private watcher?: FSWatcher
   private timer?: NodeJS.Timeout
   private debounce?: NodeJS.Timeout
-  private last = ''
   private current: RegistryEntry[] = []
+  private running?: Promise<void>
+  private dirty = false
 
   constructor(
     private readonly dir: string,
-    private readonly probe: ProcessProbe & { prefetch?(pids: number[]): Promise<void> },
+    private readonly probe: ProcessProbe,
     private readonly pollMs = 5000,
   ) {
     super()
-  }
-
-  get entries(): RegistryEntry[] {
-    return this.current
   }
 
   start(): void {
@@ -100,24 +104,33 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
     this.debounce = setTimeout(() => void this.refresh(), 150)
   }
 
-  async refresh(): Promise<void> {
-    let names: string[]
-    try {
-      names = (await readdir(this.dir)).filter((n) => ENTRY_FILE.test(n))
-    } catch {
-      names = []
+  /** Single-flight: a refresh requested while one runs is folded into one rerun. */
+  refresh(): Promise<void> {
+    if (this.running) {
+      this.dirty = true
+      return this.running
     }
+    this.running = this.scan().finally(() => {
+      this.running = undefined
+      if (this.dirty) {
+        this.dirty = false
+        void this.refresh()
+      }
+    })
+    return this.running
+  }
+
+  private async scan(): Promise<void> {
+    const names = (await readdir(this.dir).catch(() => [] as string[])).filter((n) => ENTRY_FILE.test(n))
     const parsed = await Promise.all(
       names.map(async (n) => parseEntry(await readFile(join(this.dir, n), 'utf8').catch(() => ''))),
     )
-    const entries = parsed.filter((e): e is RegistryEntry => e !== null)
-    await this.probe.prefetch?.(entries.filter((e) => this.probe.isRunning(e.pid)).map((e) => e.pid))
-    const alive = await Promise.all(entries.map((e) => isSessionAlive(e, this.probe)))
-    const live = entries.filter((_, i) => alive[i]).sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0))
+    const entries = parsed.filter((e) => e !== null)
+    const live = (await liveEntries(entries, this.probe)).sort(
+      (a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0),
+    )
 
-    const snapshot = JSON.stringify(live)
-    if (snapshot === this.last) return
-    this.last = snapshot
+    if (isDeepStrictEqual(live, this.current)) return
     this.current = live
     this.emit('change', live)
   }
