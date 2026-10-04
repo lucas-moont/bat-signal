@@ -8,6 +8,7 @@ import {
   mascotMood,
   orderCases,
   plainPreview,
+  reportCopy,
   relativeTime,
   taskLabel,
 } from '../src/shared/view'
@@ -252,5 +253,38 @@ describe('small case details', () => {
     expect(taskLabel({ ...task, status: 'in_progress' })).toBe('Scanning Gotham')
     expect(taskLabel({ ...task, status: 'pending' })).toBe('Scan Gotham')
     expect(taskLabel({ ...task, activeForm: undefined, status: 'in_progress' })).toBe('Scan Gotham')
+  })
+})
+
+describe('reportCopy', () => {
+  const base = { sessionId: 's', at: '2026-01-01T00:00:00.000Z' }
+
+  it.each<[AttentionItem, { stamp: string; sentence: string }]>([
+    [
+      { ...base, kind: 'permission', toolName: 'Bash', detail: 'npm install' },
+      { stamp: 'Permission', sentence: 'asks to run Bash: npm install' },
+    ],
+    [
+      { ...base, kind: 'permission', toolName: 'WebFetch' },
+      { stamp: 'Permission', sentence: 'asks to use WebFetch' },
+    ],
+    [
+      { ...base, kind: 'error', detail: 'rate_limit' },
+      { stamp: 'Error', sentence: 'stopped: rate limit' },
+    ],
+    [
+      { ...base, kind: 'waiting' },
+      { stamp: 'Waiting', sentence: 'is waiting for your answer' },
+    ],
+    [
+      { ...base, kind: 'reply' },
+      { stamp: 'New reply', sentence: 'finished replying' },
+    ],
+    [
+      { ...base, kind: 'stalled', detail: 'Scan Gotham' },
+      { stamp: 'Stalled', sentence: 'has gone quiet on “Scan Gotham”' },
+    ],
+  ])('%o', (item, expected) => {
+    expect(reportCopy(item)).toEqual(expected)
   })
 })
