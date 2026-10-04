@@ -1,15 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { isSessionAlive, type ProcessProbe, type RegistryEntry } from '../src/main/sources/sessionRegistry'
-import { CWD, SESSION_ID } from './fixtures/lines'
-
-const entry = (overrides: Partial<RegistryEntry> = {}): RegistryEntry => ({
-  pid: 4242,
-  sessionId: SESSION_ID,
-  cwd: CWD,
-  procStart: '134355583899737171',
-  status: 'idle',
-  ...overrides,
-})
+import { isSessionAlive, type ProcessProbe } from '../src/main/sources/sessionRegistry'
+import { registryEntry as entry } from './fixtures/lines'
 
 /** Fake OS: pid → process start time (Windows FILETIME). */
 const probe = (processes: Record<number, string>): ProcessProbe => ({

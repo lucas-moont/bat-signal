@@ -2,7 +2,17 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { SessionStore, type StoreSources } from '../src/main/store'
 import type { RegistryEntry } from '../src/main/sources/sessionRegistry'
 import type { SubagentTranscript } from '../src/main/sources/transcriptLocator'
-import { aiTitle, assistantText, CWD, resetClock, SESSION_ID, toolResult, toolUse } from './fixtures/lines'
+import {
+  aiTitle,
+  assistantText,
+  hookEvent as hook,
+  permissionRequest,
+  registryEntry as entry,
+  resetClock,
+  SESSION_ID,
+  toolResult,
+  toolUse,
+} from './fixtures/lines'
 
 /** In-memory stand-in for the transcript files on disk. */
 class FakeDisk implements StoreSources {
@@ -47,15 +57,6 @@ class FakeDisk implements StoreSources {
     this.files.set(path, [...(this.files.get(path) ?? []), ...lines])
   }
 }
-
-const entry = (overrides: Partial<RegistryEntry> = {}): RegistryEntry => ({
-  pid: 4242,
-  sessionId: SESSION_ID,
-  cwd: CWD,
-  status: 'idle',
-  name: 'wayne-enterprises-1',
-  ...overrides,
-})
 
 let disk: FakeDisk
 let store: SessionStore
@@ -120,18 +121,10 @@ describe('SessionStore session lifecycle', () => {
   })
 })
 
-const hook = (hook_event_name: string, fields: Record<string, unknown> = {}) => ({
-  session_id: SESSION_ID,
-  hook_event_name,
-  ...fields,
-})
-
 describe('SessionStore hooks and attention', () => {
   it('shows a permission prompt from a hook in the needs-you list', async () => {
     await store.setLiveSessions([entry()])
-    await store.handleHook(
-      hook('PermissionRequest', { tool_name: 'Bash', tool_input: { command: 'rm -rf build' } }),
-    )
+    await store.handleHook(permissionRequest('Bash', { command: 'rm -rf build' }))
     expect(store.snapshot().attention).toEqual([
       {
         sessionId: SESSION_ID,

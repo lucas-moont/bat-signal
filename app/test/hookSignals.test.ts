@@ -1,22 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { applyHookEvent } from '../src/main/model/hookSignals'
 import type { SessionSignals } from '../src/shared/types'
+import { hookEvent as hook, permissionRequest } from './fixtures/lines'
 
 const AT = '2026-01-01T12:00:00.000Z'
 const idle: SessionSignals = {}
-const hook = (hook_event_name: string, fields: Record<string, unknown> = {}) => ({
-  session_id: 's1',
-  hook_event_name,
-  ...fields,
-})
 
 describe('applyHookEvent: permissions', () => {
   it('records what Claude wants to do when it asks for permission', () => {
-    const s = applyHookEvent(
-      idle,
-      hook('PermissionRequest', { tool_name: 'Bash', tool_input: { command: 'npm install' } }),
-      AT,
-    )
+    const s = applyHookEvent(idle, permissionRequest('Bash', { command: 'npm install' }), AT)
     expect(s.pendingPermission).toEqual({ toolName: 'Bash', detail: 'npm install', at: AT })
   })
 })
@@ -33,22 +25,14 @@ describe('applyHookEvent: permission details', () => {
 
   it('shortens very long details', () => {
     const command = 'echo ' + 'x'.repeat(300)
-    const s = applyHookEvent(
-      idle,
-      hook('PermissionRequest', { tool_name: 'Bash', tool_input: { command } }),
-      AT,
-    )
+    const s = applyHookEvent(idle, permissionRequest('Bash', { command }), AT)
     expect(s.pendingPermission?.detail).toHaveLength(120)
     expect(s.pendingPermission?.detail?.endsWith('…')).toBe(true)
   })
 })
 
 describe('applyHookEvent: a pending permission goes away', () => {
-  const pending = applyHookEvent(
-    idle,
-    hook('PermissionRequest', { tool_name: 'Bash', tool_input: { command: 'ls' } }),
-    AT,
-  )
+  const pending = applyHookEvent(idle, permissionRequest('Bash', { command: 'ls' }), AT)
 
   it.each(['PostToolUse', 'PermissionDenied', 'UserPromptSubmit', 'Stop', 'StopFailure', 'SessionStart'])(
     'when %s arrives',
@@ -104,11 +88,7 @@ describe('applyHookEvent: other events', () => {
   })
 
   it('keeps the richer PermissionRequest details when the notification follows it', () => {
-    const asked = applyHookEvent(
-      idle,
-      hook('PermissionRequest', { tool_name: 'Bash', tool_input: { command: 'ls' } }),
-      AT,
-    )
+    const asked = applyHookEvent(idle, permissionRequest('Bash', { command: 'ls' }), AT)
     const s = applyHookEvent(
       asked,
       hook('Notification', { notification_type: 'permission_prompt', message: 'x' }),
