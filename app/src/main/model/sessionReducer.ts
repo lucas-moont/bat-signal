@@ -235,9 +235,7 @@ export function applySubagentLine(
 ): TrackedSession {
   const line = obj(raw)
   if (line['type'] !== 'assistant') return state
-  const index = state.subagents.findIndex(
-    (a) => (link.toolUseId !== undefined && a.toolUseId === link.toolUseId) || a.agentId === link.agentId,
-  )
+  const index = state.subagents.findIndex((a) => isTranscriptOf(link, a))
   const content = obj(line['message'])['content']
   const text = Array.isArray(content)
     ? content
@@ -255,6 +253,10 @@ export function applySubagentLine(
   }
   return { ...state, subagents }
 }
+
+/** Whether a subagent transcript (linked by its meta.json tool_use id, or else its agent id) belongs to `a`. */
+export const isTranscriptOf = (link: { agentId: string; toolUseId?: string }, a: Subagent): boolean =>
+  (link.toolUseId !== undefined && a.toolUseId === link.toolUseId) || a.agentId === link.agentId
 
 const NOTIFICATION_OPEN = '<task-notification>'
 const XML_TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g

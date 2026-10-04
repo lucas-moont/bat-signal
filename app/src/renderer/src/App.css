@@ -25,3 +25,77 @@
   line-height: 1;
   color: var(--signal);
 }
+
+.app-badge {
+  margin-left: auto;
+  min-width: 22px;
+  padding: 2px 7px;
+  border-radius: 11px;
+  background: var(--signal);
+  color: var(--bone);
+  font-weight: 600;
+  text-align: center;
+}
+
+.session-empty {
+  margin: 24px 16px;
+  color: var(--ash);
+}
+
+.session-list {
+  flex: 1;
+  min-height: 0;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.session {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.session:hover {
+  background: var(--raised);
+}
+
+.session-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-meta {
+  margin-top: 2px;
+  color: var(--ash);
+  font-size: 12px;
+}
+
+.session-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ash);
+}
+.session-dot--busy {
+  background: var(--blood);
+}
+.session-dot--alert {
+  background: var(--signal);
+  box-shadow: 0 0 8px var(--signal-glow);
+}

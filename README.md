@@ -14,6 +14,25 @@ Batcave is a small desktop app that stays on top of your other windows and:
 
 The look is inspired by the reds and blacks of *The Batman* (2022).
 
+## Getting started
+
+Requirements: Windows 10/11, Node.js 24+ and Claude Code.
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+Batcave already works from the files Claude Code writes. For instant alerts, including permission prompts, install the plugin:
+
+```bash
+claude plugin marketplace add lucas-moont/batcave
+claude plugin install batcave@batcave
+```
+
+The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md).
+
 ---
 
 Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic.

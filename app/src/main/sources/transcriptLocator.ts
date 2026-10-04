@@ -11,14 +11,20 @@ export interface SubagentTranscript {
 
 const AGENT_FILE = /^agent-(.+)\.jsonl$/
 
-/** Lists `<sessionId>/subagents/agent-<id>.jsonl` next to a session transcript. */
-export async function listSubagentTranscripts(transcriptPath: string): Promise<SubagentTranscript[]> {
+/**
+ * Lists `<sessionId>/subagents/agent-<id>.jsonl` next to a session transcript, skipping agent ids
+ * in `known` so their meta.json isn't read again.
+ */
+export async function listSubagentTranscripts(
+  transcriptPath: string,
+  known: ReadonlySet<string> = new Set(),
+): Promise<SubagentTranscript[]> {
   const dir = join(transcriptPath.replace(/\.jsonl$/, ''), 'subagents')
   const names = await readdir(dir).catch(() => [] as string[])
   return Promise.all(
     names.flatMap((name) => {
       const agentId = name.match(AGENT_FILE)?.[1]
-      if (!agentId) return []
+      if (!agentId || known.has(agentId)) return []
       const path = join(dir, name)
       return [
         readFile(join(dir, `agent-${agentId}.meta.json`), 'utf8')
@@ -40,16 +46,18 @@ const exists = (path: string) =>
 
 /**
  * Finds `~/.claude/projects/<folder>/<sessionId>.jsonl`. Tries the folder name derived
- * from cwd first, then scans every project folder (long paths get shortened names).
+ * from cwd first, then, if `deep`, scans every project folder (long paths get shortened names).
  */
 export async function locateTranscript(
   projectsDir: string,
   cwd: string,
   sessionId: string,
+  deep = true,
 ): Promise<string | null> {
   const file = `${sessionId}.jsonl`
   const direct = join(projectsDir, projectFolderName(cwd), file)
   if (await exists(direct)) return direct
+  if (!deep) return null
 
   const folders = await readdir(projectsDir).catch(() => [] as string[])
   const candidates = folders.map((folder) => join(projectsDir, folder, file))

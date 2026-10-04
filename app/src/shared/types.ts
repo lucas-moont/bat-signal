@@ -58,11 +58,10 @@ export interface SessionState {
 export const LIVE_STATUSES = ['busy', 'idle', 'shell'] as const
 export type LiveStatus = (typeof LIVE_STATUSES)[number]
 
-/** Live facts about a session that don't come from the transcript (registry + hooks). */
+/** Live facts about a session reported by Claude Code hooks. */
 export interface SessionSignals {
-  status: LiveStatus
   /** Claude is showing a permission dialog. */
-  pendingPermission?: { toolName: string; detail?: string; at: string }
+  pendingPermission?: { toolName: string; detail?: string; toolUseId?: string; at: string }
   /** Claude reported it is idle, waiting for your input. */
   waitingSince?: string
   /** The last turn ended because of an API error. */
@@ -71,9 +70,14 @@ export interface SessionSignals {
   lastStopAt?: string
 }
 
+/** One session as the attention rules see it. */
 export interface SessionView {
   state: SessionState
   signals: SessionSignals
+  /** From the session registry. */
+  status: LiveStatus
+  /** When the user last looked at this session. */
+  seenAt?: string
 }
 
 export type AttentionKind = 'permission' | 'error' | 'waiting' | 'reply' | 'stalled'
@@ -86,4 +90,15 @@ export interface AttentionItem {
   toolName?: string
   detail?: string
   taskId?: string
+}
+
+/** Everything the window shows about one live session. */
+export interface SessionSnapshot extends SessionState, Pick<SessionView, 'status' | 'signals'> {
+  pid: number
+  name?: string
+}
+
+export interface StoreSnapshot {
+  sessions: SessionSnapshot[]
+  attention: AttentionItem[]
 }

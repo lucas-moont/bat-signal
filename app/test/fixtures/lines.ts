@@ -1,3 +1,5 @@
+import type { RegistryEntry } from '../../src/main/sources/sessionRegistry'
+
 // Synthetic transcript lines that mirror the shape Claude Code writes to
 // ~/.claude/projects/<cwd>/<sessionId>.jsonl. Content is invented on purpose.
 
@@ -65,3 +67,24 @@ export const taskNotification = (opts: {
     `<output-file>/tmp/claude/tasks/${opts.taskId}.output</output-file>\n<status>${opts.status}</status>\n` +
     `<summary>${opts.summary ?? ''}</summary>\n</task-notification>`,
 })
+
+/** A `~/.claude/sessions/<pid>.json` entry for the synthetic session. */
+export const registryEntry = (overrides: Partial<RegistryEntry> = {}): RegistryEntry => ({
+  pid: 4242,
+  sessionId: SESSION_ID,
+  cwd: CWD,
+  procStart: '134355583899737171',
+  status: 'idle',
+  name: 'wayne-enterprises-1',
+  ...overrides,
+})
+
+/** A Claude Code hook payload, as POSTed by the plugin. */
+export const hookEvent = (hook_event_name: string, fields: Record<string, unknown> = {}) => ({
+  session_id: SESSION_ID,
+  hook_event_name,
+  ...fields,
+})
+
+export const permissionRequest = (tool_name: string, tool_input: Record<string, unknown>) =>
+  hookEvent('PermissionRequest', { tool_name, tool_input })

@@ -4,16 +4,9 @@ const STALLED_AFTER_MS = 30 * 60 * 1000
 
 const URGENCY: Record<AttentionKind, number> = { permission: 0, error: 1, waiting: 2, reply: 3, stalled: 4 }
 
-/**
- * Everything that needs the user, most urgent first.
- * @param seen when the user last looked at each session (ISO time), keyed by session id
- */
-export function deriveAttention(
-  sessions: SessionView[],
-  seen: Record<string, string>,
-  now: Date,
-): AttentionItem[] {
-  const items = sessions.flatMap(({ state, signals }) => {
+/** Everything that needs the user, most urgent first. */
+export function deriveAttention(sessions: SessionView[], now: Date): AttentionItem[] {
+  const items = sessions.flatMap(({ state, signals, status, seenAt }) => {
     const sessionId = state.sessionId
     const found: AttentionItem[] = []
     const { pendingPermission, error, waitingSince, lastStopAt } = signals
@@ -24,15 +17,15 @@ export function deriveAttention(
     }
     if (error) found.push({ sessionId, kind: 'error', at: error.at, detail: error.type })
 
-    if (waitingSince) {
+    if (waitingSince && !seenSince(seenAt, waitingSince)) {
       found.push({ sessionId, kind: 'waiting', at: waitingSince })
-    } else if (lastStopAt && signals.status !== 'busy' && !seenSince(seen[sessionId], lastStopAt)) {
+    } else if (lastStopAt && status !== 'busy' && !seenSince(seenAt, lastStopAt)) {
       found.push({ sessionId, kind: 'reply', at: lastStopAt })
     }
 
     // "Stalled" means no news at all: neither the task nor its session moved recently.
     const sessionQuietFor = now.getTime() - time(state.lastActivityAt)
-    if (signals.status !== 'busy' && sessionQuietFor >= STALLED_AFTER_MS) {
+    if (status !== 'busy' && sessionQuietFor >= STALLED_AFTER_MS) {
       for (const task of state.tasks) {
         const since = task.history.at(-1)?.at
         if (task.status === 'in_progress' && since && now.getTime() - time(since) >= STALLED_AFTER_MS) {

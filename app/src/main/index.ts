@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { app, BrowserWindow, screen } from 'electron'
+import { startBatcave } from './batcave'
 
 const WIDTH = 360
 const HEIGHT = 520
@@ -44,7 +45,8 @@ if (!app.requestSingleInstanceLock()) {
 } else {
   app.setAppUserModelId('com.lucasmoont.batcave')
   void app.whenReady().then(() => {
-    createWindow()
+    const stop = startBatcave(createWindow())
+    app.once('before-quit', stop)
   })
   app.on('window-all-closed', () => app.quit())
 }
