@@ -252,8 +252,7 @@ export const currentTask = (session: SessionSnapshot): Task | undefined =>
   session.tasks.find((t) => t.status === 'in_progress')
 
 /**
- * The plugin is silent: a session is working, which sends hooks all the time, and none has arrived
- * since launch. Then Needs you cannot show permission prompts or waits, and should say so.
+ * The plugin is silent for some session: it finished a whole turn without a hook (with the plugin,
+ * every turn sends them). Then Needs you cannot show that session's prompts or waits, and says so.
  */
-export const pluginSilent = (snapshot: StoreSnapshot): boolean =>
-  snapshot.hooksHeard === false && snapshot.sessions.some((s) => s.status === 'busy')
+export const pluginSilent = (snapshot: StoreSnapshot): boolean => (snapshot.unheard?.length ?? 0) > 0

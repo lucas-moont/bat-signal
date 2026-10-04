@@ -54,12 +54,14 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   /** Hook-derived signals, kept apart because hooks can arrive before the registry lists the session. */
   private readonly signals = new Map<string, { signals: SessionSignals; at: number }>()
   /**
-   * For sessions that send no hooks (no plugin, or started before it was installed): what the
-   * registry alone can tell, a turn that ended when the status went from busy to idle.
+   * Without hooks (no plugin, or a session started before it was installed), the registry's flip
+   * from busy to idle is the end of a turn. A flip waits FLIP_GRACE_MS for the Stop hook, which
+   * wins when it lands; past that, it stands as the turn's end and the session counts as unheard.
    */
-  private readonly inferred = new Map<string, SessionSignals>()
-  /** Whether any hook has arrived since launch: without the plugin, Needs you can never fill. */
-  private hooksHeard = false
+  private readonly flips = new Map<string, string>()
+  private readonly inferredStop = new Map<string, string>()
+  /** Sessions that finished a turn without sending a single hook. */
+  private readonly unheard = new Set<string>()
 
   /**
    * Resolves once the first registry listing has been read. Snapshots taken before it are not the
@@ -81,7 +83,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       if (live.has(id)) continue
       this.sessions.delete(id)
       this.signals.delete(id)
-      this.inferred.delete(id)
+      this.forgetFlip(id)
       changed = true
     }
     // Hooks from sessions the registry never lists (headless runs, late SessionEnd) expire.
@@ -96,8 +98,8 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       if (known) {
         if (!isDeepStrictEqual(known.entry, entry)) changed = true
         // Hooks report the end of a turn themselves; without them, the registry's flip says it.
-        if (known.entry.status === 'busy' && entry.status !== 'busy' && !this.signals.has(entry.sessionId)) {
-          this.inferred.set(entry.sessionId, { lastStopAt: this.sources.clock().toISOString() })
+        if (known.entry.status === 'busy' && entry.status === 'idle' && !this.signals.has(entry.sessionId)) {
+          this.flips.set(entry.sessionId, this.sources.clock().toISOString())
         }
         known.entry = entry
         continue
@@ -124,26 +126,28 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
     } finally {
       this.markReady()
     }
+    if (this.settleFlips()) changed = true
     if (changed || added.length) this.emit('update')
   }
 
   /** Reads whatever was appended to every live session's transcript. */
   async refresh(): Promise<void> {
     const changed = await Promise.all([...this.sessions.values()].map((s) => this.readChanged(s)))
-    if (changed.includes(true)) this.emit('update')
+    if (this.settleFlips() || changed.includes(true)) this.emit('update')
   }
 
   /** Applies a Claude Code hook payload, then reads that session's transcript for fresh detail. */
   async handleHook(event: unknown): Promise<void> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
-    this.hooksHeard = true
+    const wasUnheard = this.unheard.has(sessionId)
+    this.forgetFlip(sessionId) // the session speaks for itself from now on
     const before = this.signals.get(sessionId)?.signals ?? {}
     const after = applyHookEvent(before, event, this.sources.clock().toISOString())
     this.signals.set(sessionId, { signals: after, at: this.sources.clock().getTime() })
     const session = this.sessions.get(sessionId)
     const read = session ? await this.readChanged(session) : false
-    if (session && (read || after !== before)) this.emit('update')
+    if (session && (read || after !== before || wasUnheard)) this.emit('update')
   }
 
   /** The user looked at this session: its replies so far no longer need attention. */
@@ -159,7 +163,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       .filter((s) => s.read)
       .map(({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
         state: toSessionState(tracked),
-        signals: this.signals.get(entry.sessionId)?.signals ?? this.inferred.get(entry.sessionId) ?? {},
+        signals: this.signals.get(entry.sessionId)?.signals ?? this.inferredSignals(entry.sessionId),
         status: entry.status,
         seenAt,
         entry,
@@ -173,8 +177,34 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
         signals,
       })),
       attention: deriveAttention(views, this.sources.clock()),
-      hooksHeard: this.hooksHeard,
+      unheard: [...this.unheard].filter((id) => this.sessions.has(id)),
     }
+  }
+
+  /** Turns flips that waited out their grace without a hook into ended turns. Says if any did. */
+  private settleFlips(): boolean {
+    const now = this.sources.clock().getTime()
+    let settled = false
+    for (const [id, at] of this.flips) {
+      if (now - Date.parse(at) < FLIP_GRACE_MS) continue
+      this.flips.delete(id)
+      if (this.signals.has(id)) continue
+      this.inferredStop.set(id, at)
+      this.unheard.add(id)
+      settled = true
+    }
+    return settled
+  }
+
+  private forgetFlip(id: string): void {
+    this.flips.delete(id)
+    this.inferredStop.delete(id)
+    this.unheard.delete(id)
+  }
+
+  private inferredSignals(id: string): SessionSignals {
+    const lastStopAt = this.inferredStop.get(id)
+    return lastStopAt ? { lastStopAt } : {}
   }
 
   /** Reads a session and says whether anything it shows changed. */
@@ -250,3 +280,5 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
 
 const DEEP_SCAN_EVERY_MS = 30_000
 const UNLISTED_SIGNALS_TTL_MS = 5 * 60_000
+/** How long a busy-to-idle flip waits for the Stop hook before it stands as the end of a turn. */
+const FLIP_GRACE_MS = 3000
