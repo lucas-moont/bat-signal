@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { findWindowOwner, type ProcessInfo } from '../src/main/terminal'
+import { findWindowOwner, pickTab, type ProcessInfo } from '../src/main/terminal'
 
 const proc = (pid: number, ppid: number, name: string, hasWindow = false): ProcessInfo => ({
   pid,
@@ -38,5 +38,34 @@ describe('findWindowOwner edge cases', () => {
   it('stops before system processes, which never host a session', () => {
     const processes = [proc(4, 0, 'System'), proc(800, 4, 'svchost.exe', true), proc(30, 800, 'claude.exe')]
     expect(findWindowOwner(processes, 30)).toBeUndefined()
+  })
+})
+
+describe('pickTab', () => {
+  const tabs = ['✳ m3-doom-part-2', '◑ bat-computer', 'Command Prompt']
+
+  it("finds the tab titled with the session's name, past Claude Code's status glyph", () => {
+    expect(pickTab(tabs, 'bat-computer')).toBe(1)
+  })
+})
+
+describe('pickTab when there is no clear match', () => {
+  const tabs = ['✳ bat-computer-old', '◑ bat-computer', '✳ bat-computer']
+
+  it('matches the whole name, never a longer one that starts with it', () => {
+    expect(pickTab(['✳ bat-computer-old'], 'bat-computer')).toBeUndefined()
+  })
+
+  it('takes the first of two tabs with the same name', () => {
+    expect(pickTab(tabs, 'bat-computer')).toBe(1)
+  })
+
+  it('finds nothing for a session without a name, or with no tab of its name', () => {
+    expect(pickTab(tabs, undefined)).toBeUndefined()
+    expect(pickTab(tabs, 'gcpd')).toBeUndefined()
+  })
+
+  it('matches a title that has no glyph at all', () => {
+    expect(pickTab(['gcpd'], 'gcpd')).toBe(0)
   })
 })
