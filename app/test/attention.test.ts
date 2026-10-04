@@ -33,7 +33,13 @@ describe('deriveAttention', () => {
       NOW,
     )
     expect(items).toEqual([
-      { sessionId: 's1', kind: 'permission', detail: 'Bash: npm install', at: '2026-01-01T11:59:00.000Z' },
+      {
+        sessionId: 's1',
+        kind: 'permission',
+        toolName: 'Bash',
+        detail: 'npm install',
+        at: '2026-01-01T11:59:00.000Z',
+      },
     ])
   })
 

@@ -20,7 +20,7 @@ export function deriveAttention(
 
     if (pendingPermission) {
       const { toolName, detail, at } = pendingPermission
-      found.push({ sessionId, kind: 'permission', at, detail: detail ? `${toolName}: ${detail}` : toolName })
+      found.push({ sessionId, kind: 'permission', at, toolName, ...(detail ? { detail } : {}) })
     }
     if (error) found.push({ sessionId, kind: 'error', at: error.at, detail: error.type })
 
