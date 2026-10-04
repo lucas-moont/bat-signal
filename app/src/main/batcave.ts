@@ -32,14 +32,16 @@ const DEMO_NEWS_MS = 4000
 
 /** Serves the made-up Gotham night instead of real sessions (screenshots, demos). */
 function startDemo(broadcast: Broadcast): () => void {
+  // One fixed night: times computed afresh on every push would make old alerts look new.
+  const night = new Date()
   let news = false
   const newsTimer = setTimeout(() => {
     news = true
-    broadcast(IPC.snapshot, demoSnapshot())
+    broadcast(IPC.snapshot, demoSnapshot(night))
   }, DEMO_NEWS_MS)
-  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : beforeNewsDemoSnapshot()))
+  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot(night) : beforeNewsDemoSnapshot(night)))
   ipcMain.on(IPC.markSeen, () => undefined)
-  const timer = setInterval(() => broadcast(IPC.snapshot, demoSnapshot()), CLOCK_TICK_MS)
+  const timer = setInterval(() => broadcast(IPC.snapshot, demoSnapshot(night)), CLOCK_TICK_MS)
   return () => {
     clearTimeout(newsTimer)
     clearInterval(timer)

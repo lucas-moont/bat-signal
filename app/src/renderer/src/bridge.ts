@@ -59,10 +59,11 @@ function pickStandIn(): BatcaveApi {
     console.error('[batcave] preload bridge missing: no data source')
     return standIn(EMPTY)
   }
-  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
-  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot())
-  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
-  return standIn(demoSnapshot())
+  const night = new Date() // one night, so the news snapshot only adds what is new
+  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot(night))
+  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot(night))
+  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(night), demoSnapshot(night))
+  return standIn(demoSnapshot(night))
 }
 
 export const batcave: BatcaveApi = (window as { batcave?: BatcaveApi }).batcave ?? pickStandIn()
