@@ -56,6 +56,7 @@ export class BatcaveWindow {
     this.win.once('ready-to-show', () => this.win.show())
     this.win.on('moved', () => this.scheduleSave())
     this.win.on('resized', () => this.scheduleSave())
+    this.win.on('close', () => this.saveNow())
 
     if (process.env['ELECTRON_RENDERER_URL']) void this.win.loadURL(process.env['ELECTRON_RENDERER_URL'])
     else void this.win.loadFile(join(__dirname, '../renderer/index.html'))
@@ -73,6 +74,7 @@ export class BatcaveWindow {
 
   setMode(mode: WindowMode): void {
     if (mode === this.current) return
+    clearTimeout(this.saveTimer) // a pending save must not record the pill
     const now = this.win.getBounds()
     if (mode === 'pill') {
       this.fullBounds = now
@@ -92,14 +94,23 @@ export class BatcaveWindow {
       this.win.setBounds(restoreBounds(next, displaysPrimaryFirst(), DEFAULTS))
     }
     this.current = mode
+    if (mode === 'full') this.saveNow() // where the pill was moved is where the window now lives
     this.win.webContents.send(IPC.mode, mode)
   }
 
   private scheduleSave(): void {
     if (this.current !== 'full') return
     clearTimeout(this.saveTimer)
-    this.saveTimer = setTimeout(() => {
-      boundsFile.save(this.win.getBounds())
-    }, SAVE_DEBOUNCE_MS)
+    this.saveTimer = setTimeout(() => this.saveNow(), SAVE_DEBOUNCE_MS)
+  }
+
+  /** Records the full window's bounds; in pill mode, the full window anchored where the pill is. */
+  private saveNow(): void {
+    clearTimeout(this.saveTimer)
+    if (this.win.isDestroyed()) return
+    const now = this.win.getBounds()
+    if (this.current === 'full') return boundsFile.save(now)
+    const { width, height } = this.fullBounds
+    boundsFile.save({ x: now.x + now.width - width, y: now.y + now.height - height, width, height })
   }
 }
