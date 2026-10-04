@@ -28,9 +28,6 @@ function useBridgedState<T>(
   return [state.value, state.loaded]
 }
 
-const useBridged = <T>(initial: T, get: () => Promise<T>, on: (cb: (value: T) => void) => () => void): T =>
-  useBridgedState(initial, get, on)[0]
-
 /** The latest store snapshot pushed by the main process, and whether the real one has arrived. */
 export const useSnapshotState = (): [StoreSnapshot, boolean] =>
   useBridgedState(EMPTY, batcave.getSnapshot, batcave.onSnapshot)
@@ -45,7 +42,7 @@ export function useSettings(): [Settings, (patch: Partial<Settings>) => void, bo
 
 /** Signal or panel: the main process owns it; pages only read it and ask to change it. */
 export const useWindowMode = (): WindowMode =>
-  useBridged<WindowMode>('signal', batcave.getMode, batcave.onMode)
+  useBridgedState<WindowMode>('signal', batcave.getMode, batcave.onMode)[0]
 
 const NOW_EVERY_MS = 30_000
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
 import { mascotMood } from '@shared/view'
@@ -50,11 +50,8 @@ export function App() {
     batcave.markSeen(sessionId)
   }
   // A click on a notice card opens the panel on that case.
-  const openRef = useRef(open)
-  useEffect(() => {
-    openRef.current = open
-  })
-  useEffect(() => batcave.onFocusCase((id) => openRef.current(id)), [])
+  const onFocusCase = useEffectEvent((sessionId: string) => open(sessionId))
+  useEffect(() => batcave.onFocusCase((sessionId) => onFocusCase(sessionId)), [])
 
   const openAttention = (item: AttentionItem) =>
     open(item.sessionId, item.kind === 'stalled' && item.taskId ? { kind: 'task', id: item.taskId } : null)

@@ -9,6 +9,9 @@ import type { BatcaveApi } from '../../preload/index'
 
 const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
+/** Both windows load the same page; the query says which one this is. */
+export const isSignalView = new URLSearchParams(location.search).get('view') === 'signal'
+
 /** A value with listeners: what the main process keeps for real, kept in memory. */
 function observable<T>(initial: T) {
   let value = initial
@@ -34,8 +37,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatcaveApi {
   const snapshot = observable(first)
   if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
   const settings = observable<Settings>(DEFAULT_SETTINGS)
-  const isSignal = new URLSearchParams(location.search).get('view') === 'signal'
-  const mode = observable<WindowMode>(isSignal ? 'signal' : 'panel')
+  const mode = observable<WindowMode>(isSignalView ? 'signal' : 'panel')
   return {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
@@ -59,11 +61,10 @@ function pickStandIn(): BatcaveApi {
     console.error('[batcave] preload bridge missing: no data source')
     return standIn(EMPTY)
   }
-  const night = new Date() // one night, so the news snapshot only adds what is new
-  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot(night))
-  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot(night))
-  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(night), demoSnapshot(night))
-  return standIn(demoSnapshot(night))
+  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
+  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot())
+  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
+  return standIn(demoSnapshot())
 }
 
 export const batcave: BatcaveApi = (window as { batcave?: BatcaveApi }).batcave ?? pickStandIn()
