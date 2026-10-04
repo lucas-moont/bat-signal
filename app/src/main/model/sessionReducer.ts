@@ -9,6 +9,7 @@ import type {
   Task,
   TaskStatus,
 } from '../../shared/types'
+import { TASK_STATUSES } from '../../shared/types'
 
 /** Session state plus the reducer's own bookkeeping, which never leaves the main process. */
 export interface TrackedSession extends SessionState {
@@ -148,7 +149,7 @@ const TOOLS: Record<string, ToolHandler> = {
       if (failed) return state
       const id = str(output['taskId']) ?? str(input['taskId'])
       const fields = Array.isArray(output['updatedFields']) ? (output['updatedFields'] as unknown[]) : []
-      const to = str(obj(output['statusChange'])['to']) as TaskStatus | undefined
+      const to = asTaskStatus(str(obj(output['statusChange'])['to']))
       if (to === 'deleted') return { ...state, tasks: state.tasks.filter((t) => t.id !== id) }
 
       const tasks = state.tasks.map((task) => {
@@ -299,3 +300,6 @@ const upsert = <T extends { id: string }>(list: T[], item: T): T[] => [
   ...list.filter((x) => x.id !== item.id),
   item,
 ]
+
+const asTaskStatus = (v: string | undefined): TaskStatus | undefined =>
+  TASK_STATUSES.includes(v as TaskStatus) ? (v as TaskStatus) : undefined

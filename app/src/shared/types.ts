@@ -1,4 +1,5 @@
-export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'deleted'
+export const TASK_STATUSES = ['pending', 'in_progress', 'completed', 'deleted'] as const
+export type TaskStatus = (typeof TASK_STATUSES)[number]
 
 export interface Task {
   id: string
