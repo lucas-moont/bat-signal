@@ -61,10 +61,6 @@
 .header__mascot .clawd {
   max-width: 100%;
 }
-/* Asleep, Bat-Clawd hangs from the very top edge of the window. */
-.header__mascot--sleeping {
-  align-items: start;
-}
 .header__actions {
   flex: none;
   display: flex;

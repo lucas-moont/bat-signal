@@ -36,7 +36,7 @@ export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderPr
         </AnimatePresence>
       </span>
       <h1 className="header__title">BAT-SIGNAL</h1>
-      <div className={`header__mascot header__mascot--${mood}`}>
+      <div className="header__mascot">
         <BatClawd mood={mood} />
       </div>
       <nav className="header__actions">
