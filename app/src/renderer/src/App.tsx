@@ -66,7 +66,7 @@ export function App() {
   return (
     <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
       <main className="app">
-        <Atmosphere rain={settings.rain && !calm} />
+        <Atmosphere rain={settings.rain && !calm} activity={snapshot} />
         <Header
           needsYou={attention.length}
           mood={mood}
