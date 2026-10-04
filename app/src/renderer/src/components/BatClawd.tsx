@@ -52,11 +52,11 @@ interface Pose {
   eyeColor: string
 }
 
-const POSES: Record<MascotMood, [Pose, Pose]> = {
-  sleeping: [
-    { wing: 0, spread: 0.35, eyes: 'shut', eyeColor: 'var(--bone)' },
-    { wing: 0, spread: 0.35, eyes: 'shut', eyeColor: 'var(--bone)' },
-  ],
+/** Each mood's poses; the first is the resting one. */
+type Poses = readonly [Pose, ...Pose[]]
+
+const POSES: Record<MascotMood, Poses> = {
+  sleeping: [{ wing: 0, spread: 0.35, eyes: 'shut', eyeColor: 'var(--bone)' }],
   flying: [
     { wing: -24, spread: 1, eyes: 'open', eyeColor: 'var(--bone)' },
     { wing: 16, spread: 0.85, eyes: 'open', eyeColor: 'var(--bone)' },
@@ -102,22 +102,20 @@ const SWAY_STEP_MS = 500
 const BOB = [0, -1, -2, -1]
 
 /** Each mood's flip-book: which pose to show and where to put it on a given frame. */
-const MOTION: Record<MascotMood, (frame: number, poses: [Pose, Pose]) => { pose: Pose; transform: string }> =
-  {
-    // Hanging upside down from the top edge, swaying a little.
-    // Hanging upside down from the top edge; the sway is written straight to the element.
-    sleeping: (_f, [a]) => ({ pose: a, transform: 'rotate(180deg)' }),
-    // Wings beat between two poses while the body bobs.
-    flying: (f, [a, b]) => ({
-      pose: f % 2 ? b : a,
-      transform: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
-    }),
-    // Red eyes that blink every so often, and a shiver.
-    alarmed: (f, [a, b]) => ({
-      pose: f % 10 === 9 ? b : a,
-      transform: `translateX(${f % 2 ? 0.6 : -0.6}px)`,
-    }),
-  }
+const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; transform: string }> = {
+  // Hanging upside down from the top edge; the sway is written straight to the element.
+  sleeping: (_f, [a]) => ({ pose: a, transform: 'rotate(180deg)' }),
+  // Wings beat between two poses while the body bobs.
+  flying: (f, [a, b = a]) => ({
+    pose: f % 2 ? b : a,
+    transform: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
+  }),
+  // Red eyes that blink every so often, and a shiver.
+  alarmed: (f, [a, b = a]) => ({
+    pose: f % 10 === 9 ? b : a,
+    transform: `translateX(${f % 2 ? 0.6 : -0.6}px)`,
+  }),
+}
 
 /** How far the eyes may slide toward the pointer, in grid units. */
 const GAZE = 0.6
@@ -173,7 +171,7 @@ export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number 
       ref={ref}
       role="img"
       aria-label={LABEL[mood]}
-      className={`clawd clawd--${mood}${calm ? ' clawd--calm' : ''}${hopping ? ' clawd--hop' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
         if (calm || hopping) return

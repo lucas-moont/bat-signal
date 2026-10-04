@@ -119,7 +119,6 @@
 .row:focus-visible {
   outline: 1px solid var(--signal);
 }
-.row .icon,
 .row > svg {
   color: var(--line);
   flex: none;
