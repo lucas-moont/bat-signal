@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { applyTranscriptLine, createSession } from '../src/main/model/sessionReducer'
-import type { SessionState } from '../src/shared/types'
+import {
+  applySubagentLine,
+  applyTranscriptLine,
+  createSession,
+  type TrackedSession,
+} from '../src/main/model/sessionReducer'
 import {
   aiTitle,
   assistantText,
@@ -14,7 +18,7 @@ import {
   userText,
 } from './fixtures/lines'
 
-const replay = (lines: unknown[]): SessionState =>
+const replay = (lines: unknown[]): TrackedSession =>
   lines.reduce(applyTranscriptLine, createSession(SESSION_ID))
 
 beforeEach(resetClock)
@@ -290,5 +294,31 @@ describe('replayed or duplicated lines', () => {
       ),
     ])
     expect(s.background[0]).toMatchObject({ status: 'completed', endedAt: '2026-01-01T00:00:03.000Z' })
+  })
+})
+
+describe('subagent transcripts', () => {
+  const spawned = () => [
+    toolUse('toolu_a', 'Agent', { description: 'Search', subagent_type: 'Explore' }),
+    toolResult('toolu_a', { isAsync: true, status: 'async_launched', agentId: 'a1b2' }),
+  ]
+
+  it("shows a subagent's latest reply, linked through its meta.json tool_use id", () => {
+    const s = applySubagentLine(
+      replay(spawned()),
+      { agentId: 'zzz', toolUseId: 'toolu_a' },
+      assistantText('Found 3 files'),
+    )
+    expect(s.subagents[0]?.lastMessage).toBe('Found 3 files')
+  })
+
+  it('links a subagent transcript through its agent id when meta.json has no tool_use id', () => {
+    const s = applySubagentLine(replay(spawned()), { agentId: 'a1b2' }, assistantText('Still looking'))
+    expect(s.subagents[0]?.lastMessage).toBe('Still looking')
+  })
+
+  it('ignores lines from an agent the session does not know', () => {
+    const before = replay(spawned())
+    expect(applySubagentLine(before, { agentId: 'other' }, assistantText('hi'))).toBe(before)
   })
 })
