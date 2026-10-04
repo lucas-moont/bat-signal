@@ -5,34 +5,28 @@ import { batcave } from './bridge'
 
 const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
-/** The latest store snapshot pushed by the main process. */
-export function useSnapshot(): StoreSnapshot {
-  const [snapshot, setSnapshot] = useState(EMPTY)
+/** A value owned by the main process: fetched once, then kept current by its pushes. */
+function useBridged<T>(initial: T, get: () => Promise<T>, on: (cb: (value: T) => void) => () => void): T {
+  const [value, setValue] = useState(initial)
   useEffect(() => {
     let live = true
-    void batcave.getSnapshot().then((s) => live && setSnapshot(s))
-    const unsubscribe = batcave.onSnapshot(setSnapshot)
+    void get().then((v) => live && setValue(v))
+    const unsubscribe = on(setValue)
     return () => {
       live = false
       unsubscribe()
     }
-  }, [])
-  return snapshot
+  }, [get, on])
+  return value
 }
 
-export function useSettings(): [Settings, (patch: Partial<Settings>) => void] {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
-  useEffect(() => {
-    let live = true
-    void batcave.getSettings().then((s) => live && setSettings(s))
-    const unsubscribe = batcave.onSettings(setSettings)
-    return () => {
-      live = false
-      unsubscribe()
-    }
-  }, [])
-  return [settings, batcave.setSettings]
-}
+/** The latest store snapshot pushed by the main process. */
+export const useSnapshot = (): StoreSnapshot => useBridged(EMPTY, batcave.getSnapshot, batcave.onSnapshot)
+
+export const useSettings = (): [Settings, (patch: Partial<Settings>) => void] => [
+  useBridged(DEFAULT_SETTINGS, batcave.getSettings, batcave.onSettings),
+  batcave.setSettings,
+]
 
 /** The current time, refreshed often enough for "2m ago" labels. */
 export function useNow(everyMs = 30_000): Date {
