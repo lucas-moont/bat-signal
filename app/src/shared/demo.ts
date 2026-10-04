@@ -184,3 +184,9 @@ export function beforeNewsDemoSnapshot(now = new Date()): StoreSnapshot {
   const snapshot = demoSnapshot(now)
   return { ...snapshot, attention: snapshot.attention.filter((a) => a.kind !== 'permission') }
 }
+
+/** The same quiet night with one case at work and nothing pending: Bat-Clawd on patrol. */
+export function busyDemoSnapshot(now = new Date()): StoreSnapshot {
+  const { sessions } = quietDemoSnapshot(now)
+  return { sessions: sessions.map((s, i) => (i === 0 ? { ...s, status: 'busy' } : s)), attention: [] }
+}

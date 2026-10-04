@@ -1,8 +1,8 @@
 // The window's link to the main process. Without the preload bridge a stand-in takes over:
-// in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-news
+// in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-busy / #demo-news
 // (screenshots) it serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
 // window stays empty rather than showing fake sessions as if they were real.
-import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
+import { beforeNewsDemoSnapshot, busyDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
 import { applySettingsPatch, DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import type { BatcaveApi } from '../../preload/index'
@@ -60,6 +60,7 @@ function pickStandIn(): BatcaveApi {
     return standIn(EMPTY)
   }
   if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
+  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot())
   if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
   return standIn(demoSnapshot())
 }
