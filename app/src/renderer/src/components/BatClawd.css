@@ -27,6 +27,13 @@
   stroke-width: 0.35;
   stroke-linejoin: round;
 }
+/* Drawn behind the face, so only the outer half of the stroke shows. */
+.clawd__cowl-edge {
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 0.7;
+  stroke-linejoin: miter;
+}
 .clawd__lining {
   fill: var(--blood);
 }

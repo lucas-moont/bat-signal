@@ -33,6 +33,8 @@ const FEET: Px[] = [
   [4.5, 10.2, 2, 0.8],
   [9.5, 10.2, 2, 0.8],
 ]
+/** The cowl's outline (ears, crown and sides) as one shape, for its red edge. */
+const COWL_EDGE = 'M3 5 L3 2 L4 2 L4 0 L5 0 L5 1 L11 1 L11 0 L12 0 L12 2 L13 2 L13 5 Z'
 const COWL: Px[] = [
   [4, 0, 1, 1], // left ear tip
   [11, 0, 1, 1], // right ear tip
@@ -110,6 +112,8 @@ function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: nu
   return (
     <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
       <CapeBehind style={pose.cape} />
+      {/* Behind the face, so only the outer edge of the black cowl shows on the black window. */}
+      <path className="clawd__cowl-edge" d={COWL_EDGE} />
       <g fill="var(--clawd)">{rects(wrapped ? BODY : [...BODY, ...ARMS])}</g>
       <g fill="var(--clawd-shade)">{rects(wrapped ? FEET : LEGS)}</g>
       {wrapped && (
