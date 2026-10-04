@@ -95,7 +95,8 @@ li + li > .watch-row {
   width: 82px;
   text-align: center;
   font-size: 9.5px;
-  padding: 0 4px;
+  padding: 3px 4px 1px;
+  line-height: 1.1;
   border-width: 1px;
   transform: rotate(-1.5deg);
 }
@@ -138,7 +139,7 @@ li + li > .watch-row {
   color: var(--ink-soft);
 }
 .watch-row--working .watch-row__stamp {
-  color: var(--bone);
+  color: var(--ink-live);
 }
 .watch-row--quiet .watch-row__stamp,
 .watch-row--idle .watch-row__stamp {
