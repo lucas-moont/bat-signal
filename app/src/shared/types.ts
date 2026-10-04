@@ -63,3 +63,33 @@ export interface SessionState {
   lastActivityAt?: string
   pendingToolUses: Record<string, PendingToolUse>
 }
+
+export type LiveStatus = 'busy' | 'idle' | 'shell'
+
+/** Live facts about a session that don't come from the transcript (registry + hooks). */
+export interface SessionSignals {
+  status: LiveStatus
+  /** Claude is showing a permission dialog. */
+  pendingPermission?: { toolName: string; detail?: string; at: string }
+  /** Claude reported it is idle, waiting for your input. */
+  waitingSince?: string
+  /** The last turn ended because of an API error. */
+  error?: { type: string; at: string }
+  /** When Claude last finished a turn. */
+  lastStopAt?: string
+}
+
+export interface SessionView {
+  state: SessionState
+  signals: SessionSignals
+}
+
+export type AttentionKind = 'permission' | 'error' | 'waiting' | 'reply' | 'stalled'
+
+export interface AttentionItem {
+  sessionId: string
+  kind: AttentionKind
+  at: string
+  detail?: string
+  taskId?: string
+}
