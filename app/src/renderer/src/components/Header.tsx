@@ -18,7 +18,7 @@ export function Header({ needsYou, mood, onSettings, onPill, onClose }: HeaderPr
     <header className="header">
       <BatEmblem size={34} />
       <h1 className="header__title">BATCAVE</h1>
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {needsYou > 0 && (
           <motion.span
             key={needsYou}
