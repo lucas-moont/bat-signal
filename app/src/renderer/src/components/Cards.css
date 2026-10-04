@@ -157,10 +157,10 @@
   background: var(--line);
 }
 .status--busy {
-  color: var(--bone);
+  color: var(--ink-live);
 }
 .status--busy .status__dot {
-  background: var(--signal-hot);
+  background: var(--ink-live);
 }
 .status--alert {
   color: var(--signal-hot);

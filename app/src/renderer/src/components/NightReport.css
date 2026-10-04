@@ -174,7 +174,7 @@
   color: var(--ink-soft);
 }
 .report .stamp--working {
-  color: var(--bone);
+  color: var(--ink-live);
   transform: rotate(-1.5deg);
 }
 .report .stamp--quiet {

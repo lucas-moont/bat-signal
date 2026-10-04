@@ -21,6 +21,8 @@
      for 4.5:1 on black at 11px. */
   --ink-hot: #ec2a2a;
   --ink-soft: #d4574c;
+  /* Working: the amber of Gotham's sodium streetlights, a lit window that is not an alarm. */
+  --ink-live: #e8a33d;
 
   --clawd: #d77757;
 
