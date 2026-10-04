@@ -20,7 +20,7 @@ Batcave rests in a corner of your screen as a small **Bat-Signal**. When somethi
 - shows which sessions are active and what each one is doing (tasks, subagents, background commands);
 - tells you when tasks finish;
 - gathers everything that **needs you** in one place (permission prompts, Claude waiting for input, errors);
-- has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open, red-eyed, when something needs you.
+- has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open, showing its red lining, when something needs you.
 
 The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all.
 
@@ -28,11 +28,15 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Cases | Task drawer | All quiet |
 |---|---|---|
-| <img src="docs/screenshots/cases.png" width="240" alt="Case cards with case numbers, status, task progress and Claude's last words"> | <img src="docs/screenshots/task-drawer.png" width="240" alt="A drawer with a task's brief and timeline"> | <img src="docs/screenshots/all-quiet.png" width="240" alt="Nothing pending: Bat-Clawd sleeps wrapped in his cape"> |
+| <img src="docs/screenshots/cases.png" width="240" alt="Case cards with case numbers, status, task progress and Claude's last words"> | <img src="docs/screenshots/task-drawer.png" width="240" alt="A drawer with a task's brief and timeline"> | <img src="docs/screenshots/all-quiet.png" width="240" alt="Nothing pending: two quiet cases, Bat-Clawd asleep in the header"> |
 
 | Settings | The Bat-Signal at rest |
 |---|---|
 | <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+
+| Bat-Clawd asleep | On patrol | Needs you |
+|---|---|---|
+| <img src="docs/screenshots/clawd-sleeping.png" width="190" alt="Bat-Clawd asleep, sitting wrapped in his cape"> | <img src="docs/screenshots/clawd-flying.png" width="190" alt="Bat-Clawd flying, his cape streaming behind him"> | <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="Bat-Clawd alarmed, his black cape flung open to show its red lining"> |
 
 Screenshots use made-up data (`npm run shots`), never real sessions.
 
