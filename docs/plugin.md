@@ -29,6 +29,19 @@ To try it in a single session without installing:
 claude --plugin-dir /path/to/bat-signal/plugin/bat-signal
 ```
 
+### Upgrading from Batcave
+
+The plugin used to be called `batcave`. Remove it and its marketplace before installing `bat-signal`, or every event will arrive twice:
+
+```bash
+claude plugin uninstall batcave@batcave
+claude plugin marketplace remove batcave
+claude plugin marketplace add lucas-moont/bat-signal
+claude plugin install bat-signal@bat-signal
+```
+
+The app carries your Batcave settings and window place over on its first run.
+
 ## What it sends
 
 Each hook is a `POST http://127.0.0.1:47777/hook` with the JSON payload Claude Code gives every hook (session id, cwd, event name and the event's own fields). Events used:

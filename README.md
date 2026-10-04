@@ -57,7 +57,7 @@ claude plugin marketplace add lucas-moont/bat-signal
 claude plugin install bat-signal@bat-signal
 ```
 
-The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md).
+The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md). Coming from Batcave? See [upgrading](docs/plugin.md#upgrading-from-batcave): the old plugin must be removed first.
 
 Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. Both open where you left them.
 
