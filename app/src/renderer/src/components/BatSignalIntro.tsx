@@ -15,11 +15,16 @@ export function BatSignalIntro() {
   const [leaving, setLeaving] = useState(false)
   const [done, setDone] = useState(played)
 
+  // Marked as played only once it ends: StrictMode runs effects twice in development.
+  const finish = () => {
+    played = true
+    setDone(true)
+  }
+
   useEffect(() => {
     if (played) return
-    played = true
     const leave = setTimeout(() => setLeaving(true), DURATION_MS - 300)
-    const end = setTimeout(() => setDone(true), DURATION_MS)
+    const end = setTimeout(finish, DURATION_MS)
     return () => {
       clearTimeout(leave)
       clearTimeout(end)
@@ -29,11 +34,7 @@ export function BatSignalIntro() {
   if (done) return null
 
   return (
-    <div
-      className={`intro${leaving ? ' intro--leaving' : ''}`}
-      onClick={() => setDone(true)}
-      role="presentation"
-    >
+    <div className={`intro${leaving ? ' intro--leaving' : ''}`} onClick={finish} role="presentation">
       <div className="intro__beam" />
       <div className="intro__signal">
         <BatEmblem size={120} />
