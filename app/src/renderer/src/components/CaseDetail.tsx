@@ -32,14 +32,12 @@ export function CaseDetail({
   session,
   attention,
   now,
-  calm,
   onBack,
   onOpen,
 }: {
   session: SessionSnapshot
   attention: AttentionItem[]
   now: Date
-  calm: boolean
   onBack: () => void
   onOpen: (target: SheetTarget) => void
 }) {
@@ -80,7 +78,7 @@ export function CaseDetail({
                     className={`row row--task row--${t.status}`}
                     onClick={() => onOpen({ kind: 'task', id: t.id })}
                   >
-                    <Beat beating={t.status === 'in_progress' && !calm} strength={0.3} className="row__glyph">
+                    <Beat beating={t.status === 'in_progress'} strength={0.3} className="row__glyph">
                       {TASK_GLYPH[t.status]}
                     </Beat>
                     <span className="row__text">
@@ -142,7 +140,7 @@ export function CaseDetail({
                   <span className="log__who">{m.role === 'user' ? 'You' : 'Claude'}</span>
                   <span className="log__text">
                     {i === messages.length - 1 ? (
-                      <Typewriter text={plainPreview(m.text)} calm={calm} />
+                      <Typewriter text={plainPreview(m.text)} />
                     ) : (
                       plainPreview(m.text)
                     )}

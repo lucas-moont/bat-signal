@@ -11,13 +11,11 @@ import './Sheets.css'
 export function Sheet({
   title,
   kicker,
-  calm,
   onClose,
   children,
 }: {
   title: string
   kicker: string
-  calm: boolean
   onClose: () => void
   children: ReactNode
 }) {
@@ -29,14 +27,14 @@ export function Sheet({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: calm ? 0 : 0.2 }}
+        transition={{ duration: 0.2 }}
       />
       <motion.div
         className="sheet"
-        initial={calm ? { y: 0 } : { y: '100%' }}
+        initial={{ y: '100%' }}
         animate={{ y: 0 }}
-        exit={calm ? { opacity: 0 } : { y: '100%' }}
-        transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 38 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 420, damping: 38 }}
       >
         <div className="sheet__grip" aria-hidden />
         <div className="sheet__head">
@@ -122,13 +120,11 @@ export function DetailSheet({
   session,
   target,
   now,
-  calm,
   onClose,
 }: {
   session: SessionSnapshot
   target: SheetTarget
   now: Date
-  calm: boolean
   onClose: () => void
 }) {
   if (target.kind === 'task') {
@@ -138,7 +134,6 @@ export function DetailSheet({
       <Sheet
         kicker={`Task ${task.id} · ${TASK_STATUS_LABEL[task.status]}`}
         title={task.subject}
-        calm={calm}
         onClose={onClose}
       >
         <TaskBody task={task} now={now} />
@@ -152,7 +147,6 @@ export function DetailSheet({
       <Sheet
         kicker={`Subagent · ${RUN_STATUS_LABEL[agent.status]}`}
         title={agent.description}
-        calm={calm}
         onClose={onClose}
       >
         <SubagentBody agent={agent} now={now} />
@@ -165,7 +159,6 @@ export function DetailSheet({
     <Sheet
       kicker={`Background · ${RUN_STATUS_LABEL[job.status]}`}
       title={job.description ?? job.command}
-      calm={calm}
       onClose={onClose}
     >
       <JobBody job={job} now={now} />
@@ -198,17 +191,15 @@ function Toggle({
 
 export function SettingsSheet({
   settings,
-  calm,
   onChange,
   onClose,
 }: {
   settings: Settings
-  calm: boolean
   onChange: (patch: Partial<Settings>) => void
   onClose: () => void
 }) {
   return (
-    <Sheet kicker="Bat-Computer" title="Settings" calm={calm} onClose={onClose}>
+    <Sheet kicker="Bat-Computer" title="Settings" onClose={onClose}>
       <Toggle
         label="Animations"
         hint="Intro, flying mascot, typewriter and transitions"

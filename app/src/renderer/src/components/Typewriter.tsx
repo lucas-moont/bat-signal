@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { useIsCalm } from '../calm'
 
 const DURATION_MS = 400
 
 /** Types new text out over ~400ms; renders it at once when calm or unchanged. */
-export function Typewriter({ text, calm }: { text: string; calm: boolean }) {
+export function Typewriter({ text }: { text: string }) {
+  const calm = useIsCalm()
   const [shown, setShown] = useState(text)
   const previous = useRef(text)
 

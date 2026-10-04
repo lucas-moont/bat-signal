@@ -7,12 +7,10 @@ import { Icon } from './Icon'
 export function Pill({
   needsYou,
   mood,
-  calm,
   onExpand,
 }: {
   needsYou: number
   mood: MascotMood
-  calm: boolean
   onExpand: () => void
 }) {
   return (
@@ -20,7 +18,7 @@ export function Pill({
       <BatEmblem size={30} />
       <span className="pill__count">{needsYou || '—'}</span>
       <div className="pill__mascot">
-        <BatClawd mood={mood} calm={calm} size={36} />
+        <BatClawd mood={mood} size={36} />
       </div>
       <button className="icon-button" onClick={onExpand} aria-label="Open the full window" title="Open">
         <Icon name="expand" />

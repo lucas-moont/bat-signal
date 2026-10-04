@@ -7,14 +7,13 @@ import { Icon } from './Icon'
 interface HeaderProps {
   needsYou: number
   mood: MascotMood
-  calm: boolean
   onSettings: () => void
   onPill: () => void
   onClose: () => void
 }
 
 /** Title bar of the frameless window: drag it to move. */
-export function Header({ needsYou, mood, calm, onSettings, onPill, onClose }: HeaderProps) {
+export function Header({ needsYou, mood, onSettings, onPill, onClose }: HeaderProps) {
   return (
     <header className="header">
       <BatEmblem size={34} />
@@ -25,7 +24,7 @@ export function Header({ needsYou, mood, calm, onSettings, onPill, onClose }: He
             key={needsYou}
             className="header__count"
             title={`${needsYou} need${needsYou === 1 ? 's' : ''} you`}
-            initial={calm ? false : { scale: 1.8, opacity: 0, rotate: -14 }}
+            initial={{ scale: 1.8, opacity: 0, rotate: -14 }}
             animate={{ scale: 1, opacity: 1, rotate: -5 }}
             exit={{ opacity: 0, scale: 0.6 }}
             transition={{ type: 'spring', stiffness: 520, damping: 22 }}
@@ -35,7 +34,7 @@ export function Header({ needsYou, mood, calm, onSettings, onPill, onClose }: He
         )}
       </AnimatePresence>
       <div className={`header__mascot header__mascot--${mood}`}>
-        <BatClawd mood={mood} calm={calm} />
+        <BatClawd mood={mood} />
       </div>
       <nav className="header__actions">
         <button className="icon-button" onClick={onSettings} aria-label="Settings" title="Settings">

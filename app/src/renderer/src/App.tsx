@@ -10,6 +10,7 @@ import { CaseDetail, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { Pill } from './components/Pill'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
+import { CalmContext } from './calm'
 import { useCalm, useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
 import './App.css'
 
@@ -65,95 +66,101 @@ export function App() {
   }, [settingsOpen, sheet, openCase])
 
   if (mode === 'pill') {
-    return <Pill needsYou={attention.length} mood={mood} calm={calm} onExpand={() => setMode('full')} />
+    return (
+      <CalmContext value={calm}>
+        <Pill needsYou={attention.length} mood={mood} onExpand={() => setMode('full')} />
+      </CalmContext>
+    )
   }
 
   return (
-    <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
-      <main className="app">
-        <Atmosphere rain={settings.rain && !calm} activity={activity} />
-        <Header
-          needsYou={attention.length}
-          mood={mood}
-          calm={calm}
-          onSettings={() => setSettingsOpen(true)}
-          onPill={() => setMode('pill')}
-          onClose={batcave.closeWindow}
-        />
-        <Tabs
-          tab={activeTab}
-          counts={{ needs: attention.length, cases: sessions.length }}
-          onChange={setTab}
-        />
+    <CalmContext value={calm}>
+      <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
+        <main className="app">
+          <Atmosphere rain={settings.rain && !calm} activity={activity} />
+          <Header
+            needsYou={attention.length}
+            mood={mood}
 
-        <div className="stage">
-          <div className="stage__scroll">
-            {activeTab === 'needs' ? (
-              <AttentionList
-                items={attention}
-                sessions={sessions}
-                now={now}
-                calm={calm}
-                onOpen={openAttention}
-              />
-            ) : (
-              <CaseList
-                sessions={sessions}
-                attention={attention}
-                now={now}
-                calm={calm}
-                onOpen={(id) => open(id)}
-              />
-            )}
-          </div>
+            onSettings={() => setSettingsOpen(true)}
+            onPill={() => setMode('pill')}
+            onClose={batcave.closeWindow}
+          />
+          <Tabs
+            tab={activeTab}
+            counts={{ needs: attention.length, cases: sessions.length }}
+            onChange={setTab}
+          />
 
-          <AnimatePresence>
-            {session && (
-              <motion.div
-                key="detail"
-                className="stage__layer"
-                initial={calm ? false : { x: '100%' }}
-                animate={{ x: 0 }}
-                exit={calm ? { opacity: 0 } : { x: '100%' }}
-                transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 36 }}
-              >
-                <CaseDetail
-                  session={session}
+          <div className="stage">
+            <div className="stage__scroll">
+              {activeTab === 'needs' ? (
+                <AttentionList
+                  items={attention}
+                  sessions={sessions}
+                  now={now}
+
+                  onOpen={openAttention}
+                />
+              ) : (
+                <CaseList
+                  sessions={sessions}
                   attention={attention}
                   now={now}
-                  calm={calm}
-                  onBack={() => setOpenCase(null)}
-                  onOpen={setSheet}
+
+                  onOpen={(id) => open(id)}
                 />
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </div>
 
-          <AnimatePresence>
-            {session && sheet && (
-              <DetailSheet
-                key="sheet"
-                session={session}
-                target={sheet}
-                now={now}
-                calm={calm}
-                onClose={() => setSheet(null)}
-              />
-            )}
-            {settingsOpen && (
-              <SettingsSheet
-                key="settings"
-                settings={settings}
-                calm={calm}
-                onChange={changeSettings}
-                onClose={() => setSettingsOpen(false)}
-              />
-            )}
-          </AnimatePresence>
-        </div>
+            <AnimatePresence>
+              {session && (
+                <motion.div
+                  key="detail"
+                  className="stage__layer"
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+                >
+                  <CaseDetail
+                    session={session}
+                    attention={attention}
+                    now={now}
 
-        {intro && !calm && <BatSignalIntro onDone={endIntro} />}
-      </main>
-    </MotionConfig>
+                    onBack={() => setOpenCase(null)}
+                    onOpen={setSheet}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {session && sheet && (
+                <DetailSheet
+                  key="sheet"
+                  session={session}
+                  target={sheet}
+                  now={now}
+
+                  onClose={() => setSheet(null)}
+                />
+              )}
+              {settingsOpen && (
+                <SettingsSheet
+                  key="settings"
+                  settings={settings}
+
+                  onChange={changeSettings}
+                  onClose={() => setSettingsOpen(false)}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+
+          {intro && !calm && <BatSignalIntro onDone={endIntro} />}
+        </main>
+      </MotionConfig>
+    </CalmContext>
   )
 }

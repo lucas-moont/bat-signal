@@ -6,6 +6,7 @@
 // sways; CSS loops would keep the compositor busy at 60fps.
 import { useEffect, useRef, useState } from 'react'
 import type { MascotMood } from '@shared/view'
+import { useIsCalm } from '../calm'
 import { useFrame, useLiveStyle } from '../ticker'
 import './BatClawd.css'
 
@@ -126,7 +127,8 @@ const LABEL: Record<MascotMood, string> = {
   alarmed: 'Bat-Clawd needs you',
 }
 
-export function BatClawd({ mood, calm, size = 60 }: { mood: MascotMood; calm: boolean; size?: number }) {
+export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number }) {
+  const calm = useIsCalm()
   const ref = useRef<HTMLSpanElement>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
