@@ -1,6 +1,6 @@
 import { app, ipcMain } from 'electron'
 import { IPC } from '../shared/ipc'
-import { parseSettings, type WindowMode } from '../shared/settings'
+import { applySettingsPatch, type WindowMode } from '../shared/settings'
 import { startBatcave } from './batcave'
 import { loadSettings, saveSettings } from './settings'
 import { BatcaveWindow } from './window'
@@ -12,7 +12,7 @@ function start(): void {
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
-    settings = parseSettings({ ...settings, ...(patch && typeof patch === 'object' ? patch : {}) })
+    settings = applySettingsPatch(settings, patch)
     saveSettings(settings)
     window.apply(settings)
     window.win.webContents.send(IPC.settings, settings)

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import type { Settings } from '@shared/settings'
+import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { relativeTime } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
@@ -233,8 +233,8 @@ export function SettingsSheet({
         <span className="toggle__label">Opacity</span>
         <input
           type="range"
-          min={50}
-          max={100}
+          min={OPACITY_MIN * 100}
+          max={OPACITY_MAX * 100}
           step={5}
           value={Math.round(settings.opacity * 100)}
           onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}

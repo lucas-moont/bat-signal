@@ -1,7 +1,7 @@
 // The window's link to the main process. In a plain browser (design review, `vite` preview)
 // there is no preload bridge, so a stand-in serves the demo snapshot and in-memory settings.
 import { demoSnapshot, quietDemoSnapshot } from '@shared/demo'
-import { DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
+import { applySettingsPatch, DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { BatcaveApi } from '../../preload/index'
 
 function browserStandIn(): BatcaveApi {
@@ -15,7 +15,7 @@ function browserStandIn(): BatcaveApi {
     markSeen: () => undefined,
     getSettings: async () => settings,
     setSettings: (patch) => {
-      settings = { ...settings, ...patch }
+      settings = applySettingsPatch(settings, patch)
       settingsListeners.forEach((l) => l(settings))
     },
     onSettings: (callback) => {

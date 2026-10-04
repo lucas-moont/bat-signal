@@ -1,3 +1,5 @@
+import { clamp } from '../shared/guards'
+
 export interface Rect {
   x: number
   y: number
@@ -51,8 +53,6 @@ export function restoreBounds(
     height,
   }
 }
-
-const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)
 
 const overlap = (a: Rect, b: Rect): number => {
   const w = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)
