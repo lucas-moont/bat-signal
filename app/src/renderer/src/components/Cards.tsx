@@ -6,6 +6,16 @@ import { Beat, Glow } from './Live'
 import { Typewriter } from './Typewriter'
 import './Cards.css'
 
+function Empty({ title, hint }: { title: string; hint: string }) {
+  return (
+    <div className="empty">
+      <BatClawd mood="sleeping" size={72} />
+      <p className="empty__title">{title}</p>
+      <p className="empty__hint">{hint}</p>
+    </div>
+  )
+}
+
 const URGENT = new Set<AttentionItem['kind']>(['permission', 'error'])
 
 const listMotion = (index: number) => ({
@@ -27,13 +37,7 @@ export function AttentionList({
   onOpen: (item: AttentionItem) => void
 }) {
   if (!items.length) {
-    return (
-      <div className="empty">
-        <BatClawd mood="sleeping" size={72} />
-        <p className="empty__title">All quiet in Gotham.</p>
-        <p className="empty__hint">Nothing needs you right now.</p>
-      </div>
-    )
+    return <Empty title="All quiet in Gotham." hint="Nothing needs you right now." />
   }
   return (
     <ul className="cards">
@@ -75,13 +79,7 @@ export function CaseList({
   onOpen: (sessionId: string) => void
 }) {
   if (!sessions.length) {
-    return (
-      <div className="empty">
-        <BatClawd mood="sleeping" size={72} />
-        <p className="empty__title">No open cases.</p>
-        <p className="empty__hint">Start Claude Code in a terminal and it shows up here.</p>
-      </div>
-    )
+    return <Empty title="No open cases." hint="Start Claude Code in a terminal and it shows up here." />
   }
   return (
     <ul className="cards">
