@@ -1,19 +1,29 @@
-// Brings a session's terminal to the front on Windows: the window that hosts it and, in Windows
-// Terminal, the tab titled with its name. The decisions are the pure rules in ../terminal.
+// Brings a session's terminal to the front on Windows: the Windows Terminal window and tab titled
+// with its name, or else the window its process tree leads to. The decisions are the pure rules
+// in ../terminal; this file only asks Windows and acts.
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import { clipboard } from 'electron'
 import type { TerminalOutcome } from '../../shared/types'
-import { findWindowOwner, pickTab, type ProcessInfo } from '../terminal'
+import { findWindowOwner, pickWindowTab, type ProcessInfo, type TerminalWindow } from '../terminal'
 
 const SCRIPT_TIMEOUT_MS = 10_000
 
+interface Pending {
+  end: string
+  out: string
+  resolve: (out: string) => void
+  reject: (err: Error) => void
+  timer: NodeJS.Timeout
+}
+
 /**
  * One PowerShell kept open for the app's lifetime. Starting PowerShell costs ~270ms and Windows'
- * process queries are slow until warm, so a fresh one per click took ~3-4s; a warm one answers in
- * a fraction of that. Scripts run one at a time, each sent as one base64 line.
+ * process queries are slow until warm, so a fresh one per click took ~3s; a warm one answers in a
+ * fraction of that. Scripts run one at a time, each sent as one base64 line.
  */
 class PowerShellHost {
   private child?: ChildProcessWithoutNullStreams
+  private pending?: Pending
   private queue: Promise<unknown> = Promise.resolve()
   private runs = 0
 
@@ -23,28 +33,54 @@ class PowerShellHost {
     return next
   }
 
-  /** Starts PowerShell ahead of a likely request and runs `prelude`, so even the first one is quick. */
+  /** Starts PowerShell ahead of a likely request and runs `prelude`, so even the first is quick. */
   warm(prelude: string): void {
-    if (this.child && this.child.exitCode === null) return
-    void this.run(prelude).catch(() => undefined)
+    if (!this.child) void this.run(prelude).catch(() => undefined)
   }
 
   close(): void {
-    this.child?.kill()
+    this.stop(this.child, new Error('PowerShell host closed'))
+  }
+
+  /** Kills `child` (only if it is still the current one) and fails what it was running. */
+  private stop(child: ChildProcessWithoutNullStreams | undefined, err: Error): void {
+    if (!child || child !== this.child) return
     this.child = undefined
+    child.kill()
+    const pending = this.pending
+    this.pending = undefined
+    if (pending) {
+      clearTimeout(pending.timer)
+      pending.reject(err)
+    }
   }
 
   private start(): ChildProcessWithoutNullStreams {
-    if (this.child && this.child.exitCode === null) return this.child
+    if (this.child) return this.child
     const child = spawn('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '-'], {
       windowsHide: true,
     })
-    child.stdin.write('[Console]::OutputEncoding = [Text.Encoding]::UTF8\n')
-    child.on('exit', () => {
-      if (this.child === child) this.child = undefined
-    })
     this.child = child
+    child.stdout.setEncoding('utf8') // a glyph split across chunks must not turn into U+FFFD
+    child.stdout.on('data', (chunk: string) => this.onOutput(chunk))
+    child.stderr.resume() // nobody reads it, but an undrained pipe would block PowerShell
+    const fail = (err: Error) => this.stop(child, err)
+    child.on('error', fail) // PowerShell missing or blocked by policy
+    child.stdin.on('error', fail) // the pipe broke under a write
+    child.on('exit', () => fail(new Error('PowerShell exited')))
+    child.stdin.write('[Console]::OutputEncoding = [Text.Encoding]::UTF8\n')
     return child
+  }
+
+  private onOutput(chunk: string): void {
+    const pending = this.pending
+    if (!pending) return
+    pending.out += chunk
+    const at = pending.out.indexOf(pending.end)
+    if (at < 0) return
+    this.pending = undefined
+    clearTimeout(pending.timer)
+    pending.resolve(pending.out.slice(0, at))
   }
 
   private send(script: string): Promise<string> {
@@ -52,26 +88,14 @@ class PowerShellHost {
     const end = `<<bat-signal-end-${++this.runs}>>`
     const encoded = Buffer.from(script, 'utf8').toString('base64')
     return new Promise((resolve, reject) => {
-      let out = ''
-      const timer = setTimeout(() => {
-        cleanup()
-        this.close() // a stuck script takes the host with it; the next request starts afresh
-        reject(new Error('PowerShell did not answer in time'))
-      }, SCRIPT_TIMEOUT_MS)
-      const onData = (chunk: Buffer) => {
-        out += chunk.toString('utf8')
-        const at = out.indexOf(end)
-        if (at < 0) return
-        cleanup()
-        resolve(out.slice(0, at))
-      }
-      const cleanup = () => {
-        clearTimeout(timer)
-        child.stdout.off('data', onData)
-      }
-      child.stdout.on('data', onData)
+      // A stuck script takes its own host with it; the next request starts afresh.
+      const timer = setTimeout(
+        () => this.stop(child, new Error('PowerShell did not answer in time')),
+        SCRIPT_TIMEOUT_MS,
+      )
+      this.pending = { end, out: '', resolve, reject, timer }
       child.stdin.write(
-        `try { iex ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encoded}'))) | Out-String -Width 4096 } catch {}; '${end}'\n`,
+        `try { iex ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encoded}'))) | Out-String -Width 4096 } catch { "PS-ERROR: $($_.Exception.Message)" }; '${end}'\n`,
       )
     })
   }
@@ -79,109 +103,133 @@ class PowerShellHost {
 
 const host = new PowerShellHost()
 
-/** Starts the PowerShell host before a request (the pointer reached a terminal button). */
-export const warmTerminal = (): void => host.warm(PRELUDE)
-/** Stops the PowerShell host (the app is quitting). */
-export const closeTerminalHost = (): void => host.close()
-
-const UIA = [
+/**
+ * Compiled once per host: a process table straight from the kernel, and every visible titled
+ * top-level window with its process. WMI took ~0.5s per question even when warm, and
+ * MainWindowHandle knows only one window per process; these take milliseconds and see them all.
+ */
+const PRELUDE = [
+  "$ErrorActionPreference = 'SilentlyContinue'",
+  "if (-not ('BatSignal.Native' -as [type])) {",
+  'Add-Type -TypeDefinition @"',
+  'using System; using System.Runtime.InteropServices; using System.Text;',
+  'namespace BatSignal { public static class Native {',
+  '  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] struct Entry {',
+  '    public uint size, usage, pid; public IntPtr heap; public uint module, threads, ppid;',
+  '    public int priority; public uint flags;',
+  '    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string exe; }',
+  '  delegate bool EnumProc(IntPtr hwnd, IntPtr lparam);',
+  '  [DllImport("kernel32.dll")] static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint pid);',
+  '  [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern bool Process32FirstW(IntPtr snap, ref Entry e);',
+  '  [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern bool Process32NextW(IntPtr snap, ref Entry e);',
+  '  [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);',
+  '  [DllImport("user32.dll")] static extern bool EnumWindows(EnumProc proc, IntPtr lparam);',
+  '  [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr hwnd);',
+  '  [DllImport("user32.dll")] static extern int GetWindowTextLength(IntPtr hwnd);',
+  '  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid);',
+  '  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);',
+  '  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);',
+  '  [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr h);',
+  '  [DllImport("user32.dll")] public static extern bool IsWindow(IntPtr h);',
+  '  [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);',
+  '  public static string Processes() {',
+  '    var snap = CreateToolhelp32Snapshot(2, 0); var e = new Entry(); e.size = (uint)Marshal.SizeOf(e);',
+  '    var sb = new StringBuilder();',
+  "    if (Process32FirstW(snap, ref e)) do { sb.Append(e.pid).Append('\\t').Append(e.ppid).Append('\\t').Append(e.exe).Append('\\n'); } while (Process32NextW(snap, ref e));",
+  '    CloseHandle(snap); return sb.ToString(); }',
+  '  public static string Windows() {',
+  '    var sb = new StringBuilder();',
+  '    EnumWindows((h, l) => { if (IsWindowVisible(h) && GetWindowTextLength(h) > 0) { uint pid; GetWindowThreadProcessId(h, out pid);',
+  "      sb.Append(h.ToInt64()).Append('\\t').Append(pid).Append('\\n'); } return true; }, IntPtr.Zero);",
+  '    return sb.ToString(); } } }',
+  '"@',
+  '}',
   'Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes',
   '$tabType = New-Object System.Windows.Automation.PropertyCondition(' +
     '[System.Windows.Automation.AutomationElement]::ControlTypeProperty, ' +
     '[System.Windows.Automation.ControlType]::TabItem)',
   'function Tabs($handle) { ' +
-    '[System.Windows.Automation.AutomationElement]::FromHandle($handle).FindAll(' +
+    '[System.Windows.Automation.AutomationElement]::FromHandle([IntPtr][long]$handle).FindAll(' +
     '[System.Windows.Automation.TreeScope]::Descendants, $tabType) }',
 ].join('\n')
 
 /**
- * Compiled once per host: a process table straight from the kernel (pid, parent, name). WMI took
- * ~0.5s per question even when warm; this takes milliseconds.
- */
-const PRELUDE = [
-  "if (-not ('BatSignal.Procs' -as [type])) {",
-  'Add-Type -TypeDefinition @"',
-  'using System; using System.Runtime.InteropServices; using System.Text;',
-  'namespace BatSignal { public static class Procs {',
-  '  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] struct Entry {',
-  '    public uint size, usage, pid; public IntPtr heap; public uint module, threads, ppid;',
-  '    public int priority; public uint flags;',
-  '    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string exe; }',
-  '  [DllImport("kernel32.dll")] static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint pid);',
-  '  [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern bool Process32FirstW(IntPtr snap, ref Entry e);',
-  '  [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] static extern bool Process32NextW(IntPtr snap, ref Entry e);',
-  '  [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);',
-  '  public static string Table() {',
-  '    var snap = CreateToolhelp32Snapshot(2, 0); var e = new Entry(); e.size = (uint)Marshal.SizeOf(e);',
-  '    var sb = new StringBuilder();',
-  "    if (Process32FirstW(snap, ref e)) do { sb.Append(e.pid).Append('\\t').Append(e.ppid).Append('\\t').Append(e.exe).Append('\\n'); } while (Process32NextW(snap, ref e));",
-  '    CloseHandle(snap); return sb.ToString(); } } }',
-  '"@',
-  '}',
-].join('\n')
-
-/**
- * The session's line of ancestors (up to the first with a window), plus the tab titles of a
- * Windows Terminal on that line.
+ * The session's line of ancestors (up to the first with a window), every Windows Terminal window
+ * with its tab titles, and the handle of each process's first window.
  */
 const surveyScript = (pid: number) =>
   [
-    "$ErrorActionPreference = 'SilentlyContinue'",
     PRELUDE,
-    '$windows = @{}',
-    'Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { $windows[$_.Id] = $_.MainWindowHandle }',
     '$table = @{}',
-    'foreach ($line in [BatSignal.Procs]::Table() -split "`n") { $f = $line -split "`t"; if ($f.Count -eq 3) { $table[[int]$f[0]] = $f } }',
+    'foreach ($line in [BatSignal.Native]::Processes() -split "`n") { $f = $line -split "`t"; if ($f.Count -eq 3) { $table[[int]$f[0]] = $f } }',
+    '$firstWindow = @{}',
+    '$windows = @()',
+    'foreach ($line in [BatSignal.Native]::Windows() -split "`n") { $f = $line -split "`t"; if ($f.Count -eq 2) {',
+    // ConvertTo-Json only takes string keys.
+    '  $wpid = [int]$f[1]; if (-not $firstWindow.ContainsKey([string]$wpid)) { $firstWindow[[string]$wpid] = [long]$f[0] }',
+    '  if ($table.ContainsKey($wpid) -and $table[$wpid][2] -eq "WindowsTerminal.exe") {',
+    '    $windows += [pscustomobject]@{ handle = [long]$f[0]; pid = $wpid; titles = @(Tabs $f[0] | ForEach-Object { $_.Current.Name }) } } } }',
     '$processes = @()',
     `$id = ${pid}`,
     'for ($i = 0; $i -lt 16 -and $table.ContainsKey($id); $i++) {',
     '  $f = $table[$id]',
-    '  $processes += [pscustomobject]@{ pid = $id; ppid = [int]$f[1]; name = [string]$f[2]; hasWindow = $windows.ContainsKey($id) }',
-    '  if ($windows.ContainsKey($id)) { break }',
+    '  $processes += [pscustomobject]@{ pid = $id; ppid = [int]$f[1]; name = [string]$f[2]; hasWindow = $firstWindow.ContainsKey([string]$id) }',
+    '  if ($firstWindow.ContainsKey([string]$id)) { break }',
     '  $id = [int]$f[1]',
     '}',
-    UIA,
-    '$tabs = @{}',
-    '$terminal = $processes | Where-Object { $_.hasWindow -and $_.name -eq "WindowsTerminal.exe" } | Select-Object -First 1',
-    'if ($terminal) { $tabs[[string]$terminal.pid] = @(Tabs $windows[$terminal.pid] | ForEach-Object { $_.Current.Name }) }',
-    '[pscustomobject]@{ processes = $processes; tabs = $tabs } | ConvertTo-Json -Depth 4 -Compress',
+    '[pscustomobject]@{ processes = $processes; windows = $windows; firstWindow = $firstWindow } | ConvertTo-Json -Depth 5 -Compress',
   ].join('\n')
 
-/** Restores the window if minimized, brings it to the front, then selects tab `tab` (or none). */
-const focusScript = (pid: number, tab: number) =>
+/** Restores window `handle` if minimized, brings it to the front, then selects tab `tab` (or none). */
+const focusScript = (handle: number, tab: number) =>
   [
-    "$ErrorActionPreference = 'SilentlyContinue'",
-    "if (-not ('BatSignal.Win' -as [type])) {",
-    'Add-Type -Namespace BatSignal -Name Win -MemberDefinition @"',
-    '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(System.IntPtr h);',
-    '[DllImport("user32.dll")] public static extern bool ShowWindow(System.IntPtr h, int cmd);',
-    '[DllImport("user32.dll")] public static extern bool IsIconic(System.IntPtr h);',
-    '[DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, System.UIntPtr extra);',
-    '"@',
-    '}',
-    `$handle = (Get-Process -Id ${pid}).MainWindowHandle`,
-    "if (-not $handle -or $handle -eq 0) { 'gone' } else {",
-    'if ([BatSignal.Win]::IsIconic($handle)) { [void][BatSignal.Win]::ShowWindow($handle, 9) }',
+    PRELUDE,
+    `$handle = [IntPtr][long]${handle}`,
+    "if (-not [BatSignal.Native]::IsWindow($handle)) { 'gone' } else {",
+    'if ([BatSignal.Native]::IsIconic($handle)) { [void][BatSignal.Native]::ShowWindow($handle, 9) }',
     // A tap of Alt lets a background process take the foreground (Windows' focus-stealing guard).
-    '[BatSignal.Win]::keybd_event(0x12, 0, 0, [System.UIntPtr]::Zero)',
-    '[void][BatSignal.Win]::SetForegroundWindow($handle)',
-    '[BatSignal.Win]::keybd_event(0x12, 0, 2, [System.UIntPtr]::Zero)',
+    '[BatSignal.Native]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)',
+    '[void][BatSignal.Native]::SetForegroundWindow($handle)',
+    '[BatSignal.Native]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)',
     ...(tab >= 0
       ? [
-          UIA,
-          `$tab = @(Tabs $handle)[${tab}]`,
+          `$tab = @(Tabs ${handle})[${tab}]`,
           'if ($tab) { $tab.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select() }',
         ]
       : []),
     "'focused' }",
   ].join('\n')
 
+/** PowerShell 5.1's ConvertTo-Json writes a one-item array as the bare item. */
+const list = <T>(raw: T | T[] | undefined): T[] => (raw === undefined ? [] : Array.isArray(raw) ? raw : [raw])
+
 interface Survey {
-  processes: ProcessInfo[]
-  tabs: Record<string, string[] | string>
+  processes: ProcessInfo | ProcessInfo[]
+  windows: (Omit<TerminalWindow, 'titles'> & { titles: string | string[] }) | TerminalWindow[]
+  firstWindow: Record<string, number>
 }
 
-/** Brings the terminal of the session running as `pid` to the front, or copies how to resume it. */
+/** Which window to raise (and tab to select) for a session, from what Windows reported. */
+function target(
+  survey: Survey,
+  session: { pid: number; name?: string },
+): { handle: number; tab: number } | undefined {
+  const windows = list(survey.windows).map((w) => ({ ...w, titles: list(w.titles) }))
+  // The tab titled with the session's name wins: it also covers a terminal started from the Start
+  // menu on Windows 11, whose shell descends from explorer, not from Windows Terminal.
+  const tab = pickWindowTab(windows, session.name)
+  if (tab) return { handle: tab.handle, tab: tab.tab }
+  const owner = findWindowOwner(list(survey.processes), session.pid)
+  const handle = owner === undefined ? undefined : survey.firstWindow[String(owner)]
+  return handle === undefined ? undefined : { handle, tab: -1 }
+}
+
+/** Starts the PowerShell host before a request (the pointer reached a terminal button). */
+export const warmTerminal = (): void => host.warm(PRELUDE)
+/** Stops the PowerShell host (the app is quitting). */
+export const closeTerminalHost = (): void => host.close()
+
+/** Brings the terminal of a session to the front, or copies the command that resumes it. */
 export async function goToTerminal(session: {
   pid: number
   name?: string
@@ -191,15 +239,11 @@ export async function goToTerminal(session: {
     clipboard.writeText(`claude --resume ${session.sessionId}`)
     return 'copied'
   }
-  if (session.pid <= 0) return copy()
   try {
-    const survey = JSON.parse(await host.run(surveyScript(session.pid))) as Survey
-    const owner = findWindowOwner(survey.processes, session.pid)
-    if (owner === undefined) return copy()
-    // ConvertTo-Json turns a one-item array into a bare string.
-    const raw = survey.tabs[String(owner)]
-    const titles = raw === undefined ? [] : Array.isArray(raw) ? raw : [raw]
-    const result = await host.run(focusScript(owner, pickTab(titles, session.name) ?? -1))
+    if (session.pid <= 0) return copy()
+    const found = target(JSON.parse(await host.run(surveyScript(session.pid))) as Survey, session)
+    if (!found) return copy()
+    const result = await host.run(focusScript(found.handle, found.tab))
     return result.includes('focused') ? 'focused' : copy()
   } catch (err) {
     console.warn('[bat-signal] could not reach the terminal:', err)
