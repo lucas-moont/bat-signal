@@ -37,6 +37,7 @@ export async function isSessionAlive(entry: RegistryEntry, probe: ProcessProbe):
   return (await liveEntries([entry], probe)).length === 1
 }
 
+const DEBOUNCE_MS = 150
 const ENTRY_FILE = /^\d+\.json$/ // never touch the sibling *.key files: they hold secrets
 
 function parseEntry(text: string): RegistryEntry | null {
@@ -74,6 +75,7 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   private current?: RegistryEntry[]
   private running?: Promise<void>
   private dirty = false
+  private stopped = false
 
   constructor(
     private readonly dir: string,
@@ -84,6 +86,7 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   }
 
   start(): void {
+    this.stopped = false
     try {
       this.watcher = watch(this.dir, () => this.schedule())
       this.watcher.on('error', () => undefined) // folder removed: polling still runs
@@ -94,7 +97,9 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
     void this.refresh()
   }
 
+  /** Also cancels any rerun queued behind an in-flight scan and suppresses its result. */
   stop(): void {
+    this.stopped = true
     this.watcher?.close()
     clearInterval(this.timer)
     clearTimeout(this.debounce)
@@ -102,7 +107,7 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
 
   private schedule(): void {
     clearTimeout(this.debounce)
-    this.debounce = setTimeout(() => void this.refresh(), 150)
+    this.debounce = setTimeout(() => void this.refresh(), DEBOUNCE_MS)
   }
 
   /** Single-flight: a refresh requested while one runs is folded into one rerun. */
@@ -113,7 +118,7 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
     }
     this.running = this.scan().finally(() => {
       this.running = undefined
-      if (this.dirty) {
+      if (this.dirty && !this.stopped) {
         this.dirty = false
         void this.refresh()
       }
@@ -135,7 +140,7 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
     }
     live.sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0))
 
-    if (isDeepStrictEqual(live, this.current)) return
+    if (this.stopped || isDeepStrictEqual(live, this.current)) return
     this.current = live
     this.emit('change', live)
   }
