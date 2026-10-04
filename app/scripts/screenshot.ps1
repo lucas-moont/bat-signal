@@ -11,6 +11,7 @@ public class BatcaveWin {
   [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr v);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int attr, out RECT r, int size);
+  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
   public struct RECT { public int L, T, R, B; }
 }
 "@
@@ -28,13 +29,23 @@ try {
   $win = Get-Process electron | Where-Object $isOurs | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
   if (-not $win) { throw 'Batcave window not found' }
 
-  # DWMWA_EXTENDED_FRAME_BOUNDS (9) excludes the invisible resize borders.
+  $hwnd = $win.MainWindowHandle
+  # Whole window including the invisible resize borders, and the visible part (DWMWA_EXTENDED_FRAME_BOUNDS = 9).
+  $outer = New-Object BatcaveWin+RECT
+  [BatcaveWin]::GetWindowRect($hwnd, [ref]$outer) | Out-Null
   $r = New-Object BatcaveWin+RECT
-  [BatcaveWin]::DwmGetWindowAttribute($win.MainWindowHandle, 9, [ref]$r, 16) | Out-Null
-  $w = $r.R - $r.L; $h = $r.B - $r.T
+  [BatcaveWin]::DwmGetWindowAttribute($hwnd, 9, [ref]$r, 16) | Out-Null
 
-  $bmp = New-Object System.Drawing.Bitmap $w, $h
-  [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($r.L, $r.T, 0, 0, $bmp.Size)
+  # PrintWindow asks the window to paint itself, so whatever overlaps it on screen doesn't matter.
+  $full = New-Object System.Drawing.Bitmap ($outer.R - $outer.L), ($outer.B - $outer.T)
+  $g = [System.Drawing.Graphics]::FromImage($full)
+  $hdc = $g.GetHdc()
+  [BatcaveWin]::PrintWindow($hwnd, $hdc, 2) | Out-Null # PW_RENDERFULLCONTENT
+  $g.ReleaseHdc($hdc)
+
+  $w = $r.R - $r.L; $h = $r.B - $r.T
+  $crop = New-Object System.Drawing.Rectangle ($r.L - $outer.L), ($r.T - $outer.T), $w, $h
+  $bmp = $full.Clone($crop, $full.PixelFormat)
   New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Out) | Out-Null
   $bmp.Save($Out)
   "Saved ${w}x${h} to $Out"
