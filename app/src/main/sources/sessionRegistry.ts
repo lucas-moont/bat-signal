@@ -127,9 +127,13 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
       names.map(async (n) => parseEntry(await readFile(join(this.dir, n), 'utf8').catch(() => ''))),
     )
     const entries = parsed.filter((e) => e !== null)
-    const live = (await liveEntries(entries, this.probe)).sort(
-      (a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0),
-    )
+    let live: RegistryEntry[]
+    try {
+      live = await liveEntries(entries, this.probe)
+    } catch {
+      return // the OS lookup failed: keep the last known list rather than dropping every session
+    }
+    live.sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0))
 
     if (isDeepStrictEqual(live, this.current)) return
     this.current = live
