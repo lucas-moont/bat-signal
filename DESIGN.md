@@ -201,7 +201,7 @@ A black-on-black noir palette with one family of reds that work as light and ink
 
 A single column inside a frameless window with a 1px warm border (#1d1714). The 54px header doubles as the title bar and drag region. Under it, the files layout has a tab row (Needs you, Cases) with a 14px gutter and 18px between tabs, then a scroll stage. The case detail and the bottom sheets (task drawer, settings) are layers over the stage, not new windows. Cards stack in a grid with 8px gaps inside 10px padding. Text inside cards sits on a 14px left edge, which leaves room for the colored rule.
 
-The Night Report replaces the tab row and cards with one article. A 114px margin column holds right-aligned stamps and ages, a 1px Dried Blood rule runs down the sheet at the margin, and the words start 12px after it. A double rule (3px double, Line) closes the dateline. Sections are 18px apart; entries carry 7px vertical padding.
+The Night Report keeps the tab row and replaces the cards with one typed article per tab. A 114px margin column holds right-aligned stamps and ages, a 1px Dried Blood rule runs down the sheet at the margin, and the words start 12px after it. A double rule (3px double, Line) closes the dateline; entries carry 5px vertical padding.
 
 Responsive behavior has one breakpoint, max-width 330px: the header tightens, Bat-Clawd steps out before the buttons give up any room, and the Night Report margin shrinks to 100px with tighter tracking on stamps and headings. The minimum window is 300x360.
 
@@ -275,11 +275,11 @@ Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px t
 Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge and Dried Blood lining. Poses come from the shared clock; a click plays a single 0.7s hop.
 
 ### The Night Report (alternate panel layout)
-One typed column on black, read top to bottom. There are no tabs, no cards and no slide-in screens.
-- **Dateline:** NIGHT REPORT in Bone typewriter caps; the weekday, date and 24-hour time in 11px Ash; the case tally on the right; when anything waits, "n need you" under a hot pen stroke. A double rule closes it.
+One typed column on black, read top to bottom, under the same Needs you / Cases tabs as the case files. There are no cards and no slide-in screens: a case opens in place.
+- **Dateline:** NIGHT REPORT in Bone typewriter caps on the left, the weekday, date and 24-hour time in 11px Ash on the right, on one line (the tabs carry the counts). A double rule closes it.
 - **Entries:** a two-column grid, with the margin (stamp, then mono age) right-aligned and the words after the margin rule. Hover tints the entry with Raised at 45%. Focus is a 1px Bone outline inset by 1px. The case name is in Bone, the rest in Typed Ink.
 - **Red pen:** a hand-drawn SVG stroke tiled under the action phrase (28x5 tile, `box-decoration-break: clone` so it follows wrapped lines). Pen Hot at 1.5px for blocked work (permission, error), Pen Soft at 1.1px for waiting work (waiting, reply), and no stroke for quiet work (stalled). It is a drawn stroke and not a text underline, so it reads neither as a link nor as a spelling mark.
-- **Case paragraphs:** the title, case number, folder, current task, "n of m filed", and Claude's last words in quotes (capped at 150 characters, typed out). Clicking unfolds the notes in place (height and opacity over 0.2s), and an Ash pen bracket in the margin holds the open case.
+- **Case paragraphs:** only what a glance needs: the title, the current task and "n of m filed", with a terminal button on the right. Clicking unfolds the case in place (height and opacity over 0.2s), held by an Ash pen bracket in the margin: its requests (stamp and pen), the case number, folder and Claude's last words in quotes (capped at 150 characters, typed out), a labelled Terminal button, then the notes.
 - **Notes:** small uppercase group titles (Tasks, Subagents, In the background). Each line has a typed mark, the text and a state: typed checkboxes `[ ]` `[>]` `[x]` `[-]` for tasks, the agent type for subagents, `$` for jobs. Running lines mark in Bone; finished lines are struck through in Ash. A note line opens the existing task drawer.
 - **Close:** "End of report." in 11px Ash.
 
