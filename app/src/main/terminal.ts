@@ -26,3 +26,13 @@ export function findWindowOwner(processes: ProcessInfo[], pid: number): number |
   }
   return undefined
 }
+
+/** A tab title without the status glyph Claude Code puts in front of it ("◑ name" → "name"). */
+const bareTitle = (title: string) => title.replace(/^[^\p{L}\p{N}]+/u, '').trim()
+
+/** Index of the Windows Terminal tab titled with the session's name. */
+export function pickTab(titles: string[], name: string | undefined): number | undefined {
+  if (!name) return undefined
+  const index = titles.findIndex((t) => bareTitle(t) === name)
+  return index < 0 ? undefined : index
+}
