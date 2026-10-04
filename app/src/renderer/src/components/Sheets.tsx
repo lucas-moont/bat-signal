@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
-import { relativeTime, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
+import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import './Sheets.css'
@@ -71,7 +71,7 @@ function TaskBody({ task, now }: { task: Task; now: Date }) {
           {[...task.history].reverse().map((h, i) => (
             <li key={`${h.at}:${i}`} className={`timeline__step timeline__step--${h.status}`}>
               <span className="timeline__what">{TASK_STATUS_LABEL[h.status]}</span>
-              <span className="card__time">{relativeTime(h.at, now)} ago</span>
+              <span className="card__time">{ago(h.at, now)}</span>
             </li>
           ))}
         </ol>
@@ -93,12 +93,28 @@ function SubagentBody({ agent, now }: { agent: Subagent; now: Date }) {
           {agent.prompt}
         </Field>
       )}
-      <Field label="Timing">
-        Started {relativeTime(agent.startedAt, now)} ago
-        {agent.endedAt && ` · finished ${relativeTime(agent.endedAt, now)} ago`}
-      </Field>
+      <Timing started={agent.startedAt} ended={agent.endedAt} endedWord="finished" now={now} />
     </>
   )
+}
+
+/** "Started 3m ago · finished just now", skipping times that are missing. */
+function Timing({
+  started,
+  ended,
+  endedWord,
+  now,
+}: {
+  started: string
+  ended?: string
+  endedWord: string
+  now: Date
+}) {
+  const parts = [
+    ago(started, now) && `Started ${ago(started, now)}`,
+    ended && ago(ended, now) && `${endedWord} ${ago(ended, now)}`,
+  ].filter(Boolean)
+  return parts.length ? <Field label="Timing">{parts.join(' · ')}</Field> : null
 }
 
 function JobBody({ job, now }: { job: BackgroundJob; now: Date }) {
@@ -107,10 +123,7 @@ function JobBody({ job, now }: { job: BackgroundJob; now: Date }) {
       <Field label="Command" mono>
         {job.command}
       </Field>
-      <Field label="Timing">
-        Started {relativeTime(job.startedAt, now)} ago
-        {job.endedAt && ` · ended ${relativeTime(job.endedAt, now)} ago`}
-      </Field>
+      <Timing started={job.startedAt} ended={job.endedAt} endedWord="ended" now={now} />
     </>
   )
 }
