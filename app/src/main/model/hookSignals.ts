@@ -97,8 +97,9 @@ const HOOKS: Record<HookEvent, Handler> = {
  */
 export function applyHookEvent(signals: SessionSignals, raw: unknown, at: string): SessionSignals {
   const event = obj(raw)
-  const handler = HOOKS[str(event['hook_event_name']) as HookEvent] as Handler | undefined
-  return handler ? handler(signals, event, at) : signals
+  const name = str(event['hook_event_name']) ?? ''
+  // Own keys only: a payload naming "toString" must not reach Object.prototype.
+  return Object.hasOwn(HOOKS, name) ? HOOKS[name as HookEvent](signals, event, at) : signals
 }
 
 const MAX_DETAIL = 120
