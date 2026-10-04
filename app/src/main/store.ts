@@ -1,4 +1,5 @@
 import { EventEmitter } from 'node:events'
+import { isDeepStrictEqual } from 'node:util'
 import { obj, str } from '../shared/guards'
 import type { SessionSignals, SessionView, StoreSnapshot } from '../shared/types'
 import { deriveAttention } from './model/attention'
@@ -38,7 +39,7 @@ interface LiveSession {
 
 /**
  * Joins the session registry, transcripts and hook events into what the window shows.
- * Emits `update` whenever the snapshot may have changed.
+ * Emits `update` only when something it shows changed.
  */
 export class SessionStore extends EventEmitter<{ update: [] }> {
   private readonly sessions = new Map<string, LiveSession>()
@@ -52,16 +53,19 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   /** Mirrors the registry: new sessions are read, known ones keep their state, gone ones are dropped. */
   async setLiveSessions(entries: RegistryEntry[]): Promise<void> {
     const live = new Set(entries.map((e) => e.sessionId))
+    let changed = false
     for (const id of this.sessions.keys()) {
       if (live.has(id)) continue
       this.sessions.delete(id)
       this.signals.delete(id)
+      changed = true
     }
 
     const added: LiveSession[] = []
     for (const entry of entries) {
       const known = this.sessions.get(entry.sessionId)
       if (known) {
+        if (!isDeepStrictEqual(known.entry, entry)) changed = true
         known.entry = entry
         continue
       }
@@ -74,13 +78,13 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       added.push(session)
     }
     await Promise.all(added.map((s) => this.readTranscript(s)))
-    this.emit('update')
+    if (changed || added.length) this.emit('update')
   }
 
   /** Reads whatever was appended to every live session's transcript. */
   async refresh(): Promise<void> {
-    await Promise.all([...this.sessions.values()].map((s) => this.readTranscript(s)))
-    this.emit('update')
+    const changed = await Promise.all([...this.sessions.values()].map((s) => this.readChanged(s)))
+    if (changed.includes(true)) this.emit('update')
   }
 
   /** Applies a Claude Code hook payload, then reads that session's transcript for fresh detail. */
@@ -88,10 +92,11 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
     const before = this.signals.get(sessionId) ?? {}
-    this.signals.set(sessionId, applyHookEvent(before, event, this.sources.clock().toISOString()))
+    const after = applyHookEvent(before, event, this.sources.clock().toISOString())
+    this.signals.set(sessionId, after)
     const session = this.sessions.get(sessionId)
-    if (session) await this.readTranscript(session)
-    this.emit('update')
+    const read = session ? await this.readChanged(session) : false
+    if (session && (read || after !== before)) this.emit('update')
   }
 
   /** The user looked at this session: its replies so far no longer need attention. */
@@ -122,6 +127,14 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       })),
       attention: deriveAttention(views, this.sources.clock()),
     }
+  }
+
+  /** Reads a session and says whether anything it shows changed. */
+  private async readChanged(session: LiveSession): Promise<boolean> {
+    const before = session.tracked
+    await this.readTranscript(session)
+    // The reducers return the same object when a line changes nothing.
+    return session.tracked !== before
   }
 
   /**

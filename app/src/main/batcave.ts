@@ -13,6 +13,8 @@ import { SessionStore } from './store'
 const REFRESH_MS = 2000
 /** Coalesces bursts of updates (a busy turn fires many hooks) into one message to the window. */
 const PUSH_THROTTLE_MS = 100
+/** Some needs-you items depend only on the clock ("stalled for 30 minutes"), so re-push this often. */
+const CLOCK_TICK_MS = 60_000
 
 /** Wires the data sources to the store and the store to the window. Returns a stop function. */
 export function startBatcave(win: BrowserWindow): () => void {
@@ -30,18 +32,14 @@ export function startBatcave(win: BrowserWindow): () => void {
   const hooks = new HookServer((event) => void store.handleHook(event))
   hooks.listen().catch((err: Error) => console.warn(`[batcave] hook server unavailable: ${err.message}`))
 
-  let lastSent = ''
   let pushTimer: NodeJS.Timeout | undefined
-  store.on('update', () => {
+  const schedulePush = () => {
     pushTimer ??= setTimeout(() => {
       pushTimer = undefined
-      const snapshot = store.snapshot()
-      const serialized = JSON.stringify(snapshot)
-      if (serialized === lastSent || win.isDestroyed()) return
-      lastSent = serialized
-      win.webContents.send(IPC.snapshot, snapshot)
+      if (!win.isDestroyed()) win.webContents.send(IPC.snapshot, store.snapshot())
     }, PUSH_THROTTLE_MS)
-  })
+  }
+  store.on('update', schedulePush)
 
   ipcMain.handle(IPC.getSnapshot, () => store.snapshot())
   ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
@@ -50,9 +48,11 @@ export function startBatcave(win: BrowserWindow): () => void {
 
   registry.start()
   const refreshTimer = setInterval(() => void store.refresh(), REFRESH_MS)
+  const clockTimer = setInterval(schedulePush, CLOCK_TICK_MS)
 
   return () => {
     clearInterval(refreshTimer)
+    clearInterval(clockTimer)
     clearTimeout(pushTimer)
     registry.stop()
     void hooks.close()
