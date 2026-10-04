@@ -83,7 +83,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       this.sessions.set(entry.sessionId, session)
       added.push(session)
     }
-    await Promise.all(added.map((s) => this.readTranscript(s)))
+    await Promise.all(added.map((s) => this.readChanged(s)))
     if (changed || added.length) this.emit('update')
   }
 
@@ -138,7 +138,12 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   /** Reads a session and says whether anything it shows changed. */
   private async readChanged(session: LiveSession): Promise<boolean> {
     const before = session.tracked
-    await this.readTranscript(session)
+    try {
+      await this.readTranscript(session)
+    } catch (err) {
+      // One unreadable transcript (e.g. locked by an antivirus) must not hold back the others.
+      console.warn(`[batcave] could not read session ${session.entry.sessionId}:`, err)
+    }
     // The reducers return the same object when a line changes nothing.
     return session.tracked !== before
   }
