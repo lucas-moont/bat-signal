@@ -30,7 +30,9 @@ export function deriveAttention(
       found.push({ sessionId, kind: 'reply', at: lastStopAt })
     }
 
-    if (signals.status !== 'busy') {
+    // "Stalled" means no news at all: neither the task nor its session moved recently.
+    const sessionQuietFor = now.getTime() - time(state.lastActivityAt)
+    if (signals.status !== 'busy' && sessionQuietFor >= STALLED_AFTER_MS) {
       for (const task of state.tasks) {
         const since = task.history.at(-1)?.at
         if (task.status === 'in_progress' && since && now.getTime() - time(since) >= STALLED_AFTER_MS) {
