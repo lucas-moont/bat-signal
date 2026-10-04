@@ -6,12 +6,18 @@ import './BatSignalIntro.css'
 
 const DURATION_MS = 1400
 
-/** Plays once when mounted, then removes itself. */
+// Once per launch: the window remounts after pill mode or when animations come back on, and
+// the intro must not replay then.
+let played = false
+
+/** Plays the first time it mounts in this launch, then removes itself. */
 export function BatSignalIntro() {
   const [leaving, setLeaving] = useState(false)
-  const [done, setDone] = useState(false)
+  const [done, setDone] = useState(played)
 
   useEffect(() => {
+    if (played) return
+    played = true
     const leave = setTimeout(() => setLeaving(true), DURATION_MS - 300)
     const end = setTimeout(() => setDone(true), DURATION_MS)
     return () => {
