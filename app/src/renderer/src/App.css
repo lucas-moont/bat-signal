@@ -65,7 +65,7 @@
 }
 .header__title,
 .header__count,
-.header .emblem {
+.header > svg {
   flex: none;
 }
 @media (max-width: 330px) {
