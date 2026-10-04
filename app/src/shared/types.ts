@@ -111,3 +111,10 @@ export interface StoreSnapshot {
   sessions: SessionSnapshot[]
   attention: AttentionItem[]
 }
+
+/** What "go to the terminal" managed to do. */
+export type TerminalOutcome =
+  /** The window is in front (and its tab selected, when it has one of the session's name). */
+  | 'focused'
+  /** No window was found: `claude --resume <id>` is on the clipboard instead. */
+  | 'copied'
