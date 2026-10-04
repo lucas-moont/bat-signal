@@ -155,13 +155,24 @@ const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; 
 
 /** How far the eyes may slide toward the pointer, in grid units. */
 const GAZE = 0.6
+/** On watch from the rooftop: the eyes sweep left, back, right, back, one step a second. */
+const SCAN = [-GAZE, -GAZE, 0, GAZE, GAZE, 0]
 const LABEL: Record<MascotMood, string> = {
   sleeping: 'Bat-Clawd is asleep',
   flying: 'Bat-Clawd is on patrol',
   alarmed: 'Bat-Clawd needs you',
 }
 
-export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number }) {
+export function BatClawd({
+  mood,
+  size = 60,
+  perched = false,
+}: {
+  mood: MascotMood
+  size?: number
+  /** Standing watch on the edge of the watch strip: the cape in the wind, the eyes sweeping. */
+  perched?: boolean
+}) {
   const calm = useIsCalm()
   const ref = useRef<HTMLSpanElement>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
@@ -169,7 +180,7 @@ export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number 
 
   // Eyes follow the pointer while awake. Event-driven, so it costs nothing when the pointer rests.
   useEffect(() => {
-    if (mood === 'sleeping' || calm) return
+    if (mood === 'sleeping' || calm || perched) return // the perch takes no pointer
     let frame = 0
     const onMove = (e: PointerEvent) => {
       cancelAnimationFrame(frame)
@@ -190,15 +201,26 @@ export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number 
       window.removeEventListener('pointermove', onMove)
       cancelAnimationFrame(frame)
     }
-  }, [mood, calm])
+  }, [mood, calm, perched])
 
-  const eyes = mood === 'sleeping' || calm ? { x: 0, y: 0 } : gaze
-  // Pixel-art pace: awake moods move at 4 frames a second through React (the pose changes).
-  const frame = useFrame(!calm && mood !== 'sleeping', 2)
-  const { pose, transform } = MOTION[mood](frame, POSES[mood])
+  // On the perch he keeps watch whatever happens, until something needs you.
+  const watching = perched && mood !== 'alarmed'
+  // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
+  // costs more to redraw, the watch moves once a second (gusts of wind) and an alarm twice.
+  const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
+  const { pose, transform } = watching
+    ? { pose: POSES.flying[frame % 2] ?? POSES.flying[0], transform: '' }
+    : MOTION[mood](frame, POSES[mood])
+  const eyes = calm
+    ? { x: 0, y: 0 }
+    : watching
+      ? { x: SCAN[frame % SCAN.length] ?? 0, y: 0 }
+      : mood === 'sleeping'
+        ? { x: 0, y: 0 }
+        : gaze
   // Asleep only the breath changes, so it skips React: the CSS `translate` property composes
   // with the `transform` React sets.
-  const mover = useLiveStyle<HTMLSpanElement>(!calm && mood === 'sleeping', (el, now) => {
+  const mover = useLiveStyle<HTMLSpanElement>(!calm && !perched && mood === 'sleeping', (el, now) => {
     el.style.translate = now === null ? '' : `0 ${BREATH[Math.floor(now / BREATH_STEP_MS) % BREATH.length]}px`
   })
 
@@ -206,7 +228,7 @@ export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number 
     <span
       ref={ref}
       role="img"
-      aria-label={LABEL[mood]}
+      aria-label={watching ? 'Bat-Clawd keeps watch' : LABEL[mood]}
       className={`clawd${hopping ? ' clawd--hop' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
