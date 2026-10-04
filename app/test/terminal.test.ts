@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { findWindowOwner, pickTab, type ProcessInfo } from '../src/main/terminal'
+import { findWindowOwner, pickTab, pickWindowTab, type ProcessInfo } from '../src/main/terminal'
 
 const proc = (pid: number, ppid: number, name: string, hasWindow = false): ProcessInfo => ({
   pid,
@@ -67,5 +67,27 @@ describe('pickTab when there is no clear match', () => {
 
   it('matches a title that has no glyph at all', () => {
     expect(pickTab(['gcpd'], 'gcpd')).toBe(0)
+  })
+})
+
+describe('pickTab with punctuation', () => {
+  it('matches a session name that itself starts with punctuation', () => {
+    expect(pickTab(['◑ [wip] api'], '[wip] api')).toBe(0)
+  })
+})
+
+describe('pickWindowTab', () => {
+  const windows = [
+    { handle: 111, pid: 10, titles: ['✳ m3-doom-part-2', 'Command Prompt'] },
+    { handle: 222, pid: 10, titles: ['◑ bat-computer'] },
+  ]
+
+  it('finds the window holding the tab of the session, not just the first window', () => {
+    expect(pickWindowTab(windows, 'bat-computer')).toEqual({ handle: 222, pid: 10, tab: 0 })
+  })
+
+  it('finds nothing when no window has a tab of that name', () => {
+    expect(pickWindowTab(windows, 'gcpd')).toBeUndefined()
+    expect(pickWindowTab(windows, undefined)).toBeUndefined()
   })
 })
