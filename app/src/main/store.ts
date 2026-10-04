@@ -170,7 +170,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       await this.readTranscript(session)
     } catch (err) {
       // One unreadable transcript (e.g. locked by an antivirus) must not hold back the others.
-      console.warn(`[batcave] could not read session ${session.entry.sessionId}:`, err)
+      console.warn(`[bat-signal] could not read session ${session.entry.sessionId}:`, err)
     }
     // The reducers return the same object when a line changes nothing.
     return session.tracked !== before

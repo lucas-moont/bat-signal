@@ -24,8 +24,8 @@ const AFTER_HOOK_REREAD_MS = 300
 type Publish = (snapshot: StoreSnapshot) => void
 
 /** Wires the data sources to the store and the store to the windows. Returns a stop function. */
-export function startBatcave(publish: Publish): () => void {
-  return process.env['BATCAVE_DEMO'] ? startDemo(publish) : startLive(publish)
+export function startBatSignal(publish: Publish): () => void {
+  return process.env['BAT_SIGNAL_DEMO'] ? startDemo(publish) : startLive(publish)
 }
 
 /** A few seconds in, the demo night brings news, so the Bat-Signal has something to announce. */
@@ -66,7 +66,7 @@ function startLive(publish: Publish): () => void {
     clearTimeout(rereadTimer)
     rereadTimer = setTimeout(() => void store.refresh(), AFTER_HOOK_REREAD_MS)
   })
-  hooks.listen().catch((err: Error) => console.warn(`[batcave] hook server unavailable: ${err.message}`))
+  hooks.listen().catch((err: Error) => console.warn(`[bat-signal] hook server unavailable: ${err.message}`))
 
   let pushTimer: NodeJS.Timeout | undefined
   const schedulePush = () => {

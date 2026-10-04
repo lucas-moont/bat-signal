@@ -8,7 +8,7 @@ let dir: string
 let file: string
 
 beforeEach(async () => {
-  dir = await mkdtemp(join(tmpdir(), 'batcave-'))
+  dir = await mkdtemp(join(tmpdir(), 'bat-signal-'))
   file = join(dir, 'session.jsonl')
 })
 afterEach(() => rm(dir, { recursive: true, force: true }))

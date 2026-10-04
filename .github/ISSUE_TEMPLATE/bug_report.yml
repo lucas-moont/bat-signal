@@ -14,7 +14,7 @@ body:
     attributes:
       label: How to reproduce
       placeholder: |
-        1. Open Batcave
+        1. Open Bat-Signal
         2. Start a Claude Code session
         3. ...
     validations:
@@ -23,7 +23,7 @@ body:
     id: versions
     attributes:
       label: Versions
-      placeholder: 'Batcave 0.1.0, Claude Code 2.1.289, Windows 11'
+      placeholder: 'Bat-Signal v0.4.0 (or a commit), Claude Code 2.1.289, Windows 11'
   - type: markdown
     attributes:
       value: '**Do not paste transcript excerpts, prompts, personal paths or tokens.**'

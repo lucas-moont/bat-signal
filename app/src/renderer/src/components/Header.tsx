@@ -16,23 +16,26 @@ interface HeaderProps {
 export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderProps) {
   return (
     <header className="header">
-      <BatEmblem size={34} />
-      <h1 className="header__title">BATCAVE</h1>
-      <AnimatePresence mode="popLayout">
-        {needsYou > 0 && (
-          <motion.span
-            key={needsYou}
-            className="header__count"
-            title={`${needsYou} need${needsYou === 1 ? 's' : ''} you`}
-            initial={{ scale: 1.8, opacity: 0, rotate: -14 }}
-            animate={{ scale: 1, opacity: 1, rotate: -5 }}
-            exit={{ opacity: 0, scale: 0.6 }}
-            transition={{ type: 'spring', stiffness: 520, damping: 22 }}
-          >
-            {needsYou}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      {/* The needs-you count hangs off the emblem like a stamp, taking no room in the row. */}
+      <span className="header__brand">
+        <BatEmblem size={34} />
+        <AnimatePresence mode="popLayout">
+          {needsYou > 0 && (
+            <motion.span
+              key={needsYou}
+              className="header__count"
+              title={`${needsYou} need${needsYou === 1 ? 's' : ''} you`}
+              initial={{ scale: 1.8, opacity: 0, rotate: -14 }}
+              animate={{ scale: 1, opacity: 1, rotate: -5 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ type: 'spring', stiffness: 520, damping: 22 }}
+            >
+              {needsYou}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+      <h1 className="header__title">BAT-SIGNAL</h1>
       <div className={`header__mascot header__mascot--${mood}`}>
         <BatClawd mood={mood} />
       </div>
@@ -43,8 +46,8 @@ export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderPr
         <button
           className="icon-button"
           onClick={onFold}
-          aria-label="Fold into the Bat-Signal"
-          title="Fold into the Bat-Signal (Esc)"
+          aria-label="Fold into the signal disc"
+          title="Fold into the signal disc (Esc)"
         >
           <Icon name="fold" />
         </button>

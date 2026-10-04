@@ -1,5 +1,5 @@
 {
-  "description": "Batcave: report session activity to the Batcave desktop app on 127.0.0.1:47777. Observe-only: the app always answers with an empty 204, so it never takes a permission decision. If the app isn't running, the request fails fast and Claude Code carries on.",
+  "description": "Bat-Signal: report session activity to the Bat-Signal desktop app on 127.0.0.1:47777. Observe-only: the app always answers with an empty 204, so it never takes a permission decision. If the app isn't running, the request fails fast and Claude Code carries on.",
   "hooks": {
     "SessionStart": [
       {

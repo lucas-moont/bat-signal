@@ -39,7 +39,7 @@ export function BatSignalIntro() {
       <div className="intro__signal">
         <BatEmblem size={120} />
       </div>
-      <div className="intro__title">BATCAVE</div>
+      <div className="intro__title">BAT-SIGNAL</div>
     </div>
   )
 }

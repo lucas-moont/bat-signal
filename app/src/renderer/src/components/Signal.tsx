@@ -6,7 +6,7 @@ import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { NoticeLayout } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
-import { batcave } from '../bridge'
+import { batSignal } from '../bridge'
 import { CalmContext, useCalm } from '../calm'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { BatEmblem } from './BatEmblem'
@@ -19,8 +19,8 @@ const DRAG_THRESHOLD = 4
 
 /** The signal takes clicks only while the pointer is over the disc or a card (see window.ts). */
 const interactive = {
-  onPointerEnter: () => batcave.setInteractive(true),
-  onPointerLeave: () => batcave.setInteractive(false),
+  onPointerEnter: () => batSignal.setInteractive(true),
+  onPointerLeave: () => batSignal.setInteractive(false),
 }
 
 /** Turns snapshot changes into the notice card on screen, while the signal is the window showing. */
@@ -68,7 +68,7 @@ function useStagedNotice(notice: Notice | undefined) {
   useEffect(() => {
     if (!notice) return
     let live = true
-    void batcave.setNoticeOut(true).then((layout) => live && setStaged({ key: notice.key, layout }))
+    void batSignal.setNoticeOut(true).then((layout) => live && setStaged({ key: notice.key, layout }))
     return () => {
       live = false
     }
@@ -100,14 +100,14 @@ export function Signal() {
           <AnimatePresence
             mode="wait"
             onExitComplete={() => {
-              if (!notice) void batcave.setNoticeOut(false)
+              if (!notice) void batSignal.setNoticeOut(false)
             }}
           >
             {shown && (
               <NoticeCard
                 key={shown.key}
                 notice={shown}
-                onOpen={() => batcave.setMode('panel', shown.sessionId)}
+                onOpen={() => batSignal.setMode('panel', shown.sessionId)}
                 onHover={setHovered}
               />
             )}
@@ -118,7 +118,7 @@ export function Signal() {
             // transparent window is costly to redraw 8 times a second all that time.
             pulsing={!!shown && isUrgent(shown.kind)}
             count={needsYou}
-            onOpen={() => batcave.setMode('panel')}
+            onOpen={() => batSignal.setMode('panel')}
           />
         </main>
       </MotionConfig>
@@ -188,7 +188,7 @@ function Disc({
     p.dx += dx
     p.dy += dy
     p.frame ||= requestAnimationFrame(() => {
-      batcave.moveSignalBy(p.dx, p.dy)
+      batSignal.moveSignalBy(p.dx, p.dy)
       pending.current = { dx: 0, dy: 0, frame: 0 }
     })
   }
@@ -197,8 +197,8 @@ function Disc({
   return (
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
-      aria-label={count ? `Open Batcave: ${count} need${count === 1 ? 's' : ''} you` : 'Open Batcave'}
-      title="Open Batcave · drag to move"
+      aria-label={count ? `Open Bat-Signal: ${count} need${count === 1 ? 's' : ''} you` : 'Open Bat-Signal'}
+      title="Open Bat-Signal · drag to move"
       {...interactive}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId)

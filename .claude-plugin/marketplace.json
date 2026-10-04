@@ -1,15 +1,15 @@
 {
-  "name": "batcave",
-  "description": "Batcave: a tiny always-on-top Bat-Computer for your Claude Code sessions.",
+  "name": "bat-signal",
+  "description": "Bat-Signal: a tiny always-on-top Bat-Computer for your Claude Code sessions.",
   "owner": {
     "name": "Lucas Monteiro",
     "url": "https://github.com/lucas-moont"
   },
   "plugins": [
     {
-      "name": "batcave",
-      "source": "./plugin/batcave",
-      "description": "Reports Claude Code session activity to Batcave, a tiny always-on-top window that watches your sessions."
+      "name": "bat-signal",
+      "source": "./plugin/bat-signal",
+      "description": "Reports Claude Code session activity to Bat-Signal, a tiny always-on-top window that watches your sessions."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Roadmap
 
-Where Batcave can go. The order inside each version is a suggestion. After v1 ships there will be a feedback round to decide what actually goes into v2.
+Where Bat-Signal can go. The order inside each version is a suggestion. After v1 ships there will be a feedback round to decide what actually goes into v2.
 
 ## v1: "the Bat-Computer watches"
 

@@ -1,7 +1,7 @@
 import { obj, str, type Json } from '../../shared/guards'
 import type { SessionSignals } from '../../shared/types'
 
-/** Every hook the plugin subscribes to (plugin/batcave/hooks/hooks.json must list exactly these). */
+/** Every hook the plugin subscribes to (plugin/bat-signal/hooks/hooks.json must list exactly these). */
 export const HOOK_EVENTS = [
   'SessionStart',
   'SessionEnd',

@@ -14,7 +14,7 @@ export type MascotMood = 'sleeping' | 'flying' | 'alarmed'
 /** Alerts where Claude is blocked on the user, as opposed to a finished reply or a quiet task. */
 const ALARMING = new Set<AttentionItem['kind']>(['permission', 'error', 'waiting'])
 
-/** How Bat-Clawd should look given everything Batcave knows. */
+/** How Bat-Clawd should look given everything Bat-Signal knows. */
 export function mascotMood({ sessions, attention }: StoreSnapshot): MascotMood {
   if (attention.some((a) => ALARMING.has(a.kind))) return 'alarmed'
   return sessions.some((s) => s.status === 'busy') ? 'flying' : 'sleeping'

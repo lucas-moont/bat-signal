@@ -4,9 +4,9 @@ import type { AddressInfo } from 'node:net'
 export const HOOK_PORT = 47777
 
 /**
- * Receives Claude Code HTTP hooks (see plugin/batcave/hooks/hooks.json) on the loopback
+ * Receives Claude Code HTTP hooks (see plugin/bat-signal/hooks/hooks.json) on the loopback
  * interface. It is observe-only: every answer is an empty 204, which Claude Code reads as
- * "no decision", so Batcave can never approve or block anything.
+ * "no decision", so Bat-Signal can never approve or block anything.
  */
 export class HookServer {
   private readonly server: Server
@@ -55,7 +55,7 @@ export class HookServer {
     // A bad event must never take the server down, whether the handler throws or rejects.
     await Promise.resolve()
       .then(() => this.onEvent(event))
-      .catch((err: unknown) => console.warn('[batcave] hook handler failed:', err))
+      .catch((err: unknown) => console.warn('[bat-signal] hook handler failed:', err))
   }
 }
 

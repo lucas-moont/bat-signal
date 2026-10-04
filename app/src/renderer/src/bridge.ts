@@ -5,7 +5,7 @@
 import { beforeNewsDemoSnapshot, busyDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
 import { applySettingsPatch, DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
-import type { BatcaveApi } from '../../preload/index'
+import type { BatSignalApi } from '../../preload/index'
 
 const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
@@ -33,7 +33,7 @@ function observable<T>(initial: T) {
 /** NEWS_DELAY_MS after loading, #demo-news turns the night into the next one (a notice for the signal). */
 const NEWS_DELAY_MS = 800
 
-function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatcaveApi {
+function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
   const snapshot = observable(first)
   if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
   const settings = observable<Settings>(DEFAULT_SETTINGS)
@@ -56,10 +56,10 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatcaveApi {
   }
 }
 
-function pickStandIn(): BatcaveApi {
+function pickStandIn(): BatSignalApi {
   const inElectron = navigator.userAgent.includes('Electron')
   if (inElectron && !location.hash.startsWith('#demo')) {
-    console.error('[batcave] preload bridge missing: no data source')
+    console.error('[bat-signal] preload bridge missing: no data source')
     return standIn(EMPTY)
   }
   if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
@@ -68,4 +68,4 @@ function pickStandIn(): BatcaveApi {
   return standIn(demoSnapshot())
 }
 
-export const batcave: BatcaveApi = (window as { batcave?: BatcaveApi }).batcave ?? pickStandIn()
+export const batSignal: BatSignalApi = (window as { batSignal?: BatSignalApi }).batSignal ?? pickStandIn()

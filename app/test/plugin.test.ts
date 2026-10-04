@@ -5,7 +5,9 @@ import { HOOK_EVENTS } from '../src/main/model/hookSignals'
 import { HOOK_PORT } from '../src/main/sources/hookServer'
 
 // JSON can't import constants, so this keeps the plugin and the app in step.
-const config = JSON.parse(readFileSync(join(__dirname, '../../plugin/batcave/hooks/hooks.json'), 'utf8')) as {
+const config = JSON.parse(
+  readFileSync(join(__dirname, '../../plugin/bat-signal/hooks/hooks.json'), 'utf8'),
+) as {
   hooks: Record<string, { hooks: { type: string; url: string; timeout: number }[] }[]>
 }
 const allHooks = Object.values(config.hooks).flatMap((groups) => groups.flatMap((g) => g.hooks))

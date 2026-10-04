@@ -324,7 +324,7 @@ describe('subagent transcripts', () => {
 })
 
 describe('unexpected task statuses', () => {
-  it('ignores a status change to a value Batcave does not know', () => {
+  it('ignores a status change to a value Bat-Signal does not know', () => {
     const s = replay([
       toolUse('toolu_1', 'TaskCreate', { subject: 'Find the Riddler' }),
       toolResult('toolu_1', { task: { id: '1', subject: 'Find the Riddler' } }),
