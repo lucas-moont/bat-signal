@@ -12,6 +12,7 @@ export const HOOK_EVENTS = [
   'PermissionRequest',
   'PermissionDenied',
   'PostToolUse',
+  'PostToolUseFailure',
   'SubagentStart',
   'SubagentStop',
   'TaskCreated',
@@ -22,6 +23,15 @@ export type HookEvent = (typeof HOOK_EVENTS)[number]
 type Handler = (signals: SessionSignals, event: Json, at: string) => SessionSignals
 
 const withoutPermission = ({ pendingPermission: _gone, ...rest }: SessionSignals): SessionSignals => rest
+
+/** Clears the pending permission if the event is about the tool call that asked for it. */
+const resolvesPermission: Handler = (signals, event) => {
+  const pending = signals.pendingPermission?.toolUseId
+  const id = str(event['tool_use_id'])
+  return !signals.pendingPermission || (pending && id && pending !== id)
+    ? signals
+    : withoutPermission(signals)
+}
 const keep: Handler = (signals) => signals
 
 // Notification types that mean Claude is blocked on the user (other than a permission dialog).
@@ -42,21 +52,19 @@ const HOOKS: Record<HookEvent, Handler> = {
     pendingPermission: {
       toolName: str(event['tool_name']) ?? 'a tool',
       detail: describeInput(event['tool_input']),
+      toolUseId: str(event['tool_use_id']),
       at,
     },
   }),
-  // The dialog is gone once the tool ran or was denied.
-  PostToolUse: withoutPermission,
-  PermissionDenied: withoutPermission,
+  // The dialog is gone once its tool ran, failed or was denied. Other calls can finish meanwhile.
+  PostToolUse: resolvesPermission,
+  PostToolUseFailure: resolvesPermission,
+  PermissionDenied: resolvesPermission,
 
-  Notification: (signals, event, at) => {
-    const type = str(event['notification_type']) ?? ''
-    if (type === 'permission_prompt' && !signals.pendingPermission) {
-      // Only the notification text is known; PermissionRequest, when it fires, has the details.
-      return { ...signals, pendingPermission: { toolName: str(event['message']) ?? 'a tool', at } }
-    }
-    return WAITING_FOR_USER.has(type) ? { ...signals, waitingSince: at } : signals
-  },
+  // permission_prompt is ignored: PermissionRequest already reported it with details, and a
+  // notification arriving after the answer would bring back a prompt that is gone.
+  Notification: (signals, event, at) =>
+    WAITING_FOR_USER.has(str(event['notification_type']) ?? '') ? { ...signals, waitingSince: at } : signals,
 
   UserPromptSubmit: ({ pendingPermission: _p, waitingSince: _w, error: _e, ...rest }) => rest,
   Stop: (signals, _event, at) => ({ ...withoutPermission(signals), lastStopAt: at }),

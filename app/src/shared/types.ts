@@ -61,7 +61,7 @@ export type LiveStatus = (typeof LIVE_STATUSES)[number]
 /** Live facts about a session reported by Claude Code hooks. */
 export interface SessionSignals {
   /** Claude is showing a permission dialog. */
-  pendingPermission?: { toolName: string; detail?: string; at: string }
+  pendingPermission?: { toolName: string; detail?: string; toolUseId?: string; at: string }
   /** Claude reported it is idle, waiting for your input. */
   waitingSince?: string
   /** The last turn ended because of an API error. */
