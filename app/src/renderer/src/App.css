@@ -166,7 +166,7 @@
   z-index: 10;
 }
 
-/* Pill mode: the whole window is a small draggable bar. */
+/* Pill mode: the whole window is a small bar. */
 .pill {
   height: 100%;
   display: flex;
@@ -176,6 +176,13 @@
   background: linear-gradient(180deg, #0f0c0b, #000);
   border: 1px solid var(--line);
   border-radius: 30px;
+}
+/* Only the emblem drags the pill, so the rest can open it on hover (see Pill.tsx). */
+.pill__grip {
+  display: grid;
+  place-items: center;
+  padding: 6px 4px;
+  cursor: grab;
   -webkit-app-region: drag;
 }
 .pill--alert {
