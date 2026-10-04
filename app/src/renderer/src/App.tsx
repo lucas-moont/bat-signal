@@ -8,6 +8,7 @@ import { BatSignalIntro } from './components/BatSignalIntro'
 import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
+import { NightReport } from './components/NightReport'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
 import { useNow, useSettings, useSnapshot } from './hooks'
@@ -37,6 +38,8 @@ export function App() {
   )
   const mood = mascotMood(snapshot)
   const fold = () => batSignal.setMode('signal')
+  // The night report reads everything in one column: no tabs, cases open in place.
+  const report = settings.layout === 'report'
   // Open on whatever matters: the needs-you list when something is waiting.
   const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
   // A case that ends while open simply disappears: no session, no detail.
@@ -85,15 +88,27 @@ export function App() {
             onFold={fold}
             onClose={batSignal.closeWindow}
           />
-          <Tabs
-            tab={activeTab}
-            counts={{ needs: attention.length, cases: sessions.length }}
-            onChange={setTab}
-          />
+          {!report && (
+            <Tabs
+              tab={activeTab}
+              counts={{ needs: attention.length, cases: sessions.length }}
+              onChange={setTab}
+            />
+          )}
 
           <div className="stage">
             <div className="stage__scroll">
-              {activeTab === 'needs' ? (
+              {report ? (
+                <NightReport
+                  sessions={sessions}
+                  attention={attention}
+                  now={now}
+                  openCase={session ? openCase : null}
+                  onToggleCase={(id) => (openCase === id ? setOpenCase(null) : open(id))}
+                  onOpenAlert={openAttention}
+                  onOpenSheet={open}
+                />
+              ) : activeTab === 'needs' ? (
                 <AttentionList items={attention} sessions={sessions} now={now} onOpen={openAttention} />
               ) : (
                 <CaseList sessions={sessions} attention={attention} now={now} onOpen={(id) => open(id)} />
@@ -101,7 +116,7 @@ export function App() {
             </div>
 
             <AnimatePresence>
-              {session && (
+              {session && !report && (
                 <motion.div
                   key="detail"
                   className="stage__layer"

@@ -1,0 +1,241 @@
+/* The night report: one typed column on black, a red margin rule like legal paper, stamps in
+   the margin, red pen on whatever waits for you. */
+.report {
+  --margin: 92px;
+  --ink: #bdb4aa;
+  position: relative;
+  padding: 12px 12px 28px 0;
+  font-family: var(--font-type);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+/* The margin rule runs the whole sheet. */
+.report::before {
+  content: '';
+  position: absolute;
+  top: 56px;
+  bottom: 0;
+  left: var(--margin);
+  width: 1px;
+  background: rgb(139 0 0 / 75%);
+  pointer-events: none;
+}
+.report ::selection {
+  background: rgb(175 0 6 / 55%);
+  color: var(--bone);
+}
+
+.report__dateline {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: 10px;
+  margin: 0 0 14px 14px;
+  padding-bottom: 8px;
+  border-bottom: 3px double var(--line);
+}
+.report__name {
+  margin: 0;
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+.report__date {
+  justify-self: end;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ash);
+}
+.report__tally {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--ash);
+}
+.report__tally em {
+  font-style: normal;
+  color: var(--signal-hot);
+}
+
+.report__section + .report__section {
+  margin-top: 18px;
+}
+.report__heading {
+  margin: 0 0 4px calc(var(--margin) + 12px);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--ash);
+}
+.report__nil {
+  margin: 4px 0 0 calc(var(--margin) + 12px);
+  color: var(--ash);
+}
+.report__lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One typed line or paragraph: the stamp in the margin, the words after the rule. */
+.entry {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: var(--margin) 1fr auto;
+  width: 100%;
+  padding: 7px 0;
+  cursor: pointer;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  transition: background 0.15s;
+}
+.entry:hover {
+  background: rgb(39 21 14 / 45%);
+}
+.entry:focus-visible {
+  outline: 1px solid var(--bone);
+  outline-offset: -1px;
+}
+.entry__margin {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 3px 9px 0 4px;
+}
+.entry__body {
+  padding: 0 4px 0 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.entry__body strong {
+  font-weight: inherit;
+  color: var(--bone);
+}
+/* Red pen: what waits for you is underlined by hand. */
+.entry__pen {
+  color: var(--bone);
+  text-decoration: underline solid var(--signal-hot) 1.5px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 4px;
+}
+.entry__age {
+  padding: 2px 2px 0 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ash);
+}
+
+/* Stamps sized for the margin. */
+.report .stamp {
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+  padding: 1px 4px 0;
+  border-width: 1px;
+  white-space: nowrap;
+}
+.report .stamp--waiting,
+.report .stamp--reply {
+  color: #c9463d;
+}
+.report .stamp--stalled {
+  color: var(--ash);
+}
+.report .stamp--status {
+  color: var(--ash);
+  transform: rotate(-1.5deg);
+}
+.report .case:has(.stamp--hot) .stamp--status,
+.report .stamp--hot {
+  color: var(--signal-hot);
+}
+
+/* A case opened in place: its notes typed under the paragraph. */
+.case--open > .entry {
+  background: rgb(39 21 14 / 30%);
+}
+.notes {
+  overflow: hidden;
+}
+.notes__body,
+.notes__nil {
+  padding: 2px 4px 10px calc(var(--margin) + 12px);
+}
+.notes__nil {
+  margin: 0;
+  color: var(--ash);
+}
+.notes__group + .notes__group {
+  margin-top: 8px;
+}
+.notes__title {
+  margin: 0;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.notes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.note {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 8px;
+  width: 100%;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+.note:hover {
+  background: rgb(39 21 14 / 50%);
+}
+.note:focus-visible {
+  outline: 1px solid var(--bone);
+}
+.note__mark {
+  color: var(--ash);
+  white-space: nowrap;
+}
+.note__text {
+  min-width: 0;
+  color: var(--bone);
+}
+.note__state {
+  font-size: 10.5px;
+  color: var(--ash);
+}
+.note--live .note__mark,
+.note--live .note__state {
+  color: var(--signal-hot);
+}
+.note--done .note__text {
+  color: var(--ash);
+  text-decoration: line-through;
+  text-decoration-color: rgb(138 129 122 / 60%);
+}
+
+.report__end {
+  margin: 22px 0 0 calc(var(--margin) + 12px);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ash);
+}
+
+/* The narrowest panel keeps the margin, a little tighter. */
+@media (max-width: 330px) {
+  .report {
+    --margin: 84px;
+    font-size: 12px;
+  }
+}
