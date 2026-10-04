@@ -27,7 +27,7 @@ Start-Process -FilePath $electron -ArgumentList "`"$appDir`"" | Out-Null
 try {
   Start-Sleep -Seconds $WaitSeconds
   $win = Get-Process electron | Where-Object $isOurs | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
-  if (-not $win) { throw 'Batcave window not found' }
+  if (-not $win) { throw 'Bat-Signal window not found' }
 
   $hwnd = $win.MainWindowHandle
   # Whole window including the invisible resize borders, and the visible part (DWMWA_EXTENDED_FRAME_BOUNDS = 9).

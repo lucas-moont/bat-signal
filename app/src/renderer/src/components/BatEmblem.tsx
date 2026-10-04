@@ -7,7 +7,7 @@ const WINGS =
 
 export function BatEmblem({
   size = 40,
-  title = 'Batcave',
+  title = 'Bat-Signal',
   fill = 'var(--signal)',
 }: {
   size?: number

@@ -197,8 +197,8 @@ function Disc({
   return (
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
-      aria-label={count ? `Open Batcave: ${count} need${count === 1 ? 's' : ''} you` : 'Open Batcave'}
-      title="Open Batcave · drag to move"
+      aria-label={count ? `Open Bat-Signal: ${count} need${count === 1 ? 's' : ''} you` : 'Open Bat-Signal'}
+      title="Open Bat-Signal · drag to move"
       {...interactive}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId)

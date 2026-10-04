@@ -6,7 +6,7 @@ export const HOOK_PORT = 47777
 /**
  * Receives Claude Code HTTP hooks (see plugin/batcave/hooks/hooks.json) on the loopback
  * interface. It is observe-only: every answer is an empty 204, which Claude Code reads as
- * "no decision", so Batcave can never approve or block anything.
+ * "no decision", so Bat-Signal can never approve or block anything.
  */
 export class HookServer {
   private readonly server: Server

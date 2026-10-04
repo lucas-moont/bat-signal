@@ -7,7 +7,7 @@ export interface Rect {
   height: number
 }
 
-/** The bottom-right point every Batcave window hangs from: the signal disc, its notice, the panel. */
+/** The bottom-right point every Bat-Signal window hangs from: the signal disc, its notice, the panel. */
 export interface Anchor {
   x: number
   y: number

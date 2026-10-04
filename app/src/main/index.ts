@@ -3,9 +3,11 @@ import { IPC } from '../shared/ipc'
 import { applySettingsPatch, parseWindowMode } from '../shared/settings'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
+import { migrateUserData } from './userData'
 import { BatSignalWindows } from './window'
 
 function start(): void {
+  migrateUserData()
   let settings = settingsFile.load()
   const windows = new BatSignalWindows(settings)
   const stop = startBatSignal((snapshot) => windows.publish(snapshot))

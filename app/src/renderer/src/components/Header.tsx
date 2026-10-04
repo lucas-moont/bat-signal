@@ -17,7 +17,7 @@ export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderPr
   return (
     <header className="header">
       <BatEmblem size={34} />
-      <h1 className="header__title">BATCAVE</h1>
+      <h1 className="header__title">BAT-SIGNAL</h1>
       <AnimatePresence mode="popLayout">
         {needsYou > 0 && (
           <motion.span
@@ -43,8 +43,8 @@ export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderPr
         <button
           className="icon-button"
           onClick={onFold}
-          aria-label="Fold into the Bat-Signal"
-          title="Fold into the Bat-Signal (Esc)"
+          aria-label="Fold into the signal disc"
+          title="Fold into the signal disc (Esc)"
         >
           <Icon name="fold" />
         </button>

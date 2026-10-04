@@ -55,7 +55,7 @@ const webPreferences = {
 }
 
 /**
- * Batcave's two windows, both hanging from one corner: the Bat-Signal disc (transparent, the
+ * Bat-Signal's two windows, both hanging from one corner: the signal disc (transparent, the
  * resting form, grows when a notice card comes out) and the panel. Only one shows at a time;
  * the main process owns which (the mode) and the corner.
  */
