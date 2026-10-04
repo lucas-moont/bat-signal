@@ -48,6 +48,7 @@ describe('diffNotices: alerts', () => {
         kind: 'permission',
         sessionId: 'a',
         at: '2026-01-01T00:00:00.000Z',
+        stamp: 'Permission',
         title: 'Case a',
         line: 'Bash · npm test',
       },

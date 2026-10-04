@@ -2,7 +2,7 @@
 // up its beam; a click on either opens the panel.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
-import { diffNotices, isUrgent, NOTICE_STAMP, type Notice } from '@shared/notices'
+import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { StoreSnapshot } from '@shared/types'
 import { batcave } from '../bridge'
@@ -125,7 +125,7 @@ function NoticeCard({
         onPointerLeave={() => onHover(false)}
         title="Open this case"
       >
-        <span className="stamp">{NOTICE_STAMP[notice.kind]}</span>
+        <span className="stamp">{notice.stamp}</span>
         <strong className="notice__title">{notice.title}</strong>
         {notice.line && <span className="notice__line">{notice.line}</span>}
       </button>

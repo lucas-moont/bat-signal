@@ -1,5 +1,5 @@
 // What the Bat-Signal announces: news found by comparing two snapshots.
-import type { AttentionItem, StoreSnapshot } from './types'
+import { ATTENTION_URGENCY, type AttentionItem, type SessionSnapshot, type StoreSnapshot } from './types'
 import { attentionCopy, caseHeader, folderName } from './view'
 
 export type NoticeKind =
@@ -11,11 +11,27 @@ export interface Notice {
   kind: NoticeKind
   sessionId: string
   at: string
+  /** The red ink stamp: the same words as on the panel's cards. */
+  stamp: string
   /** The case it is about. */
   title: string
   /** One line of detail. */
   line: string
 }
+
+/** Most urgent first; alerts keep the needs-you list's order. */
+export const NOTICE_URGENCY: Record<NoticeKind, number> = {
+  permission: ATTENTION_URGENCY.permission,
+  error: ATTENTION_URGENCY.error,
+  waiting: ATTENTION_URGENCY.waiting,
+  reply: ATTENTION_URGENCY.reply,
+  'task-done': 10,
+  'session-opened': 11,
+  'session-closed': 12,
+}
+
+/** News that needs the user, not just news. */
+export const isUrgent = (kind: NoticeKind): boolean => NOTICE_URGENCY[kind] <= NOTICE_URGENCY.waiting
 
 const ANNOUNCED_ALERTS = new Set<AttentionItem['kind']>(['permission', 'error', 'waiting', 'reply'])
 
@@ -24,78 +40,69 @@ const alertKey = (a: AttentionItem) => `${a.sessionId}:${a.kind}:${a.at}`
 /** News between two snapshots. The first snapshot announces nothing: it is the state, not news. */
 export function diffNotices(prev: StoreSnapshot | undefined, next: StoreSnapshot): Notice[] {
   if (!prev) return []
-  const titleOf = (id: string) => {
-    const s = next.sessions.find((x) => x.sessionId === id) ?? prev.sessions.find((x) => x.sessionId === id)
+  const before = new Map(prev.sessions.map((s) => [s.sessionId, s]))
+  const after = new Map(next.sessions.map((s) => [s.sessionId, s]))
+  const title = (id: string) => {
+    const s = after.get(id) ?? before.get(id)
     return s ? caseHeader(s).title : 'Unknown case'
   }
+  const notice = (
+    s: Pick<SessionSnapshot, 'sessionId'>,
+    fields: Omit<Notice, 'sessionId' | 'title'>,
+  ): Notice => ({
+    ...fields,
+    sessionId: s.sessionId,
+    title: title(s.sessionId),
+  })
 
   const known = new Set(prev.attention.map(alertKey))
-  const alerts: Notice[] = next.attention
+  const alerts = next.attention
     .filter((a) => ANNOUNCED_ALERTS.has(a.kind) && !known.has(alertKey(a)))
-    .map((a) => ({
-      key: alertKey(a),
-      kind: a.kind as NoticeKind,
-      sessionId: a.sessionId,
-      at: a.at,
-      title: titleOf(a.sessionId),
-      line: attentionCopy(a).line,
-    }))
+    .map((a) => notice(a, { key: alertKey(a), kind: a.kind as NoticeKind, at: a.at, ...attentionCopy(a) }))
 
-  const before = new Map(prev.sessions.map((s) => [s.sessionId, s]))
-  const after = new Set(next.sessions.map((s) => s.sessionId))
   const tasks: Notice[] = []
   const opened: Notice[] = []
   for (const s of next.sessions) {
     const old = before.get(s.sessionId)
     if (!old) {
       // A session that just appeared: announce it, not the work it already finished.
-      opened.push({
-        key: `${s.sessionId}:opened`,
-        kind: 'session-opened',
-        sessionId: s.sessionId,
-        at: s.lastActivityAt ?? '',
-        title: titleOf(s.sessionId),
-        line: folderName(s.cwd ?? '') || 'New session',
-      })
+      opened.push(
+        notice(s, {
+          key: `${s.sessionId}:opened`,
+          kind: 'session-opened',
+          at: s.lastActivityAt ?? '',
+          stamp: 'Case opened',
+          line: folderName(s.cwd ?? '') || 'New session',
+        }),
+      )
       continue
     }
+    if (old.tasks === s.tasks) continue
     const wasDone = new Set(old.tasks.filter((t) => t.status === 'completed').map((t) => t.id))
     for (const t of s.tasks) {
       if (t.status !== 'completed' || wasDone.has(t.id)) continue
-      tasks.push({
-        key: `${s.sessionId}:task:${t.id}`,
-        kind: 'task-done',
-        sessionId: s.sessionId,
-        at: t.history.at(-1)?.at ?? '',
-        title: titleOf(s.sessionId),
-        line: t.subject,
-      })
+      tasks.push(
+        notice(s, {
+          key: `${s.sessionId}:task:${t.id}`,
+          kind: 'task-done',
+          at: t.history.at(-1)?.at ?? '',
+          stamp: 'Task done',
+          line: t.subject,
+        }),
+      )
     }
   }
-  const closed: Notice[] = prev.sessions
+  const closed = prev.sessions
     .filter((s) => !after.has(s.sessionId))
-    .map((s) => ({
-      key: `${s.sessionId}:closed`,
-      kind: 'session-closed',
-      sessionId: s.sessionId,
-      at: s.lastActivityAt ?? '',
-      title: titleOf(s.sessionId),
-      line: 'Session ended',
-    }))
+    .map((s) =>
+      notice(s, {
+        key: `${s.sessionId}:closed`,
+        kind: 'session-closed',
+        at: s.lastActivityAt ?? '',
+        stamp: 'Case closed',
+        line: 'Session ended',
+      }),
+    )
 
   return [...alerts, ...tasks, ...opened, ...closed]
 }
-
-export const NOTICE_STAMP: Record<NoticeKind, string> = {
-  permission: 'Permission',
-  error: 'Error',
-  waiting: 'Waiting',
-  reply: 'New reply',
-  'task-done': 'Task done',
-  'session-opened': 'Case opened',
-  'session-closed': 'Case closed',
-}
-
-/** News that needs the user, not just news. */
-export const isUrgent = (kind: NoticeKind): boolean =>
-  kind === 'permission' || kind === 'error' || kind === 'waiting'

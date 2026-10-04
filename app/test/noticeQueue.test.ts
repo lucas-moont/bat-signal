@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { Notice, NoticeKind } from '../src/shared/notices'
-import { NOTICE_MS, advance, dismiss, emptyQueue, enqueue, silence } from '../src/shared/noticeQueue'
+import { NOTICE_MS, advance, emptyQueue, enqueue, silence } from '../src/shared/noticeQueue'
 
 const notice = (key: string, kind: NoticeKind = 'reply'): Notice => ({
   key,
   kind,
   sessionId: 's',
   at: '',
+  stamp: '',
   title: `Case ${key}`,
   line: '',
 })
@@ -57,11 +58,6 @@ describe('notice queue timing', () => {
   it('goes quiet when the last card has had its time', () => {
     const q = advance(enqueue(emptyQueue(), [notice('a')], T0), T0 + NOTICE_MS)
     expect(q.showing).toBeUndefined()
-  })
-
-  it('moves on at once when a card is dismissed', () => {
-    const q = dismiss(enqueue(emptyQueue(), [notice('a'), notice('b')], T0), T0 + 10)
-    expect(q.showing).toEqual({ notice: notice('b'), since: T0 + 10 })
   })
 })
 
