@@ -31,7 +31,9 @@ export class HookServer {
   }
 
   private async handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const reply = (status: number) => res.writeHead(status, { connection: 'close' }).end()
+    const reply = (status: number): void => {
+      res.writeHead(status, { connection: 'close' }).end()
+    }
 
     if (req.url !== '/hook') return reply(404)
     if (req.method !== 'POST') return reply(405)
