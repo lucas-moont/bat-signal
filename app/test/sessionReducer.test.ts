@@ -274,3 +274,21 @@ describe('background commands', () => {
     expect(s.background[0]?.status).toBe('running')
   })
 })
+
+describe('replayed or duplicated lines', () => {
+  it('does not list a subagent twice when its spawn line is replayed', () => {
+    const spawn = toolUse('toolu_a', 'Agent', { description: 'Search', subagent_type: 'Explore' })
+    expect(replay([spawn, spawn]).subagents).toHaveLength(1)
+  })
+
+  it('finishes a run from a task notification delivered as a user line', () => {
+    const s = replay([
+      toolUse('toolu_b', 'Bash', { command: 'npm run dev', run_in_background: true }),
+      toolResult('toolu_b', { backgroundTaskId: 'bjob1' }),
+      userText(
+        '<task-notification>\n<task-id>bjob1</task-id>\n<tool-use-id>toolu_b</tool-use-id>\n<status>completed</status>\n</task-notification>',
+      ),
+    ])
+    expect(s.background[0]).toMatchObject({ status: 'completed', endedAt: '2026-01-01T00:00:03.000Z' })
+  })
+})
