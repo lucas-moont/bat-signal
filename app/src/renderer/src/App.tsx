@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
-import { mascotMood } from '@shared/view'
+import { mascotMood, pluginSilent } from '@shared/view'
 import { batSignal } from './bridge'
 import { Atmosphere } from './components/Atmosphere'
 import { BatSignalIntro } from './components/BatSignalIntro'
@@ -9,6 +9,7 @@ import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { NightReport } from './components/NightReport'
+import { PluginHint } from './components/PluginHint'
 import { WatchStrip } from './components/WatchStrip'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
@@ -112,6 +113,7 @@ export function App() {
 
           <div className="stage">
             <div className="stage__scroll">
+              {activeTab === 'needs' && pluginSilent(snapshot) && <PluginHint />}
               {report ? (
                 <NightReport
                   tab={activeTab}

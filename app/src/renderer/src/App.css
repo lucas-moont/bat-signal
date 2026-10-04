@@ -242,6 +242,36 @@
   z-index: 10;
 }
 
+/* While the plugin is silent, Needs you says so (see PluginHint). */
+.plugin-hint {
+  margin: 10px 10px 0;
+  padding: 9px 11px 10px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--ash);
+}
+.plugin-hint p {
+  margin: 0;
+}
+.plugin-hint__title {
+  font-weight: 600;
+  color: var(--bone);
+}
+.plugin-hint .plugin-hint__text {
+  margin-top: 2px;
+}
+.plugin-hint__command {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px; /* fits on one line at the compact width */
+  white-space: nowrap;
+  overflow-x: auto;
+  color: var(--bone);
+  user-select: all;
+}
+
 /* Click ripple (see ripple.ts): targets clip it and anchor it. */
 .card,
 .row,
