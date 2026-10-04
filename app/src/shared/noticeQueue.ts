@@ -45,3 +45,6 @@ export function advance(queue: NoticeQueue, now: number): NoticeQueue {
 
 /** The user dealt with the card on screen: show the next one now. */
 export const dismiss = (queue: NoticeQueue, now: number): NoticeQueue => showNext(queue, now)
+
+/** The panel is open, so the user sees everything: drop the cards, keep the memory of them. */
+export const silence = (queue: NoticeQueue): NoticeQueue => ({ waiting: [], announced: queue.announced })
