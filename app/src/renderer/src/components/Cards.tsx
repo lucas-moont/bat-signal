@@ -12,6 +12,7 @@ import {
 } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
+import { TerminalButton } from './TerminalButton'
 import { Typewriter } from './Typewriter'
 import './Cards.css'
 
@@ -55,7 +56,11 @@ export function AttentionList({
           const session = sessions.find((s) => s.sessionId === item.sessionId)
           const { stamp, line } = attentionCopy(item)
           return (
-            <motion.li key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`} {...listMotion(i)}>
+            <motion.li
+              key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`}
+              className="card-slot"
+              {...listMotion(i)}
+            >
               <button
                 className={`card card--attention card--${item.kind}${URGENT.has(item.kind) ? ' card--urgent' : ''}`}
                 onClick={() => onOpen(item)}
@@ -68,6 +73,7 @@ export function AttentionList({
                 <span className="card__title">{session ? caseHeader(session).title : 'Unknown case'}</span>
                 <span className="card__detail">{line}</span>
               </button>
+              <TerminalButton sessionId={item.sessionId} className="card__terminal" />
             </motion.li>
           )
         })}
@@ -99,7 +105,7 @@ export function CaseList({
           const last = lastReply(s)
           const status = needsYou ? 'alert' : s.status
           return (
-            <motion.li key={s.sessionId} {...listMotion(i)}>
+            <motion.li key={s.sessionId} className="card-slot" {...listMotion(i)}>
               <button
                 className={`card card--case${needsYou ? ' card--urgent' : ''}`}
                 onClick={() => onOpen(s.sessionId)}
@@ -140,6 +146,7 @@ export function CaseList({
                   <span className="card__time">{relativeTime(s.lastActivityAt, now)}</span>
                 </span>
               </button>
+              <TerminalButton sessionId={s.sessionId} className="card__terminal" />
             </motion.li>
           )
         })}

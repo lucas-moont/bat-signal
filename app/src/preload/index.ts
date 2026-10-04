@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc'
 import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
-import type { StoreSnapshot } from '../shared/types'
+import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 
 /** Subscribes to a push channel; returns an unsubscribe function. */
 function subscribe<T>(channel: string, callback: (value: T) => void): () => void {
@@ -14,6 +14,11 @@ const api = {
   getSnapshot: (): Promise<StoreSnapshot> => ipcRenderer.invoke(IPC.getSnapshot),
   onSnapshot: (callback: (snapshot: StoreSnapshot) => void) => subscribe(IPC.snapshot, callback),
   markSeen: (sessionId: string): void => ipcRenderer.send(IPC.markSeen, sessionId),
+  /** Brings the session's terminal to the front, or copies its resume command; says which. */
+  goToTerminal: (sessionId: string): Promise<TerminalOutcome | undefined> =>
+    ipcRenderer.invoke(IPC.goToTerminal, sessionId),
+  /** The pointer reached a terminal button: get ready to answer quickly. */
+  warmTerminal: (): void => ipcRenderer.send(IPC.warmTerminal),
 
   getSettings: (): Promise<Settings> => ipcRenderer.invoke(IPC.getSettings),
   setSettings: (patch: Partial<Settings>): void => ipcRenderer.send(IPC.setSettings, patch),

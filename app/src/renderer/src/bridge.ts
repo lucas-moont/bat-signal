@@ -42,6 +42,8 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
     markSeen: () => undefined,
+    goToTerminal: async () => 'copied',
+    warmTerminal: () => undefined,
     getSettings: settings.get,
     setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
     onSettings: settings.on,
