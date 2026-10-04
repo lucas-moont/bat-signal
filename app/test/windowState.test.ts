@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { anchoredRect, resolveAnchor } from '../src/main/windowState'
+import { anchoredRect, noticePlacement, resolveAnchor } from '../src/main/windowState'
 
 // Primary display first, as Electron's screen API is queried by the caller.
 const laptop = { workArea: { x: 0, y: 0, width: 1536, height: 816 } }
@@ -41,6 +41,35 @@ describe('signal geometry', () => {
     expect(anchoredRect({ x: 1520, y: 800 }, { width: 2000, height: 2000 }, [laptop])).toMatchObject({
       width: 1536,
       height: 816,
+    })
+  })
+})
+
+describe('signal geometry near edges', () => {
+  const sizes = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
+
+  it('keeps a window on the display nearest its corner when the corner slips just off it', () => {
+    expect(anchoredRect({ x: 3000, y: 1045 }, { width: 88, height: 88 }, [laptop, external])).toEqual({
+      x: 2912,
+      y: 952,
+      width: 88,
+      height: 88,
+    })
+  })
+
+  it('grows the notice window up and left from the disc when there is room', () => {
+    expect(noticePlacement({ x: 1520, y: 800 }, sizes, [laptop])).toEqual({
+      rect: { x: 1200, y: 570, width: 320, height: 230 },
+      below: false,
+      right: false,
+    })
+  })
+
+  it('opens the card below and to the right of a disc near the top-left, so the disc stays put', () => {
+    expect(noticePlacement({ x: 150, y: 120 }, sizes, [laptop])).toEqual({
+      rect: { x: 54, y: 24, width: 320, height: 230 },
+      below: true,
+      right: true,
     })
   })
 })
