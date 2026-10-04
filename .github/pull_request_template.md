@@ -1,12 +1,12 @@
-## O que muda
+## What changes
 
-<!-- Uma ou duas frases. -->
+<!-- One or two sentences. -->
 
 Closes #
 
 ## Checklist
 
-- [ ] `npm run lint`, `npm run typecheck` e `npm test` passando
-- [ ] Testes novos para lógica nova
-- [ ] Nada de dados reais de transcripts, caminhos pessoais ou tokens
-- [ ] Docs atualizadas, se mudou comportamento
+- [ ] `npm run lint`, `npm run typecheck` and `npm test` pass
+- [ ] New tests for new logic
+- [ ] No real transcript data, personal paths or tokens
+- [ ] Docs updated if behavior changed

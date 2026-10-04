@@ -1,45 +1,45 @@
 # Roadmap
 
-Para onde a Batcaverna pode ir. A ordem dentro de cada versão é uma sugestão. Depois da v1 vai ter uma rodada de conversa para decidir o que entra de fato na v2.
+Where Batcave can go. The order inside each version is a suggestion. After v1 ships there will be a feedback round to decide what actually goes into v2.
 
-## v1: "o Bat-Computador observa"
+## v1: "the Bat-Computer watches"
 
-Só observa, nunca age nas sessões.
+Observe only. Never acts on sessions.
 
-- [ ] Lista de sessões ativas do Claude Code, com status (trabalhando / parada / precisa de você)
-- [ ] Detalhe da sessão: tarefas, subagentes, comandos em segundo plano, últimas mensagens
-- [ ] Detalhe da tarefa (clique): descrição, histórico de status
-- [ ] Painel "Precisa de você": pedidos de permissão, Claude esperando resposta, erros
-- [ ] Notificações do Windows: precisa de você, terminou de responder, tarefa concluída, sessão aberta/fechada
-- [ ] Plugin do Claude Code com hooks HTTP (avisos na hora exata)
-- [ ] "Ir pro terminal": traz para frente a janela da sessão
-- [ ] Bat-Clawd, o mascote, com estados (dormindo, voando, alarmado)
-- [ ] Animações: abertura do Bat-Sinal, chuva, transições
-- [ ] Bandeja do sistema, atalho global, iniciar com o Windows
-- [ ] Instalador para Windows
+- [ ] List of active Claude Code sessions with status (working / idle / needs you)
+- [ ] Session detail: tasks, subagents, background commands, latest messages
+- [ ] Task detail (click): description, status history
+- [ ] "Needs you" panel: permission prompts, Claude waiting for input, errors
+- [ ] Windows notifications: needs you, finished replying, task completed, session opened/closed
+- [ ] Claude Code plugin with HTTP hooks (alerts at the exact moment)
+- [ ] "Go to terminal": brings the session's window to the front
+- [ ] Bat-Clawd, the mascot, with states (sleeping, flying, alarmed)
+- [ ] Animations: Bat-Signal intro, rain, transitions
+- [ ] System tray, global shortcut, start with Windows
+- [ ] Windows installer
 
-## v2: "a caverna responde"
+## v2: "the cave answers back"
 
-Sair de só observar para agir, com cuidado e sempre com confirmação explícita.
+Move from watching to acting, carefully and always with explicit confirmation.
 
-- **Aprovar/negar permissões pela janelinha.** O hook `PermissionRequest` espera a resposta do app, com timeout seguro: se o app não responder, o Claude segue o fluxo normal no terminal.
-- **Mensagem rápida.** Mandar "continue" ou um texto curto para uma sessão parada.
-- **Aba certa no Windows Terminal.** Hoje só a janela vem para frente. Pesquisar a automação do Windows Terminal para selecionar a aba exata.
-- **Histórico e busca.** O que cada sessão fez hoje, linha do tempo por sessão, busca por texto.
-- **Custo e tokens.** Painel por sessão e por dia, usando as linhas `cost-state` do transcript.
-- **Agent teams e jobs.** Mostrar `~/.claude/teams/` (times de agentes, caixas de entrada) e `~/.claude/jobs/` (jobs em segundo plano).
-- **Modo foco.** Silenciar avisos por X minutos e definir regras de aviso por projeto.
-- **Temas.** Arkham (verde), Gotham (azul noite), mais estados do mascote.
+- **Approve/deny permissions from the window.** The `PermissionRequest` hook waits for the app's answer with a safe timeout: if the app doesn't answer, Claude falls back to the normal terminal flow.
+- **Quick reply.** Send "continue" or a short message to an idle session.
+- **The right Windows Terminal tab.** Today only the window comes to the front. Research Windows Terminal automation to select the exact tab.
+- **History and search.** What each session did today, a per-session timeline, full-text search.
+- **Cost and tokens.** Per-session and per-day panel, from the transcript's `cost-state` lines.
+- **Agent teams and jobs.** Show `~/.claude/teams/` (agent teams, inboxes) and `~/.claude/jobs/` (background jobs).
+- **Focus mode.** Mute alerts for X minutes and set per-project alert rules.
+- **Themes.** Arkham (green), Gotham (night blue), more mascot states.
 
-## v3: "Bat-Computador completo"
+## v3: "the full Bat-Computer"
 
-- **Multiplataforma.** macOS e Linux; sessões dentro do WSL.
-- **Sessões remotas e na nuvem.** claude.ai/code, Remote Control, sessões em outras máquinas.
-- **Resumo do dia.** "Hoje suas sessões fizeram…", gerado com a API do Claude.
-- **Celular.** Push via ntfy ou Telegram quando você estiver longe do PC.
-- **Alertas inteligentes.** Detectar sessão em loop, tarefa travada há muito tempo, custo fora da curva.
-- **Distribuição.** Plugin num marketplace público e auto-update do app.
+- **Cross-platform.** macOS and Linux; sessions inside WSL.
+- **Remote and cloud sessions.** claude.ai/code, Remote Control, sessions on other machines.
+- **Daily digest.** "Today your sessions did…", generated with the Claude API.
+- **Phone.** Push via ntfy or Telegram when you're away from the PC.
+- **Smart alerts.** Detect a session stuck in a loop, a task stalled for too long, unusual cost.
+- **Distribution.** Plugin on a public marketplace and app auto-update.
 
-## Como sugerir
+## Suggesting ideas
 
-Abra uma issue usando o modelo "Ideia".
+Open an issue using the "Idea" template.
