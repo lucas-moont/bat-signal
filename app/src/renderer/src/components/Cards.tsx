@@ -3,6 +3,8 @@ import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import {
   attentionCopy,
   caseHeader,
+  folderName,
+  lastReply,
   LIVE_STATUS_LABEL,
   orderCases,
   plainPreview,
@@ -94,7 +96,7 @@ export function CaseList({
         {orderCases(sessions, attention).map((s, i) => {
           const { number, title, progress } = caseHeader(s)
           const needsYou = attention.some((a) => a.sessionId === s.sessionId)
-          const last = s.messages.findLast((m) => m.role === 'assistant')
+          const last = lastReply(s)
           const status = needsYou ? 'alert' : s.status
           return (
             <motion.li key={s.sessionId} {...listMotion(i)}>
@@ -126,11 +128,11 @@ export function CaseList({
                 )}
                 {last && (
                   <span className="card__quote">
-                    <Typewriter text={plainPreview(last.text)} />
+                    <Typewriter text={plainPreview(last)} />
                   </span>
                 )}
                 <span className="card__meta">
-                  {s.cwd && <span className="card__cwd">{s.cwd.split(/[\\/]/).filter(Boolean).pop()}</span>}
+                  {s.cwd && <span className="card__cwd">{folderName(s.cwd)}</span>}
                   <span className="card__time">{relativeTime(s.lastActivityAt, now)}</span>
                 </span>
               </button>

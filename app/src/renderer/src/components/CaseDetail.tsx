@@ -7,6 +7,7 @@ import {
   relativeTime,
   RUN_STATUS_LABEL,
   TASK_GLYPH,
+  taskLabel,
 } from '@shared/view'
 import { Icon } from './Icon'
 import { Beat } from './Live'
@@ -80,9 +81,7 @@ export function CaseDetail({
                     <Beat beating={t.status === 'in_progress'} strength={0.3} className="row__glyph">
                       {TASK_GLYPH[t.status]}
                     </Beat>
-                    <span className="row__text">
-                      {t.status === 'in_progress' ? (t.activeForm ?? t.subject) : t.subject}
-                    </span>
+                    <span className="row__text">{taskLabel(t)}</span>
                     <Icon name="chevron" size={14} />
                   </button>
                 </li>
