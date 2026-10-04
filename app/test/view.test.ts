@@ -155,3 +155,12 @@ describe('plainPreview', () => {
     expect(plainPreview('Checking   the GCPD files.')).toBe('Checking the GCPD files.')
   })
 })
+
+describe('plainPreview on long replies', () => {
+  it('only reads the start of a long reply, ending with an ellipsis', () => {
+    const preview = plainPreview('**Report** ' + 'word '.repeat(2000))
+    expect(preview.startsWith('Report word')).toBe(true)
+    expect(preview.length).toBeLessThanOrEqual(281)
+    expect(preview.endsWith('…')).toBe(true)
+  })
+})
