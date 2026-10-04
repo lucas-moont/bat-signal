@@ -1,0 +1,170 @@
+/* The watch strip: a narrow, dense list to leave in the corner. Rows are one or two lines. */
+.watch {
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  background: var(--abyss);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* The bar is the handle: drag it to move the strip. */
+.watch__bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 4px 0 10px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #0c0a09, #000);
+  -webkit-app-region: drag;
+}
+.watch__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+.watch__count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-hot);
+}
+.watch__actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* Past the main process's height cap, the rows scroll under the bar. */
+.watch__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.watch__nil {
+  margin: 0;
+  padding: 10px 12px 12px;
+  font-size: 12px;
+  color: var(--ash);
+}
+.watch__rows {
+  margin: 0;
+  padding: 2px 0;
+  list-style: none;
+}
+
+.watch-row {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'stamp title progress'
+    '. line line';
+  align-items: baseline;
+  column-gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+li + li > .watch-row {
+  border-top: 1px solid rgb(49 48 47 / 55%);
+}
+.watch-row:hover {
+  background: var(--surface);
+}
+.watch-row:focus-visible {
+  outline: 1px solid var(--bone);
+  outline-offset: -1px;
+}
+.watch-row[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.watch-row__stamp {
+  grid-area: stamp;
+  box-sizing: border-box;
+  width: 82px;
+  text-align: center;
+  font-size: 9.5px;
+  padding: 0 4px;
+  border-width: 1px;
+  transform: rotate(-1.5deg);
+}
+.watch-row__title {
+  grid-area: title;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--bone);
+}
+.watch-row__progress {
+  grid-area: progress;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ash);
+}
+.watch-row__line {
+  grid-area: line;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ash);
+}
+
+/* Inks by tone: red only for what waits for the user. */
+.watch-row--hot .watch-row__stamp {
+  color: var(--ink-hot);
+}
+.watch-row--hot .watch-row__line {
+  color: var(--bone);
+}
+.watch-row--soft .watch-row__stamp {
+  color: var(--ink-soft);
+}
+.watch-row--working .watch-row__stamp {
+  color: var(--bone);
+}
+.watch-row--quiet .watch-row__stamp,
+.watch-row--idle .watch-row__stamp {
+  color: var(--ash);
+}
+.watch-row--idle .watch-row__title {
+  color: #cfc6be;
+  font-weight: 500;
+}
+
+/* The night report theme: the same strip, typed. */
+.watch--report .watch-row__title,
+.watch--report .watch-row__line,
+.watch--report /* Past the main process's height cap, the rows scroll under the bar. */
+.watch__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.watch__nil {
+  font-family: var(--font-type);
+  font-weight: 400;
+}
+.watch--report .watch-row__title {
+  font-size: 12.5px;
+}
+.watch--report .watch-row__line {
+  font-size: 11.5px;
+}

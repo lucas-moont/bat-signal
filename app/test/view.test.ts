@@ -8,6 +8,8 @@ import {
   mascotMood,
   orderCases,
   plainPreview,
+  reportCopy,
+  watchRow,
   relativeTime,
   taskLabel,
 } from '../src/shared/view'
@@ -252,5 +254,101 @@ describe('small case details', () => {
     expect(taskLabel({ ...task, status: 'in_progress' })).toBe('Scanning Gotham')
     expect(taskLabel({ ...task, status: 'pending' })).toBe('Scan Gotham')
     expect(taskLabel({ ...task, activeForm: undefined, status: 'in_progress' })).toBe('Scan Gotham')
+  })
+})
+
+describe('reportCopy', () => {
+  const base = { sessionId: 's', at: '2026-01-01T00:00:00.000Z' }
+
+  it.each<[AttentionItem, { stamp: string; sentence: string }]>([
+    [
+      { ...base, kind: 'permission', toolName: 'Bash', detail: 'npm install' },
+      { stamp: 'Permission', sentence: 'asks to run Bash: npm install' },
+    ],
+    [
+      { ...base, kind: 'permission', toolName: 'WebFetch' },
+      { stamp: 'Permission', sentence: 'asks to use WebFetch' },
+    ],
+    [
+      { ...base, kind: 'error', detail: 'rate_limit' },
+      { stamp: 'Error', sentence: 'stopped: rate limit' },
+    ],
+    [
+      { ...base, kind: 'waiting' },
+      { stamp: 'Waiting', sentence: 'is waiting for your answer' },
+    ],
+    [
+      { ...base, kind: 'reply' },
+      { stamp: 'New reply', sentence: 'finished replying' },
+    ],
+    [
+      { ...base, kind: 'stalled', detail: 'Scan Gotham' },
+      { stamp: 'Stalled', sentence: 'has gone quiet on “Scan Gotham”' },
+    ],
+  ])('%o', (item, expected) => {
+    expect(reportCopy(item)).toEqual(expected)
+  })
+})
+
+describe('watchRow', () => {
+  const task = (id: string, status: 'pending' | 'in_progress' | 'completed', activeForm?: string) => ({
+    id,
+    subject: `Task ${id}`,
+    activeForm,
+    status,
+    history: [],
+  })
+  const s = (status: SessionSnapshot['status'], extra: Partial<SessionSnapshot> = {}): SessionSnapshot => ({
+    ...session(status),
+    sessionId: 'c',
+    title: 'Tune the Batmobile',
+    ...extra,
+  })
+  const alert = (kind: AttentionItem['kind'], extra: Partial<AttentionItem> = {}): AttentionItem => ({
+    sessionId: 'c',
+    kind,
+    at: '2026-01-01T00:00:00.000Z',
+    ...extra,
+  })
+
+  it('leads with what waits for the user, the most urgent first', () => {
+    const row = watchRow(s('busy'), [
+      alert('reply'),
+      alert('permission', { toolName: 'Bash', detail: 'rm -rf ./x' }),
+    ])
+    expect(row).toEqual({
+      tone: 'hot',
+      stamp: 'Permission',
+      title: 'Tune the Batmobile',
+      line: 'Bash · rm -rf ./x',
+    })
+  })
+
+  it('shows what a working session is doing now, with its progress', () => {
+    const tasks = [
+      task('1', 'completed'),
+      task('2', 'in_progress', 'Profiling the ignition'),
+      task('3', 'pending'),
+    ]
+    expect(watchRow(s('busy', { tasks }), [])).toEqual({
+      tone: 'working',
+      stamp: 'Working',
+      title: 'Tune the Batmobile',
+      line: 'Profiling the ignition',
+      progress: '1/3',
+    })
+  })
+
+  it('keeps an idle session to one line', () => {
+    expect(watchRow(s('idle'), [])).toEqual({ tone: 'idle', stamp: 'Idle', title: 'Tune the Batmobile' })
+  })
+
+  it('reads waiting work softer than blocked work, and a stalled task quietest', () => {
+    expect(watchRow(s('idle'), [alert('waiting')]).tone).toBe('soft')
+    expect(watchRow(s('idle'), [alert('stalled', { detail: 'Scan' })]).tone).toBe('quiet')
+  })
+
+  it('ignores alerts that belong to other sessions', () => {
+    expect(watchRow(s('idle'), [alert('error', { sessionId: 'other' })]).tone).toBe('idle')
   })
 })

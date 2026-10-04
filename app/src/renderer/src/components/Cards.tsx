@@ -1,19 +1,17 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import {
+  ALERT_INK,
   attentionCopy,
   caseHeader,
   folderName,
-  lastReply,
   LIVE_STATUS_LABEL,
   orderCases,
-  plainPreview,
   relativeTime,
 } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
 import { TerminalButton } from './TerminalButton'
-import { Typewriter } from './Typewriter'
 import './Cards.css'
 
 function Empty({ title, hint }: { title: string; hint: string }) {
@@ -26,7 +24,10 @@ function Empty({ title, hint }: { title: string; hint: string }) {
   )
 }
 
-const URGENT = new Set<AttentionItem['kind']>(['permission', 'error'])
+/** Cards that glow: the blocked work the pen presses hardest on. */
+const URGENT = new Set(
+  (Object.keys(ALERT_INK) as AttentionItem['kind'][]).filter((k) => ALERT_INK[k] === 'hot'),
+)
 
 const listMotion = (index: number) => ({
   layout: true,
@@ -102,7 +103,6 @@ export function CaseList({
         {orderCases(sessions, attention).map((s, i) => {
           const { number, title, progress } = caseHeader(s)
           const needsYou = attention.some((a) => a.sessionId === s.sessionId)
-          const last = lastReply(s)
           const status = needsYou ? 'alert' : s.status
           return (
             <motion.li key={s.sessionId} className="card-slot" {...listMotion(i)}>
@@ -134,11 +134,6 @@ export function CaseList({
                       />
                     </span>
                     <span className="progress__label">{progress.label}</span>
-                  </span>
-                )}
-                {last && (
-                  <span className="card__quote">
-                    <Typewriter text={plainPreview(last)} />
                   </span>
                 )}
                 <span className="card__meta">

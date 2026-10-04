@@ -1,5 +1,5 @@
 // The window's link to the main process. Without the preload bridge a stand-in takes over:
-// in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-busy / #demo-news
+// in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-busy / #demo-news (and -watch for the strip)
 // (screenshots) it serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
 // window stays empty rather than showing fake sessions as if they were real.
 import { beforeNewsDemoSnapshot, busyDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
@@ -11,6 +11,9 @@ const EMPTY: StoreSnapshot = { sessions: [], attention: [] }
 
 /** Both windows load the same page; the query says which one this is. */
 export const isSignalView = new URLSearchParams(location.search).get('view') === 'signal'
+
+/** The demo flags in the hash, word by word (#demo-watch-report → demo, watch, report). */
+const flags = new Set(location.hash.slice(1).split('-'))
 
 /** A value with listeners: what the main process keeps for real, kept in memory. */
 function observable<T>(initial: T) {
@@ -36,8 +39,13 @@ const NEWS_DELAY_MS = 800
 function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
   const snapshot = observable(first)
   if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
-  const settings = observable<Settings>(DEFAULT_SETTINGS)
-  const mode = observable<WindowMode>(isSignalView ? 'signal' : 'panel')
+  // #demo-report opens in the night report theme.
+  const settings = observable<Settings>({
+    ...DEFAULT_SETTINGS,
+    layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
+  })
+  const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
+  let lastOpened: WindowMode = 'panel'
   return {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
@@ -48,25 +56,30 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
     onSettings: settings.on,
     getMode: mode.get,
-    setMode: (next) => mode.set(next),
+    setMode: (next) => {
+      if (next !== 'signal') lastOpened = next
+      mode.set(next)
+    },
     onFocusCase: () => () => undefined,
     setNoticeOut: async () => ({ below: false, right: false }),
     setInteractive: () => undefined,
     moveSignalBy: () => undefined,
     onMode: mode.on,
+    reopen: () => mode.set(lastOpened),
+    setWatchHeight: () => undefined,
     closeWindow: () => window.close(),
   }
 }
 
 function pickStandIn(): BatSignalApi {
   const inElectron = navigator.userAgent.includes('Electron')
-  if (inElectron && !location.hash.startsWith('#demo')) {
+  if (inElectron && !flags.has('demo')) {
     console.error('[bat-signal] preload bridge missing: no data source')
     return standIn(EMPTY)
   }
-  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
-  if (location.hash.includes('busy')) return standIn(busyDemoSnapshot())
-  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
+  if (flags.has('quiet')) return standIn(quietDemoSnapshot())
+  if (flags.has('busy')) return standIn(busyDemoSnapshot())
+  if (flags.has('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
   return standIn(demoSnapshot())
 }
 

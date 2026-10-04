@@ -1,0 +1,282 @@
+/* The night report: one typed column on black, a red margin rule like legal paper, stamps in
+   the margin, red pen on whatever waits for you. */
+.report {
+  --margin: 114px;
+  --ink: #bdb4aa;
+  position: relative;
+  padding: 8px 10px 20px 0;
+  font-family: var(--font-type);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+/* The margin rule runs the whole sheet. */
+.report::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: var(--margin);
+  width: 1px;
+  background: rgb(139 0 0 / 75%);
+  pointer-events: none;
+}
+.report ::selection {
+  background: rgb(175 0 6 / 55%);
+  color: var(--bone);
+}
+
+.report__dateline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px 14px;
+  padding-bottom: 6px;
+  border-bottom: 3px double var(--line);
+}
+.report__name {
+  margin: 0;
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+.report__date {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ash);
+}
+
+/* Each entry leaves room on the right for its terminal button. */
+.report__line,
+.case {
+  position: relative;
+}
+.report__line > .entry,
+.case > .entry {
+  padding-right: 34px;
+}
+.report__terminal {
+  position: absolute;
+  top: 5px;
+  right: 2px;
+}
+/* Inside .notes, whose list reset (.notes ul) would otherwise win. */
+.notes .notes__alerts {
+  margin: 0 0 6px;
+  padding: 0 4px 0 calc(var(--margin) + 12px);
+  list-style: none;
+  color: var(--bone);
+}
+.notes__alerts li + li {
+  margin-top: 4px;
+}
+.notes__file {
+  margin: 0;
+  padding: 0 4px 6px calc(var(--margin) + 12px);
+  color: var(--ink);
+}
+.notes__terminal {
+  margin: 0 0 8px calc(var(--margin) + 12px);
+}
+.report__heading {
+  margin: 0 0 4px calc(var(--margin) + 12px);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--ash);
+}
+.report__nil {
+  margin: 4px 0 0 calc(var(--margin) + 12px);
+  color: var(--ash);
+}
+.report__lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One typed line or paragraph: the stamp (and age) in the margin, the words after the rule. */
+.entry {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: var(--margin) 1fr;
+  width: 100%;
+  padding: 5px 0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.entry:hover {
+  background: rgb(39 21 14 / 45%);
+}
+.entry:focus-visible {
+  outline: 1px solid var(--bone);
+  outline-offset: -1px;
+}
+.entry__margin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 2px 9px 0 4px;
+}
+.entry__body {
+  padding: 0 4px 0 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.entry__body strong {
+  font-weight: inherit;
+  color: var(--bone);
+}
+.entry__age {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ash);
+}
+
+/* Red pen: a hand-drawn stroke under what waits for you, pressed harder for blocked work. A
+   drawn stroke, not a text underline, so it reads neither as a link nor as a spelling mark. */
+.pen {
+  color: var(--bone);
+  padding-bottom: 3px;
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+  background-size: 28px 5px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.pen--hot {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ec2a2a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.pen--soft {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23d4574c' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.pen--quiet {
+  padding-bottom: 0;
+}
+
+/* Stamps at the approved scale, inked by urgency. */
+.report .stamp {
+  white-space: nowrap;
+}
+.report .stamp--hot {
+  color: var(--ink-hot);
+}
+.report .stamp--soft {
+  color: var(--ink-soft);
+}
+.report .stamp--working {
+  color: var(--bone);
+  transform: rotate(-1.5deg);
+}
+.report .stamp--quiet {
+  color: var(--ash);
+  transform: rotate(-1.5deg);
+}
+
+/* A case opened in place: a pen bracket in the margin holds the paragraph and its notes. */
+.case--open::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  bottom: 10px;
+  left: calc(var(--margin) - 6px);
+  width: 4px;
+  border: 1px solid var(--ash);
+  border-right: 0;
+  pointer-events: none;
+}
+.notes {
+  overflow: hidden;
+}
+.notes__body,
+.notes__nil {
+  padding: 2px 4px 10px calc(var(--margin) + 12px);
+}
+.notes__nil {
+  margin: 0;
+  color: var(--ash);
+}
+.notes__group + .notes__group {
+  margin-top: 8px;
+}
+.notes__title {
+  margin: 0;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.notes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.note {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 8px;
+  width: 100%;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+.note:hover {
+  background: rgb(39 21 14 / 50%);
+}
+.note:focus-visible {
+  outline: 1px solid var(--bone);
+}
+.note__mark {
+  color: var(--ash);
+  white-space: nowrap;
+}
+.note__text {
+  min-width: 0;
+  color: var(--bone);
+}
+.note__state {
+  font-size: 10.5px;
+  color: var(--ash);
+}
+/* Running work is news, not a request: bone, never red. */
+.note--live .note__mark {
+  color: var(--bone);
+}
+.note--done .note__text {
+  color: var(--ash);
+  text-decoration: line-through;
+  text-decoration-color: rgb(138 129 122 / 60%);
+}
+
+.report__end {
+  margin: 22px 0 0 calc(var(--margin) + 12px);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ash);
+}
+
+/* The narrowest panel keeps the margin, a little tighter. */
+@media (max-width: 330px) {
+  .report {
+    --margin: 100px;
+    font-size: 12px;
+  }
+  /* Room for the column: stamps and headings track tighter at the narrowest width. */
+  .report .stamp {
+    letter-spacing: 0.04em;
+  }
+  .report__heading {
+    letter-spacing: 0.08em;
+  }
+}

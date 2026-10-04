@@ -13,3 +13,7 @@ Thumbs.db
 .env.*
 *.local
 *.tsbuildinfo
+
+# Impeccable working files (review captures, decision pages); the product and surface briefs are kept
+.impeccable/review/
+.impeccable/questions/

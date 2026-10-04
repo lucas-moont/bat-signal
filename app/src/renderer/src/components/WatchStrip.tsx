@@ -1,0 +1,117 @@
+// The watch strip: Bat-Signal left in the corner to follow the active sessions. One row per case,
+// the most urgent first; a click on a row goes to that session's terminal.
+import { useEffect, useMemo, useRef } from 'react'
+import type { PanelLayout } from '@shared/settings'
+import type { AttentionItem, SessionSnapshot } from '@shared/types'
+import { orderCases, watchRow, type WatchRow } from '@shared/view'
+import { batSignal } from '../bridge'
+import { BatEmblem } from './BatEmblem'
+import { Icon } from './Icon'
+import { COPIED_NOTE, useTerminalJump } from './TerminalButton'
+import './Cards.css'
+import './WatchStrip.css'
+
+export function WatchStrip({
+  sessions,
+  attention,
+  layout,
+}: {
+  sessions: SessionSnapshot[]
+  attention: AttentionItem[]
+  layout: PanelLayout
+}) {
+  // The window is as tall as the strip asks: the bar plus the rows at their natural height (the
+  // main process caps it, and the rows scroll past the cap), plus the frame's two border pixels.
+  const bar = useRef<HTMLElement>(null)
+  const content = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const [top, body] = [bar.current, content.current]
+    if (!top || !body) return
+    let sent = 0
+    const observer = new ResizeObserver(() => {
+      const height = Math.ceil(top.getBoundingClientRect().height + body.getBoundingClientRect().height) + 2
+      if (height !== sent) batSignal.setWatchHeight((sent = height)) // the window resize echoes back
+    })
+    observer.observe(top)
+    observer.observe(body)
+    return () => observer.disconnect()
+  }, [])
+
+  // The same count as the panel header's badge: everything that needs you.
+  const needsYou = attention.length
+  // Snapshots arrive up to ten times a second while sessions work: derive the rows once each.
+  const rows = useMemo(
+    () => orderCases(sessions, attention).map((s) => ({ id: s.sessionId, row: watchRow(s, attention) })),
+    [sessions, attention],
+  )
+
+  return (
+    <main className={`watch watch--${layout}`}>
+      <header ref={bar} className="watch__bar">
+        <BatEmblem size={22} />
+        <h1 className="watch__name">Bat-Signal</h1>
+        {needsYou > 0 && (
+          <span className="watch__count">
+            {needsYou} need{needsYou === 1 ? 's' : ''} you
+          </span>
+        )}
+        <nav className="watch__actions">
+          <button
+            className="icon-button"
+            onClick={() => batSignal.setMode('panel')}
+            aria-label="Open the full panel"
+            title="Open the full panel"
+          >
+            <Icon name="expand" />
+          </button>
+          <button
+            className="icon-button"
+            onClick={() => batSignal.setMode('signal')}
+            aria-label="Fold into the signal disc"
+            title="Fold into the signal disc"
+          >
+            <Icon name="fold" />
+          </button>
+        </nav>
+      </header>
+      <div className="watch__scroll">
+        <div ref={content}>
+          {sessions.length === 0 ? (
+            <p className="watch__nil">No open cases. Start Claude Code in a terminal to follow it here.</p>
+          ) : (
+            <ul className="watch__rows">
+              {rows.map(({ id, row }) => (
+                <Row key={id} sessionId={id} row={row} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </main>
+  )
+}
+
+function Row({ sessionId, row }: { sessionId: string; row: WatchRow }) {
+  const { go, busy, copied, warm } = useTerminalJump(sessionId)
+  return (
+    <li>
+      <button
+        className={`watch-row watch-row--${row.tone}`}
+        onClick={go}
+        onPointerEnter={warm}
+        onFocus={warm}
+        aria-busy={busy}
+        title="Go to the terminal"
+      >
+        <span className="watch-row__stamp stamp">{row.stamp}</span>
+        <span className="watch-row__title">{row.title}</span>
+        {row.progress && <span className="watch-row__progress">{row.progress}</span>}
+        {(copied || row.line) && (
+          <span className="watch-row__line" role={copied ? 'status' : undefined}>
+            {copied ? COPIED_NOTE : row.line}
+          </span>
+        )}
+      </button>
+    </li>
+  )
+}

@@ -11,9 +11,19 @@ export interface Settings {
   alwaysOnTop: boolean
   /** Window opacity, OPACITY_MIN to OPACITY_MAX. */
   opacity: number
+  /** How the panel reads: as case files (the approved layout) or as one typed night report. */
+  layout: PanelLayout
 }
 
-export const DEFAULT_SETTINGS: Settings = { animations: true, rain: true, alwaysOnTop: true, opacity: 1 }
+export type PanelLayout = 'files' | 'report'
+
+export const DEFAULT_SETTINGS: Settings = {
+  animations: true,
+  rain: true,
+  alwaysOnTop: true,
+  opacity: 1,
+  layout: 'files',
+}
 
 /** Settings from untrusted JSON: unknown keys dropped, bad values replaced by defaults. */
 export function parseSettings(raw: unknown): Settings {
@@ -26,6 +36,7 @@ export function parseSettings(raw: unknown): Settings {
     rain: bool('rain'),
     alwaysOnTop: bool('alwaysOnTop'),
     opacity: opacity === undefined ? DEFAULT_SETTINGS.opacity : clamp(opacity, OPACITY_MIN, OPACITY_MAX),
+    layout: o['layout'] === 'report' ? 'report' : 'files',
   }
 }
 
@@ -39,8 +50,8 @@ export interface NoticeLayout {
   right: boolean
 }
 
-/** Which window shows: the Bat-Signal disc at rest, or the full panel. */
-export type WindowMode = 'signal' | 'panel'
+/** Which window shows: the Bat-Signal disc at rest, the full panel, or the narrow watch strip. */
+export type WindowMode = 'signal' | 'panel' | 'watch'
 
 export const parseWindowMode = (raw: unknown): WindowMode | undefined =>
-  raw === 'signal' || raw === 'panel' ? raw : undefined
+  raw === 'signal' || raw === 'panel' || raw === 'watch' ? raw : undefined

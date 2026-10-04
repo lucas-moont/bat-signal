@@ -8,15 +8,18 @@ import { BatSignalIntro } from './components/BatSignalIntro'
 import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
+import { NightReport } from './components/NightReport'
+import { WatchStrip } from './components/WatchStrip'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
-import { useNow, useSettings, useSnapshot } from './hooks'
+import { useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
 import './App.css'
 
 export function App() {
   const snapshot = useSnapshot()
   const [settings, changeSettings, settingsLoaded] = useSettings()
   const calm = useCalm(settings)
+  const mode = useWindowMode()
   const now = useNow()
 
   const [tab, setTab] = useState<Tab | null>(null)
@@ -37,10 +40,13 @@ export function App() {
   )
   const mood = mascotMood(snapshot)
   const fold = () => batSignal.setMode('signal')
-  // Open on whatever matters: the needs-you list when something is waiting.
-  const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
+  // The night report opens a case in place, among its case notes, instead of sliding a detail in.
+  const report = settings.layout === 'report'
   // A case that ends while open simply disappears: no session, no detail.
   const session = openCase ? sessions.find((s) => s.sessionId === openCase) : undefined
+  // Open on whatever matters: the needs-you list when something is waiting. In the report an open
+  // case shows on the case notes, without pinning that choice for later.
+  const activeTab: Tab = report && session ? 'cases' : (tab ?? (attention.length ? 'needs' : 'cases'))
   // A drawer whose task, subagent or job left the session is gone too (and must not eat an Esc).
   const activeSheet = session && sheet && sheetExists(session, sheet) ? sheet : null
 
@@ -73,6 +79,14 @@ export function App() {
   // than flashing an intro or rain the user may have turned off.
   if (!settingsLoaded) return <main className="app" />
 
+  if (mode === 'watch') {
+    return (
+      <CalmContext value={calm}>
+        <WatchStrip sessions={sessions} attention={attention} layout={settings.layout} />
+      </CalmContext>
+    )
+  }
+
   return (
     <CalmContext value={calm}>
       <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
@@ -81,19 +95,35 @@ export function App() {
           <Header
             needsYou={attention.length}
             mood={mood}
-            onSettings={() => setSettingsOpen(true)}
             onFold={fold}
+            onWatch={() => batSignal.setMode('watch')}
             onClose={batSignal.closeWindow}
           />
           <Tabs
             tab={activeTab}
             counts={{ needs: attention.length, cases: sessions.length }}
-            onChange={setTab}
+            onChange={(next) => {
+              // In the report, leaving the case notes closes the case opened there.
+              if (report && next === 'needs') setOpenCase(null)
+              setTab(next)
+            }}
+            onSettings={() => setSettingsOpen(true)}
           />
 
           <div className="stage">
             <div className="stage__scroll">
-              {activeTab === 'needs' ? (
+              {report ? (
+                <NightReport
+                  tab={activeTab}
+                  sessions={sessions}
+                  attention={attention}
+                  now={now}
+                  openCase={session ? openCase : null}
+                  onToggleCase={(id) => (openCase === id ? setOpenCase(null) : open(id))}
+                  onOpenAlert={openAttention}
+                  onOpenSheet={open}
+                />
+              ) : activeTab === 'needs' ? (
                 <AttentionList items={attention} sessions={sessions} now={now} onOpen={openAttention} />
               ) : (
                 <CaseList sessions={sessions} attention={attention} now={now} onOpen={(id) => open(id)} />
@@ -101,7 +131,7 @@ export function App() {
             </div>
 
             <AnimatePresence>
-              {session && (
+              {session && !report && (
                 <motion.div
                   key="detail"
                   className="stage__layer"

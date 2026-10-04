@@ -238,6 +238,12 @@ export function SettingsSheet({
         onChange={(rain) => onChange({ rain })}
       />
       <Toggle
+        label="Night report"
+        hint="Read the panel as one typed report instead of case files"
+        on={settings.layout === 'report'}
+        onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
+      />
+      <Toggle
         label="Always on top"
         hint="Keep the window above everything else"
         on={settings.alwaysOnTop}

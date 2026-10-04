@@ -8,14 +8,21 @@ import { jsonFile } from './jsonFile'
 import { anchoredRect, cornerOf, noticePlacement, resolveAnchor, type Anchor, type Size } from './windowState'
 
 const MARGIN = 16
-const PANEL = { width: 360, height: 520, minWidth: 300, minHeight: 360 }
+/** A corner companion, not a big-screen app: the panel opens small. */
+const PANEL = { width: 320, height: 440, minWidth: 300, minHeight: 360 }
+/** The watch strip: narrow, as tall as its rows ask for (see setWatchHeight). */
+const WATCH = { width: 280, minHeight: 56, initialHeight: 160, maxShare: 0.7 }
 /** The signal window: just the disc, or the disc with a notice card next to it. */
 const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
 const SAVE_DEBOUNCE_MS = 500
 
+/** What the disc opens: the full panel or the watch strip, whichever was used last. */
+type OpenMode = Exclude<WindowMode, 'signal'>
+
 interface Place {
   anchor?: Anchor
   panel: Size
+  open: OpenMode
 }
 
 const pair = <A extends string, B extends string>(o: Record<string, unknown>, a: A, b: B) => {
@@ -32,7 +39,7 @@ function parsePlace(raw: unknown): Place {
     pair(obj(o['anchor']), 'x', 'y') ?? (old && oldSize ? cornerOf({ ...old, ...oldSize }) : undefined)
   const panel = pair(obj(o['panel']), 'width', 'height') ??
     oldSize ?? { width: PANEL.width, height: PANEL.height }
-  return { anchor, panel }
+  return { anchor, panel, open: o['open'] === 'watch' ? 'watch' : 'panel' }
 }
 
 const placeFile = jsonFile('window.json', parsePlace)
@@ -65,6 +72,9 @@ export class BatSignalWindows {
   private current: WindowMode = 'signal'
   private anchor: Anchor
   private panelSize: Size
+  /** What the disc opens: the panel or the strip, whichever the user picked last. */
+  private lastOpened: OpenMode
+  private watchHeight: number = WATCH.initialHeight
   private noticeOut = false
   private latest?: StoreSnapshot
   private quitting = false
@@ -74,6 +84,7 @@ export class BatSignalWindows {
     const place = placeFile.load()
     this.anchor = resolveAnchor(place.anchor, displaysPrimaryFirst(), MARGIN)
     this.panelSize = place.panel
+    this.lastOpened = place.open
 
     this.panel = new BrowserWindow({
       ...this.rect(this.panelSize),
@@ -136,12 +147,13 @@ export class BatSignalWindows {
 
   /**
    * A new store snapshot. The signal always gets it (it compares snapshots to find news); the
-   * hidden panel gets only the latest one, when it opens, instead of re-rendering for nothing.
+   * panel window, hidden while the disc rests, gets only the latest one when it opens (as panel or
+   * strip) instead of re-rendering for nothing.
    */
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (this.current === 'panel' && !this.panel.isDestroyed())
+    if (this.current !== 'signal' && !this.panel.isDestroyed())
       this.panel.webContents.send(IPC.snapshot, snapshot)
   }
 
@@ -153,18 +165,36 @@ export class BatSignalWindows {
     this.broadcast(IPC.settings, settings)
   }
 
-  /** Shows the panel (optionally on one case) or folds back into the signal. */
+  /** Opens what the disc opened last: the panel or the watch strip. */
+  reopen(): void {
+    this.setMode(this.lastOpened)
+  }
+
+  /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
   setMode(mode: WindowMode, focusSessionId?: string): void {
-    if (mode === 'panel') {
-      // Opening the panel silences the cards; the hidden page may never finish their exit.
+    if (mode === 'panel' || mode === 'watch') {
+      // Opening silences the cards; the hidden page may never finish their exit.
       this.setClickThrough(false)
       this.noticeOut = false
       if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
-      this.panel.setBounds(this.rect(this.panelSize))
+      if (mode === 'panel') {
+        this.panel.setMinimumSize(PANEL.minWidth, PANEL.minHeight)
+        this.panel.setResizable(true)
+        this.panel.setBounds(this.rect(this.panelSize))
+      } else {
+        this.panel.setResizable(false)
+        this.panel.setMinimumSize(WATCH.width, WATCH.minHeight)
+        this.panel.setBounds(this.watchRect())
+      }
       this.panel.show()
-      this.panel.focus()
+      if (mode === 'panel') this.panel.focus()
       this.signal.hide()
       if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+      // A notice card opening the panel on one case is not the user picking the panel.
+      if (!focusSessionId && mode !== this.lastOpened) {
+        this.lastOpened = mode
+        this.scheduleSave()
+      }
     } else {
       this.panel.hide()
       this.placeSignal()
@@ -214,6 +244,10 @@ export class BatSignalWindows {
     this.scheduleSave()
   }
 
+  private watchRect() {
+    return this.rect({ width: WATCH.width, height: this.watchHeight })
+  }
+
   private rect(size: Size) {
     return anchoredRect(this.anchor, size, displaysPrimaryFirst())
   }
@@ -227,11 +261,21 @@ export class BatSignalWindows {
     )
   }
 
+  /** The watch strip measured its rows: fit the window to them, growing up from the corner. */
+  setWatchHeight(height: number): void {
+    if (!Number.isFinite(height)) return
+    const area = screen.getDisplayNearestPoint(this.anchor).workArea
+    const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
+    if (next === this.watchHeight) return
+    this.watchHeight = next
+    if (this.current === 'watch') this.panel.setBounds(this.watchRect())
+  }
+
   private followPanel(): void {
-    if (this.current !== 'panel') return
+    if (this.current === 'signal') return
     const b = this.panel.getBounds()
     this.anchor = cornerOf(b)
-    this.panelSize = { width: b.width, height: b.height }
+    if (this.current === 'panel') this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()
   }
 
@@ -242,6 +286,6 @@ export class BatSignalWindows {
 
   private saveNow(): void {
     clearTimeout(this.saveTimer)
-    placeFile.save({ anchor: this.anchor, panel: this.panelSize })
+    placeFile.save({ anchor: this.anchor, panel: this.panelSize, open: this.lastOpened })
   }
 }

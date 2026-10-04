@@ -1,4 +1,5 @@
 // Pure presentation rules shared by the window and its tests.
+import { ATTENTION_URGENCY } from './types'
 import type {
   AttentionItem,
   LiveStatus,
@@ -72,6 +73,31 @@ export function attentionCopy(item: AttentionItem): CardCopy {
   }
 }
 
+/** How an alert reads in the night report: the case's title, then this sentence. */
+export function reportCopy(item: AttentionItem): { stamp: string; sentence: string } {
+  const { stamp } = attentionCopy(item)
+  switch (item.kind) {
+    case 'permission':
+      return {
+        stamp,
+        sentence: item.detail
+          ? `asks to run ${item.toolName ?? 'a tool'}: ${item.detail}`
+          : `asks to use ${item.toolName ?? 'a tool'}`,
+      }
+    case 'error':
+      return {
+        stamp,
+        sentence: item.detail ? `stopped: ${humanize(item.detail).toLowerCase()}` : 'stopped with an error',
+      }
+    case 'waiting':
+      return { stamp, sentence: 'is waiting for your answer' }
+    case 'reply':
+      return { stamp, sentence: 'finished replying' }
+    case 'stalled':
+      return { stamp, sentence: item.detail ? `has gone quiet on “${item.detail}”` : 'has a task gone quiet' }
+  }
+}
+
 export interface CaseHeader {
   /** Short case number from the session id, e.g. "#b47c0d". */
   number: string
@@ -137,6 +163,14 @@ export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
   completed: 'Completed',
   deleted: 'Deleted',
 }
+/** Tasks as a typist marks them (the night report). */
+export const TYPED_BOX: Record<TaskStatus, string> = {
+  pending: '[ ]',
+  in_progress: '[>]',
+  completed: '[x]',
+  deleted: '[-]',
+}
+
 export const TASK_GLYPH: Record<TaskStatus, string> = {
   pending: '○',
   in_progress: '◐',
@@ -177,3 +211,42 @@ export const lastReply = (session: SessionSnapshot): string | undefined =>
 /** A task by what is happening right now while in progress, by its subject otherwise. */
 export const taskLabel = (task: Task): string =>
   task.status === 'in_progress' ? (task.activeForm ?? task.subject) : task.subject
+
+export interface WatchRow {
+  /** How loud the row reads: blocked (hot), waiting (soft), stalled (quiet), working or idle. */
+  tone: 'hot' | 'soft' | 'quiet' | 'working' | 'idle'
+  stamp: string
+  title: string
+  /** The one line under the title: what waits for the user, or what is happening now. */
+  line?: string
+  progress?: string
+}
+
+/** How hard an alert presses, everywhere it is inked: blocked work hot, waiting work soft, a stalled task quiet. */
+export const ALERT_INK: Record<AttentionItem['kind'], 'hot' | 'soft' | 'quiet'> = {
+  permission: 'hot',
+  error: 'hot',
+  waiting: 'soft',
+  reply: 'soft',
+  stalled: 'quiet',
+}
+
+/** One row of the watch strip: what a glance at the corner should tell about a session. */
+export function watchRow(session: SessionSnapshot, attention: AttentionItem[]): WatchRow {
+  const { title, progress } = caseHeader(session)
+  const own = attention
+    .filter((a) => a.sessionId === session.sessionId)
+    .sort((a, b) => ATTENTION_URGENCY[a.kind] - ATTENTION_URGENCY[b.kind])[0]
+  const row: WatchRow = own
+    ? { tone: ALERT_INK[own.kind], ...attentionCopy(own), title }
+    : session.status === 'busy'
+      ? { tone: 'working', stamp: LIVE_STATUS_LABEL.busy, title, ...lineOf(currentTask(session)) }
+      : { tone: 'idle', stamp: LIVE_STATUS_LABEL[session.status], title }
+  return progress ? { ...row, progress: progress.label } : row
+}
+
+const lineOf = (task: Task | undefined) => (task ? { line: taskLabel(task) } : {})
+
+/** The task a session is working on right now, if any. */
+export const currentTask = (session: SessionSnapshot): Task | undefined =>
+  session.tasks.find((t) => t.status === 'in_progress')

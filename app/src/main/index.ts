@@ -28,6 +28,10 @@ function start(): void {
   ipcMain.on(IPC.moveSignal, (_event, dx: unknown, dy: unknown) => {
     if (typeof dx === 'number' && typeof dy === 'number') windows.moveSignalBy(dx, dy)
   })
+  ipcMain.on(IPC.reopen, () => windows.reopen())
+  ipcMain.on(IPC.watchHeight, (_event, height: unknown) => {
+    if (typeof height === 'number') windows.setWatchHeight(height)
+  })
   ipcMain.on(IPC.closeWindow, () => app.quit())
 
   app.once('before-quit', stop)

@@ -17,6 +17,10 @@
   --signal-glow: rgb(175 0 6 / 45%);
   /* Only for tiny lit pixels (mascot eyes, live dots), where #af0006 reads too dark on black. */
   --signal-hot: #e3121b;
+  /* Small inks for stamps and pen marks: signal-hot and the approved brick, lifted just enough
+     for 4.5:1 on black at 11px. */
+  --ink-hot: #ec2a2a;
+  --ink-soft: #d4574c;
 
   --clawd: #d77757;
 

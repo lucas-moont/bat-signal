@@ -54,7 +54,7 @@
   margin-left: auto;
   display: grid;
   place-items: center;
-  flex: 0 1 66px;
+  flex: 0 1 60px;
   min-width: 0;
   height: 54px;
 }
@@ -69,7 +69,20 @@
 .header__title {
   flex: none;
 }
-@media (max-width: 330px) {
+/* The title bar fits the compact default width (320px) with the mascot; only the minimum drops it. */
+@media (max-width: 360px) {
+  .header {
+    gap: 7px;
+  }
+  .header__title {
+    font-size: 19px;
+    letter-spacing: 2px;
+  }
+}
+.tabs__settings {
+  margin-left: auto;
+}
+@media (max-width: 310px) {
   .header {
     gap: 6px;
     padding-left: 10px;
@@ -87,7 +100,8 @@
   }
 }
 
-.icon-button {
+/* Zero specificity (:where), so any one-class modifier can place or space a button. */
+:where(.icon-button) {
   all: unset;
   display: grid;
   place-items: center;
@@ -119,7 +133,8 @@
 }
 
 /* Go to the terminal: beside each card and in the case detail (see TerminalButton). */
-.terminal-button {
+/* Zero specificity, so a layout can pin it (see .card__terminal, .report__terminal). */
+:where(.terminal-button) {
   position: relative;
   display: inline-flex;
   flex: none;
@@ -167,6 +182,7 @@
 
 .tabs {
   display: flex;
+  align-items: center;
   gap: 18px;
   padding: 0 14px;
   border-bottom: 1px solid var(--line);
