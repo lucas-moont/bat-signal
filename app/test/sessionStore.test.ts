@@ -187,3 +187,31 @@ describe('SessionStore concurrent reads', () => {
     expect(store.snapshot().sessions[0]?.messages.map((m) => m.text)).toEqual(['once'])
   })
 })
+
+describe('SessionStore updates', () => {
+  const countUpdates = () => {
+    let n = 0
+    store.on('update', () => n++)
+    return () => n
+  }
+
+  it('stays quiet when a refresh finds nothing new', async () => {
+    disk.append(SESSION_ID, assistantText('hi'))
+    await store.setLiveSessions([entry()])
+    const updates = countUpdates()
+    await store.refresh()
+    await store.setLiveSessions([entry()])
+    await store.handleHook(hook('SubagentStart'))
+    expect(updates()).toBe(0)
+  })
+
+  it('speaks up when new lines arrive or a hook changes something', async () => {
+    await store.setLiveSessions([entry()])
+    const updates = countUpdates()
+    disk.append(SESSION_ID, assistantText('new'))
+    await store.refresh()
+    await store.handleHook(hook('Stop'))
+    await store.setLiveSessions([entry({ status: 'busy' })])
+    expect(updates()).toBe(3)
+  })
+})
