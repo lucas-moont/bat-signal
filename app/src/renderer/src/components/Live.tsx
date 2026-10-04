@@ -3,12 +3,12 @@ import type { ReactNode } from 'react'
 import { useIsCalm } from '../calm'
 import { beatAt, pulseAt, useLiveStyle } from '../ticker'
 
-/** The breathing red glow around an urgent card. Steady when calm. */
-export function Glow() {
+/** A breathing pulse of opacity: the glow around an urgent card, the blink of an alert dot. Steady when calm. */
+export function Glow({ className = 'card__glow' }: { className?: string }) {
   const ref = useLiveStyle<HTMLSpanElement>(!useIsCalm(), (el, now) => {
     el.style.opacity = now === null ? '1' : pulseAt(now).toFixed(2)
   })
-  return <span ref={ref} className="card__glow" aria-hidden />
+  return <span ref={ref} className={className} aria-hidden />
 }
 
 /** A heartbeat: scales its content with each beat while `beating`. */

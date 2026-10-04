@@ -108,7 +108,11 @@ export function CaseList({
                 <span className="card__top">
                   <span className="case-number">Case {number}</span>
                   <span className={`status status--${status}`}>
-                    <Beat beating={status === 'busy'} className="status__dot" />
+                    {status === 'alert' ? (
+                      <Glow className="status__dot" />
+                    ) : (
+                      <Beat beating={status === 'busy'} className="status__dot" />
+                    )}
                     {needsYou ? 'Needs you' : LIVE_STATUS_LABEL[s.status]}
                   </span>
                 </span>
