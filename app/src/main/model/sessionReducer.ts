@@ -4,6 +4,8 @@ type Line = Record<string, unknown>
 type Block = Record<string, unknown>
 
 const MAX_MESSAGES = 20
+// User-side lines that Claude Code writes itself (slash commands, their output, task notifications).
+const INJECTED = /^<(command-|local-command-|task-notification)/
 
 export function createSession(sessionId: string): SessionState {
   return { sessionId, messages: [], tasks: [], subagents: [], background: [] }
@@ -42,7 +44,10 @@ function applyConversationLine(state: SessionState, line: Line): SessionState {
   const role = line['type'] as Message['role']
   const content = message?.content
 
-  if (typeof content === 'string') return pushMessage(state, { role, text: content, at })
+  if (line['isMeta'] === true) return state
+  if (typeof content === 'string') {
+    return INJECTED.test(content) ? state : pushMessage(state, { role, text: content, at })
+  }
   if (!Array.isArray(content)) return state
 
   const text = (content as Block[])
