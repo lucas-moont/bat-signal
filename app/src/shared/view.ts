@@ -10,10 +10,19 @@ import type {
 
 export type MascotMood = 'sleeping' | 'flying' | 'alarmed'
 
+/** Alerts where Claude is blocked on the user, as opposed to a finished reply or a quiet task. */
+const ALARMING = new Set<AttentionItem['kind']>(['permission', 'error', 'waiting'])
+
 /** How Bat-Clawd should look given everything Batcave knows. */
 export function mascotMood({ sessions, attention }: StoreSnapshot): MascotMood {
-  if (attention.some((a) => a.kind === 'permission' || a.kind === 'error')) return 'alarmed'
+  if (attention.some((a) => ALARMING.has(a.kind))) return 'alarmed'
   return sessions.some((s) => s.status === 'busy') ? 'flying' : 'sleeping'
+}
+
+/** relativeTime as a phrase: "just now", "5m ago", or empty for missing or invalid times. */
+export function ago(iso: string | undefined, now: Date): string {
+  const age = relativeTime(iso, now)
+  return age === 'now' ? 'just now' : age && `${age} ago`
 }
 
 const MINUTE = 60_000
