@@ -1,0 +1,491 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-04T14:20:49.876Z",
+  "title": "Design System: Bat-Signal",
+  "extensions": {
+    "colorMeta": {
+      "abyss": {
+        "role": "neutral",
+        "displayName": "Abyss",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "smoke": {
+        "role": "neutral",
+        "displayName": "Smoke",
+        "canonical": "#080808",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#13100e",
+        "tonalRamp": [
+          "#0d0a09",
+          "#282422",
+          "#45413f",
+          "#64605e",
+          "#85817f",
+          "#a8a4a1",
+          "#cdc8c5",
+          "#f2edea"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised",
+        "canonical": "#27150e",
+        "tonalRamp": [
+          "#160602",
+          "#332018",
+          "#513c34",
+          "#725b53",
+          "#947c73",
+          "#b89f95",
+          "#ddc3b9",
+          "#ffe8de"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#31302f",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262524",
+          "#434241",
+          "#626160",
+          "#838281",
+          "#a6a5a3",
+          "#cac9c7",
+          "#efeeed"
+        ]
+      },
+      "blood": {
+        "role": "secondary",
+        "displayName": "Dried Blood",
+        "canonical": "#8b0000",
+        "tonalRamp": [
+          "#370000",
+          "#5d0000",
+          "#840000",
+          "#ab2d22",
+          "#d25344",
+          "#fb7766",
+          "#ff9c89",
+          "#ffc2ad"
+        ]
+      },
+      "signal": {
+        "role": "primary",
+        "displayName": "Signal Red",
+        "canonical": "#af0006",
+        "tonalRamp": [
+          "#3e0000",
+          "#660000",
+          "#8e0000",
+          "#b61110",
+          "#df4338",
+          "#ff6a5b",
+          "#ff907e",
+          "#ffb7a2"
+        ]
+      },
+      "signal-hot": {
+        "role": "primary",
+        "displayName": "Hot Signal",
+        "canonical": "#e3121b",
+        "tonalRamp": [
+          "#3f0000",
+          "#670000",
+          "#8f0000",
+          "#b80310",
+          "#e13f38",
+          "#ff675b",
+          "#ff8d7e",
+          "#ffb4a2"
+        ]
+      },
+      "brick": {
+        "role": "secondary",
+        "displayName": "Brick Ink",
+        "canonical": "#c9463d",
+        "tonalRamp": [
+          "#380000",
+          "#5f0000",
+          "#850000",
+          "#ac2a25",
+          "#d45046",
+          "#fd7568",
+          "#ff9a8b",
+          "#ffc0af"
+        ]
+      },
+      "clawd": {
+        "role": "tertiary",
+        "displayName": "Clawd Orange",
+        "canonical": "#d77757",
+        "tonalRamp": [
+          "#2f0000",
+          "#520000",
+          "#771f00",
+          "#9c4222",
+          "#c26444",
+          "#e98766",
+          "#ffab89",
+          "#ffd0ae"
+        ]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "#e8e1d9",
+        "tonalRamp": [
+          "#0f0a06",
+          "#29241e",
+          "#47413a",
+          "#666059",
+          "#87817a",
+          "#aaa49c",
+          "#cfc8c0",
+          "#f4ede5"
+        ]
+      },
+      "ash": {
+        "role": "neutral",
+        "displayName": "Ash",
+        "canonical": "#8a817a",
+        "tonalRamp": [
+          "#100a05",
+          "#2b231e",
+          "#48403a",
+          "#685f59",
+          "#898079",
+          "#aca39c",
+          "#d1c7c0",
+          "#f6ece5"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Typed Ink",
+        "canonical": "#bdb4aa",
+        "tonalRamp": [
+          "#100a04",
+          "#2b241c",
+          "#484138",
+          "#686057",
+          "#898177",
+          "#aca39a",
+          "#d1c7bd",
+          "#f6ede2"
+        ]
+      },
+      "ink-hot": {
+        "role": "primary",
+        "displayName": "Pen Hot",
+        "canonical": "#ec2a2a",
+        "tonalRamp": [
+          "#3f0000",
+          "#670000",
+          "#8f0000",
+          "#b80211",
+          "#e13f38",
+          "#ff675b",
+          "#ff8d7f",
+          "#ffb4a3"
+        ]
+      },
+      "ink-soft": {
+        "role": "secondary",
+        "displayName": "Pen Soft",
+        "canonical": "#d4574c",
+        "tonalRamp": [
+          "#360000",
+          "#5c0000",
+          "#830002",
+          "#a92f28",
+          "#d15449",
+          "#f9786b",
+          "#ff9d8e",
+          "#ffc3b2"
+        ]
+      },
+      "signal-glow": {
+        "role": "primary",
+        "displayName": "Signal Glow",
+        "canonical": "rgb(175 0 6 / 45%)",
+        "tonalRamp": [
+          "#3e0000",
+          "#660000",
+          "#8e0000",
+          "#b61110",
+          "#df4338",
+          "#ff6a5b",
+          "#ff907e",
+          "#ffb7a2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The BAT-SIGNAL wordmark and intro title only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Case-detail, sheet and empty-state titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and notice titles, one line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text and quoted last words."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Tabs, status, field labels, ruled section titles; uppercase, tracked."
+      },
+      "stamp": {
+        "displayName": "Stamp",
+        "purpose": "Ink stamps, case numbers, log speakers."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Machine output: times, paths, commands, counts, chips."
+      },
+      "report-body": {
+        "displayName": "Report Body",
+        "purpose": "The Night Report typed column."
+      }
+    },
+    "shadows": [
+      {
+        "name": "wordmark-glow",
+        "value": "text-shadow: 0 0 14px rgb(175 0 6 / 35%)",
+        "purpose": "Masthead wordmark."
+      },
+      {
+        "name": "lift-glow",
+        "value": "0 6px 18px -8px var(--signal-glow)",
+        "purpose": "Card hover, with a 2px lift."
+      },
+      {
+        "name": "urgent-breath",
+        "value": "0 0 16px -2px var(--signal-glow), inset 0 0 12px -6px var(--signal-glow)",
+        "purpose": "Urgent card outline; opacity breathes from the shared clock."
+      },
+      {
+        "name": "stamp-glow",
+        "value": "0 0 12px var(--signal-glow)",
+        "purpose": "Needs-you count on the emblem."
+      },
+      {
+        "name": "sheet-spill",
+        "value": "0 -12px 34px -12px var(--signal-glow)",
+        "purpose": "Bottom sheets."
+      },
+      {
+        "name": "desk-float",
+        "value": "0 10px 28px rgb(0 0 0 / 80%)",
+        "purpose": "Notice card over the desktop."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Default curve for state transitions and one-off moments (--ease-out)."
+      },
+      {
+        "name": "notes-unfold",
+        "value": "0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Night Report case opening in place (height and opacity)."
+      },
+      {
+        "name": "hover",
+        "value": "0.15s to 0.2s",
+        "purpose": "Color and background state changes."
+      },
+      {
+        "name": "ripple",
+        "value": "0.45s ease-out",
+        "purpose": "One-off click ripple in translucent Signal Red."
+      },
+      {
+        "name": "task-flash",
+        "value": "0.9s ease-out",
+        "purpose": "A task that just completed flashes once."
+      },
+      {
+        "name": "clawd-hop",
+        "value": "0.7s ease-out",
+        "purpose": "Mascot hop on click."
+      },
+      {
+        "name": "shared-clock",
+        "value": "8 fps; pulse 2600ms, beat 1400ms",
+        "purpose": "Every looping effect is sampled from one ticker and pauses when hidden. No infinite CSS animation."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "330px"
+      },
+      {
+        "name": "min-window",
+        "value": "300x360"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Header controls: 26px square, Ash line icon, Bone on Surface when hovered.",
+      "html": "<button class=\"ds-icon-btn\" aria-label=\"Settings\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\"><path d=\"M8 5.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Zm5.4 3.3.9.7-1.1 1.9-1.1-.4a4.7 4.7 0 0 1-1.2.7l-.2 1.2H8.5l-.2-1.2a4.7 4.7 0 0 1-1.2-.7l-1.1.4-1.1-1.9.9-.7a4.6 4.6 0 0 1 0-1.4l-.9-.7 1.1-1.9 1.1.4c.4-.3.8-.5 1.2-.7l.2-1.2h2.2l.2 1.2c.4.2.8.4 1.2.7l1.1-.4 1.1 1.9-.9.7a4.6 4.6 0 0 1 0 1.4Z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
+      "css": ".ds-icon-btn{all:unset;display:grid;place-items:center;width:26px;height:26px;border-radius:var(--radius,4px);color:var(--ash,#8a817a);cursor:pointer;transition:color .15s,background .15s}.ds-icon-btn:hover{color:var(--bone,#e8e1d9);background:var(--surface,#13100e)}.ds-icon-btn:focus-visible{outline:1px solid var(--signal,#af0006)}"
+    },
+    {
+      "name": "Icon Button (danger)",
+      "kind": "button",
+      "refersTo": "icon-button-danger-hover",
+      "description": "Quit: Bone on Dried Blood when hovered.",
+      "html": "<button class=\"ds-icon-btn-danger\" aria-label=\"Quit\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\"><path d=\"m4.5 4.5 7 7m0-7-7 7\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg></button>",
+      "css": ".ds-icon-btn-danger{all:unset;display:grid;place-items:center;width:26px;height:26px;border-radius:var(--radius,4px);color:var(--ash,#8a817a);cursor:pointer;transition:color .15s,background .15s}.ds-icon-btn-danger:hover{color:var(--bone,#e8e1d9);background:var(--blood,#8b0000)}.ds-icon-btn-danger:focus-visible{outline:1px solid var(--signal,#af0006)}"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "tabs",
+      "description": "Files layout: uppercase tabs with mono counts and a Hot Signal underline on the active tab.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab\" aria-selected=\"true\">Needs you <span class=\"ds-tab-count\">5</span><span class=\"ds-tab-line\"></span></button><button class=\"ds-tab\">Cases <span class=\"ds-tab-count\">5</span></button></div>",
+      "css": ".ds-tabs{display:flex;gap:18px;padding:0 14px;border-bottom:1px solid var(--line,#31302f);background:var(--abyss,#000)}.ds-tab{all:unset;position:relative;display:flex;gap:6px;align-items:center;padding:9px 0 10px;font:600 12px 'Barlow Semi Condensed','Segoe UI',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ash,#8a817a);cursor:pointer;transition:color .15s}.ds-tab[aria-selected=true],.ds-tab:hover{color:var(--bone,#e8e1d9)}.ds-tab:focus-visible{outline:1px solid var(--signal,#af0006);outline-offset:2px}.ds-tab-count{font:10.5px 'JetBrains Mono',monospace;letter-spacing:0;color:var(--ash,#8a817a)}.ds-tab-line{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--signal-hot,#e3121b);box-shadow:0 0 8px rgb(175 0 6 / 45%)}"
+    },
+    {
+      "name": "Stamp",
+      "kind": "chip",
+      "refersTo": "stamp",
+      "description": "The signature mark: boxed typewriter caps, rotated, inked by tier.",
+      "html": "<span class=\"ds-stamp\">Permission</span> <span class=\"ds-stamp ds-stamp--soft\">Waiting</span> <span class=\"ds-stamp ds-stamp--quiet\">Stalled</span>",
+      "css": ".ds-stamp{display:inline-block;font:11px 'Special Elite','Courier New',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--signal-hot,#e3121b);border:1.5px solid currentColor;border-radius:2px;padding:1px 6px 0;transform:rotate(-2.5deg);opacity:.92}.ds-stamp--soft{color:#c9463d}.ds-stamp--quiet{color:var(--ash,#8a817a)}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Mono tag for agent types and job kinds.",
+      "html": "<span class=\"ds-chip\">Explore</span>",
+      "css": ".ds-chip{font:10px 'JetBrains Mono',monospace;padding:1px 6px;border:1px solid var(--line,#31302f);border-radius:2px;color:var(--ash,#8a817a)}"
+    },
+    {
+      "name": "Case Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Files layout: a case-file card with a left rule colored by tier, lifted by red light on hover.",
+      "html": "<button class=\"ds-card\"><span class=\"ds-card-top\"><span class=\"ds-card-stamp\">Permission</span><span class=\"ds-card-time\">1m</span></span><span class=\"ds-card-title\">Decode the Riddler’s cipher</span><span class=\"ds-card-detail\">Bash · rm -rf ./old-case-files</span></button>",
+      "css": ".ds-card{all:unset;box-sizing:border-box;position:relative;display:grid;gap:4px;width:100%;padding:10px 12px 11px 14px;background:linear-gradient(180deg,rgb(19 16 14 / 92%),rgb(13 11 10 / 92%));border:1px solid var(--line,#31302f);border-radius:4px;color:var(--bone,#e8e1d9);cursor:pointer;font-family:'Barlow Semi Condensed',sans-serif;transition:transform .18s cubic-bezier(.22,1,.36,1),border-color .18s,background .18s,box-shadow .18s}.ds-card::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:var(--signal-hot,#e3121b)}.ds-card:hover{transform:translateY(-2px);background:linear-gradient(180deg,rgb(39 21 14 / 95%),rgb(19 16 14 / 95%));box-shadow:0 6px 18px -8px rgb(175 0 6 / 45%);border-color:rgb(175 0 6 / 45%)}.ds-card:focus-visible{outline:1px solid var(--signal,#af0006);outline-offset:2px}.ds-card-top{display:flex;justify-content:space-between;align-items:center}.ds-card-stamp{font:11px 'Special Elite',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--signal-hot,#e3121b);border:1.5px solid currentColor;border-radius:2px;padding:1px 6px 0;transform:rotate(-2.5deg)}.ds-card-time,.ds-card-detail{font:10.5px 'JetBrains Mono',monospace;color:var(--ash,#8a817a)}.ds-card-detail{font-size:11px}.ds-card-title{font-weight:600;font-size:15px;line-height:1.2}"
+    },
+    {
+      "name": "Toggle",
+      "kind": "input",
+      "refersTo": "toggle",
+      "description": "Settings switch: a red light that comes on.",
+      "html": "<label class=\"ds-toggle\"><span class=\"ds-toggle-label\">Night Report layout</span><input type=\"checkbox\" checked><span class=\"ds-toggle-track\"></span></label>",
+      "css": ".ds-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;color:var(--bone,#e8e1d9);font:600 13px 'Barlow Semi Condensed',sans-serif}.ds-toggle-label{flex:1}.ds-toggle input{position:absolute;opacity:0}.ds-toggle-track{position:relative;width:34px;height:18px;border-radius:9px;background:var(--surface,#13100e);border:1px solid var(--line,#31302f);transition:background .2s,border-color .2s}.ds-toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--ash,#8a817a);transition:transform .2s cubic-bezier(.22,1,.36,1),background .2s}.ds-toggle input:checked+.ds-toggle-track{background:rgb(139 0 0 / 55%);border-color:var(--signal,#af0006)}.ds-toggle input:checked+.ds-toggle-track::after{transform:translateX(16px);background:var(--bone,#e8e1d9);box-shadow:0 0 8px rgb(175 0 6 / 45%)}.ds-toggle input:focus-visible+.ds-toggle-track{outline:1px solid var(--signal,#af0006);outline-offset:2px}"
+    },
+    {
+      "name": "Night Report Entry",
+      "kind": "custom",
+      "refersTo": "report-entry",
+      "description": "Alternate layout: stamp and age in the margin, typed words after the red margin rule, the action under a hand-drawn red pen stroke; typed checkboxes for tasks.",
+      "html": "<div class=\"ds-report\"><button class=\"ds-entry\"><span class=\"ds-entry-margin\"><span class=\"ds-entry-stamp\">Permission</span><span class=\"ds-entry-age\">1m</span></span><span class=\"ds-entry-body\"><strong>Decode the Riddler’s cipher</strong> <span class=\"ds-pen\">asks to run Bash</span>.</span></button><button class=\"ds-entry\"><span class=\"ds-entry-margin\"></span><span class=\"ds-entry-body\"><span class=\"ds-note-mark\">[x]</span> <s class=\"ds-note-done\">Index the 1990s case boxes</s></span></button></div>",
+      "css": ".ds-report{position:relative;background:var(--abyss,#000);padding:8px 12px 8px 0;font:12.5px/1.6 'Special Elite','Courier New',monospace;color:#bdb4aa}.ds-report::before{content:'';position:absolute;top:0;bottom:0;left:114px;width:1px;background:rgb(139 0 0 / 75%)}.ds-entry{all:unset;box-sizing:border-box;display:grid;grid-template-columns:114px 1fr;width:100%;padding:7px 0;cursor:pointer;transition:background .15s}.ds-entry:hover{background:rgb(39 21 14 / 45%)}.ds-entry:focus-visible{outline:1px solid var(--bone,#e8e1d9);outline-offset:-1px}.ds-entry-margin{display:flex;flex-direction:column;align-items:flex-end;gap:3px;padding:2px 9px 0 4px}.ds-entry-stamp{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ec2a2a;border:1.5px solid currentColor;border-radius:2px;padding:1px 6px 0;transform:rotate(-2.5deg);white-space:nowrap}.ds-entry-age{font:10.5px 'JetBrains Mono',monospace;color:var(--ash,#8a817a)}.ds-entry-body{padding:0 4px 0 12px}.ds-entry-body strong{font-weight:inherit;color:var(--bone,#e8e1d9)}.ds-note-mark,.ds-note-done{color:var(--ash,#8a817a)}.ds-pen{color:var(--bone,#e8e1d9);padding-bottom:3px;background-repeat:repeat-x;background-position:0 100%;background-size:28px 5px;box-decoration-break:clone;-webkit-box-decoration-break:clone;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ec2a2a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\")}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Noir Case File",
+    "overview": "Bat-Signal is a small, always-on-top window that reads like a detective's case file left out under a red searchlight. Everything sits on pure black. Warm near-blacks show up only as highlights over it, and the reds of The Batman (2022) carry meaning: red is a light that comes on, an ink stamp, a pen mark. It is never decoration. The type mixes three registers: Anton condensed capitals for the masthead, Barlow Semi Condensed for working text, and two machine faces (Special Elite as the typewriter and stamp ink, JetBrains Mono for paths, commands and times).\n\nThe panel is dense and made to be glanced at. It opens at 360x520 and shrinks to 300x360, so every line earns its row and ellipsis beats wrapping. Depth comes from light, not stacked material: red glows, a sodium street-light haze at the bottom, static film grain and rain behind everything. Motion is rationed. Every loop is sampled from one shared 8 fps clock, and the rest are one-off moments (a click ripple, a task flash, Bat-Clawd's hop). No infinite CSS animation exists anywhere.\n\nThe approved layout, \"files\" and the default, presents cases as cards under two tabs. The alternate layout, \"The Night Report\" (`settings.layout: 'report'`), presents the same world as one typed column on legal paper, with stamps in the margin and a red pen under whatever waits for the user. Both share the header, the signal disc, the stamps, the palette and the mascot.",
+    "keyCharacteristics": [
+      "Pure black ground; warm near-blacks only as raised highlights.",
+      "Red always means something: a light that is on, a stamp, a pen mark, a request.",
+      "Typewriter ink stamps, slightly crooked and worn, are the system's signature mark.",
+      "Glows instead of drop shadows; light sources instead of elevation.",
+      "Loops run off one 8 fps clock; everything else animates once.",
+      "Small, dense and glanceable at 300x360."
+    ],
+    "rules": [
+      {
+        "name": "The Red Means Something Rule",
+        "body": "A red element is a light that is on, a stamp, a mark or a request. In the files layout a live dot may glow Hot Signal; in the Night Report, where red ink is kept for requests, running work shows in Bone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Pure Black Ground Rule",
+        "body": "The page is #000000. Warm near-blacks (Surface, Raised) exist only as highlights laid over it, never as the page itself.",
+        "section": "colors"
+      },
+      {
+        "name": "The Small Lights Rule",
+        "body": "Hot Signal is for tiny lit pixels and thin rules. Large red areas use Signal Red or Dried Blood.",
+        "section": "colors"
+      },
+      {
+        "name": "The Machine Voice Rule",
+        "body": "Anything Claude Code or the shell produced (commands, paths, times, counts) is set in mono. Anything filed by the detective (stamps, case numbers, the report) is set in the typewriter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Not Lift Rule",
+        "body": "Elevation is shown with red light, not material. Black shadows are reserved for elements floating over the user's desktop.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Clock Rule",
+        "body": "Anything that loops (breathing glow, heartbeat dots, mascot poses, rain) is sampled from the single 8 fps ticker and pauses when the window is hidden. Infinite CSS animations are not allowed.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep the page pure black (#000000) and use Surface and Raised only as highlights over it.",
+      "**Do** spend red only on meaning: a lit light, a stamp, a pen mark, a request. In the Night Report, show running work in Bone.",
+      "**Do** use Hot Signal for small lit details and thin rules, and Signal Red or Dried Blood for anything larger.",
+      "**Do** mark alert tiers with stamp ink: hot for permission and error, brick (or Pen Soft in the report) for waiting and reply, Ash for stalled.",
+      "**Do** set machine output (paths, commands, times, counts) in mono and filed paperwork (stamps, case numbers, the report) in Special Elite.",
+      "**Do** drive every loop from the shared 8 fps clock and keep other motion one-off, on the ease-out curve (cubic-bezier(0.22, 1, 0.36, 1)), within 0.15 to 0.45s, with reduced motion honored.",
+      "**Do** show depth with red glows, keeping black drop shadows for things that float over the desktop.",
+      "**Do** design for 300x360 first: one line per field, an ellipsis over wrapping, and the mascot giving way before the controls.",
+      "**Do** keep the header, the signal disc, Bat-Clawd and the stamps identical across both panel layouts."
+    ],
+    "donts": [
+      "**Don't** add infinite CSS animations or blend modes; they keep the compositor awake on a transparent always-on-top window.",
+      "**Don't** use Hot Signal or Signal Red for running or in-progress text in the Night Report; running is news, not a request.",
+      "**Don't** underline Night Report actions with a CSS text underline, straight or wavy; the pen is a drawn stroke.",
+      "**Don't** bring cards, colored side rules or icon tiles into the Night Report; its marks are the margin rule, the stamps, the pen and typed checkboxes. Side rules remain correct in the files layout.",
+      "**Don't** use the film's logo; the bat emblem is an original drawing.",
+      "**Don't** round corners past 4px except on sheets, toggles, the disc and status dots."
+    ]
+  }
+}
