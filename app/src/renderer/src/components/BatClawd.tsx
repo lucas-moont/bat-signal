@@ -6,7 +6,7 @@
 // sways; CSS loops would keep the compositor busy at 60fps.
 import { useEffect, useRef, useState } from 'react'
 import type { MascotMood } from '@shared/view'
-import { useFrame } from '../ticker'
+import { useFrame, useLiveStyle } from '../ticker'
 import './BatClawd.css'
 
 type Px = [x: number, y: number, w?: number, h?: number]
@@ -95,14 +95,17 @@ function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: nu
   )
 }
 
-const SWAY = [180, 181.5, 183, 181.5, 180, 178.5, 177, 178.5]
+/** Sleeping sway, in degrees on top of hanging upside down; one step every half second. */
+const SWAY = [0, 1.5, 3, 1.5, 0, -1.5, -3, -1.5]
+const SWAY_STEP_MS = 500
 const BOB = [0, -1, -2, -1]
 
 /** Each mood's flip-book: which pose to show and where to put it on a given frame. */
 const MOTION: Record<MascotMood, (frame: number, poses: [Pose, Pose]) => { pose: Pose; transform: string }> =
   {
     // Hanging upside down from the top edge, swaying a little.
-    sleeping: (f, [a]) => ({ pose: a, transform: `rotate(${SWAY[f % SWAY.length]}deg)` }),
+    // Hanging upside down from the top edge; the sway is written straight to the element.
+    sleeping: (_f, [a]) => ({ pose: a, transform: 'rotate(180deg)' }),
     // Wings beat between two poses while the body bobs.
     flying: (f, [a, b]) => ({
       pose: f % 2 ? b : a,
@@ -140,7 +143,10 @@ export function BatClawd({ mood, calm, size = 60 }: { mood: MascotMood; calm: bo
         const dx = e.clientX - (box.left + box.width / 2)
         const dy = e.clientY - (box.top + box.height / 2)
         const len = Math.hypot(dx, dy) || 1
-        setGaze({ x: Math.round((dx / len) * GAZE * 10) / 10, y: Math.round((dy / len) * GAZE * 5) / 10 })
+        const x = Math.round((dx / len) * GAZE * 10) / 10
+        const y = Math.round((dy / len) * GAZE * 5) / 10
+        // Same rounded gaze: keep the old object so React skips the render.
+        setGaze((prev) => (prev.x === x && prev.y === y ? prev : { x, y }))
       })
     }
     window.addEventListener('pointermove', onMove)
@@ -151,9 +157,14 @@ export function BatClawd({ mood, calm, size = 60 }: { mood: MascotMood; calm: bo
   }, [mood, calm])
 
   const eyes = mood === 'sleeping' || calm ? { x: 0, y: 0 } : gaze
-  // Pixel-art pace: sleeping sways at 2 frames a second, awake moods move at 4.
-  const frame = useFrame(!calm, mood === 'sleeping' ? 4 : 2)
+  // Pixel-art pace: awake moods move at 4 frames a second through React (the pose changes).
+  const frame = useFrame(!calm && mood !== 'sleeping', 2)
   const { pose, transform } = MOTION[mood](frame, POSES[mood])
+  // Asleep only the angle changes, so it skips React: the CSS `rotate` property composes with
+  // the `transform` React sets.
+  const mover = useLiveStyle<HTMLSpanElement>(!calm && mood === 'sleeping', (el, now) => {
+    el.style.rotate = now === null ? '' : `${SWAY[Math.floor(now / SWAY_STEP_MS) % SWAY.length]}deg`
+  })
 
   return (
     <span
@@ -168,7 +179,7 @@ export function BatClawd({ mood, calm, size = 60 }: { mood: MascotMood; calm: bo
         setTimeout(() => setHopping(false), 700)
       }}
     >
-      <span className="clawd__mover" style={{ transform }}>
+      <span ref={mover} className="clawd__mover" style={{ transform }}>
         <Frame pose={pose} gaze={eyes} className="clawd__frame" />
       </span>
     </span>
