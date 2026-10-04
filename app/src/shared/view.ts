@@ -72,3 +72,25 @@ export function caseHeader(session: SessionSnapshot): CaseHeader {
     progress: total ? { done, total, label: `${done}/${total}` } : undefined,
   }
 }
+
+/**
+ * Claude's markdown as a one-line preview: formatting marks removed, lines joined with " · ".
+ * For short previews only; it doesn't try to be a full markdown parser.
+ */
+export function plainPreview(markdown: string): string {
+  return markdown
+    .split('\n')
+    .map((line) =>
+      line
+        .replace(/^\s*```.*$/, '') // code fence lines
+        .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+[.)])\s+/, '') // headings, quotes, list markers
+        .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // links and images keep their text
+        .replace(/(\*\*|__)(.+?)\1/g, '$2') // bold
+        .replace(/(\*|_)(.+?)\1/g, '$2') // italics
+        .replace(/`([^`]*)`/g, '$1') // inline code
+        .replace(/\s+/g, ' ')
+        .trim(),
+    )
+    .filter(Boolean)
+    .join(' · ')
+}

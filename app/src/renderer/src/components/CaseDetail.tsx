@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { AttentionItem, RunStatus, SessionSnapshot, Task } from '@shared/types'
-import { attentionCopy, caseHeader, relativeTime } from '@shared/view'
+import { attentionCopy, caseHeader, plainPreview, relativeTime } from '@shared/view'
 import { Icon } from './Icon'
 import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
@@ -147,7 +147,11 @@ export function CaseDetail({
                 <li key={`${m.at}:${i}`} className={`log__entry log__entry--${m.role}`}>
                   <span className="log__who">{m.role === 'user' ? 'You' : 'Claude'}</span>
                   <span className="log__text">
-                    {i === messages.length - 1 ? <Typewriter text={m.text} calm={calm} /> : m.text}
+                    {i === messages.length - 1 ? (
+                      <Typewriter text={plainPreview(m.text)} calm={calm} />
+                    ) : (
+                      plainPreview(m.text)
+                    )}
                   </span>
                 </li>
               ))}

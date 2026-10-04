@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
-import { attentionCopy, caseHeader, relativeTime } from '@shared/view'
+import { attentionCopy, caseHeader, plainPreview, relativeTime } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
 import { Typewriter } from './Typewriter'
@@ -130,7 +130,7 @@ export function CaseList({
                 )}
                 {last && (
                   <span className="card__quote">
-                    <Typewriter text={last.text} calm={calm} />
+                    <Typewriter text={plainPreview(last.text)} calm={calm} />
                   </span>
                 )}
                 <span className="card__meta">
