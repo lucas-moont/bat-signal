@@ -2,6 +2,7 @@ import { obj, str, type Json } from '../../shared/guards'
 import type {
   BackgroundJob,
   Message,
+  Run,
   RunStatus,
   SessionState,
   Subagent,
@@ -18,7 +19,7 @@ export interface TrackedSession extends SessionState {
 interface ToolResult {
   id: string
   input: Json
-  res: Json
+  output: Json
   failed: boolean
   at: string
 }
@@ -79,7 +80,7 @@ function applyConversationLine(prev: TrackedSession, line: Json): TrackedSession
   const role = line['type'] as Message['role']
   let state: TrackedSession = {
     ...prev,
-    lastActivityAt: str(line['timestamp']) ?? prev.lastActivityAt,
+    lastActivityAt: at || prev.lastActivityAt,
     cwd: str(line['cwd']) ?? prev.cwd,
   }
 
@@ -120,14 +121,14 @@ function onToolResult(state: TrackedSession, block: Json, result: unknown, at: s
   const failed = block['is_error'] === true
   return TOOLS[call.name]!.onResult(
     { ...state, pending },
-    { id, input: call.input, res: obj(result), failed, at },
+    { id, input: call.input, output: obj(result), failed, at },
   )
 }
 
 const TOOLS: Record<string, ToolHandler> = {
   TaskCreate: {
-    onResult(state, { input, res, failed, at }) {
-      const created = obj(res['task'])
+    onResult(state, { input, output, failed, at }) {
+      const created = obj(output['task'])
       const id = str(created['id'])
       if (failed || !id) return state
       const task: Task = {
@@ -143,11 +144,11 @@ const TOOLS: Record<string, ToolHandler> = {
   },
 
   TaskUpdate: {
-    onResult(state, { input, res, failed, at }) {
+    onResult(state, { input, output, failed, at }) {
       if (failed) return state
-      const id = str(res['taskId']) ?? str(input['taskId'])
-      const fields = Array.isArray(res['updatedFields']) ? (res['updatedFields'] as unknown[]) : []
-      const to = str(obj(res['statusChange'])['to']) as TaskStatus | undefined
+      const id = str(output['taskId']) ?? str(input['taskId'])
+      const fields = Array.isArray(output['updatedFields']) ? (output['updatedFields'] as unknown[]) : []
+      const to = str(obj(output['statusChange'])['to']) as TaskStatus | undefined
       if (to === 'deleted') return { ...state, tasks: state.tasks.filter((t) => t.id !== id) }
 
       const tasks = state.tasks.map((task) => {
@@ -180,9 +181,9 @@ const TOOLS: Record<string, ToolHandler> = {
       }
       return { ...state, subagents: [...state.subagents, subagent] }
     },
-    onResult(state, { id, res, failed, at }) {
-      const agentId = str(res['agentId']) ?? str(res['agent_id'])
-      const stillRunning = !failed && STILL_RUNNING.has(str(res['status']) ?? '')
+    onResult(state, { id, output, failed, at }) {
+      const agentId = str(output['agentId']) ?? str(output['agent_id'])
+      const stillRunning = !failed && STILL_RUNNING.has(str(output['status']) ?? '')
       const subagents = state.subagents.map((a) =>
         a.toolUseId !== id
           ? a
@@ -199,8 +200,8 @@ const TOOLS: Record<string, ToolHandler> = {
   },
 
   Bash: {
-    onResult(state, { id, input, res, failed, at }) {
-      const jobId = str(res['backgroundTaskId'])
+    onResult(state, { id, input, output, failed, at }) {
+      const jobId = str(output['backgroundTaskId'])
       if (failed || !jobId) return state
       const job: BackgroundJob = {
         id: jobId,
@@ -215,8 +216,8 @@ const TOOLS: Record<string, ToolHandler> = {
   },
 
   TaskStop: {
-    onResult(state, { input, res, failed, at }) {
-      const id = str(res['task_id']) ?? str(input['task_id'])
+    onResult(state, { input, output, failed, at }) {
+      const id = str(output['task_id']) ?? str(input['task_id'])
       return failed || !id ? state : finishRuns(state, [id], { status: 'stopped', endedAt: at })
     },
   },
@@ -254,14 +255,14 @@ export function applySubagentLine(
   return { ...state, subagents }
 }
 
-const TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g
+const NOTIFICATION_OPEN = '<task-notification>'
+const XML_TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g
 
 function applyTaskNotification(state: TrackedSession, content: string, at: string): TrackedSession {
-  const OPEN = '<task-notification>'
-  if (!content.startsWith(OPEN)) return state
+  if (!content.startsWith(NOTIFICATION_OPEN)) return state
   // Match the inner tags only: the outer wrapper would swallow them all.
-  const inner = content.slice(OPEN.length)
-  const tags = Object.fromEntries([...inner.matchAll(TAG)].map((m) => [m[1], m[2]!.trim()]))
+  const inner = content.slice(NOTIFICATION_OPEN.length)
+  const tags = Object.fromEntries([...inner.matchAll(XML_TAG)].map((m) => [m[1], m[2]!.trim()]))
   const status = NOTIFICATION_STATUS[tags['status'] ?? '']
   if (!status) return state
   const ids = [tags['task-id'], tags['tool-use-id']].filter((x): x is string => !!x)
@@ -278,7 +279,7 @@ function finishRuns(
   ids: string[],
   end: { status: RunStatus; endedAt: string; summary?: string },
 ): TrackedSession {
-  const finish = <T extends Subagent | BackgroundJob>(run: T, runIds: (string | undefined)[]): T =>
+  const finish = <T extends Run>(run: T, runIds: (string | undefined)[]): T =>
     run.status === 'running' && runIds.some((x) => x !== undefined && ids.includes(x))
       ? {
           ...run,

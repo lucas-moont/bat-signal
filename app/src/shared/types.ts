@@ -11,28 +11,29 @@ export interface Task {
 
 export type RunStatus = 'running' | 'completed' | 'failed' | 'stopped'
 
-export interface Subagent {
+/** Something Claude started that runs on its own and finishes later. */
+export interface Run {
+  /** The tool call that started it. */
   toolUseId: string
+  status: RunStatus
+  startedAt: string
+  endedAt?: string
+}
+
+export interface Subagent extends Run {
   agentId?: string
   description: string
   agentType: string
   prompt?: string
-  status: RunStatus
-  startedAt: string
-  endedAt?: string
   summary?: string
   /** Latest text reply from the subagent's own transcript. */
   lastMessage?: string
 }
 
-export interface BackgroundJob {
+export interface BackgroundJob extends Run {
   id: string
-  toolUseId: string
   command: string
   description?: string
-  status: RunStatus
-  startedAt: string
-  endedAt?: string
 }
 
 export interface Message {
