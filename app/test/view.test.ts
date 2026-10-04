@@ -116,8 +116,8 @@ describe('caseHeader', () => {
   })
 
   it('numbers the case from its session id and uses its title', () => {
-    const s = { ...session('idle'), sessionId: '289380bc-e921-42d9', title: 'Fix the Batmobile' }
-    expect(caseHeader(s)).toMatchObject({ number: '#289380', title: 'Fix the Batmobile' })
+    const s = { ...session('idle'), sessionId: 'b47c0de1-9a2f-4e11', title: 'Fix the Batmobile' }
+    expect(caseHeader(s)).toMatchObject({ number: '#b47c0d', title: 'Fix the Batmobile' })
   })
 
   it('falls back to the session name, then to a placeholder', () => {
@@ -162,5 +162,16 @@ describe('plainPreview on long replies', () => {
     expect(preview.startsWith('Report word')).toBe(true)
     expect(preview.length).toBeLessThanOrEqual(281)
     expect(preview.endsWith('…')).toBe(true)
+  })
+})
+
+describe('plainPreview keeps code and words intact', () => {
+  it.each([
+    ['Edit `__init__.py` and my_var_name', 'Edit __init__.py and my_var_name'],
+    ['Compute 2 * 3 * 4', 'Compute 2 * 3 * 4'],
+    ['Use `**kwargs` here', 'Use **kwargs here'],
+    ['A *real* emphasis and a snake_case_name', 'A real emphasis and a snake_case_name'],
+  ])('%j → %j', (markdown, expected) => {
+    expect(plainPreview(markdown)).toBe(expected)
   })
 })
