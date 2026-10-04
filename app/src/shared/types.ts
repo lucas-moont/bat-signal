@@ -87,3 +87,15 @@ export interface AttentionItem {
   detail?: string
   taskId?: string
 }
+
+/** Everything the window shows about one live session. */
+export interface SessionSnapshot extends SessionState {
+  pid: number
+  name?: string
+  signals: SessionSignals
+}
+
+export interface StoreSnapshot {
+  sessions: SessionSnapshot[]
+  attention: AttentionItem[]
+}
