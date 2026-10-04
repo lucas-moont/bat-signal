@@ -56,8 +56,10 @@ export function Signal() {
   const mode = useWindowMode()
   const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal')
 
-  // The window grows upward before a card comes out and shrinks back once it has left.
+  // The window grows upward before a card comes out and shrinks back once the last has left.
+  const noticeRef = useRef(notice)
   useEffect(() => {
+    noticeRef.current = notice
     if (notice) batcave.setNoticeOut(true)
   }, [notice])
 
@@ -69,7 +71,14 @@ export function Signal() {
     <CalmContext value={calm}>
       <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
         <main className="signal">
-          <AnimatePresence onExitComplete={() => batcave.setNoticeOut(false)}>
+          {/* One card at a time: the next waits for the last to leave, and the window shrinks
+              only when no card follows. */}
+          <AnimatePresence
+            mode="wait"
+            onExitComplete={() => {
+              if (!noticeRef.current) batcave.setNoticeOut(false)
+            }}
+          >
             {notice && (
               <NoticeCard
                 key={notice.key}
