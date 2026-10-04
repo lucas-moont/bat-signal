@@ -1,3 +1,4 @@
+import { request } from 'node:http'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { HookServer } from '../src/main/sources/hookServer'
 
@@ -55,5 +56,33 @@ describe('HookServer rejects', () => {
     })
     expect(res.status).toBe(403)
     expect(received).toEqual([])
+  })
+})
+
+describe('HookServer and DNS rebinding', () => {
+  // fetch won't let us set Host, so use node:http directly.
+  const postWithHost = (host: string) =>
+    new Promise<number>((resolve, reject) => {
+      const req = request(
+        base + '/hook',
+        { method: 'POST', headers: { host, 'content-type': 'application/json' } },
+        (res) => {
+          res.resume()
+          resolve(res.statusCode ?? 0)
+        },
+      )
+      req.on('error', reject)
+      req.end('{}')
+    })
+
+  it('rejects requests addressed to another host name', async () => {
+    expect(await postWithHost('evil.example:47777')).toBe(403)
+    expect(received).toEqual([])
+  })
+
+  it('accepts 127.0.0.1 and localhost', async () => {
+    const port = new URL(base).port
+    expect(await postWithHost(`127.0.0.1:${port}`)).toBe(204)
+    expect(await postWithHost(`localhost:${port}`)).toBe(204)
   })
 })
