@@ -7,6 +7,7 @@ import {
   customTitle,
   resetClock,
   SESSION_ID,
+  taskNotification,
   toolResult,
   toolUse,
   userText,
@@ -145,5 +146,120 @@ describe('tasks', () => {
       ),
     ])
     expect(s.tasks.map((t) => t.id)).toEqual(['2'])
+  })
+})
+
+describe('subagents', () => {
+  const spawn = (toolUseId: string) =>
+    toolUse(toolUseId, 'Agent', {
+      description: 'Search the archives',
+      subagent_type: 'Explore',
+      prompt: 'Find every record of the Riddler',
+    })
+
+  it('shows a subagent as running as soon as it is spawned', () => {
+    expect(replay([spawn('toolu_a')]).subagents).toEqual([
+      {
+        toolUseId: 'toolu_a',
+        description: 'Search the archives',
+        agentType: 'Explore',
+        prompt: 'Find every record of the Riddler',
+        status: 'running',
+        startedAt: '2026-01-01T00:00:01.000Z',
+      },
+    ])
+  })
+
+  it('completes a foreground subagent when its result arrives', () => {
+    const s = replay([spawn('toolu_a'), toolResult('toolu_a', { status: 'completed', content: [] })])
+    expect(s.subagents[0]).toMatchObject({ status: 'completed', endedAt: '2026-01-01T00:00:02.000Z' })
+  })
+
+  it('marks a subagent as failed when its tool call errors', () => {
+    const s = replay([spawn('toolu_a'), toolResult('toolu_a', 'Error', true)])
+    expect(s.subagents[0]?.status).toBe('failed')
+  })
+
+  const launched = () => toolResult('toolu_a', { isAsync: true, status: 'async_launched', agentId: 'a1b2' })
+
+  it('keeps a background subagent running after it is launched', () => {
+    const s = replay([spawn('toolu_a'), launched()])
+    expect(s.subagents[0]).toMatchObject({ status: 'running', agentId: 'a1b2' })
+  })
+
+  it('completes a background subagent from its task notification', () => {
+    const done = replay([
+      spawn('toolu_a'),
+      launched(),
+      taskNotification({
+        taskId: 'a1b2',
+        toolUseId: 'toolu_a',
+        status: 'completed',
+        summary: 'Found 3 files',
+      }),
+    ])
+    expect(done.subagents[0]).toMatchObject({
+      status: 'completed',
+      summary: 'Found 3 files',
+      endedAt: '2026-01-01T00:00:03.000Z',
+    })
+  })
+})
+
+describe('background commands', () => {
+  const runInBackground = (toolUseId: string, jobId: string) => [
+    toolUse(toolUseId, 'Bash', {
+      command: 'npm run dev',
+      description: 'Start dev server',
+      run_in_background: true,
+    }),
+    toolResult(toolUseId, { stdout: '', stderr: '', interrupted: false, backgroundTaskId: jobId }),
+  ]
+
+  it('tracks a command that went to the background', () => {
+    expect(replay(runInBackground('toolu_b', 'bjob1')).background).toEqual([
+      {
+        id: 'bjob1',
+        toolUseId: 'toolu_b',
+        command: 'npm run dev',
+        description: 'Start dev server',
+        status: 'running',
+        startedAt: '2026-01-01T00:00:02.000Z',
+      },
+    ])
+  })
+
+  it('does not track foreground commands', () => {
+    const s = replay([toolUse('toolu_b', 'Bash', { command: 'ls' }), toolResult('toolu_b', { stdout: 'a' })])
+    expect(s.background).toEqual([])
+  })
+
+  it('finishes a background command from its task notification', () => {
+    const s = replay([
+      ...runInBackground('toolu_b', 'bjob1'),
+      taskNotification({ taskId: 'bjob1', toolUseId: 'toolu_b', status: 'failed' }),
+    ])
+    expect(s.background[0]).toMatchObject({ status: 'failed', endedAt: '2026-01-01T00:00:03.000Z' })
+  })
+
+  it('marks a background command as stopped by TaskStop', () => {
+    const s = replay([
+      ...runInBackground('toolu_b', 'bjob1'),
+      toolUse('toolu_s', 'TaskStop', { task_id: 'bjob1' }),
+      toolResult('toolu_s', {
+        message: 'Successfully stopped task',
+        task_id: 'bjob1',
+        task_type: 'local_bash',
+      }),
+    ])
+    expect(s.background[0]).toMatchObject({ status: 'stopped', endedAt: '2026-01-01T00:00:04.000Z' })
+  })
+
+  it('ignores the duplicate "remove" queue operation', () => {
+    const s = replay([
+      ...runInBackground('toolu_b', 'bjob1'),
+      taskNotification({ taskId: 'bjob1', toolUseId: 'toolu_b', status: 'completed', operation: 'remove' }),
+    ])
+    expect(s.background[0]?.status).toBe('running')
   })
 })
