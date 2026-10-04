@@ -70,3 +70,13 @@ describe('silencing the queue', () => {
     expect(q.showing?.notice.key).toBe('c')
   })
 })
+
+describe('notice queue memory', () => {
+  it('remembers only the most recent announcements, so a long run does not grow it forever', () => {
+    const many = Array.from({ length: 600 }, (_, i) => notice(`n${i}`))
+    const q = enqueue(emptyQueue(), many, T0)
+    expect(q.announced.size).toBe(500)
+    expect(q.announced.has('n599')).toBe(true)
+    expect(q.announced.has('n0')).toBe(false)
+  })
+})
