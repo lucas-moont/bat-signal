@@ -5,7 +5,15 @@ const WINGS =
   'M60 12 L65 2 L68 14 L78 15 L118 6 L106 26 L96 22 L86 34 L76 30 L60 46 ' +
   'L44 30 L34 34 L24 22 L14 26 L2 6 L42 15 L52 14 L55 2 Z'
 
-export function BatEmblem({ size = 40, title = 'Batcave' }: { size?: number; title?: string }) {
+export function BatEmblem({
+  size = 40,
+  title = 'Batcave',
+  fill = 'var(--signal)',
+}: {
+  size?: number
+  title?: string
+  fill?: string
+}) {
   return (
     <svg
       width={size}
@@ -28,7 +36,7 @@ export function BatEmblem({ size = 40, title = 'Batcave' }: { size?: number; tit
           <feComposite in="SourceGraphic" in2="mask" operator="in" />
         </filter>
       </defs>
-      <path d={WINGS} fill="var(--signal)" filter="url(#bat-wear)" />
+      <path d={WINGS} fill={fill} filter="url(#bat-wear)" />
     </svg>
   )
 }

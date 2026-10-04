@@ -1,8 +1,8 @@
 // The window's link to the main process. Without the preload bridge a stand-in takes over:
-// in a plain browser (design review) or when asked with #demo / #demo-quiet (screenshots) it
-// serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
+// in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-news
+// (screenshots) it serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
 // window stays empty rather than showing fake sessions as if they were real.
-import { demoSnapshot, quietDemoSnapshot } from '@shared/demo'
+import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
 import { applySettingsPatch, DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import type { BatcaveApi } from '../../preload/index'
@@ -27,18 +27,27 @@ function observable<T>(initial: T) {
   }
 }
 
-function standIn(snapshot: () => StoreSnapshot): BatcaveApi {
+/** NEWS_DELAY_MS after loading, #demo-news turns the night into the next one (a notice for the signal). */
+const NEWS_DELAY_MS = 800
+
+function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatcaveApi {
+  const snapshot = observable(first)
+  if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
   const settings = observable<Settings>(DEFAULT_SETTINGS)
-  const mode = observable<WindowMode>('full')
+  const isSignal = new URLSearchParams(location.search).get('view') === 'signal'
+  const mode = observable<WindowMode>(isSignal ? 'signal' : 'panel')
   return {
-    getSnapshot: async () => snapshot(),
-    onSnapshot: () => () => undefined,
+    getSnapshot: snapshot.get,
+    onSnapshot: snapshot.on,
     markSeen: () => undefined,
     getSettings: settings.get,
     setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
     onSettings: settings.on,
     getMode: mode.get,
-    setMode: mode.set,
+    setMode: (next) => mode.set(next),
+    onFocusCase: () => () => undefined,
+    setNoticeOut: () => undefined,
+    moveSignalBy: () => undefined,
     onMode: mode.on,
     closeWindow: () => window.close(),
   }
@@ -48,9 +57,11 @@ function pickStandIn(): BatcaveApi {
   const inElectron = navigator.userAgent.includes('Electron')
   if (inElectron && !location.hash.startsWith('#demo')) {
     console.error('[batcave] preload bridge missing: no data source')
-    return standIn(() => EMPTY)
+    return standIn(EMPTY)
   }
-  return standIn(location.hash.includes('quiet') ? quietDemoSnapshot : demoSnapshot)
+  if (location.hash.includes('quiet')) return standIn(quietDemoSnapshot())
+  if (location.hash.includes('news')) return standIn(beforeNewsDemoSnapshot(), demoSnapshot())
+  return standIn(demoSnapshot())
 }
 
 export const batcave: BatcaveApi = (window as { batcave?: BatcaveApi }).batcave ?? pickStandIn()

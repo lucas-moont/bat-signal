@@ -85,3 +85,17 @@ export function diffNotices(prev: StoreSnapshot | undefined, next: StoreSnapshot
 
   return [...alerts, ...tasks, ...opened, ...closed]
 }
+
+export const NOTICE_STAMP: Record<NoticeKind, string> = {
+  permission: 'Permission',
+  error: 'Error',
+  waiting: 'Waiting',
+  reply: 'New reply',
+  'task-done': 'Task done',
+  'session-opened': 'Case opened',
+  'session-closed': 'Case closed',
+}
+
+/** News that needs the user, not just news. */
+export const isUrgent = (kind: NoticeKind): boolean =>
+  kind === 'permission' || kind === 'error' || kind === 'waiting'
