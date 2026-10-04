@@ -59,7 +59,7 @@ Batcave starts as the Bat-Signal disc in the bottom-right corner: drag it anywhe
 
 ## Light on resources
 
-A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Batcave processes, GPU included): under **1% of one CPU core** at rest with nothing pending, about **5%** while the lit signal pulses.
+A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Batcave processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
 
 ---
 
