@@ -14,6 +14,10 @@ import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
 import './CaseDetail.css'
 
+/** Completed in the last few seconds: gets a one-off flash. */
+const justCompleted = (t: { status: string; history: { at: string }[] }): boolean =>
+  t.status === 'completed' && Date.now() - Date.parse(t.history.at(-1)?.at ?? '') < 4000
+
 export type SheetTarget = { kind: 'task' | 'subagent' | 'job'; id: string }
 
 /** Whether a drawer's target is still part of the session. */
@@ -82,7 +86,7 @@ export function CaseDetail({
               {session.tasks.map((t) => (
                 <li key={t.id}>
                   <button
-                    className={`row row--task row--${t.status}`}
+                    className={`row row--task row--${t.status}${justCompleted(t) ? ' row--just-done' : ''}`}
                     onClick={() => onOpen({ kind: 'task', id: t.id })}
                   >
                     <Beat beating={t.status === 'in_progress'} strength={0.3} className="row__glyph">

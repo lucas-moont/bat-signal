@@ -208,3 +208,16 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* A task that just completed flashes once: a one-off animation, not a loop. */
+.row--just-done {
+  animation: row-flash 0.9s var(--ease-out);
+}
+@keyframes row-flash {
+  0% {
+    background: rgb(227 18 27 / 35%);
+  }
+  100% {
+    background: transparent;
+  }
+}
