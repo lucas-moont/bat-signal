@@ -44,6 +44,13 @@ export interface Message {
   at: string
 }
 
+/** A tool call whose result hasn't been seen yet. */
+export interface PendingToolUse {
+  name: string
+  input: Record<string, unknown>
+  at: string
+}
+
 export interface SessionState {
   sessionId: string
   title?: string
@@ -54,4 +61,5 @@ export interface SessionState {
   subagents: Subagent[]
   background: BackgroundJob[]
   lastActivityAt?: string
+  pendingToolUses: Record<string, PendingToolUse>
 }
