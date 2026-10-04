@@ -78,7 +78,10 @@ export function caseHeader(session: SessionSnapshot): CaseHeader {
  * For short previews only; it doesn't try to be a full markdown parser.
  */
 export function plainPreview(markdown: string): string {
-  return markdown
+  // Cards show a line or two: only clean the start of a reply that may be several KB.
+  const long = markdown.length > PREVIEW_READ
+  const preview = markdown
+    .slice(0, PREVIEW_READ)
     .split('\n')
     .map((line) =>
       line
@@ -93,4 +96,8 @@ export function plainPreview(markdown: string): string {
     )
     .filter(Boolean)
     .join(' · ')
+  return long || preview.length > PREVIEW_MAX ? preview.slice(0, PREVIEW_MAX).trimEnd() + '…' : preview
 }
+
+const PREVIEW_READ = 600
+const PREVIEW_MAX = 280
