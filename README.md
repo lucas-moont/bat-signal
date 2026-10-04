@@ -1,6 +1,6 @@
-# Batcave
+# Bat-Signal
 
-> A tiny window in the corner of your screen that watches your **Claude Code** sessions like the Bat-Computer.
+> A small signal in the corner of your screen that lights up when your **Claude Code** sessions need you, with a Bat-Computer panel one click away.
 
 <p align="center">
   <img src="docs/screenshots/signal-notice.png" width="320" alt="The Bat-Signal disc lit red, sending a permission notice up its beam">
@@ -14,7 +14,7 @@
 
 **Status:** under construction (v0). See the [roadmap](docs/ROADMAP.md).
 
-Batcave rests in a corner of your screen as a small **Bat-Signal**. When something happens, the signal lights up and a notice card rises from it; click it to open the full panel right on that case. It:
+Bat-Signal rests in a corner of your screen as a small signal disc. When something happens, the disc lights up and a notice card rises from it; click it to open the full panel right on that case. It:
 
 - tells you when a Claude Code session finishes replying;
 - shows which sessions are active and what each one is doing (tasks, subagents, background commands);
@@ -50,20 +50,20 @@ npm install
 npm run dev
 ```
 
-Batcave already works from the files Claude Code writes. For instant alerts, including permission prompts, install the plugin:
+Bat-Signal already works from the files Claude Code writes. For instant alerts, including permission prompts, install the plugin:
 
 ```bash
-claude plugin marketplace add lucas-moont/batcave
-claude plugin install batcave@batcave
+claude plugin marketplace add lucas-moont/bat-signal
+claude plugin install bat-signal@bat-signal
 ```
 
 The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md).
 
-Batcave starts as the Bat-Signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. Both open where you left them.
+Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. Both open where you left them.
 
 ## Light on resources
 
-A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Batcave processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
+A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
 
 ---
 

@@ -1,4 +1,4 @@
-# Contributing to Batcave
+# Contributing to Bat-Signal
 
 Thanks for your interest. The project is small, and so are the rules.
 
@@ -38,6 +38,6 @@ Small commits, one topic each.
 
 ## Privacy
 
-Batcave reads files from the user's `~/.claude/` folder. **Never** put real transcript excerpts, personal paths, prompts or tokens in issues, PRs or test fixtures. The fixtures in `app/test/fixtures/` are synthetic on purpose.
+Bat-Signal reads files from the user's `~/.claude/` folder. **Never** put real transcript excerpts, personal paths, prompts or tokens in issues, PRs or test fixtures. The fixtures in `app/test/fixtures/` are synthetic on purpose.
 
 The `~/.claude/sessions/*.key` files hold secrets and must **never** be read by the app.
