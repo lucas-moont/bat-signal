@@ -6,20 +6,28 @@ import './BatSignalIntro.css'
 
 const DURATION_MS = 1400
 
-export function BatSignalIntro({ onDone }: { onDone: () => void }) {
+/** Plays once when mounted, then removes itself. */
+export function BatSignalIntro() {
   const [leaving, setLeaving] = useState(false)
+  const [done, setDone] = useState(false)
 
   useEffect(() => {
     const leave = setTimeout(() => setLeaving(true), DURATION_MS - 300)
-    const done = setTimeout(onDone, DURATION_MS)
+    const end = setTimeout(() => setDone(true), DURATION_MS)
     return () => {
       clearTimeout(leave)
-      clearTimeout(done)
+      clearTimeout(end)
     }
-  }, [onDone])
+  }, [])
+
+  if (done) return null
 
   return (
-    <div className={`intro${leaving ? ' intro--leaving' : ''}`} onClick={onDone} role="presentation">
+    <div
+      className={`intro${leaving ? ' intro--leaving' : ''}`}
+      onClick={() => setDone(true)}
+      role="presentation"
+    >
       <div className="intro__beam" />
       <div className="intro__signal">
         <BatEmblem size={120} />

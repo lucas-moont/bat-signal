@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
 import { mascotMood } from '@shared/view'
@@ -20,7 +20,6 @@ export function App() {
   const calm = useCalm(settings)
   const now = useNow()
 
-  const [intro, setIntro] = useState(true)
   const [mode, setMode] = useWindowMode()
   const [tab, setTab] = useState<Tab | null>(null)
   const [openCase, setOpenCase] = useState<string | null>(null)
@@ -44,7 +43,6 @@ export function App() {
   // A case that ends while open simply disappears: no session, no detail.
   const session = openCase ? sessions.find((s) => s.sessionId === openCase) : undefined
 
-  const endIntro = useCallback(() => setIntro(false), [])
   const open = (sessionId: string, target: SheetTarget | null = null) => {
     setOpenCase(sessionId)
     setSheet(target)
@@ -158,7 +156,7 @@ export function App() {
             </AnimatePresence>
           </div>
 
-          {intro && !calm && <BatSignalIntro onDone={endIntro} />}
+          {!calm && <BatSignalIntro />}
         </main>
       </MotionConfig>
     </CalmContext>
