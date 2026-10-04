@@ -95,7 +95,8 @@ li + li > .watch-row {
   width: 82px;
   text-align: center;
   font-size: 9.5px;
-  padding: 0 4px;
+  padding: 3px 4px 1px;
+  line-height: 1.1;
   border-width: 1px;
   transform: rotate(-1.5deg);
 }
