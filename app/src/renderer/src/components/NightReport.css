@@ -1,8 +1,12 @@
 /* The night report: one typed column on black, a red margin rule like legal paper, stamps in
    the margin, red pen on whatever waits for you. */
 .report {
-  --margin: 92px;
+  --margin: 114px;
   --ink: #bdb4aa;
+  /* Pen and stamp inks: the theme's reds (signal-hot, the approved brick), lifted just enough
+     for 4.5:1 on black at stamp size. */
+  --ink-hot: #ec2a2a;
+  --ink-soft: #d4574c;
   position: relative;
   padding: 12px 12px 28px 0;
   font-family: var(--font-type);
@@ -14,7 +18,7 @@
 .report::before {
   content: '';
   position: absolute;
-  top: 56px;
+  top: 62px;
   bottom: 0;
   left: var(--margin);
   width: 1px;
@@ -28,9 +32,10 @@
 
 .report__dateline {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: baseline;
   column-gap: 10px;
+  row-gap: 2px;
   margin: 0 0 14px 14px;
   padding-bottom: 8px;
   border-bottom: 3px double var(--line);
@@ -43,20 +48,18 @@
   text-transform: uppercase;
   color: var(--bone);
 }
-.report__date {
+.report__tally {
   justify-self: end;
+  color: var(--bone);
+}
+.report__date {
   font-size: 11px;
   letter-spacing: 0.06em;
   color: var(--ash);
 }
-.report__tally {
-  grid-column: 1 / -1;
-  font-size: 11px;
-  color: var(--ash);
-}
-.report__tally em {
-  font-style: normal;
-  color: var(--signal-hot);
+.report__need {
+  justify-self: end;
+  color: var(--bone);
 }
 
 .report__section + .report__section {
@@ -82,16 +85,15 @@
   list-style: none;
 }
 
-/* One typed line or paragraph: the stamp in the margin, the words after the rule. */
+/* One typed line or paragraph: the stamp (and age) in the margin, the words after the rule. */
 .entry {
   all: unset;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: var(--margin) 1fr auto;
+  grid-template-columns: var(--margin) 1fr;
   width: 100%;
   padding: 7px 0;
   cursor: pointer;
-  border-radius: 0 var(--radius) var(--radius) 0;
   transition: background 0.15s;
 }
 .entry:hover {
@@ -103,9 +105,10 @@
 }
 .entry__margin {
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: 3px 9px 0 4px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 2px 9px 0 4px;
 }
 .entry__body {
   padding: 0 4px 0 12px;
@@ -116,48 +119,67 @@
   font-weight: inherit;
   color: var(--bone);
 }
-/* Red pen: what waits for you is underlined by hand. */
-.entry__pen {
-  color: var(--bone);
-  text-decoration: underline solid var(--signal-hot) 1.5px;
-  text-decoration-skip-ink: none;
-  text-underline-offset: 4px;
-}
 .entry__age {
-  padding: 2px 2px 0 6px;
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-variant-numeric: tabular-nums;
   color: var(--ash);
 }
 
-/* Stamps sized for the margin. */
+/* Red pen: a hand-drawn stroke under what waits for you, pressed harder for blocked work. A
+   drawn stroke, not a text underline, so it reads neither as a link nor as a spelling mark. */
+.pen {
+  color: var(--bone);
+  padding-bottom: 3px;
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+  background-size: 28px 5px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.pen--hot {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ec2a2a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.pen--soft {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23d4574c' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.pen--none {
+  padding-bottom: 0;
+}
+
+/* Stamps at the approved scale, inked by urgency. */
 .report .stamp {
-  font-size: 8.5px;
-  letter-spacing: 0.05em;
-  padding: 1px 4px 0;
-  border-width: 1px;
   white-space: nowrap;
 }
-.report .stamp--waiting,
-.report .stamp--reply {
-  color: #c9463d;
+.report .stamp--hot {
+  color: var(--ink-hot);
 }
-.report .stamp--stalled {
-  color: var(--ash);
+.report .stamp--soft {
+  color: var(--ink-soft);
 }
-.report .stamp--status {
+.report .stamp--working {
+  color: var(--bone);
+  transform: rotate(-1.5deg);
+}
+.report .stamp--none {
   color: var(--ash);
   transform: rotate(-1.5deg);
 }
-.report .case:has(.stamp--hot) .stamp--status,
-.report .stamp--hot {
-  color: var(--signal-hot);
-}
 
-/* A case opened in place: its notes typed under the paragraph. */
-.case--open > .entry {
-  background: rgb(39 21 14 / 30%);
+/* A case opened in place: a pen bracket in the margin holds the paragraph and its notes. */
+.case {
+  position: relative;
+}
+.case--open::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  bottom: 10px;
+  left: calc(var(--margin) - 6px);
+  width: 4px;
+  border: 1px solid var(--ash);
+  border-right: 0;
+  pointer-events: none;
 }
 .notes {
   overflow: hidden;
@@ -195,7 +217,6 @@
   width: 100%;
   padding: 2px 4px;
   cursor: pointer;
-  border-radius: var(--radius);
 }
 .note:hover {
   background: rgb(39 21 14 / 50%);
@@ -215,9 +236,9 @@
   font-size: 10.5px;
   color: var(--ash);
 }
-.note--live .note__mark,
-.note--live .note__state {
-  color: var(--signal-hot);
+/* Running work is news, not a request: bone, never red. */
+.note--live .note__mark {
+  color: var(--bone);
 }
 .note--done .note__text {
   color: var(--ash);
@@ -235,7 +256,14 @@
 /* The narrowest panel keeps the margin, a little tighter. */
 @media (max-width: 330px) {
   .report {
-    --margin: 84px;
+    --margin: 100px;
     font-size: 12px;
+  }
+  /* Room for the column: stamps and headings track tighter at the narrowest width. */
+  .report .stamp {
+    letter-spacing: 0.04em;
+  }
+  .report__heading {
+    letter-spacing: 0.08em;
   }
 }

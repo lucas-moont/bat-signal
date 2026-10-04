@@ -28,6 +28,15 @@ const TYPED_BOX: Record<TaskStatus, string> = {
   deleted: '[-]',
 }
 
+/** How hard the pen presses: blocked work in hot ink, waiting work softer, quiet work unmarked. */
+const INK: Record<AttentionItem['kind'], 'hot' | 'soft' | 'none'> = {
+  permission: 'hot',
+  error: 'hot',
+  waiting: 'soft',
+  reply: 'soft',
+  stalled: 'none',
+}
+
 /** Last words are quoted, not reprinted: a report keeps to one line of them. */
 const QUOTE_CHARS = 150
 
@@ -78,11 +87,15 @@ export function NightReport({
     <article className="report">
       <header className="report__dateline">
         <h2 className="report__name">Night report</h2>
-        <span className="report__date">{dateline(now)}</span>
         <span className="report__tally">
           {sessions.length} case{sessions.length === 1 ? '' : 's'}
-          {waiting.size > 0 && <em> · {waiting.size} need you</em>}
         </span>
+        <span className="report__date">{dateline(now)}</span>
+        {waiting.size > 0 && (
+          <span className="report__need">
+            <span className="pen pen--hot">{waiting.size} need you</span>
+          </span>
+        )}
       </header>
 
       <section className="report__section" aria-labelledby="report-signature">
@@ -97,15 +110,15 @@ export function NightReport({
               const { stamp, sentence } = reportCopy(item)
               return (
                 <li key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`}>
-                  <button className="entry entry--alert" onClick={() => onOpenAlert(item)}>
+                  <button className="entry" onClick={() => onOpenAlert(item)}>
                     <span className="entry__margin">
-                      <span className={`stamp stamp--${item.kind}`}>{stamp}</span>
+                      <span className={`stamp stamp--${INK[item.kind]}`}>{stamp}</span>
+                      <span className="entry__age">{relativeTime(item.at, now)}</span>
                     </span>
                     <span className="entry__body">
                       <strong>{titles.get(item.sessionId) ?? 'An unknown case'}</strong>{' '}
-                      <span className="entry__pen">{sentence}</span>.
+                      <span className={`pen pen--${INK[item.kind]}`}>{sentence}</span>.
                     </span>
-                    <span className="entry__age">{relativeTime(item.at, now)}</span>
                   </button>
                 </li>
               )
@@ -166,7 +179,11 @@ function CaseParagraph({
     <li id={caseAnchor(session.sessionId)} className={`case${open ? ' case--open' : ''}`}>
       <button className="entry" onClick={onToggle} aria-expanded={open}>
         <span className="entry__margin">
-          <span className={`stamp stamp--status${needsYou ? ' stamp--hot' : ''}`}>{status}</span>
+          <span
+            className={`stamp stamp--${needsYou ? 'hot' : session.status === 'busy' ? 'working' : 'none'}`}
+          >
+            {status}
+          </span>
         </span>
         <span className="entry__body">
           <strong>{title}.</strong> Case {number}
