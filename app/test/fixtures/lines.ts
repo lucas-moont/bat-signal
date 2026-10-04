@@ -2,7 +2,7 @@
 // ~/.claude/projects/<cwd>/<sessionId>.jsonl. Content is invented on purpose.
 
 export const SESSION_ID = '00000000-0000-4000-8000-000000000001'
-const CWD = '/home/bruce/wayne-enterprises'
+export const CWD = '/home/bruce/wayne-enterprises'
 
 let clock = Date.parse('2026-01-01T00:00:00.000Z')
 export const resetClock = (): void => {

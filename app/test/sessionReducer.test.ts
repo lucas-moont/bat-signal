@@ -5,6 +5,7 @@ import {
   aiTitle,
   assistantText,
   customTitle,
+  CWD,
   resetClock,
   SESSION_ID,
   taskNotification,
@@ -52,6 +53,16 @@ describe('messages', () => {
     expect(s.messages).toEqual([])
   })
 
+  it('ignores injected text in block-shaped user content too', () => {
+    const s = replay([
+      {
+        ...userText(''),
+        message: { role: 'user', content: [{ type: 'text', text: '<system-note>auto</system-note>' }] },
+      },
+    ])
+    expect(s.messages).toEqual([])
+  })
+
   it('keeps only the 20 most recent messages', () => {
     const s = replay(Array.from({ length: 25 }, (_, i) => assistantText(`reply ${i}`)))
     expect(s.messages).toHaveLength(20)
@@ -60,7 +71,7 @@ describe('messages', () => {
 
   it('tracks cwd and the time of the latest activity', () => {
     const s = replay([userText('hi'), assistantText('hello')])
-    expect(s.cwd).toBe('/home/bruce/wayne-enterprises')
+    expect(s.cwd).toBe(CWD)
     expect(s.lastActivityAt).toBe('2026-01-01T00:00:02.000Z')
   })
 })

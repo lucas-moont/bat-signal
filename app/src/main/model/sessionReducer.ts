@@ -1,7 +1,7 @@
+import { obj, str, type Json } from '../../shared/guards'
 import type {
   BackgroundJob,
   Message,
-  PendingToolUse,
   RunStatus,
   SessionState,
   Subagent,
@@ -9,160 +9,32 @@ import type {
   TaskStatus,
 } from '../../shared/types'
 
-type Line = Record<string, unknown>
-type Block = Record<string, unknown>
+/** Session state plus the reducer's own bookkeeping, which never leaves the main process. */
+export interface TrackedSession extends SessionState {
+  /** Tool calls still waiting for their result, keyed by tool_use id. Only tracked tools are kept. */
+  pending: Record<string, { name: string; input: Json }>
+}
+
+interface ToolResult {
+  id: string
+  input: Json
+  res: Json
+  failed: boolean
+  at: string
+}
+
+interface ToolHandler {
+  onCall?(state: TrackedSession, id: string, input: Json, at: string): TrackedSession
+  /** Called for every result, failed or not; most handlers ignore failures. */
+  onResult(state: TrackedSession, result: ToolResult): TrackedSession
+}
 
 const MAX_MESSAGES = 20
-// User-side lines that Claude Code writes itself (slash commands, their output, task notifications).
-const INJECTED = /^<(command-|local-command-|task-notification)/
-
-export function createSession(sessionId: string): SessionState {
-  return { sessionId, messages: [], tasks: [], subagents: [], background: [], pendingToolUses: {} }
-}
-
-export function applyTranscriptLine(state: SessionState, raw: unknown): SessionState {
-  if (!raw || typeof raw !== 'object') return state
-  const line = raw as Line
-
-  switch (line['type']) {
-    case 'custom-title':
-      return typeof line['customTitle'] === 'string'
-        ? { ...state, title: line['customTitle'], titleSource: 'custom' }
-        : state
-    case 'ai-title':
-      return typeof line['aiTitle'] === 'string' && state.titleSource !== 'custom'
-        ? { ...state, title: line['aiTitle'], titleSource: 'ai' }
-        : state
-    case 'user':
-    case 'assistant':
-      return applyConversationLine(touch(state, line), line)
-    case 'queue-operation':
-      return line['operation'] === 'enqueue' ? applyTaskNotification(state, line) : state
-    default:
-      return state
-  }
-}
-
-function touch(state: SessionState, line: Line): SessionState {
-  const at = str(line['timestamp'])
-  const cwd = str(line['cwd'])
-  return { ...state, lastActivityAt: at ?? state.lastActivityAt, cwd: cwd ?? state.cwd }
-}
-
-function applyConversationLine(state: SessionState, line: Line): SessionState {
-  const message = line['message'] as { content?: unknown } | undefined
-  const at = str(line['timestamp']) ?? ''
-  const role = line['type'] as Message['role']
-  const content = message?.content
-
-  if (line['isMeta'] === true) return state
-  if (typeof content === 'string') {
-    return INJECTED.test(content) ? state : pushMessage(state, { role, text: content, at })
-  }
-  if (!Array.isArray(content)) return state
-
-  let next = state
-  const texts: string[] = []
-  for (const block of content as Block[]) {
-    if (block['type'] === 'text' && typeof block['text'] === 'string') texts.push(block['text'])
-    else if (block['type'] === 'tool_use') next = registerToolUse(next, block, at)
-    else if (block['type'] === 'tool_result') next = resolveToolUse(next, block, line['toolUseResult'], at)
-  }
-  return texts.length ? pushMessage(next, { role, text: texts.join('\n'), at }) : next
-}
-
-function pushMessage(state: SessionState, message: Message): SessionState {
-  return { ...state, messages: [...state.messages, message].slice(-MAX_MESSAGES) }
-}
-
-function registerToolUse(state: SessionState, block: Block, at: string): SessionState {
-  const id = str(block['id'])
-  const name = str(block['name'])
-  if (!id || !name) return state
-  const input = (block['input'] ?? {}) as Record<string, unknown>
-  const next = { ...state, pendingToolUses: { ...state.pendingToolUses, [id]: { name, input, at } } }
-  if (name !== 'Agent') return next
-
-  const subagent: Subagent = {
-    toolUseId: id,
-    description: str(input['description']) ?? '',
-    agentType: str(input['subagent_type']) ?? 'general-purpose',
-    prompt: str(input['prompt']),
-    status: 'running',
-    startedAt: at,
-  }
-  return { ...next, subagents: [...next.subagents, subagent] }
-}
-
-function resolveToolUse(state: SessionState, block: Block, result: unknown, at: string): SessionState {
-  const id = str(block['tool_use_id'])
-  const pending = id ? state.pendingToolUses[id] : undefined
-  if (!id || !pending) return state
-
-  const { [id]: _done, ...rest } = state.pendingToolUses
-  const next = { ...state, pendingToolUses: rest }
-  const failed = block['is_error'] === true
-  if (pending.name === 'Agent') return onAgentResult(next, id, result, failed, at)
-  if (failed) return next
-
-  const res = (result && typeof result === 'object' ? result : {}) as Record<string, unknown>
-  switch (pending.name) {
-    case 'TaskCreate':
-      return onTaskCreated(next, pending, res, at)
-    case 'TaskUpdate':
-      return onTaskUpdated(next, pending, res, at)
-    case 'Bash':
-      return onBashResult(next, id, pending, res, at)
-    case 'TaskStop':
-      return finishJob(next, str(res['task_id']) ?? str(pending.input['task_id']), 'stopped', at)
-    default:
-      return next
-  }
-}
-
+// Claude Code wraps the user-side text it writes itself (slash commands, their output,
+// notifications, reminders) in a leading <tag>. Real prompts practically never start that way.
+const INJECTED = /^\s*<[a-z][\w-]*>/
 // Background agents and teammates answer right away and finish later via a task notification.
 const STILL_RUNNING = new Set(['async_launched', 'teammate_spawned'])
-
-function onAgentResult(
-  state: SessionState,
-  toolUseId: string,
-  result: unknown,
-  failed: boolean,
-  at: string,
-): SessionState {
-  const res = (result && typeof result === 'object' ? result : {}) as Record<string, unknown>
-  const agentId = str(res['agentId']) ?? str(res['agent_id'])
-  const stillRunning = !failed && STILL_RUNNING.has(str(res['status']) ?? '')
-  return updateSubagent(
-    state,
-    (a) => a.toolUseId === toolUseId,
-    (a) =>
-      stillRunning
-        ? { ...a, agentId: agentId ?? a.agentId }
-        : { ...a, agentId: agentId ?? a.agentId, status: failed ? 'failed' : 'completed', endedAt: at },
-  )
-}
-
-function onBashResult(
-  state: SessionState,
-  toolUseId: string,
-  pending: PendingToolUse,
-  res: Record<string, unknown>,
-  at: string,
-): SessionState {
-  const jobId = str(res['backgroundTaskId'])
-  if (!jobId) return state
-  const job: BackgroundJob = {
-    id: jobId,
-    toolUseId,
-    command: str(pending.input['command']) ?? '',
-    description: str(pending.input['description']),
-    status: 'running',
-    startedAt: at,
-  }
-  return { ...state, background: [...state.background.filter((j) => j.id !== jobId), job] }
-}
-
 const NOTIFICATION_STATUS: Record<string, RunStatus> = {
   completed: 'completed',
   failed: 'failed',
@@ -170,97 +42,222 @@ const NOTIFICATION_STATUS: Record<string, RunStatus> = {
   stopped: 'stopped',
 }
 
-function applyTaskNotification(state: SessionState, line: Line): SessionState {
-  const content = str(line['content']) ?? ''
-  if (!content.startsWith('<task-notification>')) return state
-  const tag = (name: string) => content.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`))?.[1]?.trim()
-  const status = NOTIFICATION_STATUS[tag('status') ?? '']
-  if (!status) return state
-
-  const taskId = tag('task-id')
-  const toolUseId = tag('tool-use-id')
-  const summary = tag('summary') || undefined
-  const at = str(line['timestamp']) ?? ''
-  const matches = (ids: (string | undefined)[]) => ids.some((x) => x && (x === taskId || x === toolUseId))
-
-  const withAgent = updateSubagent(
-    state,
-    (a) => a.status === 'running' && matches([a.agentId, a.toolUseId]),
-    (a) => ({ ...a, status, endedAt: at, summary: summary ?? a.summary }),
-  )
-  const background = withAgent.background.map((j) =>
-    j.status === 'running' && matches([j.id, j.toolUseId]) ? { ...j, status, endedAt: at } : j,
-  )
-  return { ...withAgent, background }
+export function createSession(sessionId: string): TrackedSession {
+  return { sessionId, messages: [], tasks: [], subagents: [], background: [], pending: {} }
 }
 
-function finishJob(
-  state: SessionState,
-  jobId: string | undefined,
-  status: RunStatus,
-  at: string,
-): SessionState {
-  if (!jobId) return state
-  const background = state.background.map((j) =>
-    j.id === jobId && j.status === 'running' ? { ...j, status, endedAt: at } : j,
-  )
-  return { ...state, background }
+/** The part of a tracked session that is safe to hand to the renderer. */
+export function toSessionState({ pending: _pending, ...state }: TrackedSession): SessionState {
+  return state
 }
 
-function updateSubagent(
-  state: SessionState,
-  match: (a: Subagent) => boolean,
-  update: (a: Subagent) => Subagent,
-): SessionState {
-  return { ...state, subagents: state.subagents.map((a) => (match(a) ? update(a) : a)) }
-}
-
-function onTaskCreated(
-  state: SessionState,
-  pending: PendingToolUse,
-  res: Record<string, unknown>,
-  at: string,
-): SessionState {
-  const created = res['task'] as { id?: unknown; subject?: unknown } | undefined
-  const id = str(created?.id)
-  if (!id) return state
-  const task: Task = {
-    id,
-    subject: str(created?.subject) ?? str(pending.input['subject']) ?? '',
-    description: str(pending.input['description']),
-    activeForm: str(pending.input['activeForm']),
-    status: 'pending',
-    history: [{ status: 'pending', at }],
+export function applyTranscriptLine(state: TrackedSession, raw: unknown): TrackedSession {
+  const line = obj(raw)
+  switch (line['type']) {
+    case 'custom-title': {
+      const title = str(line['customTitle'])
+      return title ? { ...state, title, titleSource: 'custom' } : state
+    }
+    case 'ai-title': {
+      const title = str(line['aiTitle'])
+      return title && state.titleSource !== 'custom' ? { ...state, title, titleSource: 'ai' } : state
+    }
+    case 'user':
+    case 'assistant':
+      return line['isMeta'] === true ? state : applyConversationLine(state, line)
+    case 'queue-operation':
+      return line['operation'] === 'enqueue' ? applyTaskNotification(state, line) : state
+    default:
+      return state
   }
-  return { ...state, tasks: [...state.tasks.filter((t) => t.id !== id), task] }
 }
 
-function onTaskUpdated(
-  state: SessionState,
-  pending: PendingToolUse,
-  res: Record<string, unknown>,
-  at: string,
-): SessionState {
-  const id = str(res['taskId']) ?? str(pending.input['taskId'])
-  const fields = Array.isArray(res['updatedFields']) ? (res['updatedFields'] as string[]) : []
-  const to = str((res['statusChange'] as { to?: unknown } | undefined)?.to) as TaskStatus | undefined
+function applyConversationLine(prev: TrackedSession, line: Json): TrackedSession {
+  const at = str(line['timestamp']) ?? ''
+  const role = line['type'] as Message['role']
+  let state: TrackedSession = {
+    ...prev,
+    lastActivityAt: str(line['timestamp']) ?? prev.lastActivityAt,
+    cwd: str(line['cwd']) ?? prev.cwd,
+  }
 
-  if (to === 'deleted') return { ...state, tasks: state.tasks.filter((t) => t.id !== id) }
+  const content = obj(line['message'])['content']
+  const blocks = typeof content === 'string' ? [{ type: 'text', text: content }] : content
+  if (!Array.isArray(blocks)) return state
 
-  const tasks = state.tasks.map((task) => {
-    if (task.id !== id) return task
-    const updated: Task = { ...task }
-    for (const field of ['subject', 'description', 'activeForm'] as const) {
-      const value = str(pending.input[field])
-      if (fields.includes(field) && value !== undefined) updated[field] = value
-    }
-    if (to && to !== task.status) {
-      updated.status = to
-      updated.history = [...task.history, { status: to, at }]
-    }
-    return updated
+  const texts: string[] = []
+  for (const block of blocks.map(obj)) {
+    const text = str(block['text'])
+    if (block['type'] === 'text' && text && !(role === 'user' && INJECTED.test(text))) texts.push(text)
+    else if (block['type'] === 'tool_use') state = onToolUse(state, block, at)
+    else if (block['type'] === 'tool_result') state = onToolResult(state, block, line['toolUseResult'], at)
+  }
+  if (!texts.length) return state
+  const message: Message = { role, text: texts.join('\n'), at }
+  return { ...state, messages: [...state.messages, message].slice(-MAX_MESSAGES) }
+}
+
+function onToolUse(state: TrackedSession, block: Json, at: string): TrackedSession {
+  const id = str(block['id'])
+  const name = str(block['name'])
+  const handler = name ? TOOLS[name] : undefined
+  if (!id || !name || !handler) return state
+  const input = obj(block['input'])
+  const next = { ...state, pending: { ...state.pending, [id]: { name, input } } }
+  return handler.onCall ? handler.onCall(next, id, input, at) : next
+}
+
+function onToolResult(state: TrackedSession, block: Json, result: unknown, at: string): TrackedSession {
+  const id = str(block['tool_use_id'])
+  const call = id ? state.pending[id] : undefined
+  if (!id || !call) return state
+  const { [id]: _done, ...pending } = state.pending
+  const failed = block['is_error'] === true
+  return TOOLS[call.name]!.onResult(
+    { ...state, pending },
+    { id, input: call.input, res: obj(result), failed, at },
+  )
+}
+
+const TOOLS: Record<string, ToolHandler> = {
+  TaskCreate: {
+    onResult(state, { input, res, failed, at }) {
+      const created = obj(res['task'])
+      const id = str(created['id'])
+      if (failed || !id) return state
+      const task: Task = {
+        id,
+        subject: str(created['subject']) ?? str(input['subject']) ?? '',
+        description: str(input['description']),
+        activeForm: str(input['activeForm']),
+        status: 'pending',
+        history: [{ status: 'pending', at }],
+      }
+      return { ...state, tasks: upsert(state.tasks, task) }
+    },
+  },
+
+  TaskUpdate: {
+    onResult(state, { input, res, failed, at }) {
+      if (failed) return state
+      const id = str(res['taskId']) ?? str(input['taskId'])
+      const fields = Array.isArray(res['updatedFields']) ? (res['updatedFields'] as unknown[]) : []
+      const to = str(obj(res['statusChange'])['to']) as TaskStatus | undefined
+      if (to === 'deleted') return { ...state, tasks: state.tasks.filter((t) => t.id !== id) }
+
+      const tasks = state.tasks.map((task) => {
+        if (task.id !== id) return task
+        const updated: Task = { ...task }
+        for (const field of ['subject', 'description', 'activeForm'] as const) {
+          const value = str(input[field])
+          if (fields.includes(field) && value !== undefined) updated[field] = value
+        }
+        if (to && to !== task.status) {
+          updated.status = to
+          updated.history = [...task.history, { status: to, at }]
+        }
+        return updated
+      })
+      return { ...state, tasks }
+    },
+  },
+
+  Agent: {
+    onCall(state, id, input, at) {
+      const subagent: Subagent = {
+        toolUseId: id,
+        description: str(input['description']) ?? '',
+        agentType: str(input['subagent_type']) ?? 'general-purpose',
+        prompt: str(input['prompt']),
+        status: 'running',
+        startedAt: at,
+      }
+      return { ...state, subagents: [...state.subagents, subagent] }
+    },
+    onResult(state, { id, res, failed, at }) {
+      const agentId = str(res['agentId']) ?? str(res['agent_id'])
+      const stillRunning = !failed && STILL_RUNNING.has(str(res['status']) ?? '')
+      const subagents = state.subagents.map((a) =>
+        a.toolUseId !== id
+          ? a
+          : {
+              ...a,
+              agentId: agentId ?? a.agentId,
+              ...(stillRunning
+                ? {}
+                : { status: (failed ? 'failed' : 'completed') as RunStatus, endedAt: at }),
+            },
+      )
+      return { ...state, subagents }
+    },
+  },
+
+  Bash: {
+    onResult(state, { id, input, res, failed, at }) {
+      const jobId = str(res['backgroundTaskId'])
+      if (failed || !jobId) return state
+      const job: BackgroundJob = {
+        id: jobId,
+        toolUseId: id,
+        command: str(input['command']) ?? '',
+        description: str(input['description']),
+        status: 'running',
+        startedAt: at,
+      }
+      return { ...state, background: upsert(state.background, job) }
+    },
+  },
+
+  TaskStop: {
+    onResult(state, { input, res, failed, at }) {
+      const id = str(res['task_id']) ?? str(input['task_id'])
+      return failed || !id ? state : finishRuns(state, [id], { status: 'stopped', endedAt: at })
+    },
+  },
+}
+
+const TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g
+
+function applyTaskNotification(state: TrackedSession, line: Json): TrackedSession {
+  const content = str(line['content']) ?? ''
+  const OPEN = '<task-notification>'
+  if (!content.startsWith(OPEN)) return state
+  // Match the inner tags only: the outer wrapper would swallow them all.
+  const inner = content.slice(OPEN.length)
+  const tags = Object.fromEntries([...inner.matchAll(TAG)].map((m) => [m[1], m[2]!.trim()]))
+  const status = NOTIFICATION_STATUS[tags['status'] ?? '']
+  if (!status) return state
+  const ids = [tags['task-id'], tags['tool-use-id']].filter((x): x is string => !!x)
+  return finishRuns(state, ids, {
+    status,
+    endedAt: str(line['timestamp']) ?? '',
+    summary: tags['summary'] || undefined,
   })
-  return { ...state, tasks }
 }
 
-const str = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined)
+/** Finishes every running subagent or background job known by any of `ids`. */
+function finishRuns(
+  state: TrackedSession,
+  ids: string[],
+  end: { status: RunStatus; endedAt: string; summary?: string },
+): TrackedSession {
+  const finish = <T extends Subagent | BackgroundJob>(run: T, runIds: (string | undefined)[]): T =>
+    run.status === 'running' && runIds.some((x) => x !== undefined && ids.includes(x))
+      ? {
+          ...run,
+          status: end.status,
+          endedAt: end.endedAt,
+          ...('agentType' in run && end.summary ? { summary: end.summary } : {}),
+        }
+      : run
+  return {
+    ...state,
+    subagents: state.subagents.map((a) => finish(a, [a.agentId, a.toolUseId])),
+    background: state.background.map((j) => finish(j, [j.id, j.toolUseId])),
+  }
+}
+
+const upsert = <T extends { id: string }>(list: T[], item: T): T[] => [
+  ...list.filter((x) => x.id !== item.id),
+  item,
+]

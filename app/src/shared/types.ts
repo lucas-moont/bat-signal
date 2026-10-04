@@ -1,17 +1,12 @@
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'deleted'
 
-export interface StatusChange<S> {
-  status: S
-  at: string
-}
-
 export interface Task {
   id: string
   subject: string
   description?: string
   activeForm?: string
   status: TaskStatus
-  history: StatusChange<TaskStatus>[]
+  history: { status: TaskStatus; at: string }[]
 }
 
 export type RunStatus = 'running' | 'completed' | 'failed' | 'stopped'
@@ -44,13 +39,6 @@ export interface Message {
   at: string
 }
 
-/** A tool call whose result hasn't been seen yet. */
-export interface PendingToolUse {
-  name: string
-  input: Record<string, unknown>
-  at: string
-}
-
 export interface SessionState {
   sessionId: string
   title?: string
@@ -61,10 +49,10 @@ export interface SessionState {
   subagents: Subagent[]
   background: BackgroundJob[]
   lastActivityAt?: string
-  pendingToolUses: Record<string, PendingToolUse>
 }
 
-export type LiveStatus = 'busy' | 'idle' | 'shell'
+export const LIVE_STATUSES = ['busy', 'idle', 'shell'] as const
+export type LiveStatus = (typeof LIVE_STATUSES)[number]
 
 /** Live facts about a session that don't come from the transcript (registry + hooks). */
 export interface SessionSignals {
@@ -90,6 +78,8 @@ export interface AttentionItem {
   sessionId: string
   kind: AttentionKind
   at: string
+  /** For permission prompts: the tool Claude wants to use. */
+  toolName?: string
   detail?: string
   taskId?: string
 }
