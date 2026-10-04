@@ -9,6 +9,8 @@ import type { StoreSnapshot } from '@shared/types'
 import { batSignal } from '../bridge'
 import { CalmContext, useCalm } from '../calm'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
+import { mascotMood } from '@shared/view'
+import { BatClawd } from './BatClawd'
 import { BatEmblem } from './BatEmblem'
 import { Glow } from './Live'
 import './Cards.css'
@@ -88,6 +90,17 @@ export function Signal() {
   if (layout && (layout.below !== side.below || layout.right !== side.right)) setSide(layout)
 
   if (!settingsLoaded) return null
+
+  // In watch mode this window is the perch over the strip: just Bat-Clawd, standing watch.
+  if (mode === 'watch') {
+    return (
+      <CalmContext value={calm}>
+        <main className="perch">
+          <BatClawd mood={mascotMood(snapshot)} size={78} perched />
+        </main>
+      </CalmContext>
+    )
+  }
   const needsYou = snapshot.attention.length
   const shown = layout ? notice : undefined
 
