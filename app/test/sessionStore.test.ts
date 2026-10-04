@@ -22,6 +22,7 @@ class FakeDisk implements StoreSources {
   deepScans = 0
   metaReads = 0
   reads = new Map<string, number>()
+  failing = new Set<string>()
   now = new Date('2026-01-01T12:00:00.000Z')
 
   async locateTranscript(entry: RegistryEntry, deep: boolean) {
@@ -34,6 +35,7 @@ class FakeDisk implements StoreSources {
     return {
       readNew: async () => {
         this.reads.set(path, (this.reads.get(path) ?? 0) + 1)
+        if (this.failing.has(path)) throw new Error(`EBUSY: ${path}`)
         const lines = this.files.get(path) ?? []
         const restarted = this.restarts.delete(path)
         if (restarted) read = 0
@@ -255,5 +257,30 @@ describe('SessionStore disk work', () => {
     await store.refresh()
     expect(disk.reads.get('agent-a1.jsonl')).toBe(1)
     expect(store.snapshot().sessions[0]?.subagents[0]?.lastMessage).toBe('Found it')
+  })
+})
+
+describe('SessionStore resilience', () => {
+  it("keeps updating other sessions when one session's transcript can't be read", async () => {
+    const other = entry({ sessionId: 'other', pid: 5 })
+    disk.append('other', assistantText('hello'))
+    disk.append(SESSION_ID, assistantText('hi'))
+    await store.setLiveSessions([entry(), other])
+    disk.failing.add(`${SESSION_ID}.jsonl`)
+    disk.append('other', assistantText('still here'))
+    await store.refresh()
+    const texts = store.snapshot().sessions.map((s) => s.messages.at(-1)?.text)
+    expect(texts).toContain('still here')
+  })
+
+  it('forgets hooks from a session the registry never lists after 5 minutes', async () => {
+    await store.handleHook({
+      ...hook('Notification', { notification_type: 'idle_prompt' }),
+      session_id: 'ghost',
+    })
+    disk.now = new Date(disk.now.getTime() + 6 * 60_000)
+    await store.setLiveSessions([entry()])
+    await store.setLiveSessions([entry(), entry({ sessionId: 'ghost', pid: 6 })])
+    expect(store.snapshot().attention.filter((a) => a.sessionId === 'ghost')).toEqual([])
   })
 })
