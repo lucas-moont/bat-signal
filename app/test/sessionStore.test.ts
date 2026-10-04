@@ -284,3 +284,23 @@ describe('SessionStore resilience', () => {
     expect(store.snapshot().attention.filter((a) => a.sessionId === 'ghost')).toEqual([])
   })
 })
+
+describe('SessionStore first reads', () => {
+  it('leaves a new session out of the snapshot until its transcript has been read', async () => {
+    disk.append(SESSION_ID, aiTitle('Fix the Batmobile'))
+    const listing = store.setLiveSessions([entry()])
+    expect(store.snapshot().sessions).toEqual([]) // mid-read: no half-built session
+    await listing
+    expect(store.snapshot().sessions.map((s) => s.title)).toEqual(['Fix the Batmobile'])
+  })
+
+  it('is ready once the first registry listing has been read', async () => {
+    let ready = false
+    void store.ready.then(() => (ready = true))
+    await Promise.resolve()
+    expect(ready).toBe(false)
+    await store.setLiveSessions([entry()])
+    await Promise.resolve()
+    expect(ready).toBe(true)
+  })
+})
