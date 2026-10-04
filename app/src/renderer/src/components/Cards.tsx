@@ -40,15 +40,22 @@ export function AttentionList({
   items,
   sessions,
   now,
+  quietIsKnown,
   onOpen,
 }: {
   items: AttentionItem[]
   sessions: SessionSnapshot[]
   now: Date
+  /** False while the plugin misses some sessions: then an empty list proves nothing. */
+  quietIsKnown: boolean
   onOpen: (item: AttentionItem) => void
 }) {
   if (!items.length) {
-    return <Empty title="All quiet in Gotham." hint="Nothing needs you right now." />
+    return quietIsKnown ? (
+      <Empty title="All quiet in Gotham." hint="Nothing needs you right now." />
+    ) : (
+      <Empty title="Nothing reported." hint="The plugin does not reach every session yet." />
+    )
   }
   return (
     <ul className="cards">

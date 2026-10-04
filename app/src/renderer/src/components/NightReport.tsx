@@ -22,6 +22,7 @@ import {
 } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import type { Tab } from './Header'
+import { PluginHint } from './PluginHint'
 import { TerminalButton } from './TerminalButton'
 import { Typewriter } from './Typewriter'
 import './Cards.css'
@@ -47,6 +48,7 @@ const quote = (text: string) => {
 
 export function NightReport({
   tab,
+  unheard,
   sessions,
   attention,
   now,
@@ -57,6 +59,8 @@ export function NightReport({
 }: {
   /** Which half of the report: what awaits your signature, or the case notes. */
   tab: Tab
+  /** Sessions the plugin does not reach: their requests cannot be reported. */
+  unheard: number
   sessions: SessionSnapshot[]
   attention: AttentionItem[]
   now: Date
@@ -91,8 +95,13 @@ export function NightReport({
           <h3 id="report-signature" className="report__heading">
             Awaiting your signature
           </h3>
+          {unheard > 0 && <PluginHint sessions={unheard} />}
           {attention.length === 0 ? (
-            <p className="report__nil">Nothing awaits your signature. Every case can carry on without you.</p>
+            <p className="report__nil">
+              {unheard > 0
+                ? 'Nothing reported from the sessions the plugin reaches.'
+                : 'Nothing awaits your signature. Every case can carry on without you.'}
+            </p>
           ) : (
             <ul className="report__lines">
               {attention.map((item) => {

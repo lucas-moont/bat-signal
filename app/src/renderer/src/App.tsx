@@ -113,10 +113,13 @@ export function App() {
 
           <div className="stage">
             <div className="stage__scroll">
-              {activeTab === 'needs' && pluginSilent(snapshot) && <PluginHint />}
+              {!report && activeTab === 'needs' && pluginSilent(snapshot) && (
+                <PluginHint sessions={snapshot.unheard?.length ?? 0} />
+              )}
               {report ? (
                 <NightReport
                   tab={activeTab}
+                  unheard={snapshot.unheard?.length ?? 0}
                   sessions={sessions}
                   attention={attention}
                   now={now}
@@ -126,7 +129,13 @@ export function App() {
                   onOpenSheet={open}
                 />
               ) : activeTab === 'needs' ? (
-                <AttentionList items={attention} sessions={sessions} now={now} onOpen={openAttention} />
+                <AttentionList
+                  items={attention}
+                  sessions={sessions}
+                  now={now}
+                  quietIsKnown={!pluginSilent(snapshot)}
+                  onOpen={openAttention}
+                />
               ) : (
                 <CaseList sessions={sessions} attention={attention} now={now} onOpen={(id) => open(id)} />
               )}

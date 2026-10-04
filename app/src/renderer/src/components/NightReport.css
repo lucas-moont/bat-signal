@@ -91,6 +91,11 @@
   text-underline-offset: 4px;
   color: var(--ash);
 }
+/* The plugin hint, typed into the report under its heading. */
+.report .plugin-hint {
+  margin: 6px 4px 8px calc(var(--margin) + 12px);
+  font-family: var(--font-type);
+}
 .report__nil {
   margin: 4px 0 0 calc(var(--margin) + 12px);
   color: var(--ash);
