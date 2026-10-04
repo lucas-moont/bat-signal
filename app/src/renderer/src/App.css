@@ -23,18 +23,25 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 23px;
-  letter-spacing: 3.5px;
+  font-size: 21px;
+  letter-spacing: 2.5px;
   line-height: 1;
   color: var(--signal);
   text-shadow: 0 0 14px rgb(175 0 6 / 35%);
 }
-/* The needs-you counter, stamped next to the title. */
+.header__brand {
+  position: relative;
+  flex: none;
+}
+/* The needs-you counter, stamped on the emblem's corner. */
 .header__count {
-  min-width: 24px;
-  padding: 3px 6px 1px;
+  position: absolute;
+  top: -17px;
+  left: 7px;
+  min-width: 20px;
+  padding: 2px 5px 1px;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1;
   text-align: center;
   color: var(--bone);
@@ -63,9 +70,7 @@
   display: flex;
   gap: 2px;
 }
-.header__title,
-.header__count,
-.header > svg {
+.header__title {
   flex: none;
 }
 @media (max-width: 330px) {
@@ -74,8 +79,12 @@
     padding-left: 10px;
   }
   .header__title {
-    font-size: 20px;
-    letter-spacing: 2.5px;
+    font-size: 19px;
+    letter-spacing: 2px;
+  }
+  /* At the narrowest the mascot steps aside rather than crowd the buttons. */
+  .header__mascot {
+    visibility: hidden;
   }
 }
 
