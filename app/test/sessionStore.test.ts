@@ -1,16 +1,21 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { SessionStore, type StoreSources } from '../src/main/store'
 import type { RegistryEntry } from '../src/main/sources/sessionRegistry'
+import type { SubagentTranscript } from '../src/main/sources/transcriptLocator'
 import { aiTitle, assistantText, CWD, resetClock, SESSION_ID, toolResult, toolUse } from './fixtures/lines'
 
 /** In-memory stand-in for the transcript files on disk. */
 class FakeDisk implements StoreSources {
   files = new Map<string, unknown[]>()
   restarts = new Set<string>()
-  subagents = new Map<string, { agentId: string; path: string; toolUseId?: string }[]>()
+  subagents = new Map<string, SubagentTranscript[]>()
+  deepScans = 0
+  metaReads = 0
+  reads = new Map<string, number>()
   now = new Date('2026-01-01T12:00:00.000Z')
 
-  async locateTranscript(entry: RegistryEntry) {
+  async locateTranscript(entry: RegistryEntry, deep: boolean) {
+    if (deep) this.deepScans++
     const path = `${entry.sessionId}.jsonl`
     return this.files.has(path) ? path : null
   }
@@ -18,6 +23,7 @@ class FakeDisk implements StoreSources {
     let read = 0
     return {
       readNew: async () => {
+        this.reads.set(path, (this.reads.get(path) ?? 0) + 1)
         const lines = this.files.get(path) ?? []
         const restarted = this.restarts.delete(path)
         if (restarted) read = 0
@@ -28,8 +34,10 @@ class FakeDisk implements StoreSources {
       },
     }
   }
-  async listSubagentTranscripts(transcriptPath: string) {
-    return this.subagents.get(transcriptPath) ?? []
+  async listSubagentTranscripts(transcriptPath: string, known: ReadonlySet<string>) {
+    const fresh = (this.subagents.get(transcriptPath) ?? []).filter((s) => !known.has(s.agentId))
+    this.metaReads += fresh.length
+    return fresh
   }
   clock() {
     return this.now
@@ -213,5 +221,46 @@ describe('SessionStore updates', () => {
     await store.handleHook(hook('Stop'))
     await store.setLiveSessions([entry({ status: 'busy' })])
     expect(updates()).toBe(3)
+  })
+})
+
+describe('SessionStore disk work', () => {
+  it('searches every project folder at most every 30s while a transcript is missing', async () => {
+    await store.setLiveSessions([entry()])
+    await store.refresh()
+    await store.refresh()
+    expect(disk.deepScans).toBe(1)
+    disk.now = new Date(disk.now.getTime() + 31_000)
+    await store.refresh()
+    expect(disk.deepScans).toBe(2)
+  })
+
+  const withSubagent = (status: 'async_launched' | 'completed') => {
+    disk.append(
+      SESSION_ID,
+      toolUse('toolu_a', 'Agent', { description: 'Search', subagent_type: 'Explore' }),
+      toolResult('toolu_a', status === 'completed' ? { status } : { isAsync: true, status, agentId: 'a1' }),
+    )
+    disk.subagents.set(`${SESSION_ID}.jsonl`, [
+      { agentId: 'a1', path: 'agent-a1.jsonl', toolUseId: 'toolu_a' },
+    ])
+    disk.files.set('agent-a1.jsonl', [assistantText('Found it')])
+  }
+
+  it("reads a subagent's meta.json only once", async () => {
+    withSubagent('async_launched')
+    await store.setLiveSessions([entry()])
+    await store.refresh()
+    await store.refresh()
+    expect(disk.metaReads).toBe(1)
+  })
+
+  it('stops re-reading a finished subagent once its transcript was read', async () => {
+    withSubagent('completed')
+    await store.setLiveSessions([entry()])
+    await store.refresh()
+    await store.refresh()
+    expect(disk.reads.get('agent-a1.jsonl')).toBe(1)
+    expect(store.snapshot().sessions[0]?.subagents[0]?.lastMessage).toBe('Found it')
   })
 })
