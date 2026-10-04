@@ -54,8 +54,8 @@
   background: var(--signal-hot);
 }
 
-/* Breathing glow on what can't wait: opacity only, so it stays on the compositor. */
-.card--urgent::after {
+/* The breathing glow around urgent cards; its opacity comes from the clock (see Live.tsx). */
+.card__glow {
   content: '';
   position: absolute;
   inset: -1px;
@@ -65,16 +65,8 @@
     0 0 16px -2px var(--signal-glow),
     inset 0 0 12px -6px var(--signal-glow);
   pointer-events: none;
-  animation: breathe 2.6s ease-in-out infinite;
-}
-@keyframes breathe {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
-  }
+  /* Its own layer, so each opacity change is a compositor update, not a repaint. */
+  will-change: opacity;
 }
 
 .card__top,
@@ -179,7 +171,6 @@
 }
 .status--busy .status__dot {
   background: var(--signal-hot);
-  animation: heartbeat 1.4s ease-in-out infinite;
 }
 .status--alert {
   color: var(--signal-hot);
@@ -187,21 +178,6 @@
 .status--alert .status__dot {
   background: var(--signal-hot);
   box-shadow: 0 0 8px var(--signal);
-}
-@keyframes heartbeat {
-  0%,
-  40%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  15% {
-    transform: scale(1.45);
-    opacity: 1;
-  }
-  28% {
-    transform: scale(1.15);
-  }
 }
 
 .progress {

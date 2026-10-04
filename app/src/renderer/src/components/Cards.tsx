@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import { attentionCopy, caseHeader, relativeTime } from '@shared/view'
 import { BatClawd } from './BatClawd'
+import { Beat, Glow } from './Live'
 import { Typewriter } from './Typewriter'
 import './Cards.css'
 
@@ -51,6 +52,7 @@ export function AttentionList({
                 className={`card card--attention card--${item.kind}${URGENT.has(item.kind) ? ' card--urgent' : ''}`}
                 onClick={() => onOpen(item)}
               >
+                {URGENT.has(item.kind) && <Glow calm={calm} />}
                 <span className="card__top">
                   <span className="stamp">{stamp}</span>
                   <span className="card__time">{relativeTime(item.at, now)}</span>
@@ -104,10 +106,11 @@ export function CaseList({
                 className={`card card--case${needsYou ? ' card--urgent' : ''}`}
                 onClick={() => onOpen(s.sessionId)}
               >
+                {needsYou && <Glow calm={calm} />}
                 <span className="card__top">
                   <span className="case-number">Case {number}</span>
                   <span className={`status status--${status}`}>
-                    <i className="status__dot" />
+                    <Beat beating={status === 'busy' && !calm} className="status__dot" />
                     {needsYou ? 'Needs you' : STATUS_LABEL[s.status]}
                   </span>
                 </span>

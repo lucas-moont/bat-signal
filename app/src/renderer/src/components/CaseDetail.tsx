@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { AttentionItem, RunStatus, SessionSnapshot, Task } from '@shared/types'
 import { attentionCopy, caseHeader, relativeTime } from '@shared/view'
 import { Icon } from './Icon'
+import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
 import './CaseDetail.css'
 
@@ -85,9 +86,9 @@ export function CaseDetail({
                     className={`row row--task row--${t.status}`}
                     onClick={() => onOpen({ kind: 'task', id: t.id })}
                   >
-                    <span className="row__glyph" aria-hidden>
+                    <Beat beating={t.status === 'in_progress' && !calm} strength={0.3} className="row__glyph">
                       {TASK_GLYPH[t.status]}
-                    </span>
+                    </Beat>
                     <span className="row__text">
                       {t.status === 'in_progress' ? (t.activeForm ?? t.subject) : t.subject}
                     </span>

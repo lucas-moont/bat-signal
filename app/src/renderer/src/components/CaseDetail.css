@@ -151,7 +151,6 @@
 
 .row--in_progress .row__glyph {
   color: var(--signal-hot);
-  animation: heartbeat 1.6s ease-in-out infinite;
 }
 .row--completed .row__glyph {
   color: var(--ash);
