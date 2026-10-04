@@ -24,9 +24,7 @@ export async function locateTranscript(
   if (await exists(direct)) return direct
 
   const folders = await readdir(projectsDir).catch(() => [] as string[])
-  for (const folder of folders) {
-    const candidate = join(projectsDir, folder, file)
-    if (await exists(candidate)) return candidate
-  }
-  return null
+  const candidates = folders.map((folder) => join(projectsDir, folder, file))
+  const found = await Promise.all(candidates.map(exists))
+  return candidates[found.indexOf(true)] ?? null
 }
