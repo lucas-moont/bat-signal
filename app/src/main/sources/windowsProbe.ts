@@ -22,9 +22,11 @@ export function createWindowsProbe(): ProcessProbe {
   }
 
   async function lookup(pids: number[]): Promise<Map<number, string>> {
+    // One try/catch per pid: a single protected process (StartTime: access denied)
+    // must not fail the whole batch.
     const script =
-      `Get-Process -Id ${pids.join(',')} -ErrorAction SilentlyContinue | ` +
-      `ForEach-Object { "$($_.Id) $($_.StartTime.ToFileTimeUtc())" }`
+      `foreach ($id in @(${pids.join(',')})) { try { $p = Get-Process -Id $id -ErrorAction Stop; ` +
+      `"$id $($p.StartTime.ToFileTimeUtc())" } catch {} }`
     const { stdout } = await run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], {
       windowsHide: true,
       timeout: 10_000,
