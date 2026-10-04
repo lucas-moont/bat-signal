@@ -304,3 +304,31 @@ describe('SessionStore first reads', () => {
     expect(ready).toBe(true)
   })
 })
+
+describe('SessionStore without the plugin', () => {
+  it('infers a finished reply when a session without hooks turns from busy to idle', async () => {
+    await store.setLiveSessions([entry({ status: 'busy' })])
+    disk.now = new Date('2026-01-01T12:05:00.000Z')
+    await store.setLiveSessions([entry({ status: 'idle' })])
+    expect(store.snapshot().attention).toEqual([
+      { sessionId: SESSION_ID, kind: 'reply', at: '2026-01-01T12:05:00.000Z' },
+    ])
+  })
+
+  it('leaves finished replies to the hooks when the session sends them', async () => {
+    await store.setLiveSessions([entry({ status: 'busy' })])
+    await store.handleHook(hook('Stop'))
+    disk.now = new Date('2026-01-01T12:05:00.000Z')
+    await store.setLiveSessions([entry({ status: 'idle' })])
+    expect(store.snapshot().attention.map((a) => [a.kind, a.at])).toEqual([
+      ['reply', '2026-01-01T12:00:00.000Z'],
+    ])
+  })
+
+  it('says whether any hook has been heard, so a quiet plugin is never mistaken for nothing to do', async () => {
+    await store.setLiveSessions([entry({ status: 'busy' })])
+    expect(store.snapshot().hooksHeard).toBe(false)
+    await store.handleHook(hook('PostToolUse', { tool_name: 'Bash' }))
+    expect(store.snapshot().hooksHeard).toBe(true)
+  })
+})
