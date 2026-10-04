@@ -17,7 +17,7 @@ export function deriveAttention(sessions: SessionView[], now: Date): AttentionIt
     }
     if (error) found.push({ sessionId, kind: 'error', at: error.at, detail: error.type })
 
-    if (waitingSince) {
+    if (waitingSince && !seenSince(seenAt, waitingSince)) {
       found.push({ sessionId, kind: 'waiting', at: waitingSince })
     } else if (lastStopAt && status !== 'busy' && !seenSince(seenAt, lastStopAt)) {
       found.push({ sessionId, kind: 'reply', at: lastStopAt })
