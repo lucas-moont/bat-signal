@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
 import { mascotMood } from '@shared/view'
@@ -8,10 +8,9 @@ import { BatSignalIntro } from './components/BatSignalIntro'
 import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
-import { Pill } from './components/Pill'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
-import { useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
+import { useNow, useSettings, useSnapshot } from './hooks'
 import './App.css'
 
 export function App() {
@@ -20,7 +19,6 @@ export function App() {
   const calm = useCalm(settings)
   const now = useNow()
 
-  const [mode, setMode] = useWindowMode()
   const [tab, setTab] = useState<Tab | null>(null)
   const [openCase, setOpenCase] = useState<string | null>(null)
   const [sheet, setSheet] = useState<SheetTarget | null>(null)
@@ -38,6 +36,7 @@ export function App() {
     [attention, sessions],
   )
   const mood = mascotMood(snapshot)
+  const fold = () => batcave.setMode('signal')
   // Open on whatever matters: the needs-you list when something is waiting.
   const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
   // A case that ends while open simply disappears: no session, no detail.
@@ -50,6 +49,13 @@ export function App() {
     setSheet(target)
     batcave.markSeen(sessionId)
   }
+  // A click on a notice card opens the panel on that case.
+  const openRef = useRef(open)
+  useEffect(() => {
+    openRef.current = open
+  })
+  useEffect(() => batcave.onFocusCase((id) => openRef.current(id)), [])
+
   const openAttention = (item: AttentionItem) =>
     open(item.sessionId, item.kind === 'stalled' && item.taskId ? { kind: 'task', id: item.taskId } : null)
 
@@ -60,6 +66,7 @@ export function App() {
       if (settingsOpen) setSettingsOpen(false)
       else if (activeSheet) setSheet(null)
       else if (openCase) setOpenCase(null)
+      else fold()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -69,14 +76,6 @@ export function App() {
   // than flashing an intro or rain the user may have turned off.
   if (!settingsLoaded) return <main className="app" />
 
-  if (mode === 'pill') {
-    return (
-      <CalmContext value={calm}>
-        <Pill needsYou={attention.length} mood={mood} onExpand={() => setMode('full')} />
-      </CalmContext>
-    )
-  }
-
   return (
     <CalmContext value={calm}>
       <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
@@ -85,9 +84,8 @@ export function App() {
           <Header
             needsYou={attention.length}
             mood={mood}
-
             onSettings={() => setSettingsOpen(true)}
-            onPill={() => setMode('pill')}
+            onFold={fold}
             onClose={batcave.closeWindow}
           />
           <Tabs
@@ -99,21 +97,9 @@ export function App() {
           <div className="stage">
             <div className="stage__scroll">
               {activeTab === 'needs' ? (
-                <AttentionList
-                  items={attention}
-                  sessions={sessions}
-                  now={now}
-
-                  onOpen={openAttention}
-                />
+                <AttentionList items={attention} sessions={sessions} now={now} onOpen={openAttention} />
               ) : (
-                <CaseList
-                  sessions={sessions}
-                  attention={attention}
-                  now={now}
-
-                  onOpen={(id) => open(id)}
-                />
+                <CaseList sessions={sessions} attention={attention} now={now} onOpen={(id) => open(id)} />
               )}
             </div>
 
@@ -131,7 +117,6 @@ export function App() {
                     session={session}
                     attention={attention}
                     now={now}
-
                     onBack={() => setOpenCase(null)}
                     onOpen={setSheet}
                   />
@@ -146,7 +131,6 @@ export function App() {
                   session={session}
                   target={activeSheet}
                   now={now}
-
                   onClose={() => setSheet(null)}
                 />
               )}
@@ -154,7 +138,6 @@ export function App() {
                 <SettingsSheet
                   key="settings"
                   settings={settings}
-
                   onChange={changeSettings}
                   onClose={() => setSettingsOpen(false)}
                 />
