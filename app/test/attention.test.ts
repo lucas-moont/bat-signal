@@ -116,3 +116,29 @@ describe('deriveAttention', () => {
     expect(items.map((i) => i.sessionId)).toEqual(['perm-new', 'perm-old', 'error', 'reply'])
   })
 })
+
+describe('deriveAttention edge cases', () => {
+  it('counts a session seen at the exact moment of the reply as seen', () => {
+    const at = '2026-01-01T11:30:00.000Z'
+    expect(deriveAttention([view('s1', { lastStopAt: at })], { s1: at }, NOW)).toEqual([])
+  })
+
+  it('keeps newest-first order when an item has no timestamp', () => {
+    const items = deriveAttention(
+      [
+        view('old', { error: { type: 'x', at: '2026-01-01T10:00:00.000Z' } }),
+        view('blank', { error: { type: 'x', at: '' } }),
+        view('new', { error: { type: 'x', at: '2026-01-01T11:00:00.000Z' } }),
+      ],
+      {},
+      NOW,
+    )
+    expect(items.map((i) => i.sessionId)).toEqual(['new', 'old', 'blank'])
+  })
+
+  it('does not call a task stalled while its session showed activity recently', () => {
+    const v = view('s1', {}, [task('1', 'in_progress', '2026-01-01T11:00:00.000Z')])
+    v.state.lastActivityAt = '2026-01-01T11:55:00.000Z'
+    expect(deriveAttention([v], {}, NOW)).toEqual([])
+  })
+})
