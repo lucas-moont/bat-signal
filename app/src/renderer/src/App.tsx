@@ -40,18 +40,17 @@ export function App() {
   )
   const mood = mascotMood(snapshot)
   const fold = () => batSignal.setMode('signal')
-  // The night report reads everything in one column: no tabs, cases open in place.
+  // The night report opens a case in place, among its case notes, instead of sliding a detail in.
   const report = settings.layout === 'report'
-  // Open on whatever matters: the needs-you list when something is waiting.
-  const activeTab: Tab = tab ?? (attention.length ? 'needs' : 'cases')
   // A case that ends while open simply disappears: no session, no detail.
   const session = openCase ? sessions.find((s) => s.sessionId === openCase) : undefined
+  // Open on whatever matters: the needs-you list when something is waiting. In the report an open
+  // case shows on the case notes, without pinning that choice for later.
+  const activeTab: Tab = report && session ? 'cases' : (tab ?? (attention.length ? 'needs' : 'cases'))
   // A drawer whose task, subagent or job left the session is gone too (and must not eat an Esc).
   const activeSheet = session && sheet && sheetExists(session, sheet) ? sheet : null
 
   const open = (sessionId: string, target: SheetTarget | null = null) => {
-    // The report opens a case in place, among the case notes.
-    if (report) setTab('cases')
     setOpenCase(sessionId)
     setSheet(target)
     batSignal.markSeen(sessionId)
@@ -103,7 +102,11 @@ export function App() {
           <Tabs
             tab={activeTab}
             counts={{ needs: attention.length, cases: sessions.length }}
-            onChange={setTab}
+            onChange={(next) => {
+              // In the report, leaving the case notes closes the case opened there.
+              if (report && next === 'needs') setOpenCase(null)
+              setTab(next)
+            }}
             onSettings={() => setSettingsOpen(true)}
           />
 

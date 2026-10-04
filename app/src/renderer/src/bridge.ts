@@ -45,6 +45,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
   })
   const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
+  let lastOpened: WindowMode = 'panel'
   return {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
@@ -55,13 +56,16 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
     onSettings: settings.on,
     getMode: mode.get,
-    setMode: (next) => mode.set(next),
+    setMode: (next) => {
+      if (next !== 'signal') lastOpened = next
+      mode.set(next)
+    },
     onFocusCase: () => () => undefined,
     setNoticeOut: async () => ({ below: false, right: false }),
     setInteractive: () => undefined,
     moveSignalBy: () => undefined,
     onMode: mode.on,
-    reopen: () => mode.set('panel'),
+    reopen: () => mode.set(lastOpened),
     setWatchHeight: () => undefined,
     closeWindow: () => window.close(),
   }

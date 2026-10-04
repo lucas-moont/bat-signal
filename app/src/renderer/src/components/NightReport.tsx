@@ -17,6 +17,8 @@ import {
   RUN_STATUS_LABEL,
   taskLabel,
   TYPED_BOX,
+  watchRow,
+  type WatchRow,
 } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import type { Tab } from './Header'
@@ -29,6 +31,9 @@ import './NightReport.css'
 const QUOTE_CHARS = 150
 
 const caseAnchor = (sessionId: string) => `report-case-${sessionId}`
+
+/** A label read inside a sentence ("Now profiling …"): first letter lowered, its end stop dropped. */
+const asClause = (label: string) => (label.charAt(0).toLowerCase() + label.slice(1)).replace(/[.!?…]+$/, '')
 
 // Built once: a formatter is costly to make, and the dateline renders with every snapshot.
 const DAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })
@@ -66,10 +71,9 @@ export function NightReport({
     if (openCase) document.getElementById(caseAnchor(openCase))?.scrollIntoView({ block: 'start' })
   }, [openCase])
 
-  const { titles, waiting, cases } = useMemo(
+  const { titles, cases } = useMemo(
     () => ({
       titles: new Map(sessions.map((s) => [s.sessionId, caseHeader(s).title])),
-      waiting: new Set(attention.map((a) => a.sessionId)),
       cases: orderCases(sessions, attention),
     }),
     [sessions, attention],
@@ -127,7 +131,8 @@ export function NightReport({
                 <CaseParagraph
                   key={s.sessionId}
                   session={s}
-                  needsYou={waiting.has(s.sessionId)}
+                  alerts={attention.filter((a) => a.sessionId === s.sessionId)}
+                  tone={watchRow(s, attention).tone}
                   open={openCase === s.sessionId}
                   onToggle={() => onToggleCase(s.sessionId)}
                   onOpenSheet={(target) => onOpenSheet(s.sessionId, target)}
@@ -145,13 +150,16 @@ export function NightReport({
 
 function CaseParagraph({
   session,
-  needsYou,
+  alerts,
+  tone,
   open,
   onToggle,
   onOpenSheet,
 }: {
   session: SessionSnapshot
-  needsYou: boolean
+  /** What this case is waiting on, most urgent first. */
+  alerts: AttentionItem[]
+  tone: WatchRow['tone']
   open: boolean
   onToggle: () => void
   onOpenSheet: (target: SheetTarget) => void
@@ -160,26 +168,24 @@ function CaseParagraph({
   const folder = folderName(session.cwd ?? '')
   const current = currentTask(session)
   const said = lastReply(session)
-  const status = needsYou ? 'Needs you' : LIVE_STATUS_LABEL[session.status]
+  const status = alerts.length ? 'Needs you' : LIVE_STATUS_LABEL[session.status]
 
   return (
     <li id={caseAnchor(session.sessionId)} className={`case${open ? ' case--open' : ''}`}>
       <button className="entry" onClick={onToggle} aria-expanded={open}>
         <span className="entry__margin">
-          <span
-            className={`stamp stamp--${needsYou ? 'hot' : session.status === 'busy' ? 'working' : 'quiet'}`}
-          >
-            {status}
-          </span>
+          {/* Inked like the same case in the watch strip: red only for blocked work. */}
+          <span className={`stamp stamp--${tone === 'idle' ? 'quiet' : tone}`}>{status}</span>
         </span>
         {/* Only what a glance needs; the case number, folder and last words wait inside. */}
         <span className="entry__body">
           <strong>{title}.</strong>
-          {current && ` Now ${taskLabel(current).toLowerCase()}.`}
+          {current && ` Now ${asClause(taskLabel(current))}.`}
           {progress && ` ${progress.done} of ${progress.total} filed.`}
         </span>
       </button>
-      <TerminalButton sessionId={session.sessionId} className="report__terminal" />
+      {/* An open case has its own, labelled terminal button. */}
+      {!open && <TerminalButton sessionId={session.sessionId} className="report__terminal" />}
 
       <AnimatePresence initial={false}>
         {open && (
@@ -190,6 +196,19 @@ function CaseParagraph({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
+            {alerts.length > 0 && (
+              <ul className="notes__alerts">
+                {alerts.map((a) => {
+                  const { stamp, sentence } = reportCopy(a)
+                  return (
+                    <li key={`${a.kind}:${a.taskId ?? ''}`}>
+                      <span className={`stamp stamp--${ALERT_INK[a.kind]}`}>{stamp}</span>{' '}
+                      <span className={`pen pen--${ALERT_INK[a.kind]}`}>{sentence}</span>.
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
             <p className="notes__file">
               Case {number}
               {folder && `, ${folder}`}.

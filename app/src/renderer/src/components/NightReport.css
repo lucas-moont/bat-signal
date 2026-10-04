@@ -63,6 +63,16 @@
   top: 5px;
   right: 2px;
 }
+/* Inside .notes, whose list reset (.notes ul) would otherwise win. */
+.notes .notes__alerts {
+  margin: 0 0 6px;
+  padding: 0 4px 0 calc(var(--margin) + 12px);
+  list-style: none;
+  color: var(--bone);
+}
+.notes__alerts li + li {
+  margin-top: 4px;
+}
 .notes__file {
   margin: 0;
   padding: 0 4px 6px calc(var(--margin) + 12px);
