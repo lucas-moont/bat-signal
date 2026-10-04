@@ -73,6 +73,8 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   private debounce?: NodeJS.Timeout
   /** undefined until the first scan, so the first result is always emitted, even when empty. */
   private current?: RegistryEntry[]
+  /** Last entry that parsed, per file name: a file read mid-rewrite falls back to it. */
+  private readonly lastGood = new Map<string, RegistryEntry>()
   private running?: Promise<void>
   private dirty = false
   private stopped = false
@@ -129,8 +131,15 @@ export class SessionRegistry extends EventEmitter<{ change: [RegistryEntry[]] }>
   private async scan(): Promise<void> {
     const names = (await readdir(this.dir).catch(() => [] as string[])).filter((n) => ENTRY_FILE.test(n))
     const parsed = await Promise.all(
-      names.map(async (n) => parseEntry(await readFile(join(this.dir, n), 'utf8').catch(() => ''))),
+      names.map(async (n) => {
+        const entry = parseEntry(await readFile(join(this.dir, n), 'utf8').catch(() => ''))
+        if (entry) this.lastGood.set(n, entry)
+        // Claude Code rewrites these files on every status change; a half-written one must not
+        // make the session vanish for a scan (the store would drop everything it knew about it).
+        return entry ?? this.lastGood.get(n) ?? null
+      }),
     )
+    for (const n of this.lastGood.keys()) if (!names.includes(n)) this.lastGood.delete(n)
     const entries = parsed.filter((e) => e !== null)
     let live: RegistryEntry[]
     try {
