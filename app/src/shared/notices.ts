@@ -1,9 +1,18 @@
 // What the Bat-Signal announces: news found by comparing two snapshots.
-import { ATTENTION_URGENCY, type AttentionItem, type SessionSnapshot, type StoreSnapshot } from './types'
+import {
+  ATTENTION_URGENCY,
+  type AttentionItem,
+  type AttentionKind,
+  type SessionSnapshot,
+  type StoreSnapshot,
+} from './types'
 import { attentionCopy, caseHeader, folderName } from './view'
 
-export type NoticeKind =
-  'permission' | 'error' | 'waiting' | 'reply' | 'task-done' | 'session-opened' | 'session-closed'
+/** The needs-you alerts worth announcing; a stalled task is not news. */
+const ALERT_KINDS = ['permission', 'error', 'waiting', 'reply'] as const satisfies readonly AttentionKind[]
+type AlertKind = (typeof ALERT_KINDS)[number]
+
+export type NoticeKind = AlertKind | 'task-done' | 'session-opened' | 'session-closed'
 
 export interface Notice {
   /** Stable identity, so the same news is never announced twice. */
@@ -21,10 +30,7 @@ export interface Notice {
 
 /** Most urgent first; alerts keep the needs-you list's order. */
 export const NOTICE_URGENCY: Record<NoticeKind, number> = {
-  permission: ATTENTION_URGENCY.permission,
-  error: ATTENTION_URGENCY.error,
-  waiting: ATTENTION_URGENCY.waiting,
-  reply: ATTENTION_URGENCY.reply,
+  ...(Object.fromEntries(ALERT_KINDS.map((k) => [k, ATTENTION_URGENCY[k]])) as Record<AlertKind, number>),
   'task-done': 10,
   'session-opened': 11,
   'session-closed': 12,
@@ -33,7 +39,8 @@ export const NOTICE_URGENCY: Record<NoticeKind, number> = {
 /** News that needs the user, not just news. */
 export const isUrgent = (kind: NoticeKind): boolean => NOTICE_URGENCY[kind] <= NOTICE_URGENCY.waiting
 
-const ANNOUNCED_ALERTS = new Set<AttentionItem['kind']>(['permission', 'error', 'waiting', 'reply'])
+const isAnnounced = (a: AttentionItem): a is AttentionItem & { kind: AlertKind } =>
+  (ALERT_KINDS as readonly string[]).includes(a.kind)
 
 const alertKey = (a: AttentionItem) => `${a.sessionId}:${a.kind}:${a.at}`
 
@@ -57,8 +64,9 @@ export function diffNotices(prev: StoreSnapshot | undefined, next: StoreSnapshot
 
   const known = new Set(prev.attention.map(alertKey))
   const alerts = next.attention
-    .filter((a) => ANNOUNCED_ALERTS.has(a.kind) && !known.has(alertKey(a)))
-    .map((a) => notice(a, { key: alertKey(a), kind: a.kind as NoticeKind, at: a.at, ...attentionCopy(a) }))
+    .filter(isAnnounced)
+    .filter((a) => !known.has(alertKey(a)))
+    .map((a) => notice(a, { key: alertKey(a), kind: a.kind, at: a.at, ...attentionCopy(a) }))
 
   const tasks: Notice[] = []
   const opened: Notice[] = []
@@ -77,7 +85,6 @@ export function diffNotices(prev: StoreSnapshot | undefined, next: StoreSnapshot
       )
       continue
     }
-    if (old.tasks === s.tasks) continue
     const wasDone = new Set(old.tasks.filter((t) => t.status === 'completed').map((t) => t.id))
     for (const t of s.tasks) {
       if (t.status !== 'completed' || wasDone.has(t.id)) continue
