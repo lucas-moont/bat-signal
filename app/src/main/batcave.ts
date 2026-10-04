@@ -15,6 +15,8 @@ const REFRESH_MS = 2000
 const PUSH_THROTTLE_MS = 100
 /** Some needs-you items depend only on the clock ("stalled for 30 minutes"), so re-push this often. */
 const CLOCK_TICK_MS = 60_000
+/** Claude Code may fire a hook before it writes the matching transcript line, so look again shortly after. */
+const AFTER_HOOK_REREAD_MS = 300
 
 /** Wires the data sources to the store and the store to the window. Returns a stop function. */
 export function startBatcave(win: BrowserWindow): () => void {
@@ -30,7 +32,12 @@ export function startBatcave(win: BrowserWindow): () => void {
   const registry = new SessionRegistry(join(claudeDir, 'sessions'), createWindowsProbe())
   registry.on('change', (entries) => void store.setLiveSessions(entries))
 
-  const hooks = new HookServer((event) => store.handleHook(event))
+  let rereadTimer: NodeJS.Timeout | undefined
+  const hooks = new HookServer(async (event) => {
+    await store.handleHook(event)
+    clearTimeout(rereadTimer)
+    rereadTimer = setTimeout(() => void store.refresh(), AFTER_HOOK_REREAD_MS)
+  })
   hooks.listen().catch((err: Error) => console.warn(`[batcave] hook server unavailable: ${err.message}`))
 
   let pushTimer: NodeJS.Timeout | undefined
@@ -55,6 +62,7 @@ export function startBatcave(win: BrowserWindow): () => void {
     clearInterval(refreshTimer)
     clearInterval(clockTimer)
     clearTimeout(pushTimer)
+    clearTimeout(rereadTimer)
     registry.stop()
     void hooks.close()
     ipcMain.removeHandler(IPC.getSnapshot)
