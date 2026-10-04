@@ -169,3 +169,12 @@ export function demoSnapshot(now = new Date()): StoreSnapshot {
     ],
   }
 }
+
+/** The same night with nothing pending and nobody working: Bat-Clawd sleeps. */
+export function quietDemoSnapshot(now = new Date()): StoreSnapshot {
+  const { sessions } = demoSnapshot(now)
+  return {
+    sessions: sessions.slice(1, 3).map((s) => ({ ...s, status: 'idle', signals: {} })),
+    attention: [],
+  }
+}
