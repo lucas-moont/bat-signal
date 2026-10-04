@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DEFAULT_SETTINGS, type Settings } from '@shared/settings'
+import { DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import { batcave } from './bridge'
 
@@ -26,6 +26,12 @@ export const useSnapshot = (): StoreSnapshot => useBridged(EMPTY, batcave.getSna
 export const useSettings = (): [Settings, (patch: Partial<Settings>) => void] => [
   useBridged(DEFAULT_SETTINGS, batcave.getSettings, batcave.onSettings),
   batcave.setSettings,
+]
+
+/** Full window or pill: the main process owns it, the window asks to change it. */
+export const useWindowMode = (): [WindowMode, (mode: WindowMode) => void] => [
+  useBridged<WindowMode>('full', batcave.getMode, batcave.onMode),
+  batcave.setMode,
 ]
 
 /** The current time, refreshed often enough for "2m ago" labels. */

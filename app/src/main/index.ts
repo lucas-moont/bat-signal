@@ -17,6 +17,7 @@ function start(): void {
     window.apply(settings)
     window.win.webContents.send(IPC.settings, settings)
   })
+  ipcMain.handle(IPC.getMode, () => window.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown) => {
     if (mode === 'full' || mode === 'pill') window.setMode(mode as WindowMode)
   })

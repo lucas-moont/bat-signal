@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
-import type { WindowMode } from '@shared/settings'
 import type { AttentionItem } from '@shared/types'
 import { mascotMood } from '@shared/view'
 import { batcave } from './bridge'
@@ -11,7 +10,7 @@ import { CaseDetail, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { Pill } from './components/Pill'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
-import { useCalm, useNow, useSettings, useSnapshot } from './hooks'
+import { useCalm, useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
 import './App.css'
 
 export function App() {
@@ -21,7 +20,7 @@ export function App() {
   const now = useNow()
 
   const [intro, setIntro] = useState(true)
-  const [mode, setMode] = useState<WindowMode>('full')
+  const [mode, setMode] = useWindowMode()
   const [tab, setTab] = useState<Tab | null>(null)
   const [openCase, setOpenCase] = useState<string | null>(null)
   const [sheet, setSheet] = useState<SheetTarget | null>(null)
@@ -45,10 +44,6 @@ export function App() {
   const session = openCase ? sessions.find((s) => s.sessionId === openCase) : undefined
 
   const endIntro = useCallback(() => setIntro(false), [])
-  const switchMode = (next: WindowMode) => {
-    setMode(next)
-    batcave.setMode(next)
-  }
   const open = (sessionId: string, target: SheetTarget | null = null) => {
     setOpenCase(sessionId)
     setSheet(target)
@@ -70,7 +65,7 @@ export function App() {
   }, [settingsOpen, sheet, openCase])
 
   if (mode === 'pill') {
-    return <Pill needsYou={attention.length} mood={mood} calm={calm} onExpand={() => switchMode('full')} />
+    return <Pill needsYou={attention.length} mood={mood} calm={calm} onExpand={() => setMode('full')} />
   }
 
   return (
@@ -82,7 +77,7 @@ export function App() {
           mood={mood}
           calm={calm}
           onSettings={() => setSettingsOpen(true)}
-          onPill={() => switchMode('pill')}
+          onPill={() => setMode('pill')}
           onClose={batcave.closeWindow}
         />
         <Tabs

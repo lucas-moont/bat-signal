@@ -6,6 +6,8 @@ export const IPC = {
   getSettings: 'batcave:get-settings',
   setSettings: 'batcave:set-settings',
   settings: 'batcave:settings',
+  getMode: 'batcave:get-mode',
   setMode: 'batcave:set-mode',
+  mode: 'batcave:mode',
   closeWindow: 'batcave:close-window',
 } as const

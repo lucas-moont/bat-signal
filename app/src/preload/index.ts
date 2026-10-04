@@ -19,7 +19,9 @@ const api = {
   setSettings: (patch: Partial<Settings>): void => ipcRenderer.send(IPC.setSettings, patch),
   onSettings: (callback: (settings: Settings) => void) => subscribe(IPC.settings, callback),
 
+  getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   setMode: (mode: WindowMode): void => ipcRenderer.send(IPC.setMode, mode),
+  onMode: (callback: (mode: WindowMode) => void) => subscribe(IPC.mode, callback),
   closeWindow: (): void => ipcRenderer.send(IPC.closeWindow),
 }
 

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { app, BrowserWindow, screen } from 'electron'
+import { IPC } from '../shared/ipc'
 import type { Settings, WindowMode } from '../shared/settings'
 import { restoreBounds, type Rect } from './windowState'
 
@@ -31,7 +32,7 @@ function displaysPrimaryFirst() {
  */
 export class BatcaveWindow {
   readonly win: BrowserWindow
-  private mode: WindowMode = 'full'
+  private current: WindowMode = 'full'
   private fullBounds: Rect
   private saveTimer?: NodeJS.Timeout
 
@@ -66,8 +67,13 @@ export class BatcaveWindow {
     this.win.setOpacity(settings.opacity)
   }
 
+  /** The single source of truth for the mode; the window only reads it (and asks to change it). */
+  get mode(): WindowMode {
+    return this.current
+  }
+
   setMode(mode: WindowMode): void {
-    if (mode === this.mode) return
+    if (mode === this.current) return
     const now = this.win.getBounds()
     if (mode === 'pill') {
       this.fullBounds = now
@@ -86,11 +92,12 @@ export class BatcaveWindow {
       const next = { x: now.x + now.width - width, y: now.y + now.height - height, width, height }
       this.win.setBounds(restoreBounds(next, displaysPrimaryFirst(), DEFAULTS))
     }
-    this.mode = mode
+    this.current = mode
+    this.win.webContents.send(IPC.mode, mode)
   }
 
   private scheduleSave(): void {
-    if (this.mode !== 'full') return
+    if (this.current !== 'full') return
     clearTimeout(this.saveTimer)
     this.saveTimer = setTimeout(() => {
       try {
