@@ -5,10 +5,8 @@
   flex-direction: column;
   border: 1px solid #1d1714;
   overflow: hidden;
-}
-.app > :not(.atmosphere) {
-  position: relative;
-  z-index: 1;
+  /* Own stacking context, so the atmosphere can sit behind everything at z-index -1. */
+  isolation: isolate;
 }
 
 /* Header: doubles as the title bar of the frameless window. */
