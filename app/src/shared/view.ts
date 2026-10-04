@@ -238,7 +238,7 @@ export function watchRow(session: SessionSnapshot, attention: AttentionItem[]): 
     .filter((a) => a.sessionId === session.sessionId)
     .sort((a, b) => ATTENTION_URGENCY[a.kind] - ATTENTION_URGENCY[b.kind])[0]
   const row: WatchRow = own
-    ? { tone: ALERT_INK[own.kind], stamp: attentionCopy(own).stamp, title, line: attentionCopy(own).line }
+    ? { tone: ALERT_INK[own.kind], ...attentionCopy(own), title }
     : session.status === 'busy'
       ? { tone: 'working', stamp: LIVE_STATUS_LABEL.busy, title, ...lineOf(currentTask(session)) }
       : { tone: 'idle', stamp: LIVE_STATUS_LABEL[session.status], title }

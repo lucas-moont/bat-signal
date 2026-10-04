@@ -20,21 +20,25 @@ export function WatchStrip({
   attention: AttentionItem[]
   layout: PanelLayout
 }) {
-  // The window is as tall as the strip: report every change of height to the main process.
-  const root = useRef<HTMLElement>(null)
+  // The window is as tall as the strip asks: the bar plus the rows at their natural height (the
+  // main process caps it, and the rows scroll past the cap), plus the frame's two border pixels.
+  const bar = useRef<HTMLElement>(null)
+  const content = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const el = root.current
-    if (!el) return
+    const [top, body] = [bar.current, content.current]
+    if (!top || !body) return
     let sent = 0
     const observer = new ResizeObserver(() => {
-      const height = Math.ceil(el.scrollHeight)
+      const height = Math.ceil(top.getBoundingClientRect().height + body.getBoundingClientRect().height) + 2
       if (height !== sent) batSignal.setWatchHeight((sent = height)) // the window resize echoes back
     })
-    observer.observe(el)
+    observer.observe(top)
+    observer.observe(body)
     return () => observer.disconnect()
   }, [])
 
-  const needsYou = new Set(attention.map((a) => a.sessionId)).size
+  // The same count as the panel header's badge: everything that needs you.
+  const needsYou = attention.length
   // Snapshots arrive up to ten times a second while sessions work: derive the rows once each.
   const rows = useMemo(
     () => orderCases(sessions, attention).map((s) => ({ id: s.sessionId, row: watchRow(s, attention) })),
@@ -42,11 +46,15 @@ export function WatchStrip({
   )
 
   return (
-    <main ref={root} className={`watch watch--${layout}`}>
-      <header className="watch__bar">
+    <main className={`watch watch--${layout}`}>
+      <header ref={bar} className="watch__bar">
         <BatEmblem size={22} />
         <h1 className="watch__name">Bat-Signal</h1>
-        {needsYou > 0 && <span className="watch__count">{needsYou} need you</span>}
+        {needsYou > 0 && (
+          <span className="watch__count">
+            {needsYou} need{needsYou === 1 ? 's' : ''} you
+          </span>
+        )}
         <nav className="watch__actions">
           <button
             className="icon-button"
@@ -66,15 +74,19 @@ export function WatchStrip({
           </button>
         </nav>
       </header>
-      {sessions.length === 0 ? (
-        <p className="watch__nil">No open cases. Start Claude Code in a terminal to follow it here.</p>
-      ) : (
-        <ul className="watch__rows">
-          {rows.map(({ id, row }) => (
-            <Row key={id} sessionId={id} row={row} />
-          ))}
-        </ul>
-      )}
+      <div className="watch__scroll">
+        <div ref={content}>
+          {sessions.length === 0 ? (
+            <p className="watch__nil">No open cases. Start Claude Code in a terminal to follow it here.</p>
+          ) : (
+            <ul className="watch__rows">
+              {rows.map(({ id, row }) => (
+                <Row key={id} sessionId={id} row={row} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </main>
   )
 }

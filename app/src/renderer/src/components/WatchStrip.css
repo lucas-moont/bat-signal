@@ -2,6 +2,7 @@
 .watch {
   display: flex;
   flex-direction: column;
+  max-height: 100vh;
   background: var(--abyss);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -40,6 +41,12 @@
   -webkit-app-region: no-drag;
 }
 
+/* Past the main process's height cap, the rows scroll under the bar. */
+.watch__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
 .watch__nil {
   margin: 0;
   padding: 10px 12px 12px;
@@ -145,7 +152,13 @@ li + li > .watch-row {
 /* The night report theme: the same strip, typed. */
 .watch--report .watch-row__title,
 .watch--report .watch-row__line,
-.watch--report .watch__nil {
+.watch--report /* Past the main process's height cap, the rows scroll under the bar. */
+.watch__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.watch__nil {
   font-family: var(--font-type);
   font-weight: 400;
 }
