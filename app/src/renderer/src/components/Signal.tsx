@@ -6,10 +6,10 @@ import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { StoreSnapshot } from '@shared/types'
 import { batcave } from '../bridge'
-import { CalmContext, useCalm, useIsCalm } from '../calm'
+import { CalmContext, useCalm } from '../calm'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
-import { pulseAt, useLiveStyle } from '../ticker'
 import { BatEmblem } from './BatEmblem'
+import { Glow } from './Live'
 import './Cards.css'
 import './Signal.css'
 
@@ -20,13 +20,18 @@ const DRAG_THRESHOLD = 4
 function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean) {
   const [queue, setQueue] = useState(emptyQueue)
   const prev = useRef<StoreSnapshot | undefined>(undefined)
+  const listeningRef = useRef(listening)
+  useEffect(() => {
+    listeningRef.current = listening
+  })
 
+  // Only a new snapshot can hold news; a change of mode alone must not diff it again.
   useEffect(() => {
     if (!loaded) return // the empty placeholder is not a state to compare against
     const news = diffNotices(prev.current, snapshot)
     prev.current = snapshot
-    if (listening && news.length) setQueue((q) => enqueue(q, news, Date.now()))
-  }, [snapshot, loaded, listening])
+    if (listeningRef.current && news.length) setQueue((q) => enqueue(q, news, Date.now()))
+  }, [snapshot, loaded])
 
   // Opening the panel silences the cards: the user is looking at everything already.
   const [wasListening, setWasListening] = useState(listening)
@@ -65,7 +70,6 @@ export function Signal() {
 
   if (!settingsLoaded) return null
   const needsYou = snapshot.attention.length
-  const urgent = notice ? isUrgent(notice.kind) : needsYou > 0
 
   return (
     <CalmContext value={calm}>
@@ -90,7 +94,9 @@ export function Signal() {
           </AnimatePresence>
           <Disc
             lit={needsYou > 0 || !!notice}
-            urgent={urgent}
+            // Pulsing only while urgent news is out: a pending item can wait for hours, and a
+            // transparent window is costly to redraw 8 times a second all that time.
+            pulsing={!!notice && isUrgent(notice.kind)}
             count={needsYou}
             onOpen={() => batcave.setMode('panel')}
           />
@@ -136,25 +142,32 @@ function NoticeCard({
 /** The disc: click to open the panel, drag to move it (a drag region would swallow the click). */
 function Disc({
   lit,
-  urgent,
+  pulsing,
   count,
   onOpen,
 }: {
   lit: boolean
-  urgent: boolean
+  pulsing: boolean
   count: number
   onOpen: () => void
 }) {
-  const calm = useIsCalm()
-  const halo = useLiveStyle<HTMLSpanElement>(lit && urgent && !calm, (el, now) => {
-    el.style.opacity = now === null ? '' : pulseAt(now).toFixed(2)
-  })
   const press = useRef<{ x: number; y: number } | null>(null)
   const dragged = useRef(false)
+  // Pointer moves come far faster than frames: add them up and move the window once a frame.
+  const pending = useRef({ dx: 0, dy: 0, frame: 0 })
+  const moveBy = (dx: number, dy: number) => {
+    const p = pending.current
+    p.dx += dx
+    p.dy += dy
+    p.frame ||= requestAnimationFrame(() => {
+      batcave.moveSignalBy(p.dx, p.dy)
+      pending.current = { dx: 0, dy: 0, frame: 0 }
+    })
+  }
 
   return (
     <button
-      className={`disc${lit ? ' disc--lit' : ''}${urgent ? ' disc--urgent' : ''}`}
+      className={`disc${lit ? ' disc--lit' : ''}`}
       aria-label={count ? `Open Batcave: ${count} need${count === 1 ? 's' : ''} you` : 'Open Batcave'}
       title="Open Batcave · drag to move"
       onPointerDown={(e) => {
@@ -168,7 +181,7 @@ function Disc({
         const [dx, dy] = [e.screenX - p.x, e.screenY - p.y]
         if (!dragged.current && Math.hypot(dx, dy) < DRAG_THRESHOLD) return
         dragged.current = true
-        batcave.moveSignalBy(dx, dy)
+        moveBy(dx, dy)
         press.current = { x: e.screenX, y: e.screenY }
       }}
       onPointerUp={() => (press.current = null)}
@@ -176,7 +189,7 @@ function Disc({
         if (!dragged.current) onOpen()
       }}
     >
-      <span ref={halo} className="disc__halo" aria-hidden />
+      {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
         <BatEmblem size={46} title="" fill={lit ? '#050000' : 'var(--raised)'} />
       </span>
