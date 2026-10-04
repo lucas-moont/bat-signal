@@ -13,10 +13,18 @@ export interface TailRead {
 export class TranscriptTailer {
   private offset = 0
   private identity?: string
+  private queue: Promise<unknown> = Promise.resolve()
 
   constructor(readonly path: string) {}
 
-  async readNew(): Promise<TailRead> {
+  /** Calls are serialized: overlapping reads would otherwise both start from the same offset. */
+  readNew(): Promise<TailRead> {
+    const next = this.queue.then(() => this.read())
+    this.queue = next.catch(() => undefined)
+    return next
+  }
+
+  private async read(): Promise<TailRead> {
     let handle: FileHandle
     try {
       handle = await open(this.path, 'r')
