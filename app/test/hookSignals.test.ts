@@ -75,18 +75,6 @@ describe('applyHookEvent: turns', () => {
 })
 
 describe('applyHookEvent: other events', () => {
-  it('flags a permission prompt notified without a PermissionRequest', () => {
-    const s = applyHookEvent(
-      idle,
-      hook('Notification', {
-        notification_type: 'permission_prompt',
-        message: 'Claude needs your permission to use Bash',
-      }),
-      AT,
-    )
-    expect(s.pendingPermission).toEqual({ toolName: 'Claude needs your permission to use Bash', at: AT })
-  })
-
   it('keeps the richer PermissionRequest details when the notification follows it', () => {
     const asked = applyHookEvent(idle, permissionRequest('Bash', { command: 'ls' }), AT)
     const s = applyHookEvent(
@@ -108,5 +96,39 @@ describe('applyHookEvent: other events', () => {
 
   it('returns the same signals for events it does not use', () => {
     expect(applyHookEvent(idle, hook('PreCompact'), AT)).toBe(idle)
+  })
+})
+
+describe('applyHookEvent: a permission belongs to one tool call', () => {
+  const asked = applyHookEvent(
+    idle,
+    hook('PermissionRequest', {
+      tool_name: 'Bash',
+      tool_input: { command: 'npm test' },
+      tool_use_id: 'toolu_bash',
+    }),
+    AT,
+  )
+
+  it('stays pending while other tool calls finish', () => {
+    const s = applyHookEvent(asked, hook('PostToolUse', { tool_name: 'Read', tool_use_id: 'toolu_read' }), AT)
+    expect(s.pendingPermission?.toolName).toBe('Bash')
+  })
+
+  it.each(['PostToolUse', 'PostToolUseFailure', 'PermissionDenied'])(
+    'goes away on %s for that call',
+    (name) => {
+      const s = applyHookEvent(asked, hook(name, { tool_name: 'Bash', tool_use_id: 'toolu_bash' }), AT)
+      expect(s.pendingPermission).toBeUndefined()
+    },
+  )
+
+  it('is not brought back by a permission notification that arrives late', () => {
+    const s = applyHookEvent(
+      idle,
+      hook('Notification', { notification_type: 'permission_prompt', message: 'x' }),
+      AT,
+    )
+    expect(s).toBe(idle)
   })
 })
