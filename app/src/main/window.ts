@@ -1,25 +1,24 @@
-import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { app, BrowserWindow, screen } from 'electron'
+import { BrowserWindow, screen } from 'electron'
+import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import type { Settings, WindowMode } from '../shared/settings'
+import { jsonFile } from './jsonFile'
 import { restoreBounds, type Rect } from './windowState'
 
 const DEFAULTS = { width: 360, height: 520, minWidth: 300, minHeight: 360, margin: 16 }
 const PILL = { width: 232, height: 60 }
 const SAVE_DEBOUNCE_MS = 500
 
-const boundsFile = () => join(app.getPath('userData'), 'window.json')
-
-function loadSavedBounds(): Rect | undefined {
-  try {
-    const raw = JSON.parse(readFileSync(boundsFile(), 'utf8')) as Partial<Rect>
-    const ok = ['x', 'y', 'width', 'height'].every((k) => typeof raw[k as keyof Rect] === 'number')
-    return ok ? (raw as Rect) : undefined
-  } catch {
-    return undefined
-  }
+function parseRect(raw: unknown): Rect | undefined {
+  const o = obj(raw)
+  const [x, y, width, height] = [num(o['x']), num(o['y']), num(o['width']), num(o['height'])]
+  return x === undefined || y === undefined || width === undefined || height === undefined
+    ? undefined
+    : { x, y, width, height }
 }
+
+const boundsFile = jsonFile('window.json', parseRect)
 
 function displaysPrimaryFirst() {
   const primary = screen.getPrimaryDisplay()
@@ -37,7 +36,7 @@ export class BatcaveWindow {
   private saveTimer?: NodeJS.Timeout
 
   constructor(settings: Settings) {
-    this.fullBounds = restoreBounds(loadSavedBounds(), displaysPrimaryFirst(), DEFAULTS)
+    this.fullBounds = restoreBounds(boundsFile.load(), displaysPrimaryFirst(), DEFAULTS)
     this.win = new BrowserWindow({
       ...this.fullBounds,
       minWidth: DEFAULTS.minWidth,
@@ -100,11 +99,7 @@ export class BatcaveWindow {
     if (this.current !== 'full') return
     clearTimeout(this.saveTimer)
     this.saveTimer = setTimeout(() => {
-      try {
-        writeFileSync(boundsFile(), JSON.stringify(this.win.getBounds()))
-      } catch {
-        // Losing the saved position is harmless.
-      }
+      boundsFile.save(this.win.getBounds())
     }, SAVE_DEBOUNCE_MS)
   }
 }
