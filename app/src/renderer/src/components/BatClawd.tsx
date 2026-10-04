@@ -1,9 +1,10 @@
-// Bat-Clawd: Claude Code's orange pixel Clawd in a Batman cowl, drawn on a 16x11 pixel grid.
+// Bat-Clawd: Claude Code's orange pixel Clawd in a Batman cowl and cape, drawn on a 16x11
+// pixel grid.
 //
 // Animated like a flip-book: each mood has finished poses, and a slow shared clock (see
 // ticker.ts) picks the pose and the wrapper position a few times a second. Between ticks
-// nothing animates at all, so the mascot costs almost nothing while it flaps, blinks or
-// sways; CSS loops would keep the compositor busy at 60fps.
+// nothing animates at all, so the mascot costs almost nothing while its cape flutters, it
+// blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
 import { useEffect, useRef, useState } from 'react'
 import type { MascotMood } from '@shared/view'
 import { useIsCalm } from '../calm'
@@ -12,16 +13,25 @@ import './BatClawd.css'
 
 type Px = [x: number, y: number, w?: number, h?: number]
 
-const BODY: Px[] = [
-  [3, 3, 10, 6], // head and body, the cowl covers the top rows
-  [1, 6, 2, 1], // left arm
-  [13, 6, 2, 1], // right arm
+const BODY: Px[] = [[3, 3, 10, 6]] // head and body, the cowl covers the top rows
+const ARMS: Px[] = [
+  [1, 6, 2, 1],
+  [13, 6, 2, 1],
 ]
 const LEGS: Px[] = [
   [4, 9, 1, 2],
   [6, 9, 1, 2],
   [9, 9, 1, 2],
   [11, 9, 1, 2],
+]
+/** Sitting, only the hands holding the wrapped cape shut and the feet show. */
+const HANDS: Px[] = [
+  [6.9, 7.6, 1, 0.8],
+  [8.1, 7.6, 1, 0.8],
+]
+const FEET: Px[] = [
+  [4.5, 10.2, 2, 0.8],
+  [9.5, 10.2, 2, 0.8],
 ]
 const COWL: Px[] = [
   [4, 0, 1, 1], // left ear tip
@@ -38,16 +48,23 @@ const EYES_SHUT: Px[] = [
   [5, 3.6, 2, 0.3],
   [9, 3.6, 2, 0.3],
 ]
-// From the shoulder up the arm bone to the tip, then down the trailing edge in three scallops.
-const LEFT_WING =
-  'M3 5.2 L-1.2 1.6 L-5.8 2.4 Q-4.9 4.4 -5.4 6.4 Q-3.9 5.3 -2.7 7 Q-1.5 5.8 -0.1 7.4 Q1.2 6.3 3 7.2 Z'
-const SHOULDER = { x: 3, y: 6 }
+// The cape hangs from the shoulders (y = 5) and ends in a jagged, bat-like hem.
+const CAPE = {
+  /** Closed around the body, in front of it: asleep. */
+  wrapped: 'M2.6 6.4 L13.4 6.4 L14.2 10.4 L12.2 9.9 L10 10.5 L8 10 L6 10.5 L3.8 9.9 L1.8 10.4 Z',
+  /** Streaming back while flying, in two frames of the same flutter. */
+  trailA: 'M3 5 L13 5 L13.4 9.2 L11 10.4 L7 10 L3 10.8 L-1 10 L-4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
+  trailB:
+    'M3 5 L13 5 L13.6 8.6 L11.2 10 L7.2 10.6 L3.2 10.2 L-0.6 10.9 L-4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
+  /** Flung back and hanging open (left half; mirrored for the right), showing its lining. */
+  openLeft: 'M3.4 5 L0.2 5.2 L-2.8 11.2 L-1.2 10.5 L0.4 11.3 L1.9 10.6 L3.4 11.2 Z',
+  liningLeft: 'M3.2 5.8 L0.6 6 L-1.9 10.6 L-0.9 10.1 L0.5 10.7 L1.8 10.1 L3.2 10.6 Z',
+} as const
+
+type CapeStyle = 'wrapped' | 'trailA' | 'trailB' | 'open'
 
 interface Pose {
-  /** Wing rotation in degrees around the shoulder (negative raises the left wing). */
-  wing: number
-  /** Horizontal squash of the wings: 1 open, small when wrapped around the body. */
-  spread: number
+  cape: CapeStyle
   eyes: 'open' | 'shut'
   eyeColor: string
 }
@@ -56,37 +73,52 @@ interface Pose {
 type Poses = readonly [Pose, ...Pose[]]
 
 const POSES: Record<MascotMood, Poses> = {
-  sleeping: [{ wing: 0, spread: 0.35, eyes: 'shut', eyeColor: 'var(--bone)' }],
+  sleeping: [{ cape: 'wrapped', eyes: 'shut', eyeColor: 'var(--bone)' }],
   flying: [
-    { wing: -24, spread: 1, eyes: 'open', eyeColor: 'var(--bone)' },
-    { wing: 16, spread: 0.85, eyes: 'open', eyeColor: 'var(--bone)' },
+    { cape: 'trailA', eyes: 'open', eyeColor: 'var(--bone)' },
+    { cape: 'trailB', eyes: 'open', eyeColor: 'var(--bone)' },
   ],
   alarmed: [
-    { wing: -12, spread: 1, eyes: 'open', eyeColor: 'var(--signal-hot)' },
-    { wing: -12, spread: 1, eyes: 'open', eyeColor: 'rgb(227 18 27 / 18%)' },
+    { cape: 'open', eyes: 'open', eyeColor: 'var(--signal-hot)' },
+    { cape: 'open', eyes: 'open', eyeColor: 'rgb(227 18 27 / 18%)' },
   ],
 }
 
 const rects = (pixels: Px[]) =>
   pixels.map(([x, y, w = 1, h = 1]) => <rect key={`${x},${y}`} x={x} y={y} width={w} height={h} />)
 
-function Wing({ pose, mirrored }: { pose: Pose; mirrored?: boolean }) {
-  const { x, y } = SHOULDER
-  const shape = `rotate(${pose.wing} ${x} ${y}) translate(${x} 0) scale(${pose.spread} 1) translate(${-x} 0)`
+const MIRROR = 'translate(16 0) scale(-1 1)'
+
+/** The cape behind the body (flying, alarmed); the wrapped cape is drawn in front instead. */
+function CapeBehind({ style }: { style: CapeStyle }) {
+  if (style === 'wrapped') return null
+  if (style !== 'open') return <path className="clawd__cape" d={CAPE[style]} />
   return (
-    <g transform={mirrored ? 'translate(16 0) scale(-1 1)' : undefined}>
-      <path className="clawd__wing" d={LEFT_WING} transform={shape} />
-    </g>
+    <>
+      {[undefined, MIRROR].map((transform) => (
+        <g key={transform ?? 'left'} transform={transform}>
+          <path className="clawd__cape" d={CAPE.openLeft} />
+          <path className="clawd__lining" d={CAPE.liningLeft} />
+        </g>
+      ))}
+    </>
   )
 }
 
 function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: number }; className: string }) {
+  const wrapped = pose.cape === 'wrapped'
   return (
     <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
-      <Wing pose={pose} />
-      <Wing pose={pose} mirrored />
-      <g fill="var(--clawd)">{rects(BODY)}</g>
-      <g fill="var(--clawd-shade)">{rects(LEGS)}</g>
+      <CapeBehind style={pose.cape} />
+      <g fill="var(--clawd)">{rects(wrapped ? BODY : [...BODY, ...ARMS])}</g>
+      <g fill="var(--clawd-shade)">{rects(wrapped ? FEET : LEGS)}</g>
+      {wrapped && (
+        <>
+          <path className="clawd__cape" d={CAPE.wrapped} />
+          <rect className="clawd__seam" x={7.85} y={8.4} width={0.3} height={1.6} />
+          <g fill="var(--clawd)">{rects(HANDS)}</g>
+        </>
+      )}
       <g fill="var(--cowl)">{rects(COWL)}</g>
       <g fill="var(--raised)">{rects(COWL_SHINE)}</g>
       <g fill={pose.eyeColor} transform={`translate(${gaze.x} ${gaze.y})`}>
@@ -96,16 +128,16 @@ function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: nu
   )
 }
 
-/** Sleeping sway, in degrees on top of hanging upside down; one step every half second. */
-const SWAY = [0, 1.5, 3, 1.5, 0, -1.5, -3, -1.5]
-const SWAY_STEP_MS = 500
+/** Sleeping breath, in px: a slow rise and fall, one step every half second. */
+const BREATH = [0, 0, -0.5, -1, -1, -0.5]
+const BREATH_STEP_MS = 500
 const BOB = [0, -1, -2, -1]
 
 /** Each mood's flip-book: which pose to show and where to put it on a given frame. */
 const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; transform: string }> = {
-  // Hanging upside down from the top edge; the sway is written straight to the element.
-  sleeping: (_f, [a]) => ({ pose: a, transform: 'rotate(180deg)' }),
-  // Wings beat between two poses while the body bobs.
+  // Sitting still, wrapped in the cape; the breath is written straight to the element.
+  sleeping: (_f, [a]) => ({ pose: a, transform: '' }),
+  // The cape flutters between two frames while the body bobs.
   flying: (f, [a, b = a]) => ({
     pose: f % 2 ? b : a,
     transform: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
@@ -160,10 +192,10 @@ export function BatClawd({ mood, size = 60 }: { mood: MascotMood; size?: number 
   // Pixel-art pace: awake moods move at 4 frames a second through React (the pose changes).
   const frame = useFrame(!calm && mood !== 'sleeping', 2)
   const { pose, transform } = MOTION[mood](frame, POSES[mood])
-  // Asleep only the angle changes, so it skips React: the CSS `rotate` property composes with
-  // the `transform` React sets.
+  // Asleep only the breath changes, so it skips React: the CSS `translate` property composes
+  // with the `transform` React sets.
   const mover = useLiveStyle<HTMLSpanElement>(!calm && mood === 'sleeping', (el, now) => {
-    el.style.rotate = now === null ? '' : `${SWAY[Math.floor(now / SWAY_STEP_MS) % SWAY.length]}deg`
+    el.style.translate = now === null ? '' : `0 ${BREATH[Math.floor(now / BREATH_STEP_MS) % BREATH.length]}px`
   })
 
   return (

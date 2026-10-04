@@ -20,11 +20,18 @@
   overflow: visible;
 }
 
-.clawd__wing {
-  fill: #2a1712;
+/* A near-black cape needs its red edge to read on the pure-black window. */
+.clawd__cape {
+  fill: #170d0a;
   stroke: var(--signal);
-  stroke-width: 0.4;
+  stroke-width: 0.35;
   stroke-linejoin: round;
+}
+.clawd__lining {
+  fill: var(--blood);
+}
+.clawd__seam {
+  fill: #050302;
 }
 
 /* A click sends it up for a short flight: a one-off animation, not a loop. */
