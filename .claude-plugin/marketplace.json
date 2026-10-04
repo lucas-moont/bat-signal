@@ -9,8 +9,7 @@
     {
       "name": "batcave",
       "source": "./plugin/batcave",
-      "description": "Reports Claude Code session activity to Batcave, a tiny always-on-top window that watches your sessions.",
-      "version": "0.2.0"
+      "description": "Reports Claude Code session activity to Batcave, a tiny always-on-top window that watches your sessions."
     }
   ]
 }
