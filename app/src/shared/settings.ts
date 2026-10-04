@@ -50,8 +50,8 @@ export interface NoticeLayout {
   right: boolean
 }
 
-/** Which window shows: the Bat-Signal disc at rest, or the full panel. */
-export type WindowMode = 'signal' | 'panel'
+/** Which window shows: the Bat-Signal disc at rest, the full panel, or the narrow watch strip. */
+export type WindowMode = 'signal' | 'panel' | 'watch'
 
 export const parseWindowMode = (raw: unknown): WindowMode | undefined =>
-  raw === 'signal' || raw === 'panel' ? raw : undefined
+  raw === 'signal' || raw === 'panel' || raw === 'watch' ? raw : undefined

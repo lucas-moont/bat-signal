@@ -118,7 +118,7 @@ export function Signal() {
             // transparent window is costly to redraw 8 times a second all that time.
             pulsing={!!shown && isUrgent(shown.kind)}
             count={needsYou}
-            onOpen={() => batSignal.setMode('panel')}
+            onOpen={() => batSignal.reopen()}
           />
         </main>
       </MotionConfig>

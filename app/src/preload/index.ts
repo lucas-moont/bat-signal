@@ -34,6 +34,10 @@ const api = {
   /** The signal takes clicks only while the pointer is over the disc or a card. */
   setInteractive: (interactive: boolean): void => ipcRenderer.send(IPC.interactive, interactive),
   moveSignalBy: (dx: number, dy: number): void => ipcRenderer.send(IPC.moveSignal, dx, dy),
+  /** Opens what the disc opened last: the panel or the watch strip. */
+  reopen: (): void => ipcRenderer.send(IPC.reopen),
+  /** The watch strip's rows changed height: fit the window to them. */
+  setWatchHeight: (height: number): void => ipcRenderer.send(IPC.watchHeight, height),
   closeWindow: (): void => ipcRenderer.send(IPC.closeWindow),
 }
 
