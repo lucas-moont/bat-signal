@@ -1,4 +1,5 @@
 // Pure presentation rules shared by the window and its tests.
+import { ATTENTION_URGENCY } from './types'
 import type {
   AttentionItem,
   LiveStatus,
@@ -202,3 +203,44 @@ export const lastReply = (session: SessionSnapshot): string | undefined =>
 /** A task by what is happening right now while in progress, by its subject otherwise. */
 export const taskLabel = (task: Task): string =>
   task.status === 'in_progress' ? (task.activeForm ?? task.subject) : task.subject
+
+export interface WatchRow {
+  /** How loud the row reads: blocked (hot), waiting (soft), stalled (quiet), working or idle. */
+  tone: 'hot' | 'soft' | 'quiet' | 'working' | 'idle'
+  stamp: string
+  title: string
+  /** The one line under the title: what waits for the user, or what is happening now. */
+  line?: string
+  progress?: string
+}
+
+const ALERT_TONE: Record<AttentionItem['kind'], WatchRow['tone']> = {
+  permission: 'hot',
+  error: 'hot',
+  waiting: 'soft',
+  reply: 'soft',
+  stalled: 'quiet',
+}
+
+/** One row of the watch strip: what a glance at the corner should tell about a session. */
+export function watchRow(session: SessionSnapshot, attention: AttentionItem[]): WatchRow {
+  const { title, progress } = caseHeader(session)
+  const own = attention
+    .filter((a) => a.sessionId === session.sessionId)
+    .sort((a, b) => ATTENTION_URGENCY[a.kind] - ATTENTION_URGENCY[b.kind])[0]
+  const row: WatchRow = own
+    ? { tone: ALERT_TONE[own.kind], ...splitCopy(attentionCopy(own)), title }
+    : session.status === 'busy'
+      ? { tone: 'working', stamp: LIVE_STATUS_LABEL.busy, title, line: busyLine(session) }
+      : { tone: 'idle', stamp: LIVE_STATUS_LABEL[session.status], title }
+  if (row.line === undefined) delete row.line
+  if (progress) row.progress = progress.label
+  return row
+}
+
+const splitCopy = ({ stamp, line }: CardCopy) => ({ stamp, line })
+
+const busyLine = (session: SessionSnapshot): string | undefined => {
+  const current = session.tasks.find((t) => t.status === 'in_progress')
+  return current ? taskLabel(current) : undefined
+}
