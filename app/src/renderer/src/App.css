@@ -82,9 +82,12 @@
     font-size: 19px;
     letter-spacing: 2px;
   }
-  /* At the narrowest the mascot steps aside rather than crowd the buttons. */
+  /* At the narrowest the mascot steps aside rather than crowd the buttons, and gives back its room. */
   .header__mascot {
-    visibility: hidden;
+    display: none;
+  }
+  .header__actions {
+    margin-left: auto;
   }
 }
 
