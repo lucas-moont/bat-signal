@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "screenshot": "electron-vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/screenshot.ps1",
     "test:watch": "vitest"
   },
   "devDependencies": {
