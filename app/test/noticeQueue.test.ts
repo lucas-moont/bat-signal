@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Notice, NoticeKind } from '../src/shared/notices'
-import { NOTICE_MS, advance, dismiss, emptyQueue, enqueue } from '../src/shared/noticeQueue'
+import { NOTICE_MS, advance, dismiss, emptyQueue, enqueue, silence } from '../src/shared/noticeQueue'
 
 const notice = (key: string, kind: NoticeKind = 'reply'): Notice => ({
   key,
@@ -62,5 +62,15 @@ describe('notice queue timing', () => {
   it('moves on at once when a card is dismissed', () => {
     const q = dismiss(enqueue(emptyQueue(), [notice('a'), notice('b')], T0), T0 + 10)
     expect(q.showing).toEqual({ notice: notice('b'), since: T0 + 10 })
+  })
+})
+
+describe('silencing the queue', () => {
+  it('drops the card on screen and everything waiting, but remembers what was announced', () => {
+    let q = silence(enqueue(emptyQueue(), [notice('a'), notice('b')], T0))
+    expect(q.showing).toBeUndefined()
+    expect(q.waiting).toEqual([])
+    q = enqueue(q, [notice('b'), notice('c')], T0 + 1)
+    expect(q.showing?.notice.key).toBe('c')
   })
 })
