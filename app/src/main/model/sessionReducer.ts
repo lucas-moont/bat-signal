@@ -66,7 +66,9 @@ export function applyTranscriptLine(state: TrackedSession, raw: unknown): Tracke
     case 'assistant':
       return line['isMeta'] === true ? state : applyConversationLine(state, line)
     case 'queue-operation':
-      return line['operation'] === 'enqueue' ? applyTaskNotification(state, line) : state
+      return line['operation'] === 'enqueue'
+        ? applyTaskNotification(state, str(line['content']) ?? '', str(line['timestamp']) ?? '')
+        : state
     default:
       return state
   }
@@ -88,8 +90,11 @@ function applyConversationLine(prev: TrackedSession, line: Json): TrackedSession
   const texts: string[] = []
   for (const block of blocks.map(obj)) {
     const text = str(block['text'])
-    if (block['type'] === 'text' && text && !(role === 'user' && INJECTED.test(text))) texts.push(text)
-    else if (block['type'] === 'tool_use') state = onToolUse(state, block, at)
+    if (block['type'] === 'text' && text) {
+      // The same notification also arrives as a user line; finishing a run twice is harmless.
+      if (role === 'user') state = applyTaskNotification(state, text, at)
+      if (!(role === 'user' && INJECTED.test(text))) texts.push(text)
+    } else if (block['type'] === 'tool_use') state = onToolUse(state, block, at)
     else if (block['type'] === 'tool_result') state = onToolResult(state, block, line['toolUseResult'], at)
   }
   if (!texts.length) return state
@@ -164,6 +169,7 @@ const TOOLS: Record<string, ToolHandler> = {
 
   Agent: {
     onCall(state, id, input, at) {
+      if (state.subagents.some((a) => a.toolUseId === id)) return state
       const subagent: Subagent = {
         toolUseId: id,
         description: str(input['description']) ?? '',
@@ -218,8 +224,7 @@ const TOOLS: Record<string, ToolHandler> = {
 
 const TAG = /<([\w-]+)>([\s\S]*?)<\/\1>/g
 
-function applyTaskNotification(state: TrackedSession, line: Json): TrackedSession {
-  const content = str(line['content']) ?? ''
+function applyTaskNotification(state: TrackedSession, content: string, at: string): TrackedSession {
   const OPEN = '<task-notification>'
   if (!content.startsWith(OPEN)) return state
   // Match the inner tags only: the outer wrapper would swallow them all.
@@ -230,7 +235,7 @@ function applyTaskNotification(state: TrackedSession, line: Json): TrackedSessio
   const ids = [tags['task-id'], tags['tool-use-id']].filter((x): x is string => !!x)
   return finishRuns(state, ids, {
     status,
-    endedAt: str(line['timestamp']) ?? '',
+    endedAt: at,
     summary: tags['summary'] || undefined,
   })
 }
