@@ -1,0 +1,17 @@
+{
+  "name": "bat-signal",
+  "version": "0.3.0",
+  "description": "Reports Claude Code session activity to Bat-Signal, a tiny always-on-top window that watches your sessions.",
+  "author": {
+    "name": "Lucas Monteiro",
+    "url": "https://github.com/lucas-moont"
+  },
+  "homepage": "https://github.com/lucas-moont/bat-signal",
+  "repository": "https://github.com/lucas-moont/bat-signal",
+  "license": "MIT",
+  "keywords": [
+    "monitoring",
+    "notifications",
+    "desktop"
+  ]
+}
