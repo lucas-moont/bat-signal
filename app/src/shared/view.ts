@@ -63,7 +63,7 @@ export function attentionCopy(item: AttentionItem): CardCopy {
 }
 
 export interface CaseHeader {
-  /** Short case number from the session id, e.g. "#289380". */
+  /** Short case number from the session id, e.g. "#b47c0d". */
   number: string
   title: string
   progress?: { done: number; total: number; label: string }
@@ -95,9 +95,10 @@ export function plainPreview(markdown: string): string {
         .replace(/^\s*```.*$/, '') // code fence lines
         .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+[.)])\s+/, '') // headings, quotes, list markers
         .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // links and images keep their text
-        .replace(/(\*\*|__)(.+?)\1/g, '$2') // bold
-        .replace(/(\*|_)(.+?)\1/g, '$2') // italics
-        .replace(/`([^`]*)`/g, '$1') // inline code
+        // Code spans are kept verbatim (my_var, __init__.py, **kwargs); only prose loses emphasis.
+        .split(/(`[^`]*`)/)
+        .map((part) => (part.startsWith('`') ? part.slice(1, -1) : stripEmphasis(part)))
+        .join('')
         .replace(/\s+/g, ' ')
         .trim(),
     )
@@ -105,6 +106,15 @@ export function plainPreview(markdown: string): string {
     .join(' · ')
   return long || preview.length > PREVIEW_MAX ? preview.slice(0, PREVIEW_MAX).trimEnd() + '…' : preview
 }
+
+/**
+ * Removes **bold** and *italic* marks only where they hug a word from outside, so snake_case
+ * names and arithmetic like "2 * 3" stay as written.
+ */
+const stripEmphasis = (text: string): string =>
+  text
+    .replace(/(^|[^\w*])(\*\*|__)(?=\S)(.+?)(?<=\S)\2(?![\w*])/g, '$1$3')
+    .replace(/(^|[^\w*])([*_])(?=\S)(.+?)(?<=\S)\2(?![\w*])/g, '$1$3')
 
 const PREVIEW_READ = 600
 const PREVIEW_MAX = 280
