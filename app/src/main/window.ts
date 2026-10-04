@@ -1,118 +1,247 @@
 import { join } from 'node:path'
-import { BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow, screen } from 'electron'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
-import type { Settings, WindowMode } from '../shared/settings'
+import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
+import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
-import { restoreBounds, type Rect } from './windowState'
+import { anchoredRect, cornerOf, noticePlacement, resolveAnchor, type Anchor, type Size } from './windowState'
 
-const DEFAULTS = { width: 360, height: 520, minWidth: 300, minHeight: 360, margin: 16 }
-const PILL = { width: 232, height: 60 }
+const MARGIN = 16
+const PANEL = { width: 360, height: 520, minWidth: 300, minHeight: 360 }
+/** The signal window: just the disc, or the disc with a notice card next to it. */
+const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
 const SAVE_DEBOUNCE_MS = 500
 
-function parseRect(raw: unknown): Rect | undefined {
-  const o = obj(raw)
-  const [x, y, width, height] = [num(o['x']), num(o['y']), num(o['width']), num(o['height'])]
-  return x === undefined || y === undefined || width === undefined || height === undefined
-    ? undefined
-    : { x, y, width, height }
+interface Place {
+  anchor?: Anchor
+  panel: Size
 }
 
-const boundsFile = jsonFile('window.json', parseRect)
+const pair = <A extends string, B extends string>(o: Record<string, unknown>, a: A, b: B) => {
+  const [x, y] = [num(o[a]), num(o[b])]
+  return x === undefined || y === undefined ? undefined : ({ [a]: x, [b]: y } as Record<A | B, number>)
+}
+
+/** Reads window.json, including the { x, y, width, height } that the single window used to save. */
+function parsePlace(raw: unknown): Place {
+  const o = obj(raw)
+  const old = pair(o, 'x', 'y')
+  const oldSize = pair(o, 'width', 'height')
+  const anchor =
+    pair(obj(o['anchor']), 'x', 'y') ?? (old && oldSize ? cornerOf({ ...old, ...oldSize }) : undefined)
+  const panel = pair(obj(o['panel']), 'width', 'height') ??
+    oldSize ?? { width: PANEL.width, height: PANEL.height }
+  return { anchor, panel }
+}
+
+const placeFile = jsonFile('window.json', parsePlace)
 
 function displaysPrimaryFirst() {
   const primary = screen.getPrimaryDisplay()
   return [primary, ...screen.getAllDisplays().filter((d) => d.id !== primary.id)]
 }
 
+function load(win: BrowserWindow, view: 'panel' | 'signal'): void {
+  if (process.env['ELECTRON_RENDERER_URL'])
+    void win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=${view}`)
+  else void win.loadFile(join(__dirname, '../renderer/index.html'), { query: { view } })
+}
+
+const webPreferences = {
+  preload: join(__dirname, '../preload/index.js'),
+  sandbox: true,
+  contextIsolation: true,
+}
+
 /**
- * The Batcave window: frameless and remembering its size and place. In pill mode it shrinks
- * to a small bar anchored at the same bottom-right corner, and grows back from there.
+ * Batcave's two windows, both hanging from one corner: the Bat-Signal disc (transparent, the
+ * resting form, grows when a notice card comes out) and the panel. Only one shows at a time;
+ * the main process owns which (the mode) and the corner.
  */
-export class BatcaveWindow {
-  readonly win: BrowserWindow
-  private current: WindowMode = 'full'
-  private fullBounds: Rect
+export class BatcaveWindows {
+  private readonly panel: BrowserWindow
+  private readonly signal: BrowserWindow
+  private current: WindowMode = 'signal'
+  private anchor: Anchor
+  private panelSize: Size
+  private noticeOut = false
+  private latest?: StoreSnapshot
+  private quitting = false
   private saveTimer?: NodeJS.Timeout
 
   constructor(settings: Settings) {
-    this.fullBounds = restoreBounds(boundsFile.load(), displaysPrimaryFirst(), DEFAULTS)
-    this.win = new BrowserWindow({
-      ...this.fullBounds,
-      minWidth: DEFAULTS.minWidth,
-      minHeight: DEFAULTS.minHeight,
+    const place = placeFile.load()
+    this.anchor = resolveAnchor(place.anchor, displaysPrimaryFirst(), MARGIN)
+    this.panelSize = place.panel
+
+    this.panel = new BrowserWindow({
+      ...this.rect(this.panelSize),
+      minWidth: PANEL.minWidth,
+      minHeight: PANEL.minHeight,
       frame: false,
       resizable: true,
       skipTaskbar: true,
       show: false,
       backgroundColor: '#000000',
-      webPreferences: {
-        preload: join(__dirname, '../preload/index.js'),
-        sandbox: true,
-        contextIsolation: true,
-      },
+      // Otherwise Electron reports the never-shown panel as visible and its loops keep running.
+      paintWhenInitiallyHidden: false,
+      webPreferences,
+    })
+    this.signal = new BrowserWindow({
+      ...this.rect(SIGNAL.disc),
+      frame: false,
+      transparent: true,
+      resizable: false,
+      hasShadow: false,
+      skipTaskbar: true,
+      show: false,
+      webPreferences,
     })
     this.apply(settings)
-    this.win.once('ready-to-show', () => this.win.show())
-    this.win.on('moved', () => this.scheduleSave())
-    this.win.on('resized', () => this.scheduleSave())
-    this.win.on('close', () => this.saveNow())
 
-    if (process.env['ELECTRON_RENDERER_URL']) void this.win.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    else void this.win.loadFile(join(__dirname, '../renderer/index.html'))
+    // ready-to-show did not fire for this transparent window in testing; show it once it has loaded.
+    this.signal.webContents.once('did-finish-load', () => this.setMode(this.current))
+    // The panel is moved and resized by hand: its bottom-right corner becomes the anchor.
+    this.panel.on('moved', () => this.followPanel())
+    this.panel.on('resized', () => this.followPanel())
+    app.on('before-quit', () => {
+      this.quitting = true
+      this.saveNow()
+    })
+    // Alt+F4 on the panel folds it away (with no window left the app would run invisibly);
+    // on the signal it quits, as the close button does.
+    this.panel.on('close', (e) => {
+      if (this.quitting) return
+      e.preventDefault()
+      this.setMode('signal')
+    })
+    this.signal.on('close', () => {
+      if (!this.quitting) app.quit()
+    })
+
+    load(this.panel, 'panel')
+    load(this.signal, 'signal')
   }
 
-  /** Applies settings to the window and tells the page, as setMode does for the mode. */
-  apply(settings: Settings): void {
-    this.win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
-    this.win.setOpacity(settings.opacity)
-    this.win.webContents.send(IPC.settings, settings)
-  }
-
-  /** The single source of truth for the mode; the window only reads it (and asks to change it). */
   get mode(): WindowMode {
     return this.current
   }
 
-  setMode(mode: WindowMode): void {
-    if (mode === this.current) return
-    clearTimeout(this.saveTimer) // a pending save must not record the pill
-    const now = this.win.getBounds()
-    if (mode === 'pill') {
-      this.fullBounds = now
-      this.win.setMinimumSize(PILL.width, PILL.height)
-      this.win.setResizable(false)
-      this.win.setBounds({
-        x: now.x + now.width - PILL.width,
-        y: now.y + now.height - PILL.height,
-        ...PILL,
-      })
-    } else {
-      const { width, height } = this.fullBounds
-      this.win.setResizable(true)
-      this.win.setMinimumSize(DEFAULTS.minWidth, DEFAULTS.minHeight)
-      // Grow from the pill's corner so the window stays where the user moved the pill.
-      const next = { x: now.x + now.width - width, y: now.y + now.height - height, width, height }
-      this.win.setBounds(restoreBounds(next, displaysPrimaryFirst(), DEFAULTS))
+  /** Sends to every page (both windows render the same data). */
+  private broadcast(channel: string, payload: unknown): void {
+    for (const win of [this.panel, this.signal])
+      if (!win.isDestroyed()) win.webContents.send(channel, payload)
+  }
+
+  /**
+   * A new store snapshot. The signal always gets it (it compares snapshots to find news); the
+   * hidden panel gets only the latest one, when it opens, instead of re-rendering for nothing.
+   */
+  publish(snapshot: StoreSnapshot): void {
+    this.latest = snapshot
+    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
+    if (this.current === 'panel' && !this.panel.isDestroyed())
+      this.panel.webContents.send(IPC.snapshot, snapshot)
+  }
+
+  apply(settings: Settings): void {
+    for (const win of [this.panel, this.signal]) {
+      win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
+      win.setOpacity(settings.opacity)
     }
-    this.current = mode
-    if (mode === 'full') this.saveNow() // where the pill was moved is where the window now lives
-    this.win.webContents.send(IPC.mode, mode)
+    this.broadcast(IPC.settings, settings)
+  }
+
+  /** Shows the panel (optionally on one case) or folds back into the signal. */
+  setMode(mode: WindowMode, focusSessionId?: string): void {
+    if (mode === 'panel') {
+      // Opening the panel silences the cards; the hidden page may never finish their exit.
+      this.setClickThrough(false)
+      this.noticeOut = false
+      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
+      this.panel.setBounds(this.rect(this.panelSize))
+      this.panel.show()
+      this.panel.focus()
+      this.signal.hide()
+      if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+    } else {
+      this.panel.hide()
+      this.placeSignal()
+      this.signal.showInactive()
+    }
+    if (mode !== this.current) {
+      this.current = mode
+      this.broadcast(IPC.mode, mode)
+    }
+  }
+
+  /**
+   * The signal page is about to show a card (or has hidden the last one): grow the window
+   * around the disc, or shrink it back. Returns which way the card opens.
+   */
+  setNoticeOut(out: boolean): NoticeLayout {
+    if (out !== this.noticeOut) {
+      this.setClickThrough(out)
+      this.noticeOut = out
+      if (this.current === 'signal') this.placeSignal()
+    }
+    const { below, right } = noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst())
+    return { below, right }
+  }
+
+  /** While a card is out, the page turns clicks back on when the pointer is over the disc or the card. */
+  setInteractive(interactive: boolean): void {
+    if (this.noticeOut) this.signal.setIgnoreMouseEvents(!interactive, { forward: true })
+  }
+
+  /**
+   * While a card is out, clicks on the window's transparent parts fall through to whatever is
+   * underneath. Only then: forwarding the pointer to the page costs ~10% of a core on Windows,
+   * and the disc alone leaves only small transparent corners.
+   */
+  private setClickThrough(on: boolean): void {
+    this.signal.setIgnoreMouseEvents(on, { forward: true })
+  }
+
+  /** The disc is dragged by hand (a drag region would swallow its clicks). */
+  moveSignalBy(dx: number, dy: number): void {
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return
+    // Keep the disc itself on screen, so dragging back works at once.
+    const moved = { x: this.anchor.x + dx, y: this.anchor.y + dy }
+    this.anchor = cornerOf(anchoredRect(moved, SIGNAL.disc, displaysPrimaryFirst()))
+    this.placeSignal()
+    this.scheduleSave()
+  }
+
+  private rect(size: Size) {
+    return anchoredRect(this.anchor, size, displaysPrimaryFirst())
+  }
+
+  /** The signal window at its current size: the disc, or the disc with a notice card. */
+  private placeSignal(): void {
+    this.signal.setBounds(
+      this.noticeOut
+        ? noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst()).rect
+        : this.rect(SIGNAL.disc),
+    )
+  }
+
+  private followPanel(): void {
+    if (this.current !== 'panel') return
+    const b = this.panel.getBounds()
+    this.anchor = cornerOf(b)
+    this.panelSize = { width: b.width, height: b.height }
+    this.scheduleSave()
   }
 
   private scheduleSave(): void {
-    if (this.current !== 'full') return
     clearTimeout(this.saveTimer)
     this.saveTimer = setTimeout(() => this.saveNow(), SAVE_DEBOUNCE_MS)
   }
 
-  /** Records the full window's bounds; in pill mode, the full window anchored where the pill is. */
   private saveNow(): void {
     clearTimeout(this.saveTimer)
-    if (this.win.isDestroyed()) return
-    const now = this.win.getBounds()
-    if (this.current === 'full') return boundsFile.save(now)
-    const { width, height } = this.fullBounds
-    boundsFile.save({ x: now.x + now.width - width, y: now.y + now.height - height, width, height })
+    placeFile.save({ anchor: this.anchor, panel: this.panelSize })
   }
 }

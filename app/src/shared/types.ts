@@ -82,6 +82,15 @@ export interface SessionView {
 
 export type AttentionKind = 'permission' | 'error' | 'waiting' | 'reply' | 'stalled'
 
+/** Most urgent first: the needs-you list and the Bat-Signal's cards share this order. */
+export const ATTENTION_URGENCY: Record<AttentionKind, number> = {
+  permission: 0,
+  error: 1,
+  waiting: 2,
+  reply: 3,
+  stalled: 4,
+}
+
 export interface AttentionItem {
   sessionId: string
   kind: AttentionKind

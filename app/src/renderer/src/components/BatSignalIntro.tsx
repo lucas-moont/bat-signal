@@ -6,8 +6,8 @@ import './BatSignalIntro.css'
 
 const DURATION_MS = 1400
 
-// Once per launch: the window remounts after pill mode or when animations come back on, and
-// the intro must not replay then.
+// Once per launch: the panel remounts when animations come back on, and the intro must not
+// replay then.
 let played = false
 
 /** Plays the first time it mounts in this launch, then removes itself. */

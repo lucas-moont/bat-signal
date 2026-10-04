@@ -8,12 +8,12 @@ interface HeaderProps {
   needsYou: number
   mood: MascotMood
   onSettings: () => void
-  onPill: () => void
+  onFold: () => void
   onClose: () => void
 }
 
 /** Title bar of the frameless window: drag it to move. */
-export function Header({ needsYou, mood, onSettings, onPill, onClose }: HeaderProps) {
+export function Header({ needsYou, mood, onSettings, onFold, onClose }: HeaderProps) {
   return (
     <header className="header">
       <BatEmblem size={34} />
@@ -40,8 +40,13 @@ export function Header({ needsYou, mood, onSettings, onPill, onClose }: HeaderPr
         <button className="icon-button" onClick={onSettings} aria-label="Settings" title="Settings">
           <Icon name="gear" />
         </button>
-        <button className="icon-button" onClick={onPill} aria-label="Shrink to pill" title="Shrink">
-          <Icon name="pill" />
+        <button
+          className="icon-button"
+          onClick={onFold}
+          aria-label="Fold into the Bat-Signal"
+          title="Fold into the Bat-Signal (Esc)"
+        >
+          <Icon name="fold" />
         </button>
         <button className="icon-button icon-button--danger" onClick={onClose} aria-label="Quit" title="Quit">
           <Icon name="close" />

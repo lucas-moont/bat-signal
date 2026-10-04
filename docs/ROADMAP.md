@@ -10,10 +10,10 @@ Observe only. Never acts on sessions.
 - [ ] Session detail: tasks, subagents, background commands, latest messages
 - [ ] Task detail (click): description, status history
 - [ ] "Needs you" panel: permission prompts, Claude waiting for input, errors
-- [ ] Windows notifications: needs you, finished replying, task completed, session opened/closed
+- [ ] Bat-Signal notices: needs you, finished replying, task completed, session opened/closed (Windows toasts optional)
 - [ ] Claude Code plugin with HTTP hooks (alerts at the exact moment)
 - [ ] "Go to terminal": brings the session's window to the front
-- [ ] Bat-Clawd, the mascot, with states (sleeping, flying, alarmed)
+- [ ] Bat-Clawd, the caped mascot, with states (sleeping, flying, alarmed)
 - [ ] Animations: Bat-Signal intro, rain, transitions
 - [ ] System tray, global shortcut, start with Windows
 - [ ] Windows installer

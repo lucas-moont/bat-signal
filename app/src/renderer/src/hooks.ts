@@ -28,11 +28,11 @@ function useBridgedState<T>(
   return [state.value, state.loaded]
 }
 
-const useBridged = <T>(initial: T, get: () => Promise<T>, on: (cb: (value: T) => void) => () => void): T =>
-  useBridgedState(initial, get, on)[0]
+/** The latest store snapshot pushed by the main process, and whether the real one has arrived. */
+export const useSnapshotState = (): [StoreSnapshot, boolean] =>
+  useBridgedState(EMPTY, batcave.getSnapshot, batcave.onSnapshot)
 
-/** The latest store snapshot pushed by the main process. */
-export const useSnapshot = (): StoreSnapshot => useBridged(EMPTY, batcave.getSnapshot, batcave.onSnapshot)
+export const useSnapshot = (): StoreSnapshot => useSnapshotState()[0]
 
 /** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
 export function useSettings(): [Settings, (patch: Partial<Settings>) => void, boolean] {
@@ -40,11 +40,9 @@ export function useSettings(): [Settings, (patch: Partial<Settings>) => void, bo
   return [settings, batcave.setSettings, loaded]
 }
 
-/** Full window or pill: the main process owns it, the window asks to change it. */
-export const useWindowMode = (): [WindowMode, (mode: WindowMode) => void] => [
-  useBridged<WindowMode>('full', batcave.getMode, batcave.onMode),
-  batcave.setMode,
-]
+/** Signal or panel: the main process owns it; pages only read it and ask to change it. */
+export const useWindowMode = (): WindowMode =>
+  useBridgedState<WindowMode>('signal', batcave.getMode, batcave.onMode)[0]
 
 const NOW_EVERY_MS = 30_000
 

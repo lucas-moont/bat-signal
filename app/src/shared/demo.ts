@@ -4,7 +4,13 @@ import type { SessionSnapshot, StoreSnapshot, Task } from './types'
 
 const ago = (now: Date, minutes: number) => new Date(now.getTime() - minutes * 60_000).toISOString()
 
-export function demoSnapshot(now = new Date()): StoreSnapshot {
+/**
+ * The demo night's clock, fixed when the module loads: times computed afresh on every call
+ * would give old alerts new times, and the Bat-Signal would announce them again.
+ */
+const NIGHT = new Date()
+
+export function demoSnapshot(now = NIGHT): StoreSnapshot {
   const t = (minutes: number) => ago(now, minutes)
   const task = (
     id: string,
@@ -171,10 +177,22 @@ export function demoSnapshot(now = new Date()): StoreSnapshot {
 }
 
 /** The same night with nothing pending and nobody working: Bat-Clawd sleeps. */
-export function quietDemoSnapshot(now = new Date()): StoreSnapshot {
+export function quietDemoSnapshot(now = NIGHT): StoreSnapshot {
   const { sessions } = demoSnapshot(now)
   return {
     sessions: sessions.slice(1, 3).map((s) => ({ ...s, status: 'idle', signals: {} })),
     attention: [],
   }
+}
+
+/** The night a moment earlier, before the Riddler asked to run something: news for the Bat-Signal demo. */
+export function beforeNewsDemoSnapshot(now = NIGHT): StoreSnapshot {
+  const snapshot = demoSnapshot(now)
+  return { ...snapshot, attention: snapshot.attention.filter((a) => a.kind !== 'permission') }
+}
+
+/** The same quiet night with one case at work and nothing pending: Bat-Clawd on patrol. */
+export function busyDemoSnapshot(now = NIGHT): StoreSnapshot {
+  const { sessions } = quietDemoSnapshot(now)
+  return { sessions: sessions.map((s, i) => (i === 0 ? { ...s, status: 'busy' } : s)), attention: [] }
 }

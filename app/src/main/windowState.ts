@@ -7,55 +7,79 @@ export interface Rect {
   height: number
 }
 
-export interface WindowDefaults {
-  width: number
-  height: number
-  minWidth: number
-  minHeight: number
-  /** Gap kept from the screen edges when placing the window in the corner. */
-  margin: number
+/** The bottom-right point every Batcave window hangs from: the signal disc, its notice, the panel. */
+export interface Anchor {
+  x: number
+  y: number
 }
 
-/**
- * Where to open the window.
- * @param saved bounds remembered from last time, if any
- * @param displays work areas of the connected displays, primary first
- */
-export function restoreBounds(
-  saved: Rect | undefined,
-  displays: { workArea: Rect }[],
-  d: WindowDefaults,
-): Rect {
-  const primary = displays[0]!.workArea
-  // The display the saved window overlaps most; none means that display is gone.
-  const home = saved
-    ? displays
-        .map(({ workArea }) => ({ workArea, shared: overlap(saved, workArea) }))
-        .filter((c) => c.shared > 0)
-        .sort((a, b) => b.shared - a.shared)[0]?.workArea
-    : undefined
-  const area = home ?? primary
-  const width = clamp(saved?.width ?? d.width, d.minWidth, area.width)
-  const height = clamp(saved?.height ?? d.height, d.minHeight, area.height)
+const contains = (area: Rect, p: Anchor): boolean =>
+  p.x >= area.x && p.x <= area.x + area.width && p.y >= area.y && p.y <= area.y + area.height
 
-  if (!saved || !home) {
-    return {
-      x: area.x + area.width - width - d.margin,
-      y: area.y + area.height - height - d.margin,
-      width,
-      height,
-    }
-  }
+/** How far a point is from a rectangle (0 inside it). */
+const distance = (area: Rect, p: Anchor): number =>
+  Math.hypot(
+    Math.max(area.x - p.x, 0, p.x - (area.x + area.width)),
+    Math.max(area.y - p.y, 0, p.y - (area.y + area.height)),
+  )
+
+/** The work area holding the corner, or the nearest one when the corner slipped just off it. */
+const areaOf = (anchor: Anchor, displays: { workArea: Rect }[]): Rect =>
+  displays.reduce(
+    (best, d) => (distance(d.workArea, anchor) < distance(best, anchor) ? d.workArea : best),
+    displays[0]!.workArea,
+  )
+
+export type Size = { width: number; height: number }
+
+/** The bottom-right corner of a rectangle: where a window hangs from. */
+export const cornerOf = (r: Rect): Anchor => ({ x: r.x + r.width, y: r.y + r.height })
+
+/** A saved corner if it still lies on a connected display, else the primary display's corner. */
+export function resolveAnchor(
+  saved: Anchor | undefined,
+  displays: { workArea: Rect }[],
+  margin: number,
+): Anchor {
+  if (saved && displays.some((d) => contains(d.workArea, saved))) return saved
+  const area = displays[0]!.workArea
+  return { x: area.x + area.width - margin, y: area.y + area.height - margin }
+}
+
+/** A window of `size` hanging from `anchor` by its bottom-right edge, kept on that display. */
+export function anchoredRect(anchor: Anchor, size: Size, displays: { workArea: Rect }[]): Rect {
+  const area = areaOf(anchor, displays)
+  const width = Math.min(size.width, area.width)
+  const height = Math.min(size.height, area.height)
   return {
-    x: clamp(saved.x, area.x, area.x + area.width - width),
-    y: clamp(saved.y, area.y, area.y + area.height - height),
+    x: clamp(anchor.x - width, area.x, area.x + area.width - width),
+    y: clamp(anchor.y - height, area.y, area.y + area.height - height),
     width,
     height,
   }
 }
 
-const overlap = (a: Rect, b: Rect): number => {
-  const w = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)
-  const h = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y)
-  return w > 0 && h > 0 ? w * h : 0
+/**
+ * The signal window with a notice card out. The disc stays where it is: the window grows up and
+ * left from it, or down (`below`) and right (`right`) when the display has no room that way.
+ */
+export function noticePlacement(
+  anchor: Anchor,
+  { disc, notice }: { disc: Size; notice: Size },
+  displays: { workArea: Rect }[],
+): { rect: Rect; below: boolean; right: boolean } {
+  const area = areaOf(anchor, displays)
+  const below = anchor.y - area.y < notice.height
+  const right = anchor.x - area.x < notice.width
+  const x = right ? anchor.x - disc.width : anchor.x - notice.width
+  const y = below ? anchor.y - disc.height : anchor.y - notice.height
+  return {
+    rect: {
+      x: clamp(x, area.x, area.x + area.width - notice.width),
+      y: clamp(y, area.y, area.y + area.height - notice.height),
+      ...notice,
+    },
+    below,
+    right,
+  }
 }

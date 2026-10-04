@@ -1,8 +1,6 @@
-import type { AttentionItem, AttentionKind, SessionView } from '../../shared/types'
+import { ATTENTION_URGENCY as URGENCY, type AttentionItem, type SessionView } from '../../shared/types'
 
 const STALLED_AFTER_MS = 30 * 60 * 1000
-
-const URGENCY: Record<AttentionKind, number> = { permission: 0, error: 1, waiting: 2, reply: 3, stalled: 4 }
 
 /** Everything that needs the user, most urgent first. */
 export function deriveAttention(sessions: SessionView[], now: Date): AttentionItem[] {

@@ -9,5 +9,9 @@ export const IPC = {
   getMode: 'batcave:get-mode',
   setMode: 'batcave:set-mode',
   mode: 'batcave:mode',
+  focusCase: 'batcave:focus-case',
+  noticeOut: 'batcave:notice-out',
+  moveSignal: 'batcave:move-signal',
+  interactive: 'batcave:interactive',
   closeWindow: 'batcave:close-window',
 } as const

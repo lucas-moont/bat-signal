@@ -1,8 +1,9 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { ipcMain, type BrowserWindow } from 'electron'
-import { demoSnapshot } from '../shared/demo'
+import { ipcMain } from 'electron'
+import { beforeNewsDemoSnapshot, demoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
+import type { StoreSnapshot } from '../shared/types'
 import { HookServer } from './sources/hookServer'
 import { SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
@@ -19,26 +20,34 @@ const CLOCK_TICK_MS = 60_000
 /** Claude Code may fire a hook before it writes the matching transcript line, so look again shortly after. */
 const AFTER_HOOK_REREAD_MS = 300
 
-/** Wires the data sources to the store and the store to the window. Returns a stop function. */
-export function startBatcave(win: BrowserWindow): () => void {
-  return process.env['BATCAVE_DEMO'] ? startDemo(win) : startLive(win)
+/** Hands a new store snapshot to the windows. */
+type Publish = (snapshot: StoreSnapshot) => void
+
+/** Wires the data sources to the store and the store to the windows. Returns a stop function. */
+export function startBatcave(publish: Publish): () => void {
+  return process.env['BATCAVE_DEMO'] ? startDemo(publish) : startLive(publish)
 }
 
+/** A few seconds in, the demo night brings news, so the Bat-Signal has something to announce. */
+const DEMO_NEWS_MS = 4000
+
 /** Serves the made-up Gotham night instead of real sessions (screenshots, demos). */
-function startDemo(win: BrowserWindow): () => void {
-  ipcMain.handle(IPC.getSnapshot, () => demoSnapshot())
+function startDemo(publish: Publish): () => void {
+  let news = false
+  const newsTimer = setTimeout(() => {
+    news = true
+    publish(demoSnapshot())
+  }, DEMO_NEWS_MS)
+  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : beforeNewsDemoSnapshot()))
   ipcMain.on(IPC.markSeen, () => undefined)
-  const timer = setInterval(() => {
-    if (!win.isDestroyed()) win.webContents.send(IPC.snapshot, demoSnapshot())
-  }, CLOCK_TICK_MS)
   return () => {
-    clearInterval(timer)
+    clearTimeout(newsTimer)
     ipcMain.removeHandler(IPC.getSnapshot)
     ipcMain.removeAllListeners(IPC.markSeen)
   }
 }
 
-function startLive(win: BrowserWindow): () => void {
+function startLive(publish: Publish): () => void {
   const claudeDir = join(homedir(), '.claude')
   const store = new SessionStore({
     locateTranscript: (entry, deep) =>
@@ -61,14 +70,18 @@ function startLive(win: BrowserWindow): () => void {
 
   let pushTimer: NodeJS.Timeout | undefined
   const schedulePush = () => {
-    pushTimer ??= setTimeout(() => {
+    pushTimer ??= setTimeout(async () => {
+      await store.ready // a snapshot from before the first full read is not news, only half the state
       pushTimer = undefined
-      if (!win.isDestroyed()) win.webContents.send(IPC.snapshot, store.snapshot())
+      publish(store.snapshot())
     }, PUSH_THROTTLE_MS)
   }
   store.on('update', schedulePush)
 
-  ipcMain.handle(IPC.getSnapshot, () => store.snapshot())
+  ipcMain.handle(IPC.getSnapshot, async () => {
+    await store.ready
+    return store.snapshot()
+  })
   ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
     if (typeof sessionId === 'string') store.markSeen(sessionId)
   })
