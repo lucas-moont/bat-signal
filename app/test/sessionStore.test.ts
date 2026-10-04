@@ -306,29 +306,50 @@ describe('SessionStore first reads', () => {
 })
 
 describe('SessionStore without the plugin', () => {
-  it('infers a finished reply when a session without hooks turns from busy to idle', async () => {
+  const at = (iso: string) => (disk.now = new Date(iso))
+
+  it('infers a finished reply from busy to idle once the grace period passes without a hook', async () => {
     await store.setLiveSessions([entry({ status: 'busy' })])
-    disk.now = new Date('2026-01-01T12:05:00.000Z')
+    at('2026-01-01T12:05:00.000Z')
     await store.setLiveSessions([entry({ status: 'idle' })])
+    expect(store.snapshot().attention).toEqual([]) // the Stop hook may still be on its way
+    at('2026-01-01T12:05:04.000Z')
+    await store.refresh()
     expect(store.snapshot().attention).toEqual([
       { sessionId: SESSION_ID, kind: 'reply', at: '2026-01-01T12:05:00.000Z' },
     ])
   })
 
-  it('leaves finished replies to the hooks when the session sends them', async () => {
+  it('takes the Stop hook instead when it lands just after the flip, so a reply is announced once', async () => {
     await store.setLiveSessions([entry({ status: 'busy' })])
-    await store.handleHook(hook('Stop'))
-    disk.now = new Date('2026-01-01T12:05:00.000Z')
+    at('2026-01-01T12:05:00.000Z')
     await store.setLiveSessions([entry({ status: 'idle' })])
-    expect(store.snapshot().attention.map((a) => [a.kind, a.at])).toEqual([
-      ['reply', '2026-01-01T12:00:00.000Z'],
-    ])
+    at('2026-01-01T12:05:01.000Z')
+    await store.handleHook(hook('Stop'))
+    at('2026-01-01T12:05:04.000Z')
+    await store.refresh()
+    expect(store.snapshot().attention.map((a) => a.at)).toEqual(['2026-01-01T12:05:01.000Z'])
+    expect(store.snapshot().unheard).toEqual([])
   })
 
-  it('says whether any hook has been heard, so a quiet plugin is never mistaken for nothing to do', async () => {
+  it('names the sessions that finished a turn without a single hook, until one arrives', async () => {
     await store.setLiveSessions([entry({ status: 'busy' })])
-    expect(store.snapshot().hooksHeard).toBe(false)
-    await store.handleHook(hook('PostToolUse', { tool_name: 'Bash' }))
-    expect(store.snapshot().hooksHeard).toBe(true)
+    expect(store.snapshot().unheard).toEqual([]) // busy for now: nothing to judge yet
+    at('2026-01-01T12:05:00.000Z')
+    await store.setLiveSessions([entry({ status: 'idle' })])
+    at('2026-01-01T12:05:04.000Z')
+    await store.refresh()
+    expect(store.snapshot().unheard).toEqual([SESSION_ID])
+    await store.handleHook(hook('UserPromptSubmit'))
+    expect(store.snapshot().unheard).toEqual([])
+  })
+
+  it('reads only busy to idle as the end of a turn', async () => {
+    await store.setLiveSessions([entry({ status: 'busy' })])
+    at('2026-01-01T12:05:00.000Z')
+    await store.setLiveSessions([entry({ status: 'shell' })])
+    at('2026-01-01T12:05:04.000Z')
+    await store.refresh()
+    expect(store.snapshot().attention).toEqual([])
   })
 })

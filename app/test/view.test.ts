@@ -355,16 +355,12 @@ describe('watchRow', () => {
 })
 
 describe('pluginSilent', () => {
-  const busy = { ...session('busy') }
-  const idle = { ...session('idle') }
-
-  it('is silent when a session works and no hook has arrived', () => {
-    expect(pluginSilent({ sessions: [busy], attention: [], hooksHeard: false })).toBe(true)
+  it('is silent while some session finished a turn without a hook', () => {
+    expect(pluginSilent({ sessions: [], attention: [], unheard: ['a'] })).toBe(true)
   })
 
-  it('is not silent once a hook arrived, when nothing works, or in demos that do not say', () => {
-    expect(pluginSilent({ sessions: [busy], attention: [], hooksHeard: true })).toBe(false)
-    expect(pluginSilent({ sessions: [idle], attention: [], hooksHeard: false })).toBe(false)
-    expect(pluginSilent({ sessions: [busy], attention: [] })).toBe(false)
+  it('is not silent when every session has been heard, or in demos that do not say', () => {
+    expect(pluginSilent({ sessions: [], attention: [], unheard: [] })).toBe(false)
+    expect(pluginSilent({ sessions: [], attention: [] })).toBe(false)
   })
 })
