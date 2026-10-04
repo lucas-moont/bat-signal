@@ -10,8 +10,8 @@ import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDeta
 import { Header, Tabs, type Tab } from './components/Header'
 import { Pill } from './components/Pill'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
-import { CalmContext } from './calm'
-import { useCalm, useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
+import { CalmContext, useCalm } from './calm'
+import { useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
 import './App.css'
 
 export function App() {

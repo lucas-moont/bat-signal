@@ -1,4 +1,5 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { Settings } from '@shared/settings'
 
 /**
  * True when the OS asks for reduced motion or the user turned animations off. Provided once
@@ -8,3 +9,15 @@ import { createContext, useContext } from 'react'
 export const CalmContext = createContext(false)
 
 export const useIsCalm = (): boolean => useContext(CalmContext)
+
+/** Whether to be calm: the OS asks for reduced motion or the user turned animations off. */
+export function useCalm(settings: Settings): boolean {
+  const [reduced, setReduced] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
+  useEffect(() => {
+    const query = matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => setReduced(query.matches)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+  return reduced || !settings.animations
+}

@@ -46,24 +46,14 @@ export const useWindowMode = (): [WindowMode, (mode: WindowMode) => void] => [
   batcave.setMode,
 ]
 
+const NOW_EVERY_MS = 30_000
+
 /** The current time, refreshed often enough for "2m ago" labels. */
-export function useNow(everyMs = 30_000): Date {
+export function useNow(): Date {
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), everyMs)
+    const timer = setInterval(() => setNow(new Date()), NOW_EVERY_MS)
     return () => clearInterval(timer)
-  }, [everyMs])
-  return now
-}
-
-/** True when the OS asks for reduced motion or the user turned animations off. */
-export function useCalm(settings: Settings): boolean {
-  const [reduced, setReduced] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
-  useEffect(() => {
-    const query = matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setReduced(query.matches)
-    query.addEventListener('change', onChange)
-    return () => query.removeEventListener('change', onChange)
   }, [])
-  return reduced || !settings.animations
+  return now
 }
