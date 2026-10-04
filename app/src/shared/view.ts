@@ -163,6 +163,14 @@ export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
   completed: 'Completed',
   deleted: 'Deleted',
 }
+/** Tasks as a typist marks them (the night report). */
+export const TYPED_BOX: Record<TaskStatus, string> = {
+  pending: '[ ]',
+  in_progress: '[>]',
+  completed: '[x]',
+  deleted: '[-]',
+}
+
 export const TASK_GLYPH: Record<TaskStatus, string> = {
   pending: '○',
   in_progress: '◐',
@@ -214,7 +222,8 @@ export interface WatchRow {
   progress?: string
 }
 
-const ALERT_TONE: Record<AttentionItem['kind'], WatchRow['tone']> = {
+/** How hard an alert presses, everywhere it is inked: blocked work hot, waiting work soft, a stalled task quiet. */
+export const ALERT_INK: Record<AttentionItem['kind'], 'hot' | 'soft' | 'quiet'> = {
   permission: 'hot',
   error: 'hot',
   waiting: 'soft',
@@ -229,18 +238,15 @@ export function watchRow(session: SessionSnapshot, attention: AttentionItem[]): 
     .filter((a) => a.sessionId === session.sessionId)
     .sort((a, b) => ATTENTION_URGENCY[a.kind] - ATTENTION_URGENCY[b.kind])[0]
   const row: WatchRow = own
-    ? { tone: ALERT_TONE[own.kind], ...splitCopy(attentionCopy(own)), title }
+    ? { tone: ALERT_INK[own.kind], stamp: attentionCopy(own).stamp, title, line: attentionCopy(own).line }
     : session.status === 'busy'
-      ? { tone: 'working', stamp: LIVE_STATUS_LABEL.busy, title, line: busyLine(session) }
+      ? { tone: 'working', stamp: LIVE_STATUS_LABEL.busy, title, ...lineOf(currentTask(session)) }
       : { tone: 'idle', stamp: LIVE_STATUS_LABEL[session.status], title }
-  if (row.line === undefined) delete row.line
-  if (progress) row.progress = progress.label
-  return row
+  return progress ? { ...row, progress: progress.label } : row
 }
 
-const splitCopy = ({ stamp, line }: CardCopy) => ({ stamp, line })
+const lineOf = (task: Task | undefined) => (task ? { line: taskLabel(task) } : {})
 
-const busyLine = (session: SessionSnapshot): string | undefined => {
-  const current = session.tasks.find((t) => t.status === 'in_progress')
-  return current ? taskLabel(current) : undefined
-}
+/** The task a session is working on right now, if any. */
+export const currentTask = (session: SessionSnapshot): Task | undefined =>
+  session.tasks.find((t) => t.status === 'in_progress')

@@ -1,10 +1,12 @@
 // The panel read as tonight's typed case report: what awaits your signature first, then one
 // paragraph per case, its stamp in the margin. A case opens in place into margin notes.
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import type { AttentionItem, SessionSnapshot, TaskStatus } from '@shared/types'
+import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import {
+  ALERT_INK,
   caseHeader,
+  currentTask,
   folderName,
   LIVE_STATUS_LABEL,
   lastReply,
@@ -14,6 +16,7 @@ import {
   reportCopy,
   RUN_STATUS_LABEL,
   taskLabel,
+  TYPED_BOX,
 } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import type { Tab } from './Header'
@@ -22,36 +25,15 @@ import { Typewriter } from './Typewriter'
 import './Cards.css'
 import './NightReport.css'
 
-/** Tasks as a typist marks them. */
-const TYPED_BOX: Record<TaskStatus, string> = {
-  pending: '[ ]',
-  in_progress: '[>]',
-  completed: '[x]',
-  deleted: '[-]',
-}
-
-/** How hard the pen presses: blocked work in hot ink, waiting work softer, quiet work unmarked. */
-const INK: Record<AttentionItem['kind'], 'hot' | 'soft' | 'none'> = {
-  permission: 'hot',
-  error: 'hot',
-  waiting: 'soft',
-  reply: 'soft',
-  stalled: 'none',
-}
-
 /** Last words are quoted, not reprinted: a report keeps to one line of them. */
 const QUOTE_CHARS = 150
 
 const caseAnchor = (sessionId: string) => `report-case-${sessionId}`
 
-const dateline = (now: Date) => {
-  const part = (o: Intl.DateTimeFormatOptions) => now.toLocaleString('en-GB', o).toUpperCase()
-  return `${part({ weekday: 'short' })} ${part({ day: '2-digit' })} ${part({ month: 'short' })} · ${part({
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  })}`
-}
+// Built once: a formatter is costly to make, and the dateline renders with every snapshot.
+const DAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })
+const TIME = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+const dateline = (now: Date) => `${DAY.format(now).replace(',', '').toUpperCase()} · ${TIME.format(now)}`
 
 const quote = (text: string) => {
   const plain = plainPreview(text)
@@ -84,9 +66,14 @@ export function NightReport({
     if (openCase) document.getElementById(caseAnchor(openCase))?.scrollIntoView({ block: 'start' })
   }, [openCase])
 
-  const titles = new Map(sessions.map((s) => [s.sessionId, caseHeader(s).title]))
-  const waiting = new Set(attention.map((a) => a.sessionId))
-  const cases = orderCases(sessions, attention)
+  const { titles, waiting, cases } = useMemo(
+    () => ({
+      titles: new Map(sessions.map((s) => [s.sessionId, caseHeader(s).title])),
+      waiting: new Set(attention.map((a) => a.sessionId)),
+      cases: orderCases(sessions, attention),
+    }),
+    [sessions, attention],
+  )
 
   return (
     <article className="report">
@@ -110,12 +97,12 @@ export function NightReport({
                   <li key={`${item.sessionId}:${item.kind}:${item.taskId ?? ''}`} className="report__line">
                     <button className="entry" onClick={() => onOpenAlert(item)}>
                       <span className="entry__margin">
-                        <span className={`stamp stamp--${INK[item.kind]}`}>{stamp}</span>
+                        <span className={`stamp stamp--${ALERT_INK[item.kind]}`}>{stamp}</span>
                         <span className="entry__age">{relativeTime(item.at, now)}</span>
                       </span>
                       <span className="entry__body">
                         <strong>{titles.get(item.sessionId) ?? 'An unknown case'}</strong>{' '}
-                        <span className={`pen pen--${INK[item.kind]}`}>{sentence}</span>.
+                        <span className={`pen pen--${ALERT_INK[item.kind]}`}>{sentence}</span>.
                       </span>
                     </button>
                     <TerminalButton sessionId={item.sessionId} className="report__terminal" />
@@ -171,7 +158,7 @@ function CaseParagraph({
 }) {
   const { number, title, progress } = caseHeader(session)
   const folder = folderName(session.cwd ?? '')
-  const current = session.tasks.find((t) => t.status === 'in_progress')
+  const current = currentTask(session)
   const said = lastReply(session)
   const status = needsYou ? 'Needs you' : LIVE_STATUS_LABEL[session.status]
 
@@ -180,7 +167,7 @@ function CaseParagraph({
       <button className="entry" onClick={onToggle} aria-expanded={open}>
         <span className="entry__margin">
           <span
-            className={`stamp stamp--${needsYou ? 'hot' : session.status === 'busy' ? 'working' : 'none'}`}
+            className={`stamp stamp--${needsYou ? 'hot' : session.status === 'busy' ? 'working' : 'quiet'}`}
           >
             {status}
           </span>

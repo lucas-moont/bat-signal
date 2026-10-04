@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import {
+  ALERT_INK,
   attentionCopy,
   caseHeader,
   folderName,
@@ -23,7 +24,10 @@ function Empty({ title, hint }: { title: string; hint: string }) {
   )
 }
 
-const URGENT = new Set<AttentionItem['kind']>(['permission', 'error'])
+/** Cards that glow: the blocked work the pen presses hardest on. */
+const URGENT = new Set(
+  (Object.keys(ALERT_INK) as AttentionItem['kind'][]).filter((k) => ALERT_INK[k] === 'hot'),
+)
 
 const listMotion = (index: number) => ({
   layout: true,
