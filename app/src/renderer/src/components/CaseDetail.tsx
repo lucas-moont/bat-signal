@@ -10,6 +10,7 @@ import {
   taskLabel,
 } from '@shared/view'
 import { Icon } from './Icon'
+import { TerminalButton } from './TerminalButton'
 import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
 import './CaseDetail.css'
@@ -66,6 +67,7 @@ export function CaseDetail({
           <span className="case-number">Case {number}</span>
           <h2 className="detail__title">{title}</h2>
         </div>
+        <TerminalButton sessionId={session.sessionId} label="Terminal" className="detail__terminal" />
       </div>
 
       <div className="detail__body">
