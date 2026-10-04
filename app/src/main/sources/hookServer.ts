@@ -39,6 +39,8 @@ export class HookServer {
     if (req.method !== 'POST') return reply(405)
     // Claude Code calls from a CLI process; an Origin header means a web page is trying.
     if (req.headers.origin !== undefined) return reply(403)
+    // A web page could also point a hostname it controls at 127.0.0.1 (DNS rebinding).
+    if (!LOOPBACK_HOST.test(req.headers.host ?? '')) return reply(403)
     if (!req.headers['content-type']?.startsWith('application/json')) return reply(415)
 
     const body = await readBody(req, MAX_BODY_BYTES)
@@ -59,6 +61,7 @@ export class HookServer {
 }
 
 const MAX_BODY_BYTES = 1024 * 1024
+const LOOPBACK_HOST = /^(127\.0\.0\.1|localhost)(:\d+)?$/i
 
 /** The request body as text, or null once it grows past `limit` bytes. */
 async function readBody(req: IncomingMessage, limit: number): Promise<string | null> {
