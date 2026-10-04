@@ -11,7 +11,7 @@ export const HOOK_PORT = 47777
 export class HookServer {
   private readonly server: Server
 
-  constructor(private readonly onEvent: (event: unknown) => void) {
+  constructor(private readonly onEvent: (event: unknown) => void | Promise<void>) {
     this.server = createServer((req, res) => void this.handle(req, res))
   }
 
@@ -52,11 +52,10 @@ export class HookServer {
       return reply(400)
     }
     reply(204)
-    try {
-      this.onEvent(event)
-    } catch {
-      // A bad event must never take the server down.
-    }
+    // A bad event must never take the server down, whether the handler throws or rejects.
+    await Promise.resolve()
+      .then(() => this.onEvent(event))
+      .catch((err: unknown) => console.warn('[batcave] hook handler failed:', err))
   }
 }
 

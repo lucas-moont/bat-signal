@@ -30,7 +30,7 @@ export function startBatcave(win: BrowserWindow): () => void {
   const registry = new SessionRegistry(join(claudeDir, 'sessions'), createWindowsProbe())
   registry.on('change', (entries) => void store.setLiveSessions(entries))
 
-  const hooks = new HookServer((event) => void store.handleHook(event))
+  const hooks = new HookServer((event) => store.handleHook(event))
   hooks.listen().catch((err: Error) => console.warn(`[batcave] hook server unavailable: ${err.message}`))
 
   let pushTimer: NodeJS.Timeout | undefined
