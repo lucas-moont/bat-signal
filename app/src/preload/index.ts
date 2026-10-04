@@ -3,7 +3,6 @@ import { IPC } from '../shared/ipc'
 import type { StoreSnapshot } from '../shared/types'
 
 const api = {
-  platform: process.platform,
   getSnapshot: (): Promise<StoreSnapshot> => ipcRenderer.invoke(IPC.getSnapshot),
   /** Calls back with every new snapshot; returns an unsubscribe function. */
   onSnapshot(callback: (snapshot: StoreSnapshot) => void): () => void {
