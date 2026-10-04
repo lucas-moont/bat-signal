@@ -110,6 +110,8 @@ export interface SessionSnapshot extends SessionState, Pick<SessionView, 'status
 export interface StoreSnapshot {
   sessions: SessionSnapshot[]
   attention: AttentionItem[]
+  /** Sessions that finished a turn without sending a hook: the plugin is not reaching them. */
+  unheard?: string[]
 }
 
 /** What "go to the terminal" managed to do. */

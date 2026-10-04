@@ -37,8 +37,11 @@ function observable<T>(initial: T) {
 const NEWS_DELAY_MS = 800
 
 function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
-  const snapshot = observable(first)
-  if (next) setTimeout(() => snapshot.set(next), NEWS_DELAY_MS)
+  // -silent: the plugin has not been heard from (see PluginHint).
+  const heard = (s: StoreSnapshot) =>
+    flags.has('silent') ? { ...s, unheard: s.sessions.map((x) => x.sessionId) } : s
+  const snapshot = observable(heard(first))
+  if (next) setTimeout(() => snapshot.set(heard(next)), NEWS_DELAY_MS)
   // #demo-report opens in the night report theme.
   const settings = observable<Settings>({
     ...DEFAULT_SETTINGS,

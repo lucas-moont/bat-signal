@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
-import { mascotMood } from '@shared/view'
+import { mascotMood, pluginSilent } from '@shared/view'
 import { batSignal } from './bridge'
 import { Atmosphere } from './components/Atmosphere'
 import { BatSignalIntro } from './components/BatSignalIntro'
@@ -9,6 +9,7 @@ import { AttentionList, CaseList } from './components/Cards'
 import { CaseDetail, sheetExists, type SheetTarget } from './components/CaseDetail'
 import { Header, Tabs, type Tab } from './components/Header'
 import { NightReport } from './components/NightReport'
+import { PluginHint } from './components/PluginHint'
 import { WatchStrip } from './components/WatchStrip'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
@@ -112,9 +113,13 @@ export function App() {
 
           <div className="stage">
             <div className="stage__scroll">
+              {!report && activeTab === 'needs' && pluginSilent(snapshot) && (
+                <PluginHint sessions={snapshot.unheard?.length ?? 0} />
+              )}
               {report ? (
                 <NightReport
                   tab={activeTab}
+                  unheard={snapshot.unheard?.length ?? 0}
                   sessions={sessions}
                   attention={attention}
                   now={now}
@@ -124,7 +129,13 @@ export function App() {
                   onOpenSheet={open}
                 />
               ) : activeTab === 'needs' ? (
-                <AttentionList items={attention} sessions={sessions} now={now} onOpen={openAttention} />
+                <AttentionList
+                  items={attention}
+                  sessions={sessions}
+                  now={now}
+                  quietIsKnown={!pluginSilent(snapshot)}
+                  onOpen={openAttention}
+                />
               ) : (
                 <CaseList sessions={sessions} attention={attention} now={now} onOpen={(id) => open(id)} />
               )}

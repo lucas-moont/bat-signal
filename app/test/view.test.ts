@@ -8,6 +8,7 @@ import {
   mascotMood,
   orderCases,
   plainPreview,
+  pluginSilent,
   reportCopy,
   watchRow,
   relativeTime,
@@ -350,5 +351,16 @@ describe('watchRow', () => {
 
   it('ignores alerts that belong to other sessions', () => {
     expect(watchRow(s('idle'), [alert('error', { sessionId: 'other' })]).tone).toBe('idle')
+  })
+})
+
+describe('pluginSilent', () => {
+  it('is silent while some session finished a turn without a hook', () => {
+    expect(pluginSilent({ sessions: [], attention: [], unheard: ['a'] })).toBe(true)
+  })
+
+  it('is not silent when every session has been heard, or in demos that do not say', () => {
+    expect(pluginSilent({ sessions: [], attention: [], unheard: [] })).toBe(false)
+    expect(pluginSilent({ sessions: [], attention: [] })).toBe(false)
   })
 })
