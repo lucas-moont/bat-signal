@@ -53,6 +53,13 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   private readonly sessions = new Map<string, LiveSession>()
   /** Hook-derived signals, kept apart because hooks can arrive before the registry lists the session. */
   private readonly signals = new Map<string, { signals: SessionSignals; at: number }>()
+  /**
+   * For sessions that send no hooks (no plugin, or started before it was installed): what the
+   * registry alone can tell, a turn that ended when the status went from busy to idle.
+   */
+  private readonly inferred = new Map<string, SessionSignals>()
+  /** Whether any hook has arrived since launch: without the plugin, Needs you can never fill. */
+  private hooksHeard = false
 
   /**
    * Resolves once the first registry listing has been read. Snapshots taken before it are not the
@@ -74,6 +81,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       if (live.has(id)) continue
       this.sessions.delete(id)
       this.signals.delete(id)
+      this.inferred.delete(id)
       changed = true
     }
     // Hooks from sessions the registry never lists (headless runs, late SessionEnd) expire.
@@ -87,6 +95,10 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       const known = this.sessions.get(entry.sessionId)
       if (known) {
         if (!isDeepStrictEqual(known.entry, entry)) changed = true
+        // Hooks report the end of a turn themselves; without them, the registry's flip says it.
+        if (known.entry.status === 'busy' && entry.status !== 'busy' && !this.signals.has(entry.sessionId)) {
+          this.inferred.set(entry.sessionId, { lastStopAt: this.sources.clock().toISOString() })
+        }
         known.entry = entry
         continue
       }
@@ -125,6 +137,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   async handleHook(event: unknown): Promise<void> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
+    this.hooksHeard = true
     const before = this.signals.get(sessionId)?.signals ?? {}
     const after = applyHookEvent(before, event, this.sources.clock().toISOString())
     this.signals.set(sessionId, { signals: after, at: this.sources.clock().getTime() })
@@ -146,7 +159,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       .filter((s) => s.read)
       .map(({ entry, tracked, seenAt }): SessionView & { entry: RegistryEntry } => ({
         state: toSessionState(tracked),
-        signals: this.signals.get(entry.sessionId)?.signals ?? {},
+        signals: this.signals.get(entry.sessionId)?.signals ?? this.inferred.get(entry.sessionId) ?? {},
         status: entry.status,
         seenAt,
         entry,
@@ -160,6 +173,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
         signals,
       })),
       attention: deriveAttention(views, this.sources.clock()),
+      hooksHeard: this.hooksHeard,
     }
   }
 

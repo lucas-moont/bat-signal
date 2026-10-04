@@ -110,6 +110,8 @@ export interface SessionSnapshot extends SessionState, Pick<SessionView, 'status
 export interface StoreSnapshot {
   sessions: SessionSnapshot[]
   attention: AttentionItem[]
+  /** Whether the plugin has reported anything since launch (absent in demos and tests). */
+  hooksHeard?: boolean
 }
 
 /** What "go to the terminal" managed to do. */
