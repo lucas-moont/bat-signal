@@ -32,6 +32,13 @@ const resolvesPermission: Handler = (signals, event) => {
     ? signals
     : withoutPermission(signals)
 }
+
+/** Claude is doing something again, so it is no longer waiting for the user. */
+const working = ({ waitingSince: _gone, ...rest }: SessionSignals): SessionSignals => rest
+
+/** A tool call finished: Claude is working, and it may have been the call waiting for permission. */
+const toolFinished: Handler = (signals, event, at) => resolvesPermission(working(signals), event, at)
+
 const keep: Handler = (signals) => signals
 
 // Notification types that mean Claude is blocked on the user (other than a permission dialog).
@@ -48,7 +55,7 @@ const WAITING_FOR_USER = new Set([
  */
 const HOOKS: Record<HookEvent, Handler> = {
   PermissionRequest: (signals, event, at) => ({
-    ...signals,
+    ...working(signals),
     pendingPermission: {
       toolName: str(event['tool_name']) ?? 'a tool',
       detail: describeInput(event['tool_input']),
@@ -57,9 +64,9 @@ const HOOKS: Record<HookEvent, Handler> = {
     },
   }),
   // The dialog is gone once its tool ran, failed or was denied. Other calls can finish meanwhile.
-  PostToolUse: resolvesPermission,
-  PostToolUseFailure: resolvesPermission,
-  PermissionDenied: resolvesPermission,
+  PostToolUse: toolFinished,
+  PostToolUseFailure: toolFinished,
+  PermissionDenied: toolFinished,
 
   // permission_prompt is ignored: PermissionRequest already reported it with details, and a
   // notification arriving after the answer would bring back a prompt that is gone.
@@ -67,9 +74,9 @@ const HOOKS: Record<HookEvent, Handler> = {
     WAITING_FOR_USER.has(str(event['notification_type']) ?? '') ? { ...signals, waitingSince: at } : signals,
 
   UserPromptSubmit: ({ pendingPermission: _p, waitingSince: _w, error: _e, ...rest }) => rest,
-  Stop: (signals, _event, at) => ({ ...withoutPermission(signals), lastStopAt: at }),
+  Stop: (signals, _event, at) => ({ ...withoutPermission(working(signals)), lastStopAt: at }),
   StopFailure: (signals, event, at) => ({
-    ...withoutPermission(signals),
+    ...withoutPermission(working(signals)),
     lastStopAt: at,
     error: { type: str(event['error_type']) ?? 'unknown', at },
   }),
