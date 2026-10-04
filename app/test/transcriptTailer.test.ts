@@ -70,3 +70,13 @@ describe('TranscriptTailer.readNew with bad input', () => {
     expect(await tailer.readNew()).toEqual([{ n: 9 }])
   })
 })
+
+describe('TranscriptTailer.readNew with large transcripts', () => {
+  it('reads lines longer than its internal chunk size', async () => {
+    const big = 'x'.repeat(2_500_000)
+    await writeFile(file, jsonl({ n: 1 }, { big }, { n: 3 }))
+    const lines = await new TranscriptTailer(file).readNew()
+    expect(lines).toHaveLength(3)
+    expect((lines[1] as { big: string }).big).toHaveLength(2_500_000)
+  })
+})
