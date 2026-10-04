@@ -322,3 +322,20 @@ describe('subagent transcripts', () => {
     expect(applySubagentLine(before, { agentId: 'other' }, assistantText('hi'))).toBe(before)
   })
 })
+
+describe('unexpected task statuses', () => {
+  it('ignores a status change to a value Batcave does not know', () => {
+    const s = replay([
+      toolUse('toolu_1', 'TaskCreate', { subject: 'Find the Riddler' }),
+      toolResult('toolu_1', { task: { id: '1', subject: 'Find the Riddler' } }),
+      toolUse('toolu_2', 'TaskUpdate', { taskId: '1', status: 'archived' }),
+      toolResult('toolu_2', {
+        success: true,
+        taskId: '1',
+        statusChange: { from: 'pending', to: 'archived' },
+      }),
+    ])
+    expect(s.tasks[0]?.status).toBe('pending')
+    expect(s.tasks[0]?.history).toHaveLength(1)
+  })
+})
