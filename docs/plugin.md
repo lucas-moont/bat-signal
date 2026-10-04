@@ -35,12 +35,13 @@ Each hook is a `POST http://127.0.0.1:47777/hook` with the JSON payload Claude C
 
 | Event | Used for |
 |---|---|
-| `SessionStart`, `SessionEnd` | Start from a clean slate; know when a session ends |
+| `SessionStart` | Start from a clean slate (new or cleared conversation) |
+| `SessionEnd` | Refresh right away (the session list itself comes from `~/.claude/sessions/`) |
 | `UserPromptSubmit` | Clear "waiting for you" and errors |
 | `Stop`, `StopFailure` | "Finished replying" and "turn failed" |
-| `Notification` | `permission_prompt`, `idle_prompt` and other waits |
-| `PermissionRequest`, `PermissionDenied` | What Claude wants to run, and when the prompt is answered |
-| `PostToolUse` | The prompt was answered; refresh the session |
+| `Notification` | `idle_prompt`, `agent_needs_input` and elicitation dialogs: Claude is waiting for you. `permission_prompt` is ignored, since `PermissionRequest` already reported it with details |
+| `PermissionRequest` | What Claude wants to run, tied to its tool call |
+| `PostToolUse`, `PostToolUseFailure`, `PermissionDenied` | That tool call finished, failed or was denied, so its prompt is gone; refresh the session. No matcher on purpose: any tool call means Claude is working again |
 | `SubagentStart`, `SubagentStop` | Refresh subagents |
 | `TaskCreated`, `TaskCompleted` | Refresh tasks |
 
@@ -48,5 +49,5 @@ Each hook is a `POST http://127.0.0.1:47777/hook` with the JSON payload Claude C
 
 - **Observe-only.** The app always answers with an empty `204`, which Claude Code treats as "no decision". Batcave can't approve, deny or change anything.
 - **Fails open.** Every hook has a 1-second timeout. If Batcave isn't running, the connection is refused at once and Claude Code carries on as if the plugin weren't there.
-- **Local only.** The server listens on `127.0.0.1` and rejects requests from web pages (any `Origin` header), non-JSON bodies and bodies over 1 MB.
+- **Local only.** The server listens on `127.0.0.1` and rejects requests from web pages (any `Origin` header, or a `Host` other than `127.0.0.1`/`localhost`, which defeats DNS rebinding), non-JSON bodies and bodies over 1 MB. Other programs on your machine could still post fake events; since Batcave only displays them, the worst case is a wrong alert.
 - **Never reads secrets.** Batcave only opens `~/.claude/sessions/<pid>.json`, never the `*.key` files next to them.
