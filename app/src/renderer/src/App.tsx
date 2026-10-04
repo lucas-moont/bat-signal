@@ -16,7 +16,7 @@ import './App.css'
 
 export function App() {
   const snapshot = useSnapshot()
-  const [settings, changeSettings] = useSettings()
+  const [settings, changeSettings, settingsLoaded] = useSettings()
   const calm = useCalm(settings)
   const now = useNow()
 
@@ -62,6 +62,10 @@ export function App() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [settingsOpen, sheet, openCase])
+
+  // Until the saved settings arrive (one IPC round trip), show the empty dark window rather
+  // than flashing an intro or rain the user may have turned off.
+  if (!settingsLoaded) return <main className="app" />
 
   if (mode === 'pill') {
     return (
