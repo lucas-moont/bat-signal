@@ -20,6 +20,8 @@ Bat-Signal rests in a corner of your screen as a small signal disc. When somethi
 - shows which sessions are active and what each one is doing (tasks, subagents, background commands);
 - tells you when tasks finish;
 - gathers everything that **needs you** in one place (permission prompts, Claude waiting for input, errors);
+- takes you **to the session's terminal** in one click, bringing its Windows Terminal window and tab to the front;
+- shrinks to a **watch strip**, one line per session, to follow the work from the corner;
 - has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open, showing its red lining, when something needs you.
 
 The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all.
@@ -28,7 +30,11 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Cases | Task drawer | All quiet |
 |---|---|---|
-| <img src="docs/screenshots/cases.png" width="240" alt="Case cards with case numbers, status, task progress and Claude's last words"> | <img src="docs/screenshots/task-drawer.png" width="240" alt="A drawer with a task's brief and timeline"> | <img src="docs/screenshots/all-quiet.png" width="240" alt="Nothing pending: two quiet cases, Bat-Clawd asleep in the header"> |
+| <img src="docs/screenshots/cases.png" width="240" alt="Case cards with case numbers, status and task progress, each with a terminal button"> | <img src="docs/screenshots/task-drawer.png" width="240" alt="A drawer with a task's brief and timeline"> | <img src="docs/screenshots/all-quiet.png" width="240" alt="Nothing pending: two quiet cases, Bat-Clawd asleep in the header"> |
+
+| Watch strip | The night report theme | A case opened in the report |
+|---|---|---|
+| <img src="docs/screenshots/watch.png" width="240" alt="The watch strip: one row per session with its stamp, title, progress and pending request"> | <img src="docs/screenshots/night-report.png" width="240" alt="The night report: what awaits your signature, typed, with stamps in the margin and a red pen under each request"> | <img src="docs/screenshots/night-report-case.png" width="240" alt="Case notes with one case opened in place: its file line, a terminal button and typed task boxes"> |
 
 | Settings | The Bat-Signal at rest |
 |---|---|
@@ -59,7 +65,7 @@ claude plugin install bat-signal@bat-signal
 
 The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md). Coming from Batcave? See [upgrading](docs/plugin.md#upgrading-from-batcave): the old plugin must be removed first.
 
-Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. Both open where you left them.
+Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report theme is in Settings.
 
 ## Light on resources
 
