@@ -49,10 +49,26 @@ function start(): void {
     }
   })
   ipcMain.handle(IPC.getStatus, () => readStatus())
-  // While the settings sheet records a new shortcut, the current one must reach it as keys.
-  ipcMain.on(IPC.recordShortcut, (_event, on: unknown) => {
-    shortcut.pause(on === true)
+  // While the settings sheet records a new shortcut, the current one must reach it as keys. A page
+  // that reloads or dies mid-recording never says it stopped: its going ends the pause.
+  let stopWatching = (): void => undefined
+  const record = (on: boolean) => {
+    stopWatching()
+    shortcut.pause(on)
     publishStatus()
+  }
+  ipcMain.on(IPC.recordShortcut, (event, on: unknown) => {
+    record(on === true)
+    if (on !== true) return
+    const page = event.sender
+    const resume = () => record(false)
+    page.once('did-start-loading', resume)
+    page.once('render-process-gone', resume)
+    stopWatching = () => {
+      page.off('did-start-loading', resume)
+      page.off('render-process-gone', resume)
+      stopWatching = () => undefined
+    }
   })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
