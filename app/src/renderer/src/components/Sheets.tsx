@@ -13,7 +13,7 @@ import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/typ
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { batSignal } from '../bridge'
-import { playCue } from '../cues'
+import { playEveryCue } from '../cues'
 import { Icon } from './Icon'
 import { Section } from './Section'
 import { SettingRow } from './SettingRow'
@@ -319,9 +319,12 @@ export function SettingsSheet({
             on={settings.announce.sound}
             onChange={(sound) => onChange({ announce: { sound } })}
           />
-          <label className="slider">
-            <span className="setting__label">Volume</span>
+          <div className="slider">
+            <label className="setting__label" htmlFor="volume">
+              Volume
+            </label>
             <input
+              id="volume"
               type="range"
               min={0}
               max={100}
@@ -329,15 +332,16 @@ export function SettingsSheet({
               value={Math.round(settings.announce.volume * 100)}
               onChange={(e) => onChange({ announce: { volume: Number(e.target.value) / 100 } })}
             />
+            <span className="card__time">{Math.round(settings.announce.volume * 100)}%</span>
             <button
               className="icon-button icon-button--labelled"
-              onClick={() => playCue('light', settings.announce.volume)}
-              title="Play the spotlight at this volume"
+              onClick={() => playEveryCue(settings.announce.volume)}
+              title="Play the spotlight, then the thump, at this volume"
             >
               <Icon name="sound" />
               Test
             </button>
-          </label>
+          </div>
         </Section>
       </div>
     </Sheet>
