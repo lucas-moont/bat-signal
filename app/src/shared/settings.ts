@@ -1,11 +1,11 @@
-import { clamp, num, obj, type Json } from './guards'
+import { bool, clamp, num, obj } from './guards'
 
 export const OPACITY_MIN = 0.5
 export const OPACITY_MAX = 1
 
 /** The kinds of news a Windows toast or a sound can carry, each switched on on its own. */
-export type AlertGroup = 'needsYou' | 'reply' | 'taskDone' | 'sessions'
-export const ALERT_GROUPS: readonly AlertGroup[] = ['needsYou', 'reply', 'taskDone', 'sessions']
+export const ALERT_GROUPS = ['needsYou', 'reply', 'taskDone', 'sessions'] as const
+export type AlertGroup = (typeof ALERT_GROUPS)[number]
 
 /** How news reaches the user beyond the Bat-Signal itself: all off until they ask. */
 export interface AlertPrefs {
@@ -44,33 +44,27 @@ export const DEFAULT_SETTINGS: Settings = {
   },
 }
 
-/** A true that was written as true: anything else (a string, a 1) is false. */
-const flag = (o: Json, key: string, fallback: boolean): boolean =>
-  typeof o[key] === 'boolean' ? (o[key] as boolean) : fallback
-
 function parseAlerts(raw: unknown): AlertPrefs {
   const o = obj(raw)
   const toast = obj(o['toast'])
   const defaults = DEFAULT_SETTINGS.alerts
-  const volume = num(o['volume'])
   return {
     toast: Object.fromEntries(
-      ALERT_GROUPS.map((group) => [group, flag(toast, group, defaults.toast[group])]),
-    ) as Record<AlertGroup, boolean>,
-    sound: flag(o, 'sound', defaults.sound),
-    volume: volume === undefined ? defaults.volume : clamp(volume, 0, 1),
+      ALERT_GROUPS.map((group) => [group, bool(toast[group]) ?? defaults.toast[group]]),
+    ) as AlertPrefs['toast'],
+    sound: bool(o['sound']) ?? defaults.sound,
+    volume: clamp(num(o['volume']) ?? defaults.volume, 0, 1),
   }
 }
 
 /** Settings from untrusted JSON: unknown keys dropped, bad values replaced by defaults. */
 export function parseSettings(raw: unknown): Settings {
   const o = obj(raw)
-  const opacity = num(o['opacity'])
   return {
-    animations: flag(o, 'animations', DEFAULT_SETTINGS.animations),
-    rain: flag(o, 'rain', DEFAULT_SETTINGS.rain),
-    alwaysOnTop: flag(o, 'alwaysOnTop', DEFAULT_SETTINGS.alwaysOnTop),
-    opacity: opacity === undefined ? DEFAULT_SETTINGS.opacity : clamp(opacity, OPACITY_MIN, OPACITY_MAX),
+    animations: bool(o['animations']) ?? DEFAULT_SETTINGS.animations,
+    rain: bool(o['rain']) ?? DEFAULT_SETTINGS.rain,
+    alwaysOnTop: bool(o['alwaysOnTop']) ?? DEFAULT_SETTINGS.alwaysOnTop,
+    opacity: clamp(num(o['opacity']) ?? DEFAULT_SETTINGS.opacity, OPACITY_MIN, OPACITY_MAX),
     layout: o['layout'] === 'report' ? 'report' : 'files',
     alerts: parseAlerts(o['alerts']),
   }
