@@ -5,6 +5,7 @@ import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
+import { batSignal } from '../bridge'
 import { Icon } from './Icon'
 import { Section } from './Section'
 import { SettingRow } from './SettingRow'
@@ -198,16 +199,18 @@ export function DetailSheet({
 function Toggle({
   label,
   hint,
+  warn = false,
   on,
   onChange,
 }: {
   label: string
   hint: string
+  warn?: boolean
   on: boolean
   onChange: (on: boolean) => void
 }) {
   return (
-    <SettingRow as="label" className="toggle" label={label} hint={hint}>
+    <SettingRow as="label" className="toggle" label={label} hint={hint} warn={warn}>
       <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span className="toggle__track" aria-hidden />
     </SettingRow>
@@ -268,6 +271,17 @@ export function SettingsSheet({
         </Section>
         <Section title="Comfort">
           <ShortcutField status={status.shortcut} onChange={(shortcut) => onChange({ shortcut })} />
+          <Toggle
+            label="Start with Windows"
+            hint={
+              status.startup === 'blocked'
+                ? 'Turned off in Task Manager: switch it back on under Startup apps'
+                : 'Wakes as the disc when you sign in'
+            }
+            warn={status.startup === 'blocked'}
+            on={status.startup === 'on'}
+            onChange={batSignal.setStartWithWindows}
+          />
         </Section>
       </div>
     </Sheet>
