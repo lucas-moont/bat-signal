@@ -11,4 +11,6 @@ export interface AppStatus {
   shortcut: ShortcutStatus
 }
 
-export const DEFAULT_STATUS: AppStatus = { shortcut: { accelerator: '', state: 'off' } }
+export const SHORTCUT_OFF: ShortcutStatus = { accelerator: '', state: 'off' }
+
+export const DEFAULT_STATUS: AppStatus = { shortcut: SHORTCUT_OFF }

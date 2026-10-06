@@ -21,6 +21,12 @@ function fakeHost(takenByOthers: string[] = []) {
   return { host, registered, calls, press, takenByOthers }
 }
 
+/** A shortcut on a fake host, for the tests that do not care about presses. */
+function setup(takenByOthers: string[] = []) {
+  const windows = fakeHost(takenByOthers)
+  return { windows, shortcut: createShortcut(windows.host, () => undefined) }
+}
+
 describe('createShortcut', () => {
   it('registers the shortcut, and a press calls back', () => {
     const windows = fakeHost()
@@ -32,47 +38,41 @@ describe('createShortcut', () => {
   })
 
   it('leaves an unchanged shortcut alone', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     shortcut.apply('Ctrl+Alt+B')
     expect(windows.calls).toEqual(['register Ctrl+Alt+B'])
   })
 
   it('swaps an old shortcut for a new one', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     expect(shortcut.apply('Ctrl+Alt+N')).toEqual({ accelerator: 'Ctrl+Alt+N', state: 'active' })
     expect([...windows.registered.keys()]).toEqual(['Ctrl+Alt+N'])
   })
 
   it('says when another app already has the shortcut, holding nothing', () => {
-    const windows = fakeHost(['Ctrl+Alt+B'])
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup(['Ctrl+Alt+B'])
     expect(shortcut.apply('Ctrl+Alt+B')).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'taken' })
     expect(windows.registered.size).toBe(0)
   })
 
   it('tries a taken shortcut again, in case the other app let it go', () => {
-    const windows = fakeHost(['Ctrl+Alt+B'])
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup(['Ctrl+Alt+B'])
     shortcut.apply('Ctrl+Alt+B')
     windows.takenByOthers.length = 0
     expect(shortcut.apply('Ctrl+Alt+B')).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
   })
 
   it('turns off with no shortcut', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     expect(shortcut.apply('')).toEqual({ accelerator: '', state: 'off' })
     expect(windows.registered.size).toBe(0)
   })
 
   it('lets go while a new shortcut is recorded, so the current one reaches the page', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     shortcut.pause(true)
     expect(windows.registered.size).toBe(0)
@@ -81,8 +81,7 @@ describe('createShortcut', () => {
   })
 
   it('applies a shortcut changed while paused once recording ends', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     shortcut.pause(true)
     shortcut.apply('Ctrl+Alt+N')
@@ -91,10 +90,19 @@ describe('createShortcut', () => {
   })
 
   it('lets go when the app quits', () => {
-    const windows = fakeHost()
-    const shortcut = createShortcut(windows.host, () => undefined)
+    const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
     shortcut.dispose()
     expect(windows.registered.size).toBe(0)
+  })
+
+  it('keeps the same status until something changes, so a change is cheap to spot', () => {
+    const { shortcut } = setup()
+    shortcut.apply('Ctrl+Alt+B')
+    const before = shortcut.status
+    shortcut.apply('Ctrl+Alt+B')
+    expect(shortcut.status).toBe(before)
+    shortcut.apply('Ctrl+Alt+N')
+    expect(shortcut.status).not.toBe(before)
   })
 })

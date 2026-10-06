@@ -1,4 +1,5 @@
 import { app, globalShortcut, ipcMain } from 'electron'
+import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
@@ -24,10 +25,16 @@ function start(): void {
   })
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
-  let status: AppStatus = { shortcut: shortcut.apply(settings.shortcut) }
-  const setStatus = (next: AppStatus) => {
-    status = next
-    windows.broadcast(IPC.status, status)
+  shortcut.apply(settings.shortcut)
+  // What is happening now, read from each feature; sent to the pages only when it changed (each
+  // feature keeps the same object until then).
+  const readStatus = (): AppStatus => ({ shortcut: shortcut.status })
+  let published = readStatus()
+  const publishStatus = () => {
+    const next = readStatus()
+    if ((Object.keys(next) as (keyof AppStatus)[]).every((key) => next[key] === published[key])) return
+    published = next
+    windows.publishStatus(next)
   }
 
   ipcMain.handle(IPC.getSettings, () => settings)
@@ -35,13 +42,18 @@ function start(): void {
     settings = applySettingsPatch(settings, patch)
     settingsFile.save(settings)
     windows.apply(settings)
-    setStatus({ ...status, shortcut: shortcut.apply(settings.shortcut) })
+    // Only a patch that names the shortcut touches it (and retries it, if another app had it).
+    if ('shortcut' in obj(patch)) {
+      shortcut.apply(settings.shortcut)
+      publishStatus()
+    }
   })
-  ipcMain.handle(IPC.getStatus, () => status)
+  ipcMain.handle(IPC.getStatus, () => readStatus())
   // While the settings sheet records a new shortcut, the current one must reach it as keys.
-  ipcMain.on(IPC.recordShortcut, (_event, on: unknown) =>
-    setStatus({ ...status, shortcut: shortcut.pause(on === true) }),
-  )
+  ipcMain.on(IPC.recordShortcut, (_event, on: unknown) => {
+    shortcut.pause(on === true)
+    publishStatus()
+  })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
     const next = parseViewMode(mode)

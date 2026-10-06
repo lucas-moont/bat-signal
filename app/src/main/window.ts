@@ -10,6 +10,7 @@ import {
   type ViewMode,
   type WindowMode,
 } from '../shared/settings'
+import type { AppStatus } from '../shared/status'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
 import { nextMode, type ModeAction } from './modes'
@@ -224,7 +225,7 @@ export class BatSignalWindows {
   }
 
   /** Sends to every page (both windows render the same data). */
-  broadcast(channel: string, payload: unknown): void {
+  private broadcast(channel: string, payload: unknown): void {
     for (const win of [this.panel, this.signal])
       if (!win.isDestroyed()) win.webContents.send(channel, payload)
   }
@@ -239,6 +240,11 @@ export class BatSignalWindows {
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
     if (MODES[this.current].panel && !this.panel.isDestroyed())
       this.panel.webContents.send(IPC.snapshot, snapshot)
+  }
+
+  /** What is happening now (the shortcut held or taken), to every page. */
+  publishStatus(status: AppStatus): void {
+    this.broadcast(IPC.status, status)
   }
 
   apply(settings: Settings): void {
