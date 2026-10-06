@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { announce, emptyAnnouncer, NEWS_GROUP, type AnnounceContext } from '../src/shared/announcer'
-import type { NoticeKind } from '../src/shared/notices'
+import {
+  announce,
+  emptyAnnouncer,
+  GROUP_OF_KIND,
+  toastFor,
+  type AnnounceContext,
+} from '../src/shared/announcer'
+import type { Notice, NoticeKind } from '../src/shared/notices'
 import { createSession } from '../src/main/model/sessionReducer'
 import { DEFAULT_SETTINGS, NEWS_GROUPS, type NewsGroup } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot, Task } from '../src/shared/types'
@@ -13,7 +19,12 @@ const session = (sessionId: string, extra: Partial<SessionSnapshot> = {}): Sessi
   signals: {},
   ...extra,
 })
-const done = (id: string): Task => ({ id, subject: `Task ${id}`, status: 'completed', history: [] })
+const task = (id: string, status: Task['status']): Task => ({
+  id,
+  subject: `Task ${id}`,
+  status,
+  history: [],
+})
 const alert = (
   sessionId: string,
   kind: AttentionItem['kind'],
@@ -37,54 +48,45 @@ const ctx = (on: NewsGroup[] = [...NEWS_GROUPS], panelFocused = false): Announce
   panelFocused,
 })
 
-/** Feeds snapshots in order and returns every toast that came out. */
-function toasts(snapshots: StoreSnapshot[], context: AnnounceContext) {
+/** Feeds snapshots in order and returns the kinds of news that came out for a toast. */
+function toastKinds(snapshots: StoreSnapshot[], context: AnnounceContext): NoticeKind[] {
   let state = emptyAnnouncer()
   return snapshots.flatMap((s) => {
     const out = announce(state, s, context)
     state = out.state
-    return out.toast ? [out.toast] : []
+    return out.toast.map((n) => n.kind)
   })
 }
 
 const quiet = snap([session('a')])
 
+/** One piece of news of each switch's kinds, from the quiet state. */
+const NEWS_OF: Record<NewsGroup, { snapshot: StoreSnapshot; kind: NoticeKind }> = {
+  needsYou: { snapshot: snap([session('a')], [alert('a', 'permission')]), kind: 'permission' },
+  reply: { snapshot: snap([session('a')], [alert('a', 'reply')]), kind: 'reply' },
+  taskDone: { snapshot: snap([session('a', { tasks: [task('1', 'completed')] })]), kind: 'task-done' },
+  sessions: { snapshot: snap([session('a'), session('b')]), kind: 'session-opened' },
+}
+const before: Record<NewsGroup, StoreSnapshot> = {
+  needsYou: quiet,
+  reply: quiet,
+  taskDone: snap([session('a', { tasks: [task('1', 'in_progress')] })]),
+  sessions: quiet,
+}
+
 describe('announce', () => {
   it('says nothing on the first snapshot: it is the state, not news', () => {
-    expect(toasts([snap([session('a')], [alert('a', 'permission')])], ctx())).toEqual([])
+    expect(toastKinds([snap([session('a')], [alert('a', 'permission')])], ctx())).toEqual([])
   })
 
-  it('turns news of a switched-on kind into a toast about its case', () => {
-    expect(toasts([quiet, snap([session('a')], [alert('a', 'reply')])], ctx(['reply']))).toEqual([
-      { sessionId: 'a', title: 'New reply · Case a', body: 'Claude finished replying' },
-    ])
-  })
-
-  it('leaves news of a switched-off kind to the Bat-Signal alone', () => {
-    expect(toasts([quiet, snap([session('a')], [alert('a', 'reply')])], ctx(['needsYou']))).toEqual([])
+  it.each(NEWS_GROUPS)('lets the %s switch alone decide its news', (group) => {
+    const { snapshot, kind } = NEWS_OF[group]
+    expect(toastKinds([before[group], snapshot], ctx([group]))).toEqual([kind])
+    expect(toastKinds([before[group], snapshot], ctx(NEWS_GROUPS.filter((g) => g !== group)))).toEqual([])
   })
 
   it('stays quiet while the panel is in front: the user already sees it', () => {
-    expect(toasts([quiet, snap([session('a')], [alert('a', 'error')])], ctx(undefined, true))).toEqual([])
-  })
-
-  it('sends one toast per burst: the most urgent, with a count of the rest', () => {
-    const burst = snap(
-      [session('a', { tasks: [done('1')] }), session('b')],
-      [alert('a', 'reply'), alert('b', 'permission')],
-    )
-    const before = snap([session('a', { tasks: [{ ...done('1'), status: 'in_progress' }] }), session('b')])
-    const [toast] = toasts([before, burst], ctx())
-    expect(toast?.sessionId).toBe('b')
-    expect(toast?.title).toMatch(/· Case b$/)
-    expect(toast?.body).toMatch(/\n\+2 more$/)
-  })
-
-  it('counts only the news that would have made a toast', () => {
-    const burst = snap([session('a')], [alert('a', 'reply'), alert('a', 'permission')])
-    const [toast] = toasts([quiet, burst], ctx(['reply']))
-    expect(toast?.title).toBe('New reply · Case a')
-    expect(toast?.body).not.toMatch(/more/)
+    expect(toastKinds([quiet, snap([session('a')], [alert('a', 'error')])], ctx(undefined, true))).toEqual([])
   })
 
   it('never brings the same news back, even if it was not shown the first time', () => {
@@ -97,11 +99,46 @@ describe('announce', () => {
     ]
     let state = emptyAnnouncer()
     for (const [snapshot, context] of steps) state = announce(state, snapshot, context).state
-    expect(announce(state, news, ctx()).toast).toBeUndefined()
+    expect(announce(state, news, ctx()).toast).toEqual([])
   })
 })
 
-describe('NEWS_GROUP', () => {
+const notice = (kind: NoticeKind, sessionId = 'a'): Notice => ({
+  key: `${sessionId}:${kind}`,
+  kind,
+  sessionId,
+  at: '',
+  stamp: kind === 'reply' ? 'New reply' : kind === 'permission' ? 'Permission' : 'Case closed',
+  title: `Case ${sessionId}`,
+  line: kind === 'reply' ? 'Claude finished replying' : 'A line',
+})
+
+describe('toastFor', () => {
+  it('puts a piece of news in the cards’ own words, opening its case', () => {
+    expect(toastFor([notice('reply')])).toEqual({
+      sessionId: 'a',
+      title: 'New reply · Case a',
+      body: 'Claude finished replying',
+    })
+  })
+
+  it('makes one toast of a burst, even one that came in several pushes: the most urgent, counting the rest', () => {
+    const toast = toastFor([notice('reply', 'a'), notice('task-done', 'a'), notice('permission', 'b')])
+    expect(toast?.sessionId).toBe('b')
+    expect(toast?.title).toBe('Permission · Case b')
+    expect(toast?.body).toBe('A line\n+2 more')
+  })
+
+  it('opens no case for a case that closed: it is gone from the panel', () => {
+    expect(toastFor([notice('session-closed')])).not.toHaveProperty('sessionId')
+  })
+
+  it('is nothing for no news', () => {
+    expect(toastFor([])).toBeUndefined()
+  })
+})
+
+describe('GROUP_OF_KIND', () => {
   it.each([
     ['permission', 'needsYou'],
     ['error', 'needsYou'],
@@ -111,6 +148,6 @@ describe('NEWS_GROUP', () => {
     ['session-opened', 'sessions'],
     ['session-closed', 'sessions'],
   ] as [NoticeKind, NewsGroup][])('puts %s under the %s switch', (kind, group) => {
-    expect(NEWS_GROUP[kind]).toBe(group)
+    expect(GROUP_OF_KIND[kind]).toBe(group)
   })
 })
