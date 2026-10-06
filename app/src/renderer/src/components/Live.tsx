@@ -28,8 +28,8 @@ export function Beat({
     el.style.transform = now === null ? '' : `scale(${(1 + beatAt(now) * strength).toFixed(3)})`
   })
   return (
-    <i ref={ref} className={className}>
+    <span ref={ref} className={className}>
       {children}
-    </i>
+    </span>
   )
 }
