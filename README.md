@@ -69,6 +69,8 @@ The plugin is observe-only and does nothing when the app is closed. Details in [
 
 Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report theme is in Settings.
 
+The bat by the clock is Bat-Signal's tray icon, lit red while something needs you. Click it to open or fold the panel; its menu switches between the disc, the panel and the watch strip, hides everything, opens Settings, and quits. Closing the disc or the panel's close button hides Bat-Signal to the tray instead of quitting, and launching it again brings it back.
+
 ## Light on resources
 
 A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.

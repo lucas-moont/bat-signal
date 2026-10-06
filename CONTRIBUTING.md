@@ -24,6 +24,8 @@ npm test
 
 CI runs exactly these commands.
 
+The tray icons in `app/resources/tray/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
+
 ## Commits
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
