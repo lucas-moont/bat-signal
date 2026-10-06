@@ -3,17 +3,14 @@
 import { Notification } from 'electron'
 import { toastFor } from '../shared/announcer'
 import type { Notice } from '../shared/notices'
+import { Burst } from './burst'
 import toastIcon from '../../resources/icons/toast.png?asset'
 
-/** News this close together is one burst: a finished turn pushes its reply, then its tasks. */
-const BURST_MS = 1000
 /** Toasts kept for their clicks (from the Action Center too); older ones are taken back. */
 const KEPT = 20
 
 export class BatSignalToasts {
-  /** The burst being gathered, and when it goes out. */
-  private burst: Notice[] = []
-  private burstTimer?: NodeJS.Timeout
+  private readonly burst = new Burst<Notice>((news) => this.show(news))
   /** A Notification left to the garbage collector loses its click: these are held. */
   private readonly kept: Notification[] = []
 
@@ -22,15 +19,11 @@ export class BatSignalToasts {
 
   /** News the user picked for a toast: it joins the burst, which goes out as one toast. */
   add(news: readonly Notice[]): void {
-    if (!news.length) return
-    this.burst.push(...news)
-    this.burstTimer ??= setTimeout(() => this.show(), BURST_MS)
+    this.burst.add(news)
   }
 
-  private show(): void {
-    const toast = toastFor(this.burst)
-    this.burst = []
-    this.burstTimer = undefined
+  private show(news: readonly Notice[]): void {
+    const toast = toastFor(news)
     if (!toast || !Notification.isSupported()) return
     // Silent: Bat-Signal's own sound, when the user turns it on, is the one to hear.
     const shown = new Notification({ title: toast.title, body: toast.body, icon: toastIcon, silent: true })
@@ -42,6 +35,6 @@ export class BatSignalToasts {
   }
 
   dispose(): void {
-    clearTimeout(this.burstTimer)
+    this.burst.dispose()
   }
 }

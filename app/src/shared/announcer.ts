@@ -1,6 +1,7 @@
 // What news goes beyond the Bat-Signal itself: a Windows toast for the kinds the user switched on,
 // a sound when sound is on, and neither while the panel is in front. Pure: the main process passes
-// the snapshots and the moment's context, and makes one toast and one sound of each burst.
+// the snapshots and the moment's context, gathers each burst (BURST_MS), and makes one toast and
+// one sound of it.
 import { byUrgency, diffNotices, freshen, type Notice, type NoticeKind } from './notices'
 import type { AnnouncePrefs, NewsGroup } from './settings'
 import type { StoreSnapshot } from './types'
@@ -47,13 +48,18 @@ export interface CuePlay {
   volume: number
 }
 
+/** News this close together is one burst: a finished turn pushes its reply, then its tasks. */
+export const BURST_MS = 500
+
 /** The sound each kind of news makes; a case opening or closing makes none. */
-const CUE_OF_KIND: Partial<Record<NoticeKind, Cue>> = {
+const CUE_OF_KIND: Record<NoticeKind, Cue | undefined> = {
   permission: 'light',
   error: 'light',
   waiting: 'light',
   reply: 'light',
   'task-done': 'thump',
+  'session-opened': undefined,
+  'session-closed': undefined,
 }
 
 /**
@@ -82,19 +88,12 @@ export function cueFor(news: readonly Notice[]): Cue | undefined {
   return loudest && CUE_OF_KIND[loudest.kind]
 }
 
-/** Sounds this close together are one burst: only the first plays. */
+/** The least time between two sounds, however much news comes. */
 export const SOUND_GAP_MS = 4000
 
-/** A sound to play now for this news, if one played long enough ago; `lastAt` remembers when. */
-export function pickCue(
-  state: { lastAt?: number },
-  news: readonly Notice[],
-  now: number,
-): { cue?: Cue; state: { lastAt?: number } } {
-  const cue = cueFor(news)
-  if (!cue || (state.lastAt !== undefined && now - state.lastAt < SOUND_GAP_MS)) return { state }
-  return { cue, state: { lastAt: now } }
-}
+/** Whether a sound may play now: none played (at `lastAt`) in the last SOUND_GAP_MS. */
+export const soundGapOpen = (lastAt: number | undefined, now: number): boolean =>
+  lastAt === undefined || now - lastAt >= SOUND_GAP_MS
 
 /**
  * One toast for a burst of news, however many pushes it came in: the most urgent, in the cards'

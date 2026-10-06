@@ -30,15 +30,23 @@ function start(): void {
   // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
   // not the user picking the panel for the disc to open.
   const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId, false))
-  // The burst's sound, at the volume set when it plays.
-  const cues = new BatSignalCues((cue) => windows.cue({ cue, volume: settings.announce.volume }))
+  // The burst's sound, at the volume set when it plays; the switch and the panel are asked again
+  // then, since either may have changed while Windows answered.
+  const cues = new BatSignalCues((cue) => {
+    if (!settings.announce.sound || windows.panelFocused) return false
+    windows.cue({ cue, volume: settings.announce.volume })
+    return true
+  })
   // News is found once, and what each way of announcing it wants comes out of the same list.
-  let news = emptyAnnouncer()
+  let announcer = emptyAnnouncer()
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)
-    const out = announce(news, snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
-    news = out.state
+    const out = announce(announcer, snapshot, {
+      prefs: settings.announce,
+      panelFocused: windows.panelFocused,
+    })
+    announcer = out.state
     toasts.add(out.toast)
     cues.add(out.sound)
   })
@@ -123,6 +131,7 @@ function start(): void {
   app.once('will-quit', () => {
     clearInterval(retry)
     toasts.dispose()
+    cues.dispose()
     shortcut.dispose()
   })
 }
