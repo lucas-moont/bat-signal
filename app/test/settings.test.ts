@@ -82,3 +82,13 @@ describe('applySettingsPatch: changing one switch', () => {
     expect(next).toMatchObject(OLD_FILE)
   })
 })
+
+describe('applySettingsPatch: an untrusted patch', () => {
+  it('cannot slip settings in through __proto__', () => {
+    const patch: unknown = JSON.parse(
+      '{"__proto__": {"animations": false}, "alerts": {"__proto__": {"sound": true}}}',
+    )
+    const next = applySettingsPatch(DEFAULT_SETTINGS, patch)
+    expect(next).toEqual(DEFAULT_SETTINGS)
+  })
+})

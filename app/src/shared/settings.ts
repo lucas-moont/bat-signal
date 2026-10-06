@@ -1,4 +1,4 @@
-import { bool, clamp, num, obj } from './guards'
+import { bool, clamp, num, obj, type Json } from './guards'
 
 export const OPACITY_MIN = 0.5
 export const OPACITY_MAX = 1
@@ -70,24 +70,31 @@ export function parseSettings(raw: unknown): Settings {
   }
 }
 
+type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K] }
+
 /** A change to some settings: any one switch, down to a single toast, leaving the rest as they are. */
-export type SettingsPatch = Partial<Omit<Settings, 'alerts'>> & {
-  alerts?: Partial<Omit<AlertPrefs, 'toast'>> & { toast?: Partial<AlertPrefs['toast']> }
-}
+export type SettingsPatch = DeepPartial<Settings>
+
+const isGroup = (v: unknown): v is Json => obj(v) === v
 
 /**
- * Applies an untrusted partial update, validated like everything else. The alerts merge a level
- * deep, so turning one toast on never resets the others (or the sound).
+ * An untrusted patch laid over a value: a group (an object) merges key by key, all the way down,
+ * so one switch never resets its neighbours; anything else replaces the value. A patch that is no
+ * group cannot replace one, and only keys the value already has are taken (settings always hold
+ * every key, so nothing is lost, and no __proto__ gets in).
  */
-export function applySettingsPatch(current: Settings, patch: unknown): Settings {
-  const p = obj(patch)
-  const alerts = obj(p['alerts'])
-  return parseSettings({
-    ...current,
-    ...p,
-    alerts: { ...current.alerts, ...alerts, toast: { ...current.alerts.toast, ...obj(alerts['toast']) } },
-  })
+function mergePatch(current: unknown, patch: unknown): unknown {
+  if (!isGroup(current)) return patch
+  if (!isGroup(patch)) return current
+  const merged: Json = { ...current }
+  for (const [key, value] of Object.entries(patch))
+    if (Object.hasOwn(current, key)) merged[key] = mergePatch(current[key], value)
+  return merged
 }
+
+/** Applies an untrusted partial update, validated like everything else. */
+export const applySettingsPatch = (current: Settings, patch: unknown): Settings =>
+  parseSettings(mergePatch(current, patch))
 
 /** Which way a notice card opens from the disc: up and left unless the display has no room. */
 export interface NoticeLayout {
