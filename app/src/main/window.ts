@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { app, BrowserWindow, screen } from 'electron'
+import type { CuePlay } from '../shared/announcer'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import {
@@ -249,6 +250,11 @@ export class BatSignalWindows {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
     if (this.panelShown) this.panel.webContents.send(IPC.snapshot, snapshot)
+  }
+
+  /** A sound, to the signal window: the page that is always loaded. */
+  cue(play: CuePlay): void {
+    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.cue, play)
   }
 
   /** What is happening now (the shortcut held or taken), to every page. */

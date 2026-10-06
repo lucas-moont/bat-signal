@@ -41,6 +41,12 @@ export interface Toast {
 /** The sounds Bat-Signal makes. */
 export type Cue = 'wings' | 'thump'
 
+/** A sound for the signal window to play, at the user's volume (0 to 1). */
+export interface CuePlay {
+  cue: Cue
+  volume: number
+}
+
 /** The sound each kind of news makes; a case opening or closing makes none. */
 const CUE_OF_KIND: Partial<Record<NoticeKind, Cue>> = {
   permission: 'wings',

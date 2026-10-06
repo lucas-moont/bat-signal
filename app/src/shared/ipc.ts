@@ -25,4 +25,6 @@ export const IPC = {
   setStartWithWindows: 'bat-signal:set-start-with-windows',
   /** Read again what may have changed outside the app (Task Manager's startup switch). */
   refreshStatus: 'bat-signal:refresh-status',
+  /** A sound for the signal window to play. */
+  cue: 'bat-signal:cue',
 } as const

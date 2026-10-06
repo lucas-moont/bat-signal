@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { CuePlay } from '../shared/announcer'
 import { IPC } from '../shared/ipc'
 import type { NoticeLayout, Settings, SettingsPatch, ViewMode, WindowMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
@@ -40,6 +41,8 @@ const api = {
   onFocusCase: (callback: (sessionId: string) => void) => subscribe(IPC.focusCase, callback),
   /** The tray's Settings…: open the settings sheet. */
   onOpenSettings: (callback: () => void) => subscribe(IPC.openSettings, callback),
+  /** A sound to play (the signal window plays them). */
+  onCue: (callback: (play: CuePlay) => void) => subscribe(IPC.cue, callback),
   /** Grows the signal for a notice card (or shrinks it back); resolves once done, with the card's side. */
   setNoticeOut: (out: boolean): Promise<NoticeLayout> => ipcRenderer.invoke(IPC.noticeOut, out),
   /** The signal takes clicks only while the pointer is over the disc or a card. */

@@ -7,6 +7,7 @@ import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/notice
 import type { NoticeLayout } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import { batSignal } from '../bridge'
+import { playCue } from '../cues'
 import { CalmContext, useCalm } from '../calm'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { mascotMood, needsYouCount } from '@shared/view'
@@ -81,6 +82,8 @@ function useStagedNotice(notice: Notice | undefined) {
 export function Signal() {
   const [snapshot, loaded] = useSnapshotState()
   const [settings, , settingsLoaded] = useSettings()
+  // This window is always loaded, so it plays the sounds the main process picks.
+  useEffect(() => batSignal.onCue(({ cue, volume }) => playCue(cue, volume)), [])
   const calm = useCalm(settings)
   const mode = useWindowMode()
   const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal')
