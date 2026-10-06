@@ -60,6 +60,10 @@ describe('privacy check: tokens', () => {
     for (const token of [
       fake('sk-ant-', 24),
       fake('ghp_', 36),
+      fake('gho_', 36),
+      fake('ghs_', 36),
+      fake('npm_', 36),
+      '-----BEGIN ' + 'OPENSSH PRIVATE KEY-----',
       fake('github_pat_', 40),
       fake('xoxb-', 20),
       'AKIA' + 'X'.repeat(16),

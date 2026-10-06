@@ -38,7 +38,18 @@ const USER_FOLDERS = [
 const EMAIL = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org))$/i
-const TOKEN = /sk-ant-[\w-]{16,}|ghp_\w{30,}|github_pat_\w{30,}|xox[abp]-[\w-]{10,}|AKIA[0-9A-Z]{16}/
+const TOKEN = new RegExp(
+  [
+    /sk-ant-[\w-]{16,}/, // Anthropic
+    /gh[pousr]_\w{30,}|github_pat_\w{30,}/, // GitHub: personal, OAuth (gh auth token), app, refresh
+    /npm_\w{36}/,
+    /xox[abp]-[\w-]{10,}/, // Slack
+    /AKIA[0-9A-Z]{16}/, // AWS
+    /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  ]
+    .map((re) => re.source)
+    .join('|'),
+)
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 const UUID_WORD = new RegExp(`\\b${UUID.source}\\b`, 'gi')
 const TRANSCRIPT = new RegExp(`(?:^|[\\\\/])(${UUID.source})\\.jsonl$`, 'i')
