@@ -266,20 +266,27 @@ export class BatSignalWindows {
     this.setMode(this.lastOpened)
   }
 
-  /** Does what the user's action leads to (see modes.ts): the shortcut, the tray, closing, a relaunch. */
+  /**
+   * Does what the user's action leads to (see modes.ts): the shortcut, the tray, closing, a
+   * relaunch. None of them is the user picking a view for the disc to open.
+   */
   act(action: ModeAction): void {
     const { current: mode, lastOpened, beforeHidden } = this
-    this.setMode(nextMode({ mode, lastOpened, beforeHidden }, action))
+    this.setMode(nextMode({ mode, lastOpened, beforeHidden }, action), undefined, false)
   }
 
   /** Opens the panel with its settings sheet up (the tray's Settings…). */
   openSettings(): void {
-    this.setMode('panel')
+    this.setMode('panel', undefined, false)
     this.panel.webContents.send(IPC.openSettings)
   }
 
-  /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
-  setMode(mode: WindowMode, focusSessionId?: string): void {
+  /**
+   * Shows the panel (optionally on one case) or the watch strip, folds back into the signal, or
+   * hides. `picked`: the user chose this view (a header button, the tray's Panel or Watch strip),
+   * so the disc opens it from now on; a notice card opening one case is no such choice.
+   */
+  setMode(mode: WindowMode, focusSessionId?: string, picked = !focusSessionId): void {
     const spec = MODES[mode]
     const entering = mode !== this.current
     if (mode === 'hidden' && this.current !== 'hidden') this.beforeHidden = this.current
@@ -315,8 +322,7 @@ export class BatSignalWindows {
     if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
     if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
     else if (!this.stripPending) this.show()
-    // A notice card opening the panel on one case is not the user picking the panel.
-    if (isOpenMode(mode) && !focusSessionId && mode !== this.lastOpened) {
+    if (picked && isOpenMode(mode) && mode !== this.lastOpened) {
       this.lastOpened = mode
       this.scheduleSave()
     }
