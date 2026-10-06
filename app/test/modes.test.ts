@@ -50,9 +50,13 @@ describe('nextMode: closing', () => {
 })
 
 describe('nextMode: launching Bat-Signal again', () => {
-  it('opens a resting or hidden Bat-Signal, and leaves an open one as it is', () => {
-    expect(nextMode(at('signal'), 'summon')).toBe('watch')
-    expect(nextMode(at('hidden'), 'summon')).toBe('watch')
+  it('brings a hidden Bat-Signal back as it was, like Show', () => {
+    expect(nextMode(at('hidden', { beforeHidden: 'signal' }), 'summon')).toBe('signal')
+    expect(nextMode(at('hidden', { beforeHidden: 'panel' }), 'summon')).toBe('panel')
+  })
+
+  it('leaves a Bat-Signal on screen as it is, brought forward', () => {
+    expect(nextMode(at('signal'), 'summon')).toBe('signal')
     expect(nextMode(at('panel'), 'summon')).toBe('panel')
     expect(nextMode(at('watch'), 'summon')).toBe('watch')
   })

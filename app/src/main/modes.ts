@@ -15,7 +15,7 @@ export interface ModeState {
  * - close: Alt+F4 on the disc, or the header's close button: hides to the tray (quitting is the
  *   tray's Quit).
  * - fold: Alt+F4 on the panel: folds it back into the disc.
- * - summon: Bat-Signal launched again while it runs.
+ * - summon: Bat-Signal launched again while it runs: brought back as it was, or forward.
  */
 export type ModeAction = 'shortcut' | 'trayClick' | 'trayShowHide' | 'close' | 'fold' | 'summon'
 
@@ -32,6 +32,6 @@ export function nextMode({ mode, lastOpened, beforeHidden }: ModeState, action: 
     case 'fold':
       return 'signal'
     case 'summon':
-      return isOpenMode(mode) ? mode : lastOpened
+      return mode === 'hidden' ? beforeHidden : mode
   }
 }
