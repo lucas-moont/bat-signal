@@ -30,7 +30,7 @@ function start(): void {
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)
-    toasts.update(snapshot, { prefs: settings.announce, panelFocused: windows.panelInFront })
+    toasts.update(snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
   })
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))

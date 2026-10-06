@@ -224,9 +224,14 @@ export class BatSignalWindows {
     return this.current
   }
 
-  /** The panel or the strip is the window in front: the user sees the news already. */
-  get panelInFront(): boolean {
-    return Boolean(MODES[this.current].panel) && !this.panel.isDestroyed() && this.panel.isFocused()
+  /** The panel window is on screen, as the panel or the strip. */
+  private get panelShown(): boolean {
+    return Boolean(MODES[this.current].panel) && !this.panel.isDestroyed()
+  }
+
+  /** The panel is the window in front (the strip never takes the focus): the user sees the news already. */
+  get panelFocused(): boolean {
+    return this.panelShown && this.panel.isFocused()
   }
 
   /** Sends to every page (both windows render the same data). */
@@ -243,8 +248,7 @@ export class BatSignalWindows {
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (MODES[this.current].panel && !this.panel.isDestroyed())
-      this.panel.webContents.send(IPC.snapshot, snapshot)
+    if (this.panelShown) this.panel.webContents.send(IPC.snapshot, snapshot)
   }
 
   /** What is happening now (the shortcut held or taken), to every page. */
