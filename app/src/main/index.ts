@@ -31,19 +31,19 @@ function start(): void {
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
   shortcut.apply(settings.shortcut)
-  // What is happening now, read from each feature; sent to the pages only when it changed (each
-  // feature keeps the same object until then).
-  // Starting with Windows: what Windows has (Task Manager can change it too).
+  // Starting with Windows: what Windows has (Task Manager can change it too), read when the
+  // settings sheet, the one place that shows it, opens.
   const startup = createStartup(() => publishStatus())
+  // What is happening now, read from each feature; sent to the pages only when it changed (each
+  // feature keeps the same value until then).
   const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup.state })
   let published = readStatus()
-  const publishStatus = () => {
+  function publishStatus(): void {
     const next = readStatus()
     if ((Object.keys(next) as (keyof AppStatus)[]).every((key) => next[key] === published[key])) return
     published = next
     windows.publishStatus(next)
   }
-  void startup.refresh()
   // A shortcut another app held is tried again now and then: that app may have let it go.
   const retry = setInterval(() => {
     if (shortcut.status.state !== 'taken') return
