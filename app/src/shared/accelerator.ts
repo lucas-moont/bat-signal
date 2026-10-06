@@ -2,9 +2,13 @@
 // settings sheet, read back from settings.json, and shown as keycaps. One rule for all three, so a
 // shortcut the sheet records is one the main process can register, and the other way round.
 
-/** What a keydown carries that matters here. Keys are read by place (code), not by character. */
+/**
+ * What a keydown carries that matters here. A letter is named as the layout types it (key),
+ * since Windows registers letters that way; every other key by its place (code).
+ */
 export interface KeyLike {
   code: string
+  key: string
   ctrlKey: boolean
   altKey: boolean
   shiftKey: boolean
@@ -58,12 +62,12 @@ const KEY_NAMES = new Map([...KEYS.values()].map((name) => [name.toLowerCase(), 
 
 const MODIFIER_CODES = /^(Control|Alt|Shift|Meta)(Left|Right)$/
 
-/** F13 to F24 type nothing, so they may stand alone; anything else needs Ctrl, Alt or Win. */
+/** F13 to F24 type nothing, so they may stand alone; anything else needs Ctrl or Alt (or Win). */
 const standsAlone = (key: string) => /^F(1[3-9]|2[0-4])$/.test(key)
 
 function compose(modifiers: ReadonlySet<Modifier>, key: string): Recorded {
   if (!standsAlone(key) && !TRIGGERS.some((m) => modifiers.has(m)))
-    return { kind: 'invalid', reason: 'Add Ctrl, Alt or Win, so typing never triggers it' }
+    return { kind: 'invalid', reason: 'Add Ctrl or Alt, so typing never triggers it' }
   return { kind: 'ok', accelerator: [...MODIFIERS.filter((m) => modifiers.has(m)), key].join('+') }
 }
 
@@ -72,8 +76,14 @@ export function acceleratorFromKey(e: KeyLike): Recorded {
   const bare = !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey
   if (bare && e.code === 'Escape') return { kind: 'cancel' }
   if (bare && (e.code === 'Backspace' || e.code === 'Delete')) return { kind: 'clear' }
-  const key = KEYS.get(e.code)
-  if (!key) return { kind: 'invalid', reason: 'Use a letter, a number, an F key or an arrow' }
+  let key = KEYS.get(e.code)
+  if (!key) return { kind: 'invalid', reason: 'Use a letter, a number, an F key, an arrow or Space' }
+  if (/^Key[A-Z]$/.test(e.code)) {
+    if (/^[a-z]$/i.test(e.key)) key = e.key.toUpperCase()
+    // Ctrl+Alt is AltGr on many layouts: if it typed a character, typing needs that combination.
+    else if (e.ctrlKey && e.altKey && e.key.length === 1)
+      return { kind: 'invalid', reason: `On this keyboard that combination types "${e.key}"` }
+  }
   const modifiers = new Set<Modifier>()
   if (e.ctrlKey) modifiers.add('Ctrl')
   if (e.altKey) modifiers.add('Alt')

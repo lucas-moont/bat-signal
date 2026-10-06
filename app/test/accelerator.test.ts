@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { acceleratorFromKey, keycaps, normalizeAccelerator, type KeyLike } from '../src/shared/accelerator'
 
+/** A key press on a US keyboard, unless `key` (what it typed) says otherwise. */
 const key = (code: string, mods: Partial<Omit<KeyLike, 'code'>> = {}): KeyLike => ({
   code,
+  key: /^Key[A-Z]$/.test(code) ? code.slice(3).toLowerCase() : /^Digit\d$/.test(code) ? code.slice(5) : code,
   ctrlKey: false,
   altKey: false,
   shiftKey: false,
@@ -27,10 +29,30 @@ describe('acceleratorFromKey: recording a shortcut', () => {
     })
   })
 
-  it('reads the key by its place, so the keyboard layout does not matter', () => {
-    // On a French AZERTY keyboard this key prints "a", but its code is still KeyQ.
-    expect(acceleratorFromKey(key('KeyQ', { ctrlKey: true, altKey: true }))).toMatchObject({
-      accelerator: 'Ctrl+Alt+Q',
+  it('names a letter as the keyboard layout does, as Windows will register it', () => {
+    // On a French AZERTY keyboard the key in the place of Q types "a".
+    expect(acceleratorFromKey(key('KeyQ', { key: 'a', ctrlKey: true, altKey: true }))).toMatchObject({
+      accelerator: 'Ctrl+Alt+A',
+    })
+  })
+
+  it('takes a number by its place, whatever the layout types there', () => {
+    // On AZERTY the 1 key types "&" until Shift is held.
+    expect(acceleratorFromKey(key('Digit1', { key: '&', ctrlKey: true, altKey: true }))).toMatchObject({
+      accelerator: 'Ctrl+Alt+1',
+    })
+  })
+
+  it('takes a letter by its place on a layout without Latin letters', () => {
+    expect(acceleratorFromKey(key('KeyQ', { key: 'й', ctrlKey: true }))).toMatchObject({
+      accelerator: 'Ctrl+Q',
+    })
+  })
+
+  it('refuses Ctrl+Alt on a letter that AltGr turns into a character, which typing needs', () => {
+    // On a Brazilian ABNT2 keyboard, AltGr (Ctrl+Alt) with Q types "/".
+    expect(acceleratorFromKey(key('KeyQ', { key: '/', ctrlKey: true, altKey: true }))).toMatchObject({
+      kind: 'invalid',
     })
   })
 
