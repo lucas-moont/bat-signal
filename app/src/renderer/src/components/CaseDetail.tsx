@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import {
   attentionCopy,
@@ -10,6 +9,7 @@ import {
   taskLabel,
 } from '@shared/view'
 import { Icon } from './Icon'
+import { Section } from './Section'
 import { TerminalButton } from './TerminalButton'
 import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
@@ -26,18 +26,6 @@ export function sheetExists(session: SessionSnapshot, { kind, id }: SheetTarget)
   if (kind === 'task') return session.tasks.some((t) => t.id === id)
   if (kind === 'subagent') return session.subagents.some((a) => a.toolUseId === id)
   return session.background.some((j) => j.id === id)
-}
-
-function Section({ title, aside, children }: { title: string; aside?: string; children: ReactNode }) {
-  return (
-    <section className="section">
-      <h3 className="section__title">
-        <span>{title}</span>
-        {aside && <span className="section__aside">{aside}</span>}
-      </h3>
-      {children}
-    </section>
-  )
 }
 
 export function CaseDetail({
