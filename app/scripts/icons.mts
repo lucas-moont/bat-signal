@@ -10,6 +10,8 @@ import { initWasm, Resvg } from '@resvg/resvg-wasm'
 const APP = join(import.meta.dirname, '..')
 const OUT = join(APP, 'resources', 'tray')
 const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
+/** The bat the icons were drawn from, kept beside them so a test can tell when they fall behind. */
+export const DRAWN_FROM = join(OUT, 'drawn-from.txt')
 
 /** The WINGS path of BatEmblem.tsx, joined from its string pieces. */
 export function emblemPath(source: string): string {
@@ -36,14 +38,14 @@ export function iconSvg(wings: string, lit: boolean): string {
 /** An .ico holding PNG images (one per size), as Windows reads them since Vista. */
 export function ico(images: { size: number; png: Uint8Array }[]): Buffer {
   const header = Buffer.alloc(6)
-  header.writeUInt16LE(0, 0) // reserved
-  header.writeUInt16LE(1, 2) // type: icon
+  header.writeUInt16LE(1, 2) // type: icon (bytes 0-1 are reserved, left zero)
   header.writeUInt16LE(images.length, 4)
   let offset = 6 + 16 * images.length
   const entries = images.map(({ size, png }) => {
     const entry = Buffer.alloc(16)
-    entry.writeUInt8(size >= 256 ? 0 : size, 0) // width (0 means 256)
-    entry.writeUInt8(size >= 256 ? 0 : size, 1) // height
+    const side = size >= 256 ? 0 : size // 0 means 256
+    entry.writeUInt8(side, 0) // width
+    entry.writeUInt8(side, 1) // height
     entry.writeUInt16LE(1, 4) // colour planes
     entry.writeUInt16LE(32, 6) // bits per pixel
     entry.writeUInt32LE(png.length, 8)
@@ -59,6 +61,7 @@ async function main(): Promise<void> {
   await initWasm(readFileSync(require.resolve('@resvg/resvg-wasm/index_bg.wasm')))
   const wings = emblemPath(readFileSync(join(APP, 'src/renderer/src/components/BatEmblem.tsx'), 'utf8'))
   mkdirSync(OUT, { recursive: true })
+  writeFileSync(DRAWN_FROM, `${wings}\n`)
   for (const [name, lit] of [
     ['tray', false],
     ['tray-lit', true],

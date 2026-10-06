@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { emblemPath, ico } from '../scripts/icons.mts'
+import { DRAWN_FROM, emblemPath, ico } from '../scripts/icons.mts'
 
 describe('emblemPath', () => {
   it('joins the bat out of BatEmblem.tsx, the one place it is drawn', () => {
@@ -13,6 +13,13 @@ describe('emblemPath', () => {
 
   it('fails loudly when the emblem is no longer where it was', () => {
     expect(() => emblemPath('export const Bat = 1')).toThrow(/WINGS/)
+  })
+})
+
+describe('the committed tray icons', () => {
+  it('are drawn from the bat as it is now (otherwise: npm run icons)', () => {
+    const emblem = readFileSync(join(__dirname, '../src/renderer/src/components/BatEmblem.tsx'), 'utf8')
+    expect(readFileSync(DRAWN_FROM, 'utf8').trim()).toBe(emblemPath(emblem))
   })
 })
 
