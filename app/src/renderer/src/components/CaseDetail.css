@@ -130,6 +130,10 @@
   color: var(--ash);
   flex: none;
 }
+/* A block, so the mark is centred on the row (no text baseline under it) and beats from its middle. */
+.row__glyph svg {
+  display: block;
+}
 .row__text {
   flex: 1;
   min-width: 0;

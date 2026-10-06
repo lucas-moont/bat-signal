@@ -6,6 +6,7 @@ import {
   plainPreview,
   relativeTime,
   RUN_STATUS_LABEL,
+  TASK_STATUS_LABEL,
   taskLabel,
 } from '@shared/view'
 import { Icon, type IconName } from './Icon'
@@ -97,6 +98,8 @@ export function CaseDetail({
                   <button
                     className={`row row--task row--${t.status}${justCompleted(t) ? ' row--just-done' : ''}`}
                     onClick={() => onOpen({ kind: 'task', id: t.id })}
+                    // The mark is drawn: the status is said in words for screen readers.
+                    aria-label={`${taskLabel(t)}, ${TASK_STATUS_LABEL[t.status].toLowerCase()}`}
                   >
                     <Beat beating={t.status === 'in_progress'} strength={0.3} className="row__glyph">
                       <Icon name={TASK_ICON[t.status]} size={14} />
