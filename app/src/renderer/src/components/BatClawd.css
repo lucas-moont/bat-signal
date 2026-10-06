@@ -20,7 +20,7 @@
   overflow: visible;
 }
 
-/* A black cape: its red edge and lining make it read on the pure-black window. */
+/* A black cape: its red edge makes it read on the pure-black window. */
 .clawd__cape {
   fill: #000;
   stroke: var(--signal);
@@ -34,8 +34,15 @@
   stroke-width: 0.7;
   stroke-linejoin: miter;
 }
+/* Open, it stays black inside: only a thin red thread runs along the lining's hem. */
 .clawd__lining {
-  fill: var(--blood);
+  fill: var(--cowl);
+}
+.clawd__hem {
+  fill: none;
+  stroke: var(--blood);
+  stroke-width: 0.22;
+  stroke-linejoin: round;
 }
 .clawd__seam {
   fill: var(--blood);
