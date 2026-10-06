@@ -94,11 +94,21 @@ describe('applySettingsPatch: changing one switch', () => {
 })
 
 describe('applySettingsPatch: an untrusted patch', () => {
-  it('cannot slip settings in through __proto__', () => {
+  it('changes no setting through __proto__', () => {
     const patch: unknown = JSON.parse(
       '{"__proto__": {"animations": false}, "announce": {"__proto__": {"sound": true}}}',
     )
     const next = applySettingsPatch(DEFAULT_SETTINGS, patch)
     expect(next).toEqual(DEFAULT_SETTINGS)
+  })
+})
+
+describe('settings across a restart', () => {
+  it('come back as they were saved (as jsonFile writes and reads them)', () => {
+    const chosen = applySettingsPatch(parseSettings(OLD_FILE), {
+      announce: { toast: { reply: true, sessions: true }, sound: true, volume: 0.2 },
+    })
+    const saved = JSON.stringify(chosen, null, 2)
+    expect(parseSettings(JSON.parse(saved))).toEqual(chosen)
   })
 })
