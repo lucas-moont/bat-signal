@@ -1,19 +1,27 @@
-import type { AttentionItem, SessionSnapshot } from '@shared/types'
+import type { AttentionItem, SessionSnapshot, TaskStatus } from '@shared/types'
 import {
   attentionCopy,
   caseHeader,
   plainPreview,
   relativeTime,
   RUN_STATUS_LABEL,
-  TASK_GLYPH,
+  TASK_STATUS_LABEL,
   taskLabel,
 } from '@shared/view'
-import { Icon } from './Icon'
+import { Icon, type IconName } from './Icon'
 import { Section } from './Section'
 import { TerminalButton } from './TerminalButton'
 import { Beat } from './Live'
 import { Typewriter } from './Typewriter'
 import './CaseDetail.css'
+
+/** A task's mark in the case: open, under way, done or dropped. */
+const TASK_ICON: Record<TaskStatus, IconName> = {
+  pending: 'task-pending',
+  in_progress: 'task-active',
+  completed: 'task-done',
+  deleted: 'task-deleted',
+}
 
 /** Completed in the last few seconds: gets a one-off flash. */
 const justCompleted = (t: { status: string; history: { at: string }[] }): boolean =>
@@ -78,9 +86,11 @@ export function CaseDetail({
                   <button
                     className={`row row--task row--${t.status}${justCompleted(t) ? ' row--just-done' : ''}`}
                     onClick={() => onOpen({ kind: 'task', id: t.id })}
+                    // The mark is drawn: the status is said in words for screen readers.
+                    aria-label={`${taskLabel(t)}, ${TASK_STATUS_LABEL[t.status].toLowerCase()}`}
                   >
                     <Beat beating={t.status === 'in_progress'} strength={0.3} className="row__glyph">
-                      {TASK_GLYPH[t.status]}
+                      <Icon name={TASK_ICON[t.status]} size={14} />
                     </Beat>
                     <span className="row__text">{taskLabel(t)}</span>
                     <Icon name="chevron" size={14} />

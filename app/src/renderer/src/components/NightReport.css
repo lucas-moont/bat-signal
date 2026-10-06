@@ -272,7 +272,7 @@
 }
 
 /* The narrowest panel keeps the margin, a little tighter. */
-@media (max-width: 330px) {
+@container app (max-width: 330px) {
   .report {
     --margin: 100px;
     font-size: 12px;

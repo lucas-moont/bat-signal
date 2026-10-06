@@ -25,6 +25,8 @@ const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 
 /** In watch mode the transparent signal window is Bat-Clawd's perch, on the strip's top edge. */
 const PERCH = { width: 88, height: 56 }
 const SAVE_DEBOUNCE_MS = 500
+/** How long the strip, opening, waits for its page to measure it before showing anyway. */
+const WATCH_SHOW_FALLBACK_MS = 150
 /**
  * How often visible windows reassert always-on-top. Windows' screenshot overlay can demote the
  * window that was active, dropping it behind everything; reasserting is one cheap z-order call.
@@ -33,6 +35,47 @@ const ON_TOP_EVERY_MS = 3000
 
 /** What the disc opens: the full panel or the watch strip, whichever was used last. */
 type OpenMode = Exclude<WindowMode, 'signal'>
+
+/** How a mode shows the panel window (the full panel and the watch strip share it). */
+interface PanelSpec {
+  /** As the user dragged it (the panel), or fitted to its rows (the strip, see setWatchHeight). */
+  size: 'dragged' | 'fitted'
+  minSize: Size
+  resizable: boolean
+  /**
+   * Whether it takes the keyboard. The strip never does: Windows demotes the active window behind
+   * everything after a screenshot, and the strip needs no keys (its rows take clicks regardless).
+   */
+  focusable: boolean
+}
+
+/**
+ * What each mode does with the two windows: the panel window shown one way or hidden, and the
+ * signal window as the disc, as Bat-Clawd's perch on the strip's top edge, or hidden.
+ */
+const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 'hidden' }> = {
+  signal: { signal: 'disc' },
+  panel: {
+    panel: {
+      size: 'dragged',
+      minSize: { width: PANEL.minWidth, height: PANEL.minHeight },
+      resizable: true,
+      focusable: true,
+    },
+    signal: 'hidden',
+  },
+  watch: {
+    panel: {
+      size: 'fitted',
+      minSize: { width: WATCH.width, height: WATCH.minHeight },
+      resizable: false,
+      focusable: false,
+    },
+    signal: 'perch',
+  },
+}
+
+const isOpenMode = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
 
 interface Place {
   anchor?: Anchor
@@ -95,6 +138,8 @@ export class BatSignalWindows {
   private quitting = false
   private onTop = true
   private saveTimer?: NodeJS.Timeout
+  /** Set while the strip waits for its first height (see setMode). */
+  private stripPending?: NodeJS.Timeout
 
   constructor(settings: Settings) {
     const place = placeFile.load()
@@ -133,12 +178,13 @@ export class BatSignalWindows {
     this.panel.on('moved', () => this.followPanel())
     // Bat-Clawd rides along while the strip is dragged.
     this.panel.on('move', () => {
-      if (this.current === 'watch') this.placePerch()
+      if (MODES[this.current].signal === 'perch') this.placePerch()
     })
     this.panel.on('resized', () => this.followPanel())
     const onTopTimer = setInterval(() => this.keepOnTop(), ON_TOP_EVERY_MS)
     app.on('before-quit', () => {
       clearInterval(onTopTimer)
+      this.cancelStrip() // a strip held back must not show into windows on their way out
       this.quitting = true
       this.saveNow()
     })
@@ -175,7 +221,7 @@ export class BatSignalWindows {
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (this.current !== 'signal' && !this.panel.isDestroyed())
+    if (MODES[this.current].panel && !this.panel.isDestroyed())
       this.panel.webContents.send(IPC.snapshot, snapshot)
   }
 
@@ -206,48 +252,83 @@ export class BatSignalWindows {
 
   /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
   setMode(mode: WindowMode, focusSessionId?: string): void {
-    if (mode === 'panel' || mode === 'watch') {
+    const spec = MODES[mode]
+    const entering = mode !== this.current
+    // The strip opening anew is held back until its page has measured it (see setWatchHeight),
+    // so it never shows at a stale height, or with the panel still in it, and then jumps.
+    const holdStrip = entering && spec.panel?.size === 'fitted'
+    if (entering) this.cancelStrip() // opening the strip again while it is held keeps the hold
+    if (spec.panel) {
       // Opening silences the cards; the hidden page may never finish their exit.
       this.setClickThrough(false)
       this.noticeOut = false
-      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
-      if (mode === 'panel') {
-        this.panel.setMinimumSize(PANEL.minWidth, PANEL.minHeight)
-        this.panel.setResizable(true)
-        this.panel.setBounds(this.rect(this.panelSize))
-      } else {
-        this.panel.setResizable(false)
-        this.panel.setMinimumSize(WATCH.width, WATCH.minHeight)
+      this.preparePanel(spec.panel)
+      if (holdStrip) {
+        // Out of sight and at the strip's width, so the page measures the rows it will show.
+        this.panel.hide()
         this.panel.setBounds(this.watchRect())
       }
-      if (mode === 'panel') {
-        this.panel.setFocusable(true)
-        this.panel.show()
-        this.panel.focus()
-        this.signal.hide()
-      } else {
-        // The strip never takes the focus: Windows demotes the active window behind everything
-        // after a screenshot, and the strip needs no keyboard (its rows take clicks regardless).
-        this.panel.setFocusable(false)
-        this.panel.showInactive()
-        this.placePerch()
-      }
-      if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
-      // A notice card opening the panel on one case is not the user picking the panel.
-      if (!focusSessionId && mode !== this.lastOpened) {
-        this.lastOpened = mode
-        this.scheduleSave()
-      }
+      // The latest snapshot before the mode, so the page lays out the sessions of now.
+      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
     } else {
       this.panel.hide()
+    }
+    if (entering) {
+      this.current = mode
+      // A held strip is news only to its own page for now: the disc stays the disc until the
+      // strip shows, and turns into the perch then (revealStrip).
+      if (holdStrip) this.panel.webContents.send(IPC.mode, mode)
+      else this.broadcast(IPC.mode, mode)
+    }
+    if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+    if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
+    else if (!this.stripPending) this.show()
+    // A notice card opening the panel on one case is not the user picking the panel.
+    if (isOpenMode(mode) && !focusSessionId && mode !== this.lastOpened) {
+      this.lastOpened = mode
+      this.scheduleSave()
+    }
+  }
+
+  private preparePanel(spec: PanelSpec): void {
+    this.panel.setResizable(spec.resizable)
+    this.panel.setMinimumSize(spec.minSize.width, spec.minSize.height)
+    this.panel.setFocusable(spec.focusable)
+  }
+
+  /** Puts both windows where the current mode wants them, and shows them. */
+  private show(): void {
+    const { panel, signal } = MODES[this.current]
+    if (panel) {
+      this.panel.setBounds(panel.size === 'dragged' ? this.rect(this.panelSize) : this.watchRect())
+      if (panel.focusable) {
+        this.panel.show()
+        this.panel.focus()
+      } else {
+        this.panel.showInactive()
+      }
+    }
+    if (signal === 'disc') {
       this.signal.setIgnoreMouseEvents(false) // the perch let every click through; the disc takes them
       this.placeSignal()
       this.signal.showInactive()
+    } else if (signal === 'perch') {
+      this.placePerch()
+    } else {
+      this.signal.hide()
     }
-    if (mode !== this.current) {
-      this.current = mode
-      this.broadcast(IPC.mode, mode)
-    }
+  }
+
+  /** Shows the strip held back by setMode, at the height its page measured (or the last one). */
+  private revealStrip(): void {
+    this.cancelStrip()
+    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.mode, this.current)
+    this.show()
+  }
+
+  private cancelStrip(): void {
+    clearTimeout(this.stripPending)
+    this.stripPending = undefined
   }
 
   /**
@@ -258,7 +339,7 @@ export class BatSignalWindows {
     if (out !== this.noticeOut) {
       this.setClickThrough(out)
       this.noticeOut = out
-      if (this.current === 'signal') this.placeSignal()
+      if (MODES[this.current].signal === 'disc') this.placeSignal()
     }
     const { below, right } = noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst())
     return { below, right }
@@ -322,19 +403,27 @@ export class BatSignalWindows {
     if (!Number.isFinite(height)) return
     const area = screen.getDisplayNearestPoint(this.anchor).workArea
     const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
+    // The first height after the strip opens is its page saying it is ready (WatchStrip sends one
+    // as it mounts): the strip shows now, at that height.
+    if (this.stripPending) {
+      this.watchHeight = next
+      this.revealStrip()
+      return
+    }
     if (next === this.watchHeight) return
     this.watchHeight = next
-    if (this.current === 'watch') {
+    if (MODES[this.current].panel?.size === 'fitted') {
       this.panel.setBounds(this.watchRect())
       this.placePerch()
     }
   }
 
   private followPanel(): void {
-    if (this.current === 'signal') return
+    const panel = MODES[this.current].panel
+    if (!panel) return
     const b = this.panel.getBounds()
     this.anchor = cornerOf(b)
-    if (this.current === 'panel') this.panelSize = { width: b.width, height: b.height }
+    if (panel.size === 'dragged') this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()
   }
 

@@ -47,9 +47,12 @@
   min-height: 0;
   overflow-y: auto;
 }
+/* The empty strip is typed, like a note left on the desk, in both themes. */
 .watch__nil {
   margin: 0;
   padding: 10px 12px 12px;
+  font-family: var(--font-type);
+  font-weight: 400;
   font-size: 12px;
   color: var(--ash);
 }
@@ -150,19 +153,7 @@ li + li > .watch-row {
   font-weight: 500;
 }
 
-/* The night report theme: the same strip, typed. */
-.watch--report .watch-row__title,
-.watch--report .watch-row__line,
-.watch--report /* Past the main process's height cap, the rows scroll under the bar. */
-.watch__scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-}
-.watch__nil {
-  font-family: var(--font-type);
-  font-weight: 400;
-}
+/* The night report theme: the same strip, a size smaller (the rows keep their faces, which fit more). */
 .watch--report .watch-row__title {
   font-size: 12.5px;
 }

@@ -1,6 +1,6 @@
 // The watch strip: Bat-Signal left in the corner to follow the active sessions. One row per case,
 // the most urgent first; a click on a row goes to that session's terminal.
-import { useEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import type { PanelLayout } from '@shared/settings'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
 import { orderCases, watchRow, type WatchRow } from '@shared/view'
@@ -24,14 +24,19 @@ export function WatchStrip({
   // main process caps it, and the rows scroll past the cap), plus the frame's two border pixels.
   const bar = useRef<HTMLElement>(null)
   const content = useRef<HTMLDivElement>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const [top, body] = [bar.current, content.current]
     if (!top || !body) return
     let sent = 0
-    const observer = new ResizeObserver(() => {
+    const send = () => {
       const height = Math.ceil(top.getBoundingClientRect().height + body.getBoundingClientRect().height) + 2
       if (height !== sent) batSignal.setWatchHeight((sent = height)) // the window resize echoes back
-    })
+    }
+    // Measured at once, before the window shows: the main process holds the strip back until
+    // this first height arrives (so `sent` starts at 0 on every mount), and a hidden window may
+    // not run the observer.
+    send()
+    const observer = new ResizeObserver(send)
     observer.observe(top)
     observer.observe(body)
     return () => observer.disconnect()

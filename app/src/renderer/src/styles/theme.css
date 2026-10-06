@@ -53,6 +53,15 @@ body,
   margin: 0;
 }
 
+/*
+ * The panel's narrow layouts query the page's own box (container queries), not the window. The
+ * container is the root, the size of the window: a container is also the containing block of
+ * fixed layers (the intro, the atmosphere), and these must still fill the whole window.
+ */
+#root {
+  container: app / inline-size;
+}
+
 body {
   background: var(--abyss);
   color: var(--bone);
