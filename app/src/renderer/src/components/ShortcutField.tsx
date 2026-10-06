@@ -9,7 +9,7 @@ import { SettingRow } from './SettingRow'
 const HINTS: Record<ShortcutStatus['state'], string> = {
   active: 'Opens and folds Bat-Signal from any app',
   off: 'Off: click to set one',
-  taken: 'Another app already uses it: click to pick another',
+  taken: 'Another app (or Windows) already uses it: click to pick another',
 }
 
 export function ShortcutField({
@@ -31,6 +31,8 @@ export function ShortcutField({
     batSignal.recordShortcut(true)
     // Capture, before the sheet's own keys (Esc closes it) and before anything else on the page.
     const onKey = (e: KeyboardEvent) => {
+      // Tab leaves, as it leaves any field: keyboard users move on instead of being held here.
+      if (e.code === 'Tab') return setProblem(null)
       e.preventDefault()
       e.stopPropagation()
       const recorded = acceleratorFromKey(e)
