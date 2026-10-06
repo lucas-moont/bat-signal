@@ -7,15 +7,25 @@ import type { BatSignalWindows } from './window'
 import restIcon from '../../resources/tray/tray.ico?asset'
 import litIcon from '../../resources/tray/tray-lit.ico?asset'
 
+/** Clicks closer than this are one double-click: the panel opens once, not open-and-shut. */
+const DOUBLE_CLICK_MS = 500
+
 export class BatSignalTray {
   /** Held here for the app's life: a Tray left to the garbage collector vanishes from the taskbar. */
   private readonly tray: Tray
   private lit = false
+  private tooltip = ''
+  private lastClick = 0
 
   constructor(private readonly windows: BatSignalWindows) {
     this.tray = new Tray(restIcon)
     this.tray.setToolTip('Bat-Signal')
-    this.tray.on('click', () => windows.act('trayClick'))
+    this.tray.on('click', () => {
+      const now = Date.now()
+      if (now - this.lastClick < DOUBLE_CLICK_MS) return
+      this.lastClick = now
+      windows.act('trayClick')
+    })
     // Built as it opens, so it always ticks the view on screen.
     this.tray.on('right-click', () => this.tray.popUpContextMenu(this.menu()))
   }
@@ -27,7 +37,11 @@ export class BatSignalTray {
       this.lit = lit
       this.tray.setImage(lit ? litIcon : restIcon)
     }
-    this.tray.setToolTip(tooltip)
+    // Each change is a call into the Windows shell: only make it when the text changes.
+    if (tooltip !== this.tooltip) {
+      this.tooltip = tooltip
+      this.tray.setToolTip(tooltip)
+    }
   }
 
   private menu(): Menu {
