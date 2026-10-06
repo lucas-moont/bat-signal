@@ -1,15 +1,18 @@
-// npm run icons: draws the tray icons from the bat emblem, so the bat has
+// npm run icons: draws the tray and toast icons from the bat emblem, so the bat has
 // one source (BatEmblem.tsx). A disc like the Bat-Signal's own: dark glass at rest, lit red
 // with the bat in shadow when something needs you. resvg (WebAssembly) renders each size, and
 // the sizes Windows picks from per DPI are packed into one .ico (PNG entries, Vista and later).
+// A toast takes one PNG: the lit disc, since a toast is news.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { initWasm, Resvg } from '@resvg/resvg-wasm'
 
 const APP = join(import.meta.dirname, '..')
-const OUT = join(APP, 'resources', 'tray')
+const OUT = join(APP, 'resources', 'icons')
 const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
+/** Windows draws a toast's image at up to 48px, at up to 200% scale. */
+const TOAST_SIZE = 96
 /** The bat the icons were drawn from, kept beside them so a test can tell when they fall behind. */
 export const DRAWN_FROM = join(OUT, 'drawn-from.txt')
 
@@ -74,6 +77,9 @@ async function main(): Promise<void> {
     writeFileSync(join(OUT, `${name}.ico`), ico(images))
     console.log(`  ${name}.ico`)
   }
+  const toast = new Resvg(iconSvg(wings, true), { fitTo: { mode: 'width', value: TOAST_SIZE } }).render()
+  writeFileSync(join(OUT, 'toast.png'), toast.asPng())
+  console.log('  toast.png')
 }
 
 if (import.meta.main) await main()

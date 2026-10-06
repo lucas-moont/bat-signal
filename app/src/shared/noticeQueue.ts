@@ -1,10 +1,8 @@
 // The order in which the Bat-Signal shows its notice cards. Pure: callers pass the time.
-import { NOTICE_URGENCY, type Notice } from './notices'
+import { byUrgency, freshen, type Notice } from './notices'
 
 /** How long each notice card stays out before the next one (or the signal alone). */
 export const NOTICE_MS = 6000
-/** How many announced keys to remember: far more than ever change between two snapshots. */
-const MEMORY = 500
 
 export interface NoticeQueue {
   showing?: { notice: Notice; since: number }
@@ -23,14 +21,9 @@ function showNext(queue: NoticeQueue, now: number): NoticeQueue {
 
 /** Adds news; the most urgent waits first (a stable sort keeps arrival order among equals). */
 export function enqueue(queue: NoticeQueue, notices: Notice[], now: number): NoticeQueue {
-  const fresh = notices.filter((n) => !queue.announced.has(n.key))
+  const { fresh, announced } = freshen(queue.announced, notices)
   if (!fresh.length) return queue
-  const waiting = [...queue.waiting, ...fresh].sort((a, b) => NOTICE_URGENCY[a.kind] - NOTICE_URGENCY[b.kind])
-  const next = {
-    ...queue,
-    waiting,
-    announced: new Set([...queue.announced, ...fresh.map((n) => n.key)].slice(-MEMORY)),
-  }
+  const next = { ...queue, waiting: [...queue.waiting, ...fresh].sort(byUrgency), announced }
   return next.showing ? next : showNext(next, now)
 }
 

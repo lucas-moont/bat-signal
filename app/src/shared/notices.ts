@@ -36,6 +36,25 @@ export const NOTICE_URGENCY: Record<NoticeKind, number> = {
   'session-closed': 12,
 }
 
+/** How many announced keys to remember: far more than ever change between two snapshots. */
+const MEMORY = 500
+
+/**
+ * The notices not announced before, and the memory with them added: the most recent MEMORY keys,
+ * or the very same memory when nothing is new.
+ */
+export function freshen(
+  announced: ReadonlySet<string>,
+  notices: readonly Notice[],
+): { fresh: Notice[]; announced: ReadonlySet<string> } {
+  const fresh = notices.filter((n) => !announced.has(n.key))
+  if (!fresh.length) return { fresh, announced }
+  return { fresh, announced: new Set([...announced, ...fresh.map((n) => n.key)].slice(-MEMORY)) }
+}
+
+/** Most urgent first, for a sort (a stable one keeps arrival order among equals). */
+export const byUrgency = (a: Notice, b: Notice): number => NOTICE_URGENCY[a.kind] - NOTICE_URGENCY[b.kind]
+
 /** News that needs the user, not just news. */
 export const isUrgent = (kind: NoticeKind): boolean => NOTICE_URGENCY[kind] <= NOTICE_URGENCY.waiting
 

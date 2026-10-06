@@ -35,6 +35,7 @@ const DEMO_NEWS_MS = 4000
 /** Serves the made-up Gotham night instead of real sessions (screenshots, demos). */
 function startDemo(publish: Publish): () => void {
   let news = false
+  publish(beforeNewsDemoSnapshot()) // the state to find news against, as for a live start
   const newsTimer = setTimeout(() => {
     news = true
     publish(demoSnapshot())
@@ -83,6 +84,9 @@ function startLive(publish: Publish): () => void {
     }, PUSH_THROTTLE_MS)
   }
   store.on('update', schedulePush)
+  // The state at start goes out once, so everything that compares snapshots (the toasts) finds
+  // news against what the pages loaded, even when nothing changes before the first news.
+  void store.ready.then(() => publish(store.snapshot()))
 
   ipcMain.handle(IPC.getSnapshot, async () => {
     await store.ready

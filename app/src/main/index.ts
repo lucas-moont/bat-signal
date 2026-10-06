@@ -8,6 +8,7 @@ import { settingsFile } from './settings'
 import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
+import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
@@ -24,9 +25,13 @@ function start(): void {
   const windows = new BatSignalWindows(settings)
   // Before anything can hide the windows: the tray is the way back.
   const tray = new BatSignalTray(windows)
+  // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
+  // not the user picking the panel for the disc to open.
+  const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId, false))
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)
+    toasts.update(snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
   })
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
@@ -108,6 +113,7 @@ function start(): void {
   app.once('before-quit', stop)
   app.once('will-quit', () => {
     clearInterval(retry)
+    toasts.dispose()
     shortcut.dispose()
   })
 }
