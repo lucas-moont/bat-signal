@@ -133,6 +133,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
+}
+/* A switch's whole line toggles it. */
+.toggle {
   cursor: pointer;
 }
 .setting__text {
@@ -215,18 +218,14 @@
   cursor: pointer;
 }
 .shortcut__keys:hover {
-  border-color: var(--blood);
+  border-color: var(--signal);
 }
 .shortcut__keys:focus-visible {
   outline: 1px solid var(--signal);
   outline-offset: 2px;
 }
 .shortcut__keys--recording {
-  border-color: var(--signal);
-}
-/* The keys are chips, lit like the label they belong to. */
-.shortcut__keys .chip {
-  color: var(--bone);
+  border-color: var(--signal-hot);
 }
 .shortcut__word {
   font-family: var(--font-mono);
@@ -237,5 +236,5 @@
   color: var(--bone);
 }
 .setting__hint--warn {
-  color: var(--ink-hot);
+  color: var(--signal-hot);
 }
