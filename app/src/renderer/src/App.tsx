@@ -59,6 +59,7 @@ export function App() {
   // A click on a notice card opens the panel on that case.
   const onFocusCase = useEffectEvent((sessionId: string) => open(sessionId))
   useEffect(() => batSignal.onFocusCase((sessionId) => onFocusCase(sessionId)), [])
+  useEffect(() => batSignal.onOpenSettings(() => setSettingsOpen(true)), [])
 
   const openAttention = (item: AttentionItem) =>
     open(item.sessionId, item.kind === 'stalled' && item.taskId ? { kind: 'task', id: item.taskId } : null)

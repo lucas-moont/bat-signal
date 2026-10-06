@@ -29,6 +29,8 @@ const api = {
   setMode: (mode: WindowMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
   onMode: (callback: (mode: WindowMode) => void) => subscribe(IPC.mode, callback),
   onFocusCase: (callback: (sessionId: string) => void) => subscribe(IPC.focusCase, callback),
+  /** The tray's Settings…: open the settings sheet. */
+  onOpenSettings: (callback: () => void) => subscribe(IPC.openSettings, callback),
   /** Grows the signal for a notice card (or shrinks it back); resolves once done, with the card's side. */
   setNoticeOut: (out: boolean): Promise<NoticeLayout> => ipcRenderer.invoke(IPC.noticeOut, out),
   /** The signal takes clicks only while the pointer is over the disc or a card. */

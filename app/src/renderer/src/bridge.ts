@@ -64,6 +64,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
       mode.set(next)
     },
     onFocusCase: () => () => undefined,
+    onOpenSettings: () => () => undefined,
     setNoticeOut: async () => ({ below: false, right: false }),
     setInteractive: () => undefined,
     moveSignalBy: () => undefined,

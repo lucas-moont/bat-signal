@@ -4,13 +4,19 @@ import { applySettingsPatch, parseWindowMode } from '../shared/settings'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { migrateUserData } from './userData'
+import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
 
 function start(): void {
   migrateUserData()
   let settings = settingsFile.load()
   const windows = new BatSignalWindows(settings)
-  const stop = startBatSignal((snapshot) => windows.publish(snapshot))
+  // Before anything can hide the windows: the tray is the way back.
+  const tray = new BatSignalTray(windows)
+  const stop = startBatSignal((snapshot) => {
+    windows.publish(snapshot)
+    tray.update(snapshot)
+  })
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
