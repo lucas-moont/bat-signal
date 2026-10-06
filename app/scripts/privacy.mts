@@ -5,11 +5,11 @@
 import { execFileSync } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
 import { homedir, userInfo } from 'node:os'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 
 /** What only this machine knows, gathered at run time and never written anywhere. */
 export interface LocalIdentity {
-  /** Local usernames, matched as whole words. */
+  /** Local usernames and the profile folder name, matched as whole words. */
   names: readonly string[]
   /** Ids of real Claude Code sessions on this machine. */
   ids: readonly string[]
@@ -34,6 +34,22 @@ const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 const UUID_WORD = new RegExp(`\\b${UUID.source}\\b`, 'gi')
 const TRANSCRIPT = new RegExp(`(?:^|[\\\\/])(${UUID.source})\\.jsonl$`, 'i')
 
+/**
+ * Account names that are also everyday words in code (containers run as root or node): matching
+ * them would flag ordinary lines. Names under 4 letters are skipped for the same reason.
+ */
+const EVERYDAY_NAMES = new Set([
+  'root',
+  'node',
+  'user',
+  'admin',
+  'guest',
+  'owner',
+  'test',
+  'ubuntu',
+  'vscode',
+])
+
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /** Whether the line holds a match of `pattern` (a global regex) that is not allowed. */
@@ -46,8 +62,10 @@ const anyBut = (line: string, pattern: RegExp, allowed: (match: RegExpExecArray)
  */
 export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
   const ids = new Set(local.ids.map((id) => id.toLowerCase()))
-  const names = local.names.length
-    ? new RegExp(`\\b(?:${local.names.map(escapeRegExp).join('|')})\\b`, 'i')
+  const own = local.names.filter((n) => n.length >= 4 && !EVERYDAY_NAMES.has(n.toLowerCase()))
+  // Whole words in any script: \b alone treats an accented letter as a word boundary.
+  const names = own.length
+    ? new RegExp(`(?<![\\p{L}\\p{N}_])(?:${own.map(escapeRegExp).join('|')})(?![\\p{L}\\p{N}_])`, 'iu')
     : undefined
   const rules: [Rule, (line: string) => boolean][] = [
     ['user folder', (l) => anyBut(l, USER_FOLDER, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))],
@@ -79,7 +97,9 @@ function localSessionIds(): string[] {
 export function scanRepo(): (Leak & { file: string })[] {
   const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8' })
   const root = git('rev-parse', '--show-toplevel').trim()
-  const findLeaks = leakFinder({ names: [userInfo().username], ids: localSessionIds() })
+  // The profile folder can differ from the account name (renamed or Microsoft accounts).
+  const names = [userInfo().username, basename(homedir())]
+  const findLeaks = leakFinder({ names, ids: localSessionIds() })
   return git('-C', root, 'ls-files', '-z')
     .split('\0')
     .filter(Boolean)

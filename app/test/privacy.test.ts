@@ -59,6 +59,16 @@ describe('privacy check: what only this machine knows', () => {
     expect(scan('jdoexample', me)).toEqual([])
   })
 
+  it('finds a username with accents', () => {
+    expect(scan('owner andré here', { names: ['andré'], ids: [] })).toEqual(['1:username'])
+    expect(scan('andréa', { names: ['andré'], ids: [] })).toEqual([])
+  })
+
+  it('ignores a username that is an everyday word in code', () => {
+    const container: LocalIdentity = { names: ['root', 'node', 'dev'], ids: [] }
+    expect(scan('const root = git(); node scripts/x.mts; npm run dev', container)).toEqual([])
+  })
+
   it('flags a real Claude session id, but not other ids', () => {
     expect(scan('resume 0F1E2D3C-4B5A-6978-8A9B-0C1D2E3F4A5B', me)).toEqual(['1:session id'])
     expect(scan('resume 11111111-2222-3333-4444-555555555555', me)).toEqual([])
