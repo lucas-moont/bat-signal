@@ -26,7 +26,9 @@ CI runs exactly these commands.
 
 In development, Start with Windows registers this checkout's `electron.exe` with the app folder, which loads `out/`: run `npm run build` before signing out to try it, and switch it off before moving the checkout.
 
-The tray icons in `app/resources/tray/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
+Windows shows toasts only from an app it knows by a Start menu shortcut. In development, Electron adds one (`Electron`, for this checkout's `electron.exe`) with the first toast, and Windows drops that first one: the next ones show. The installer will add the shortcut ahead of time.
+
+The tray and toast icons in `app/resources/tray/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
 
 ## Commits
 

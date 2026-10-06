@@ -75,6 +75,8 @@ The bat by the clock is Bat-Signal's tray icon, lit red while something needs yo
 
 **Start with Windows** (Settings → Comfort) has Bat-Signal wake as the disc when you sign in, without taking the focus. The switch shows what Windows will do: turn the entry off in Task Manager's Startup apps and the switch says so.
 
+**Windows notifications** (Settings → Windows notifications, all off at first) add a Windows toast to the Bat-Signal for the kinds of news you pick: Claude needs you, a reply is ready, a task is done, a case opened or closed. A burst of news is one toast (the most urgent, with a count of the rest), the same news never comes twice, and none come while the panel is the window in front. Click one to open its case.
+
 ## Light on resources
 
 A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
