@@ -5,6 +5,7 @@ import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
+import { launchOptions, loginItemFor, startupState } from './loginItem'
 import { createShortcut } from './shortcut'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
@@ -31,7 +32,13 @@ function start(): void {
   shortcut.apply(settings.shortcut)
   // What is happening now, read from each feature; sent to the pages only when it changed (each
   // feature keeps the same object until then).
-  const readStatus = (): AppStatus => ({ shortcut: shortcut.status })
+  // Starting with Windows: read from the entry Windows keeps (Task Manager can change it too).
+  const launchEnv = { isPackaged: app.isPackaged, execPath: process.execPath, appPath: app.getAppPath() }
+  const startup = () => {
+    const { path, args } = loginItemFor(true, launchEnv)
+    return startupState(app.getLoginItemSettings({ path, args }))
+  }
+  const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup() })
   let published = readStatus()
   const publishStatus = () => {
     const next = readStatus()
@@ -79,6 +86,10 @@ function start(): void {
       stopWatching = () => undefined
     }
   })
+  ipcMain.on(IPC.setStartWithWindows, (_event, on: unknown) => {
+    app.setLoginItemSettings(loginItemFor(on === true, launchEnv))
+    publishStatus()
+  })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
     const next = parseViewMode(mode)
@@ -109,7 +120,10 @@ if (!app.requestSingleInstanceLock()) {
   app.setAppUserModelId('com.lucasmoont.bat-signal')
   // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
   // for from the start, since a second launch can come while this one is still getting ready.
-  app.on('second-instance', () => summon())
+  // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
+  app.on('second-instance', (_event, argv) => {
+    if (!launchOptions(argv).atLogin) summon()
+  })
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())
 }

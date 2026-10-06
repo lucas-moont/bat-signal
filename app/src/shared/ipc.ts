@@ -22,4 +22,5 @@ export const IPC = {
   getStatus: 'bat-signal:get-status',
   status: 'bat-signal:status',
   recordShortcut: 'bat-signal:record-shortcut',
+  setStartWithWindows: 'bat-signal:set-start-with-windows',
 } as const

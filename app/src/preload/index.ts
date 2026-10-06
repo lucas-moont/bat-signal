@@ -28,6 +28,8 @@ const api = {
   onStatus: (callback: (status: AppStatus) => void) => subscribe(IPC.status, callback),
   /** On while the settings sheet records a shortcut: the current one then lets its keys through. */
   recordShortcut: (on: boolean): void => ipcRenderer.send(IPC.recordShortcut, on),
+  /** Asks Windows to start Bat-Signal at sign-in, or not; the answer comes back as status. */
+  setStartWithWindows: (on: boolean): void => ipcRenderer.send(IPC.setStartWithWindows, on),
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   /** Shows the panel (optionally opened on one case) or folds back into the signal. */

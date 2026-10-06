@@ -1,6 +1,7 @@
 // Starting with Windows: the entry Windows keeps for Bat-Signal is the one record of the choice
 // (Task Manager can turn it off too), so the settings switch reads and writes it, and nothing is
 // saved in settings.json. Pure, so the entry and its reading are tested without Windows.
+import type { StartupState } from '../shared/status'
 
 /** The flag a launch at sign-in carries: Bat-Signal then wakes quietly, as the disc. */
 export const AT_LOGIN = '--hidden'
@@ -32,8 +33,6 @@ export const loginItemFor = (enabled: boolean, env: LaunchEnv): LoginItem => ({
 export const launchOptions = (argv: readonly string[]): { atLogin: boolean } => ({
   atLogin: argv.includes(AT_LOGIN),
 })
-
-export type StartupState = 'on' | 'off' | 'blocked'
 
 /** On, off, or blocked: the entry is there, but Task Manager turned it off. */
 export const startupState = (windows: {
