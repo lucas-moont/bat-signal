@@ -17,6 +17,6 @@ export const IPC = {
   warmTerminal: 'bat-signal:warm-terminal',
   reopen: 'bat-signal:reopen',
   watchHeight: 'bat-signal:watch-height',
-  closeWindow: 'bat-signal:close-window',
+  hide: 'bat-signal:hide',
   openSettings: 'bat-signal:open-settings',
 } as const

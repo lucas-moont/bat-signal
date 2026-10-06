@@ -9,11 +9,11 @@ interface HeaderProps {
   mood: MascotMood
   onFold: () => void
   onWatch: () => void
-  onClose: () => void
+  onHide: () => void
 }
 
 /** Title bar of the frameless window: drag it to move. */
-export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps) {
+export function Header({ needsYou, mood, onFold, onWatch, onHide }: HeaderProps) {
   return (
     <header className="header">
       {/* The needs-you count hangs off the emblem like a stamp, taking no room in the row. */}
@@ -58,7 +58,7 @@ export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps
         </button>
         <button
           className="icon-button icon-button--danger"
-          onClick={onClose}
+          onClick={onHide}
           aria-label="Hide to tray"
           title="Hide to tray"
         >

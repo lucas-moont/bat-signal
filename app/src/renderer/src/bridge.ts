@@ -78,7 +78,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     onMode: mode.on,
     reopen: () => mode.set(lastOpened),
     setWatchHeight: () => undefined,
-    closeWindow: () => window.close(),
+    hide: () => window.close(),
   }
 }
 

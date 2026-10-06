@@ -99,7 +99,7 @@ export function App() {
             mood={mood}
             onFold={fold}
             onWatch={() => batSignal.setMode('watch')}
-            onClose={batSignal.closeWindow}
+            onHide={batSignal.hide}
           />
           <Tabs
             tab={activeTab}
