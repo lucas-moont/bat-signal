@@ -33,8 +33,7 @@ function start(): void {
   shortcut.apply(settings.shortcut)
   // What is happening now, read from each feature; sent to the pages only when it changed (each
   // feature keeps the same object until then).
-  // Starting with Windows: what Windows has (Task Manager can change it too), read again when a
-  // page asks for the status.
+  // Starting with Windows: what Windows has (Task Manager can change it too).
   const startup = createStartup(() => publishStatus())
   const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup.state })
   let published = readStatus()
@@ -63,10 +62,10 @@ function start(): void {
       publishStatus()
     }
   })
-  ipcMain.handle(IPC.getStatus, () => {
-    void startup.refresh()
-    return readStatus()
-  })
+  ipcMain.handle(IPC.getStatus, () => readStatus())
+  // The settings sheet opened: what it shows is read again from Windows (Task Manager may have
+  // moved the switch since); a change goes out as status.
+  ipcMain.on(IPC.refreshStatus, () => void startup.refresh())
   // While the settings sheet records a new shortcut, the current one must reach it as keys. A page
   // that reloads or dies mid-recording never says it stopped: its going ends the pause.
   let stopWatching = (): void => undefined

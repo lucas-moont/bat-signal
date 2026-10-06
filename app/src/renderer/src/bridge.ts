@@ -77,6 +77,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     getStatus: status.get,
     onStatus: status.on,
     recordShortcut: () => undefined,
+    refreshStatus: () => undefined,
     setStartWithWindows: (on) => {
       startup = on ? 'on' : 'off'
       status.set(statusOf(settings.current()))

@@ -30,6 +30,8 @@ const api = {
   recordShortcut: (on: boolean): void => ipcRenderer.send(IPC.recordShortcut, on),
   /** Asks Windows to start Bat-Signal at sign-in, or not; the answer comes back as status. */
   setStartWithWindows: (on: boolean): void => ipcRenderer.send(IPC.setStartWithWindows, on),
+  /** Asks the main process to read what may have changed outside the app (Task Manager). */
+  refreshStatus: (): void => ipcRenderer.send(IPC.refreshStatus),
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   /** Shows the panel (optionally opened on one case) or folds back into the signal. */

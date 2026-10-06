@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
 import type { AppStatus } from '@shared/status'
@@ -228,6 +228,8 @@ export function SettingsSheet({
   onChange: (patch: SettingsPatch) => void
   onClose: () => void
 }) {
+  // What Windows has may have moved since (Task Manager): read it again as the sheet opens.
+  useEffect(() => batSignal.refreshStatus(), [])
   return (
     <Sheet kicker="Bat-Computer" title="Settings" onClose={onClose}>
       <div className="settings">
