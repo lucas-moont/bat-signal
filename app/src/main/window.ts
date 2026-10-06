@@ -184,6 +184,7 @@ export class BatSignalWindows {
     const onTopTimer = setInterval(() => this.keepOnTop(), ON_TOP_EVERY_MS)
     app.on('before-quit', () => {
       clearInterval(onTopTimer)
+      this.cancelStrip() // a strip held back must not show into windows on their way out
       this.quitting = true
       this.saveNow()
     })
