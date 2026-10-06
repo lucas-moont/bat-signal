@@ -207,6 +207,13 @@ export class BatSignalWindows {
       e.preventDefault()
       this.act('close')
     })
+    // Windows ending the session (shutting down, restarting, signing out) closes for real: hiding
+    // to the tray instead would keep it waiting on Bat-Signal.
+    for (const win of [this.panel, this.signal])
+      win.on('session-end', () => {
+        this.quitting = true
+        app.quit()
+      })
 
     load(this.panel, 'panel')
     load(this.signal, 'signal')
