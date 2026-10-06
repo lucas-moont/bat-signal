@@ -32,7 +32,8 @@ describe('createShortcut', () => {
     const windows = fakeHost()
     let pressed = 0
     const shortcut = createShortcut(windows.host, () => pressed++)
-    expect(shortcut.apply('Ctrl+Alt+B')).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
+    shortcut.apply('Ctrl+Alt+B')
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
     windows.press('Ctrl+Alt+B')
     expect(pressed).toBe(1)
   })
@@ -47,13 +48,15 @@ describe('createShortcut', () => {
   it('swaps an old shortcut for a new one', () => {
     const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
-    expect(shortcut.apply('Ctrl+Alt+N')).toEqual({ accelerator: 'Ctrl+Alt+N', state: 'active' })
+    shortcut.apply('Ctrl+Alt+N')
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+N', state: 'active' })
     expect([...windows.registered.keys()]).toEqual(['Ctrl+Alt+N'])
   })
 
   it('says when another app already has the shortcut, holding nothing', () => {
     const { windows, shortcut } = setup(['Ctrl+Alt+B'])
-    expect(shortcut.apply('Ctrl+Alt+B')).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'taken' })
+    shortcut.apply('Ctrl+Alt+B')
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'taken' })
     expect(windows.registered.size).toBe(0)
   })
 
@@ -61,13 +64,15 @@ describe('createShortcut', () => {
     const { windows, shortcut } = setup(['Ctrl+Alt+B'])
     shortcut.apply('Ctrl+Alt+B')
     windows.takenByOthers.length = 0
-    expect(shortcut.apply('Ctrl+Alt+B')).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
+    shortcut.apply('Ctrl+Alt+B')
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
   })
 
   it('turns off with no shortcut', () => {
     const { windows, shortcut } = setup()
     shortcut.apply('Ctrl+Alt+B')
-    expect(shortcut.apply('')).toEqual({ accelerator: '', state: 'off' })
+    shortcut.apply('')
+    expect(shortcut.status).toEqual({ accelerator: '', state: 'off' })
     expect(windows.registered.size).toBe(0)
   })
 
@@ -86,7 +91,8 @@ describe('createShortcut', () => {
     shortcut.pause(true)
     shortcut.apply('Ctrl+Alt+N')
     expect(windows.registered.size).toBe(0)
-    expect(shortcut.pause(false)).toEqual({ accelerator: 'Ctrl+Alt+N', state: 'active' })
+    shortcut.pause(false)
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+N', state: 'active' })
   })
 
   it('lets go when the app quits', () => {
@@ -120,5 +126,13 @@ describe('createShortcut', () => {
     shortcut.apply('Ctrl+Alt+B')
     shortcut.apply('')
     expect(shortcut.status).toEqual({ accelerator: '', state: 'off' })
+  })
+
+  it('keeps the same status while a retry finds the shortcut still taken', () => {
+    const { shortcut } = setup(['Ctrl+Alt+B'])
+    shortcut.apply('Ctrl+Alt+B')
+    const before = shortcut.status
+    shortcut.apply('Ctrl+Alt+B')
+    expect(shortcut.status).toBe(before)
   })
 })

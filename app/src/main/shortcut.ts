@@ -20,16 +20,21 @@ export function createShortcut(host: ShortcutHost, onPress: () => void) {
     held = ''
   }
 
-  /** Holds `wanted` if it can (it is not paused), and says how that went. */
-  const sync = (): ShortcutStatus => {
+  /** Holds `wanted` if it can (it is not paused), and notes how that went in `status`. */
+  const sync = (): void => {
     // Already holding what is wanted. (Holding nothing is no reason to keep the status: it may
     // still say a shortcut that was released or taken.)
-    if (paused || (held && held === wanted)) return status
+    if (paused || (held && held === wanted)) return
     release()
-    if (!wanted) return (status = SHORTCUT_OFF)
-    if (!host.register(wanted, onPress)) return (status = { accelerator: wanted, state: 'taken' })
-    held = wanted
-    return (status = { accelerator: wanted, state: 'active' })
+    if (!wanted) status = SHORTCUT_OFF
+    else if (!host.register(wanted, onPress)) {
+      // Still taken on a retry: the same status, so nothing is sent for it.
+      if (status.state !== 'taken' || status.accelerator !== wanted)
+        status = { accelerator: wanted, state: 'taken' }
+    } else {
+      held = wanted
+      status = { accelerator: wanted, state: 'active' }
+    }
   }
 
   return {
@@ -38,15 +43,15 @@ export function createShortcut(host: ShortcutHost, onPress: () => void) {
       return status
     },
     /** The shortcut from settings ('' for none). A taken one is tried again each time. */
-    apply(accelerator: string): ShortcutStatus {
+    apply(accelerator: string): void {
       wanted = accelerator
-      return sync()
+      sync()
     },
     /** While the sheet records a new shortcut, the current one must reach the page, not trigger. */
-    pause(on: boolean): ShortcutStatus {
+    pause(on: boolean): void {
       paused = on
       if (on) release()
-      return sync()
+      sync()
     },
     dispose(): void {
       release()
