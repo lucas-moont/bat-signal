@@ -10,6 +10,9 @@ import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
 
+/** How often a shortcut another app holds is tried again. */
+const SHORTCUT_RETRY_MS = 60_000
+
 /** Brings Bat-Signal forward when it is launched again; nothing to bring until it has started. */
 let summon = (): void => undefined
 
@@ -36,6 +39,12 @@ function start(): void {
     published = next
     windows.publishStatus(next)
   }
+  // A shortcut another app held is tried again now and then: that app may have let it go.
+  const retry = setInterval(() => {
+    if (shortcut.status.state !== 'taken') return
+    shortcut.apply(settings.shortcut)
+    publishStatus()
+  }, SHORTCUT_RETRY_MS)
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
@@ -88,7 +97,10 @@ function start(): void {
 
   summon = () => windows.act('summon')
   app.once('before-quit', stop)
-  app.once('will-quit', () => shortcut.dispose())
+  app.once('will-quit', () => {
+    clearInterval(retry)
+    shortcut.dispose()
+  })
 }
 
 if (!app.requestSingleInstanceLock()) {
