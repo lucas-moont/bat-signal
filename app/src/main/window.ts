@@ -201,12 +201,12 @@ export class BatSignalWindows {
     this.panel.on('close', (e) => {
       if (this.quitting) return
       e.preventDefault()
-      this.setMode('signal')
+      this.act('fold')
     })
     this.signal.on('close', (e) => {
       if (this.quitting) return
       e.preventDefault()
-      this.act('closeDisc')
+      this.act('close')
     })
 
     load(this.panel, 'panel')

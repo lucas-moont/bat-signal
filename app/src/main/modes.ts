@@ -12,11 +12,12 @@ export interface ModeState {
 /**
  * - shortcut: the global shortcut, a "show me" key: opens what the disc would, folds it back.
  * - trayClick / trayShowHide: a click on the tray icon, and its Show/Hide item.
- * - closeDisc / closeButton: Alt+F4 on the disc, and the header's close button: both hide to the
- *   tray (quitting is the tray's Quit).
+ * - close: Alt+F4 on the disc, or the header's close button: hides to the tray (quitting is the
+ *   tray's Quit).
+ * - fold: Alt+F4 on the panel: folds it back into the disc.
  * - summon: Bat-Signal launched again while it runs.
  */
-export type ModeAction = 'shortcut' | 'trayClick' | 'trayShowHide' | 'closeDisc' | 'closeButton' | 'summon'
+export type ModeAction = 'shortcut' | 'trayClick' | 'trayShowHide' | 'close' | 'fold' | 'summon'
 
 export function nextMode({ mode, lastOpened, beforeHidden }: ModeState, action: ModeAction): WindowMode {
   switch (action) {
@@ -26,9 +27,10 @@ export function nextMode({ mode, lastOpened, beforeHidden }: ModeState, action: 
       return mode === 'panel' ? 'signal' : 'panel'
     case 'trayShowHide':
       return mode === 'hidden' ? beforeHidden : 'hidden'
-    case 'closeDisc':
-    case 'closeButton':
+    case 'close':
       return 'hidden'
+    case 'fold':
+      return 'signal'
     case 'summon':
       return isOpenMode(mode) ? mode : lastOpened
   }
