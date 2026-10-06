@@ -3,7 +3,7 @@ import {
   APP_ID,
   approvedByTaskManager,
   AT_LOGIN,
-  launchOptions,
+  isLoginLaunch,
   loginItemFor,
   startupState,
 } from '../src/main/loginItem'
@@ -44,14 +44,14 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
   })
 })
 
-describe('launchOptions', () => {
+describe('isLoginLaunch', () => {
   it('knows a launch at sign-in by its flag', () => {
-    expect(launchOptions(['electron.exe', '.', AT_LOGIN])).toEqual({ atLogin: true })
+    expect(isLoginLaunch(['electron.exe', '.', AT_LOGIN])).toBe(true)
   })
 
   it('takes any other launch for the user opening it', () => {
-    expect(launchOptions(['Bat-Signal.exe'])).toEqual({ atLogin: false })
-    expect(launchOptions(['Bat-Signal.exe', `${AT_LOGIN}x`])).toEqual({ atLogin: false })
+    expect(isLoginLaunch(['Bat-Signal.exe'])).toBe(false)
+    expect(isLoginLaunch(['Bat-Signal.exe', `${AT_LOGIN}x`])).toBe(false)
   })
 })
 

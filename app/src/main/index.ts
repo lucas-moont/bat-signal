@@ -5,7 +5,7 @@ import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
-import { APP_ID, launchOptions } from './loginItem'
+import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { migrateUserData } from './userData'
@@ -36,7 +36,6 @@ function start(): void {
   // Starting with Windows: what Windows has (Task Manager can change it too), read again when a
   // page asks for the status.
   const startup = createStartup(() => publishStatus())
-  void startup.refresh()
   const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup.state })
   let published = readStatus()
   const publishStatus = () => {
@@ -45,6 +44,7 @@ function start(): void {
     published = next
     windows.publishStatus(next)
   }
+  void startup.refresh()
   // A shortcut another app held is tried again now and then: that app may have let it go.
   const retry = setInterval(() => {
     if (shortcut.status.state !== 'taken') return
@@ -121,7 +121,7 @@ if (!app.requestSingleInstanceLock()) {
   // for from the start, since a second launch can come while this one is still getting ready.
   // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
   app.on('second-instance', (_event, argv) => {
-    if (!launchOptions(argv).atLogin) summon()
+    if (!isLoginLaunch(argv)) summon()
   })
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())

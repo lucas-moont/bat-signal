@@ -38,20 +38,17 @@ export const loginItemFor = (enabled: boolean, env: LaunchEnv): LoginItem => ({
   name: APP_ID,
 })
 
-export const launchOptions = (argv: readonly string[]): { atLogin: boolean } => ({
-  atLogin: argv.includes(AT_LOGIN),
-})
+/** Whether this launch is Windows starting Bat-Signal at sign-in. */
+export const isLoginLaunch = (argv: readonly string[]): boolean => argv.includes(AT_LOGIN)
 
 /**
- * Whether Task Manager lets Bat-Signal's entry run, from `reg query` of STARTUP_APPROVED for it.
+ * Whether Task Manager lets the login entry run, from `reg query` of STARTUP_APPROVED for its name.
  * Its first byte is even when switched on and odd when switched off; an entry Task Manager never
  * touched has no value and runs. (Electron's own reading misses entries with arguments.)
  */
 export function approvedByTaskManager(regOutput: string): boolean {
-  const bytes = new RegExp(`${APP_ID.replace(/\./g, '\\.')}\\s+REG_BINARY\\s+([0-9A-F]{2})`, 'i').exec(
-    regOutput,
-  )
-  return !bytes || parseInt(bytes[1]!, 16) % 2 === 0
+  const firstByte = /REG_BINARY\s+([0-9A-F]{2})/i.exec(regOutput)?.[1]
+  return !firstByte || parseInt(firstByte, 16) % 2 === 0
 }
 
 /** On, off, or blocked: the entry is there, but Task Manager turned it off. */

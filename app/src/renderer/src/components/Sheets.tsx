@@ -199,7 +199,7 @@ export function DetailSheet({
 function Toggle({
   label,
   hint,
-  warn = false,
+  warn,
   on,
   onChange,
 }: {
