@@ -71,6 +71,8 @@ Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywher
 
 The bat by the clock is Bat-Signal's tray icon, lit red while something needs you. Click it to open or fold the panel; its menu switches between the disc, the panel and the watch strip, hides everything, opens Settings, and quits. Closing the disc or the panel's close button hides Bat-Signal to the tray instead of quitting, and launching it again brings it back.
 
+**Ctrl+Alt+B**, from any app, does what a click on the disc does: it opens the panel or the watch strip (whichever you used last) and folds it back, and it brings a hidden Bat-Signal back. Change it under Settings → Comfort: click the keys and press new ones (Esc cancels, Backspace turns it off). If another app already holds the combination, Settings says so in red. On keyboards where Ctrl+Alt acts as AltGr (Portuguese ABNT2, German, French), pick a combination that does not type a character you use.
+
 ## Light on resources
 
 A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
