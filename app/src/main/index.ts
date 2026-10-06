@@ -1,6 +1,7 @@
 import { app, globalShortcut, ipcMain } from 'electron'
 import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
+import { announce, emptyAnnouncer } from '../shared/announcer'
 import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
@@ -8,6 +9,9 @@ import { settingsFile } from './settings'
 import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
+import { BatSignalCues } from './cues'
+import { warmQuiet } from './quiet'
+import { powershell } from './sources/powershell'
 import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
@@ -28,10 +32,27 @@ function start(): void {
   // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
   // not the user picking the panel for the disc to open.
   const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId, false))
+  // The burst's sound, at the volume set when it plays; the switch and the panel are asked again
+  // then, since either may have changed while Windows answered.
+  const cues = new BatSignalCues((cue) => {
+    if (!settings.announce.sound || windows.panelFocused) return false
+    windows.cue({ cue, volume: settings.announce.volume })
+    return true
+  })
+  // With sound on, the quiet check is made ready ahead, so the first sound is not late.
+  if (settings.announce.sound) warmQuiet()
+  // News is found once, and what each way of announcing it wants comes out of the same list.
+  let announcer = emptyAnnouncer()
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)
-    toasts.update(snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
+    const out = announce(announcer, snapshot, {
+      prefs: settings.announce,
+      panelFocused: windows.panelFocused,
+    })
+    announcer = out.state
+    toasts.add(out.toast)
+    cues.add(out.sound)
   })
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
@@ -59,6 +80,7 @@ function start(): void {
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
+    if (settings.announce.sound) warmQuiet()
     settingsFile.save(settings)
     windows.apply(settings)
     // Only a patch that names the shortcut touches it (and retries it, if another app had it).
@@ -114,6 +136,8 @@ function start(): void {
   app.once('will-quit', () => {
     clearInterval(retry)
     toasts.dispose()
+    cues.dispose()
+    powershell.close()
     shortcut.dispose()
   })
 }

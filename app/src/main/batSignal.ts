@@ -5,7 +5,7 @@ import { beforeNewsDemoSnapshot, demoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
-import { closeTerminalHost, goToTerminal, warmTerminal } from './sources/windowsTerminal'
+import { goToTerminal, warmTerminal } from './sources/windowsTerminal'
 import { SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
 import { TranscriptTailer } from './sources/transcriptTailer'
@@ -117,7 +117,6 @@ function startLive(publish: Publish): () => void {
     clearTimeout(rereadTimer)
     registry.stop()
     void hooks.close()
-    closeTerminalHost()
     ipcMain.removeAllListeners(IPC.warmTerminal)
     ipcMain.removeHandler(IPC.goToTerminal)
     ipcMain.removeHandler(IPC.getSnapshot)

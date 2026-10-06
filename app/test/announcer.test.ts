@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
   announce,
+  cueFor,
   emptyAnnouncer,
   GROUP_OF_KIND,
+  SOUND_GAP_MS,
+  soundGapOpen,
   toastFor,
   type AnnounceContext,
 } from '../src/shared/announcer'
@@ -149,5 +152,83 @@ describe('GROUP_OF_KIND', () => {
     ['session-closed', 'sessions'],
   ] as [NoticeKind, NewsGroup][])('puts %s under the %s switch', (kind, group) => {
     expect(GROUP_OF_KIND[kind]).toBe(group)
+  })
+})
+
+/** Sound on unless said (every toast switch off), the panel not in front unless said. */
+const soundCtx = ({ sound = true, panelFocused = false } = {}): AnnounceContext => ({
+  prefs: { ...ctx([]).prefs, sound },
+  panelFocused,
+})
+
+/** Feeds snapshots in order and returns the kinds of news that came out for a sound. */
+function soundKinds(snapshots: StoreSnapshot[], context: AnnounceContext): NoticeKind[] {
+  let state = emptyAnnouncer()
+  return snapshots.flatMap((s) => {
+    const out = announce(state, s, context)
+    state = out.state
+    return out.sound.map((n) => n.kind)
+  })
+}
+
+describe('announce: sound', () => {
+  it.each(NEWS_GROUPS.filter((g) => g !== 'sessions'))(
+    'lets %s news make a sound when sound is on, whatever its toast switch',
+    (group) => {
+      const { snapshot, kind } = NEWS_OF[group]
+      expect(soundKinds([before[group], snapshot], soundCtx())).toEqual([kind])
+    },
+  )
+
+  it('makes no sound for a case opening or closing', () => {
+    const { snapshot } = NEWS_OF.sessions
+    expect(soundKinds([before.sessions, snapshot], soundCtx())).toEqual([])
+  })
+
+  it('is silent while sound is off, or while the panel is in front', () => {
+    const { snapshot } = NEWS_OF.needsYou
+    expect(soundKinds([quiet, snapshot], soundCtx({ sound: false }))).toEqual([])
+    expect(soundKinds([quiet, snapshot], soundCtx({ panelFocused: true }))).toEqual([])
+  })
+})
+
+describe('cueFor', () => {
+  it('turns the spotlight on for news that needs you or a reply, over anything else in the burst', () => {
+    expect(cueFor([notice('task-done'), notice('reply')])).toBe('light')
+    expect(cueFor([notice('permission')])).toBe('light')
+  })
+
+  it('gives a thump for a task done on its own', () => {
+    expect(cueFor([notice('task-done')])).toBe('thump')
+  })
+
+  it('is nothing for news without a sound', () => {
+    expect(cueFor([notice('session-opened')])).toBeUndefined()
+    expect(cueFor([])).toBeUndefined()
+  })
+
+  it.each([
+    ['permission', 'light'],
+    ['error', 'light'],
+    ['waiting', 'light'],
+    ['reply', 'light'],
+    ['task-done', 'thump'],
+    ['session-opened', undefined],
+    ['session-closed', undefined],
+  ] as [NoticeKind, string | undefined][])('sounds %s as %s', (kind, cue) => {
+    expect(cueFor([notice(kind)])).toBe(cue)
+  })
+})
+
+describe('soundGapOpen', () => {
+  const T0 = 1_000_000
+
+  it('lets the first sound play', () => {
+    expect(soundGapOpen(undefined, T0)).toBe(true)
+  })
+
+  it('keeps sounds SOUND_GAP_MS apart, counted from the last one played', () => {
+    expect(soundGapOpen(T0, T0 + SOUND_GAP_MS - 1)).toBe(false)
+    expect(soundGapOpen(T0, T0 + SOUND_GAP_MS)).toBe(true)
   })
 })

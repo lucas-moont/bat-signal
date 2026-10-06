@@ -10,6 +10,7 @@ const PATHS = {
   terminal: 'M2.5 3.5h11v9h-11z M5 6.5 7 8l-2 1.5 M8.5 10H11',
   watch: 'M3 4.5h10 M3 8h10 M3 11.5h6',
   expand: 'M3 6.5V3h3.5 M9.5 3H13v3.5 M13 9.5V13H9.5 M6.5 13H3V9.5',
+  sound: 'M2.5 6.2h2.3l3-2.6v8.8l-3-2.6H2.5z M10.3 6.1a2.7 2.7 0 0 1 0 3.8 M12.1 4.3a5.2 5.2 0 0 1 0 7.4',
   // The task marks of a case: drawn, so they look the same wherever the app runs (the bundled
   // fonts have no ○ ◐ ✓, and a system fallback drew them in its own style).
   'task-pending': RING,
