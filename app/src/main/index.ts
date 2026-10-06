@@ -25,8 +25,9 @@ function start(): void {
   const windows = new BatSignalWindows(settings)
   // Before anything can hide the windows: the tray is the way back.
   const tray = new BatSignalTray(windows)
-  // A clicked toast opens its case, as a notice card does.
-  const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId))
+  // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
+  // not the user picking the panel for the disc to open.
+  const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId, false))
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)

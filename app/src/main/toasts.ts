@@ -19,7 +19,8 @@ export class BatSignalToasts {
   /** A Notification left to the garbage collector loses its click: these are held. */
   private readonly kept: Notification[] = []
 
-  constructor(private readonly openCase: (sessionId: string) => void) {}
+  /** openCase: opens the panel, on the case when there is one. */
+  constructor(private readonly openCase: (sessionId?: string) => void) {}
 
   /** A new snapshot: its news is remembered, and the news the user picked joins the burst. */
   update(snapshot: StoreSnapshot, ctx: AnnounceContext): void {

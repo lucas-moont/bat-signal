@@ -32,8 +32,8 @@ export interface AnnounceContext {
 }
 
 export interface Toast {
-  /** The case a click opens. */
-  sessionId: string
+  /** The case a click opens; none for a case that closed. */
+  sessionId?: string
   title: string
   body: string
 }
@@ -59,7 +59,7 @@ export function toastFor(news: readonly Notice[]): Toast | undefined {
   const [first, ...rest] = [...news].sort(byUrgency)
   if (!first) return undefined
   return {
-    sessionId: first.sessionId,
+    ...(first.kind !== 'session-closed' && { sessionId: first.sessionId }),
     title: `${first.stamp} · ${first.title}`,
     body: rest.length ? `${first.line}\n+${rest.length} more` : first.line,
   }
