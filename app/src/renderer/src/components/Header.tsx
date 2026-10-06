@@ -56,7 +56,12 @@ export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps
         >
           <Icon name="fold" />
         </button>
-        <button className="icon-button icon-button--danger" onClick={onClose} aria-label="Quit" title="Quit">
+        <button
+          className="icon-button icon-button--danger"
+          onClick={onClose}
+          aria-label="Hide to tray"
+          title="Hide to tray"
+        >
           <Icon name="close" />
         </button>
       </nav>

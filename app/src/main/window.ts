@@ -191,15 +191,17 @@ export class BatSignalWindows {
       this.quitting = true
       this.saveNow()
     })
-    // Alt+F4 on the panel folds it away (with no window left the app would run invisibly);
-    // on the signal it quits, as the close button does.
+    // Alt+F4 on the panel folds it away; on the disc it hides Bat-Signal to the tray, as the
+    // close button does. Quitting is the tray's Quit.
     this.panel.on('close', (e) => {
       if (this.quitting) return
       e.preventDefault()
       this.setMode('signal')
     })
-    this.signal.on('close', () => {
-      if (!this.quitting) app.quit()
+    this.signal.on('close', (e) => {
+      if (this.quitting) return
+      e.preventDefault()
+      this.act('closeDisc')
     })
 
     load(this.panel, 'panel')

@@ -38,7 +38,7 @@ function start(): void {
   ipcMain.on(IPC.watchHeight, (_event, height: unknown) => {
     if (typeof height === 'number') windows.setWatchHeight(height)
   })
-  ipcMain.on(IPC.closeWindow, () => app.quit())
+  ipcMain.on(IPC.closeWindow, () => windows.act('closeButton'))
 
   // Launching Bat-Signal again (it runs once) brings it forward instead of doing nothing.
   app.on('second-instance', () => windows.act('summon'))
