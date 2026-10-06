@@ -34,6 +34,8 @@ function start(): void {
   })
   ipcMain.on(IPC.closeWindow, () => app.quit())
 
+  // Launching Bat-Signal again (it runs once) brings it forward instead of doing nothing.
+  app.on('second-instance', () => windows.act('summon'))
   app.once('before-quit', stop)
 }
 

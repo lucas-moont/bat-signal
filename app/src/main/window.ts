@@ -5,6 +5,7 @@ import { IPC } from '../shared/ipc'
 import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
+import { nextMode, type ModeAction, type OpenMode, type VisibleMode } from './modes'
 import {
   anchoredRect,
   cornerOf,
@@ -32,9 +33,6 @@ const WATCH_SHOW_FALLBACK_MS = 150
  * window that was active, dropping it behind everything; reasserting is one cheap z-order call.
  */
 const ON_TOP_EVERY_MS = 3000
-
-/** What the disc opens: the full panel or the watch strip, whichever was used last. */
-type OpenMode = Exclude<WindowMode, 'signal'>
 
 /** How a mode shows the panel window (the full panel and the watch strip share it). */
 interface PanelSpec {
@@ -73,6 +71,8 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
     },
     signal: 'perch',
   },
+  // Nothing on screen but the tray icon.
+  hidden: { signal: 'hidden' },
 }
 
 const isOpenMode = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
@@ -132,6 +132,8 @@ export class BatSignalWindows {
   private panelSize: Size
   /** What the disc opens: the panel or the strip, whichever the user picked last. */
   private lastOpened: OpenMode
+  /** What was showing when Bat-Signal hid, to show again. Never saved: every launch wakes as the disc. */
+  private beforeHidden: VisibleMode = 'signal'
   private watchHeight: number = WATCH.initialHeight
   private noticeOut = false
   private latest?: StoreSnapshot
@@ -250,10 +252,17 @@ export class BatSignalWindows {
     this.setMode(this.lastOpened)
   }
 
+  /** Does what the user's action leads to (see modes.ts): the shortcut, the tray, closing, a relaunch. */
+  act(action: ModeAction): void {
+    const { current: mode, lastOpened, beforeHidden } = this
+    this.setMode(nextMode({ mode, lastOpened, beforeHidden }, action))
+  }
+
   /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
   setMode(mode: WindowMode, focusSessionId?: string): void {
     const spec = MODES[mode]
     const entering = mode !== this.current
+    if (mode === 'hidden' && this.current !== 'hidden') this.beforeHidden = this.current
     // The strip opening anew is held back until its page has measured it (see setWatchHeight),
     // so it never shows at a stale height, or with the panel still in it, and then jumps.
     const holdStrip = entering && spec.panel?.size === 'fitted'

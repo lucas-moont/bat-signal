@@ -60,7 +60,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     onSettings: settings.on,
     getMode: mode.get,
     setMode: (next) => {
-      if (next !== 'signal') lastOpened = next
+      if (next === 'panel' || next === 'watch') lastOpened = next
       mode.set(next)
     },
     onFocusCase: () => () => undefined,

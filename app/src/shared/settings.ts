@@ -99,8 +99,12 @@ export interface NoticeLayout {
   right: boolean
 }
 
-/** Which window shows: the Bat-Signal disc at rest, the full panel, or the narrow watch strip. */
-export type WindowMode = 'signal' | 'panel' | 'watch'
+/**
+ * Which window shows: the Bat-Signal disc at rest, the full panel, the narrow watch strip, or
+ * nothing but the tray icon (hidden).
+ */
+export type WindowMode = 'signal' | 'panel' | 'watch' | 'hidden'
 
+/** A mode a page may ask for. Hiding is the main process's call (the tray, closing the disc). */
 export const parseWindowMode = (raw: unknown): WindowMode | undefined =>
   raw === 'signal' || raw === 'panel' || raw === 'watch' ? raw : undefined
