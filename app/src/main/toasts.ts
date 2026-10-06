@@ -8,7 +8,7 @@ import toastIcon from '../../resources/icons/toast.png?asset'
 
 /** News this close together is one burst: a finished turn pushes its reply, then its tasks. */
 const BURST_MS = 1000
-/** Toasts kept for their clicks (from the Action Center too); older ones are let go. */
+/** Toasts kept for their clicks (from the Action Center too); older ones are taken back. */
 const KEPT = 20
 
 export class BatSignalToasts {
@@ -40,7 +40,8 @@ export class BatSignalToasts {
     const shown = new Notification({ title: toast.title, body: toast.body, icon: toastIcon, silent: true })
     shown.on('click', () => this.openCase(toast.sessionId))
     this.kept.push(shown)
-    if (this.kept.length > KEPT) this.kept.shift()
+    // One let go would sit in the Action Center with a click that does nothing: it goes too.
+    if (this.kept.length > KEPT) this.kept.shift()?.close()
     shown.show()
   }
 
