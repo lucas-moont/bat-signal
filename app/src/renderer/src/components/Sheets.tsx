@@ -207,7 +207,7 @@ function Toggle({
   onChange: (on: boolean) => void
 }) {
   return (
-    <SettingRow as="label" label={label} hint={hint}>
+    <SettingRow as="label" className="toggle" label={label} hint={hint}>
       <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span className="toggle__track" aria-hidden />
     </SettingRow>
@@ -254,7 +254,7 @@ export function SettingsSheet({
             onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
           />
           <label className="slider">
-            <span className="toggle__label">Opacity</span>
+            <span className="setting__label">Opacity</span>
             <input
               type="range"
               min={OPACITY_MIN * 100}

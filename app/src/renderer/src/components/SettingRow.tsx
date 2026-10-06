@@ -19,10 +19,10 @@ export function SettingRow({
   children: ReactNode
 }) {
   return (
-    <Row className={`toggle ${className}`.trim()}>
-      <span className="toggle__text">
-        <span className="toggle__label">{label}</span>
-        <span className={`toggle__hint${warn ? ' toggle__hint--warn' : ''}`}>{hint}</span>
+    <Row className={`setting ${className}`.trim()}>
+      <span className="setting__text">
+        <span className="setting__label">{label}</span>
+        <span className={`setting__hint${warn ? ' setting__hint--warn' : ''}`}>{hint}</span>
       </span>
       {children}
     </Row>
