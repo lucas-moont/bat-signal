@@ -1,6 +1,7 @@
 import { app, globalShortcut, ipcMain } from 'electron'
 import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
+import { announce, emptyAnnouncer } from '../shared/announcer'
 import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
@@ -28,10 +29,14 @@ function start(): void {
   // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
   // not the user picking the panel for the disc to open.
   const toasts = new BatSignalToasts((sessionId) => windows.setMode('panel', sessionId, false))
+  // News is found once, and what each way of announcing it wants comes out of the same list.
+  let news = emptyAnnouncer()
   const stop = startBatSignal((snapshot) => {
     windows.publish(snapshot)
     tray.update(snapshot)
-    toasts.update(snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
+    const out = announce(news, snapshot, { prefs: settings.announce, panelFocused: windows.panelFocused })
+    news = out.state
+    toasts.add(out.toast)
   })
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
