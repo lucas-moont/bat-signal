@@ -4,8 +4,8 @@ import { app, Menu, Tray } from 'electron'
 import type { StoreSnapshot } from '../shared/types'
 import { trayLook, trayMenu, type TrayAction } from './trayMenu'
 import type { BatSignalWindows } from './window'
-import restIcon from '../../resources/tray/tray.ico?asset'
-import litIcon from '../../resources/tray/tray-lit.ico?asset'
+import restIcon from '../../resources/icons/tray.ico?asset'
+import litIcon from '../../resources/icons/tray-lit.ico?asset'
 
 /** Clicks closer than this are one double-click: the panel opens once, not open-and-shut. */
 const DOUBLE_CLICK_MS = 500

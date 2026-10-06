@@ -3,7 +3,7 @@
 import { Notification } from 'electron'
 import { announce, emptyAnnouncer, type AnnounceContext } from '../shared/announcer'
 import type { StoreSnapshot } from '../shared/types'
-import toastIcon from '../../resources/tray/toast.png?asset'
+import toastIcon from '../../resources/icons/toast.png?asset'
 
 /** Toasts kept for their clicks (from the Action Center too); older ones are let go. */
 const KEPT = 20

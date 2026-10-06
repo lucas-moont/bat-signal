@@ -28,7 +28,7 @@ In development, Start with Windows registers this checkout's `electron.exe` with
 
 Windows shows toasts only from an app it knows by a Start menu shortcut. In development, Electron adds one (`Electron`, for this checkout's `electron.exe`) with the first toast, and Windows drops that first one: the next ones show. The installer will add the shortcut ahead of time.
 
-The tray and toast icons in `app/resources/tray/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
+The tray and toast icons in `app/resources/icons/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
 
 ## Commits
 

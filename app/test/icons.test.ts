@@ -16,7 +16,7 @@ describe('emblemPath', () => {
   })
 })
 
-describe('the committed tray icons', () => {
+describe('the committed icons', () => {
   it('are drawn from the bat as it is now (otherwise: npm run icons)', () => {
     const emblem = readFileSync(join(__dirname, '../src/renderer/src/components/BatEmblem.tsx'), 'utf8')
     expect(readFileSync(DRAWN_FROM, 'utf8').trim()).toBe(emblemPath(emblem))

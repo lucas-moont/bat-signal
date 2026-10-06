@@ -9,7 +9,7 @@ import { join } from 'node:path'
 import { initWasm, Resvg } from '@resvg/resvg-wasm'
 
 const APP = join(import.meta.dirname, '..')
-const OUT = join(APP, 'resources', 'tray')
+const OUT = join(APP, 'resources', 'icons')
 const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
 /** Windows draws a toast's image at up to 48px, at up to 200% scale. */
 const TOAST_SIZE = 96
