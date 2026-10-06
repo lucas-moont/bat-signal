@@ -198,3 +198,47 @@
   flex: 1;
   accent-color: var(--signal);
 }
+
+/* The global shortcut: its keys in a small well; a click records new ones. */
+.shortcut__keys {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 26px;
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+}
+.shortcut__keys:hover {
+  border-color: var(--blood);
+}
+.shortcut__keys:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 2px;
+}
+.shortcut__keys--recording {
+  border-color: var(--signal);
+}
+.shortcut__key {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--bone);
+}
+.shortcut__listening {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ash);
+}
+.shortcut__keys--recording .shortcut__listening {
+  color: var(--bone);
+}
+.shortcut__warn {
+  color: var(--ink-hot);
+}

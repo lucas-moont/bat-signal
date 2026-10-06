@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
+import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import { Section } from './Section'
+import { ShortcutField } from './ShortcutField'
 import './Sheets.css'
 
 /** A drawer that rises from the bottom over a dimmed backdrop. */
@@ -217,10 +219,12 @@ function Toggle({
 
 export function SettingsSheet({
   settings,
+  status,
   onChange,
   onClose,
 }: {
   settings: Settings
+  status: AppStatus
   onChange: (patch: SettingsPatch) => void
   onClose: () => void
 }) {
@@ -264,6 +268,9 @@ export function SettingsSheet({
             />
             <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
           </label>
+        </Section>
+        <Section title="Comfort">
+          <ShortcutField status={status.shortcut} onChange={(shortcut) => onChange({ shortcut })} />
         </Section>
       </div>
     </Sheet>
