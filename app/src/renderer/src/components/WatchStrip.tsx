@@ -32,8 +32,9 @@ export function WatchStrip({
       const height = Math.ceil(top.getBoundingClientRect().height + body.getBoundingClientRect().height) + 2
       if (height !== sent) batSignal.setWatchHeight((sent = height)) // the window resize echoes back
     }
-    // Measured at once, before the window shows: the main process holds the strip back for this,
-    // and a hidden window may not run the observer.
+    // Measured at once, before the window shows: the main process holds the strip back until
+    // this first height arrives (so `sent` starts at 0 on every mount), and a hidden window may
+    // not run the observer.
     send()
     const observer = new ResizeObserver(send)
     observer.observe(top)

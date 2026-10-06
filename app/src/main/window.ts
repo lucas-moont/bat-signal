@@ -276,8 +276,7 @@ export class BatSignalWindows {
       this.signal.hide()
       this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
     } else {
-      if (spec.panel) this.revealPanel(spec.panel)
-      this.placeSignalAs(spec.signal)
+      this.show()
     }
     // A notice card opening the panel on one case is not the user picking the panel.
     if (opens(mode) && !focusSessionId && mode !== this.lastOpened) {
@@ -292,22 +291,23 @@ export class BatSignalWindows {
     this.panel.setFocusable(spec.focusable)
   }
 
-  private revealPanel(spec: PanelSpec): void {
-    this.panel.setBounds(spec.size === 'user' ? this.rect(this.panelSize) : this.watchRect())
-    if (spec.focusable) {
-      this.panel.show()
-      this.panel.focus()
-    } else {
-      this.panel.showInactive()
+  /** Puts both windows where the current mode wants them, and shows them. */
+  private show(): void {
+    const { panel, signal } = MODES[this.current]
+    if (panel) {
+      this.panel.setBounds(panel.size === 'user' ? this.rect(this.panelSize) : this.watchRect())
+      if (panel.focusable) {
+        this.panel.show()
+        this.panel.focus()
+      } else {
+        this.panel.showInactive()
+      }
     }
-  }
-
-  private placeSignalAs(role: (typeof MODES)[WindowMode]['signal']): void {
-    if (role === 'disc') {
+    if (signal === 'disc') {
       this.signal.setIgnoreMouseEvents(false) // the perch let every click through; the disc takes them
       this.placeSignal()
       this.signal.showInactive()
-    } else if (role === 'perch') {
+    } else if (signal === 'perch') {
       this.placePerch()
     } else {
       this.signal.hide()
@@ -317,10 +317,7 @@ export class BatSignalWindows {
   /** Shows the strip held back by setMode, at the height its page measured (or the last one). */
   private revealStrip(): void {
     this.cancelStrip()
-    const spec = MODES[this.current]
-    if (spec.panel?.size !== 'watch') return
-    this.revealPanel(spec.panel)
-    this.placeSignalAs(spec.signal)
+    this.show()
   }
 
   private cancelStrip(): void {
@@ -400,10 +397,16 @@ export class BatSignalWindows {
     if (!Number.isFinite(height)) return
     const area = screen.getDisplayNearestPoint(this.anchor).workArea
     const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
-    const changed = next !== this.watchHeight
+    // The first height after the strip opens is its page saying it is ready (WatchStrip sends one
+    // as it mounts): the strip shows now, at that height.
+    if (this.stripPending) {
+      this.watchHeight = next
+      this.revealStrip()
+      return
+    }
+    if (next === this.watchHeight) return
     this.watchHeight = next
-    if (this.stripPending) return this.revealStrip()
-    if (changed && MODES[this.current].panel?.size === 'watch') {
+    if (MODES[this.current].panel?.size === 'watch') {
       this.panel.setBounds(this.watchRect())
       this.placePerch()
     }
