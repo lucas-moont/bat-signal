@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "privacy": "node scripts/privacy.mts",
     "screenshot": "electron-vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/screenshot.ps1",
     "shots": "electron-vite build && electron scripts/shots.cjs",
     "test:watch": "vitest"
