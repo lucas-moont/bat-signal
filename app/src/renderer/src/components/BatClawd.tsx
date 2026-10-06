@@ -58,11 +58,13 @@ const CAPE = {
   trailA: 'M3 5 L13 5 L13.4 9.2 L11 10.4 L7 10 L3 10.8 L-1 10 L-4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
   trailB:
     'M3 5 L13 5 L13.6 8.6 L11.2 10 L7.2 10.6 L3.2 10.2 L-0.6 10.9 L-4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
-  /** Flung back and hanging open (left half; mirrored for the right), showing its black lining. */
+  /** Flung back and hanging open (left half; mirrored for the right), black inside too. */
   openLeft: 'M3.4 5 L0.2 5.2 L-2.8 11.2 L-1.2 10.5 L0.4 11.3 L1.9 10.6 L3.4 11.2 Z',
-  liningLeft: 'M3.2 5.8 L0.6 6 L-1.9 10.6 L-0.9 10.1 L0.5 10.7 L1.8 10.1 L3.2 10.6 Z',
-  /** The lining's jagged hem, where a thin red thread catches the light. */
-  hemLeft: 'M-1.9 10.6 L-0.9 10.1 L0.5 10.7 L1.8 10.1 L3.2 10.6',
+  /**
+   * A red thread following the jagged hem a step above it, with black between: far enough from
+   * the edge to read on its own at the header's size.
+   */
+  threadLeft: 'M-2 10.1 L-1.1 9.5 L0.4 10.2 L1.9 9.6 L3.4 10.1',
 } as const
 
 type CapeStyle = 'wrapped' | 'trailA' | 'trailB' | 'open'
@@ -102,8 +104,7 @@ function CapeBehind({ style }: { style: CapeStyle }) {
       {[undefined, MIRROR].map((transform) => (
         <g key={transform ?? 'left'} transform={transform}>
           <path className="clawd__cape" d={CAPE.openLeft} />
-          <path className="clawd__lining" d={CAPE.liningLeft} />
-          <path className="clawd__hem" d={CAPE.hemLeft} />
+          <path className="clawd__thread" d={CAPE.threadLeft} />
         </g>
       ))}
     </>
