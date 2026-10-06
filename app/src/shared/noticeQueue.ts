@@ -1,5 +1,5 @@
 // The order in which the Bat-Signal shows its notice cards. Pure: callers pass the time.
-import { NOTICE_URGENCY, type Notice } from './notices'
+import { byUrgency, type Notice } from './notices'
 
 /** How long each notice card stays out before the next one (or the signal alone). */
 export const NOTICE_MS = 6000
@@ -15,9 +15,18 @@ export interface NoticeQueue {
 
 export const emptyQueue = (): NoticeQueue => ({ waiting: [], announced: new Set() })
 
-/** Adds what was just announced to the memory, keeping only the most recent MEMORY keys. */
-export const remember = (announced: ReadonlySet<string>, keys: readonly string[]): ReadonlySet<string> =>
-  new Set([...announced, ...keys].slice(-MEMORY))
+/**
+ * The notices not announced before, and the memory with them added: the most recent MEMORY keys,
+ * or the very same memory when nothing is new.
+ */
+export function freshen(
+  announced: ReadonlySet<string>,
+  notices: readonly Notice[],
+): { fresh: Notice[]; announced: ReadonlySet<string> } {
+  const fresh = notices.filter((n) => !announced.has(n.key))
+  if (!fresh.length) return { fresh, announced }
+  return { fresh, announced: new Set([...announced, ...fresh.map((n) => n.key)].slice(-MEMORY)) }
+}
 
 /** Shows the next waiting notice from `now`, or nothing. */
 function showNext(queue: NoticeQueue, now: number): NoticeQueue {
@@ -27,17 +36,9 @@ function showNext(queue: NoticeQueue, now: number): NoticeQueue {
 
 /** Adds news; the most urgent waits first (a stable sort keeps arrival order among equals). */
 export function enqueue(queue: NoticeQueue, notices: Notice[], now: number): NoticeQueue {
-  const fresh = notices.filter((n) => !queue.announced.has(n.key))
+  const { fresh, announced } = freshen(queue.announced, notices)
   if (!fresh.length) return queue
-  const waiting = [...queue.waiting, ...fresh].sort((a, b) => NOTICE_URGENCY[a.kind] - NOTICE_URGENCY[b.kind])
-  const next = {
-    ...queue,
-    waiting,
-    announced: remember(
-      queue.announced,
-      fresh.map((n) => n.key),
-    ),
-  }
+  const next = { ...queue, waiting: [...queue.waiting, ...fresh].sort(byUrgency), announced }
   return next.showing ? next : showNext(next, now)
 }
 

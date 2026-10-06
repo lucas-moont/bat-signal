@@ -36,6 +36,9 @@ export const NOTICE_URGENCY: Record<NoticeKind, number> = {
   'session-closed': 12,
 }
 
+/** Most urgent first, for a sort (a stable one keeps arrival order among equals). */
+export const byUrgency = (a: Notice, b: Notice): number => NOTICE_URGENCY[a.kind] - NOTICE_URGENCY[b.kind]
+
 /** News that needs the user, not just news. */
 export const isUrgent = (kind: NoticeKind): boolean => NOTICE_URGENCY[kind] <= NOTICE_URGENCY.waiting
 

@@ -1,8 +1,8 @@
 // What news goes beyond the Bat-Signal itself, as a Windows toast: the switches the user turned
 // on, and not while the panel is in front. Pure: the main process passes the snapshots and the
 // moment's context, and shows what comes out.
-import { remember } from './noticeQueue'
-import { diffNotices, NOTICE_URGENCY, type Notice, type NoticeKind } from './notices'
+import { freshen } from './noticeQueue'
+import { byUrgency, diffNotices, type Notice, type NoticeKind } from './notices'
 import type { AnnouncePrefs, NewsGroup } from './settings'
 import type { StoreSnapshot } from './types'
 
@@ -60,11 +60,8 @@ export function announce(
   snapshot: StoreSnapshot,
   ctx: AnnounceContext,
 ): { state: Announcer; toast?: Toast } {
-  const fresh = diffNotices(state.prev, snapshot).filter((n) => !state.announced.has(n.key))
-  const keys = fresh.map((n) => n.key)
-  const next = { prev: snapshot, announced: remember(state.announced, keys) }
-  const [first, ...rest] = fresh
-    .filter((n) => TOAST_GATES.every((gate) => gate(n, ctx)))
-    .sort((a, b) => NOTICE_URGENCY[a.kind] - NOTICE_URGENCY[b.kind])
+  const { fresh, announced } = freshen(state.announced, diffNotices(state.prev, snapshot))
+  const next = { prev: snapshot, announced }
+  const [first, ...rest] = fresh.filter((n) => TOAST_GATES.every((gate) => gate(n, ctx))).sort(byUrgency)
   return first ? { state: next, toast: toastOf(first, rest.length) } : { state: next }
 }
