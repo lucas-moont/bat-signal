@@ -27,6 +27,7 @@ describe('parseSettings: a file from before Phase 4', () => {
   it('keeps what the user chose and turns every new announcement off', () => {
     expect(parseSettings(OLD_FILE)).toEqual({
       ...OLD_FILE,
+      shortcut: 'Ctrl+Alt+B',
       announce: {
         toast: { needsYou: false, reply: false, taskDone: false, sessions: false },
         sound: false,
@@ -110,5 +111,29 @@ describe('settings across a restart', () => {
     })
     const saved = JSON.stringify(chosen, null, 2)
     expect(parseSettings(JSON.parse(saved))).toEqual(chosen)
+  })
+})
+
+describe('parseSettings: the global shortcut', () => {
+  it('is Ctrl+Alt+B unless the file says otherwise', () => {
+    expect(parseSettings({}).shortcut).toBe('Ctrl+Alt+B')
+    expect(parseSettings({ shortcut: 42 }).shortcut).toBe('Ctrl+Alt+B')
+  })
+
+  it('reads a shortcut written any way, and none as off', () => {
+    expect(parseSettings({ shortcut: 'alt+ctrl+n' }).shortcut).toBe('Ctrl+Alt+N')
+    expect(parseSettings({ shortcut: '' }).shortcut).toBe('')
+  })
+
+  it('falls back to Ctrl+Alt+B for a shortcut that cannot be registered', () => {
+    expect(parseSettings({ shortcut: 'Ctrl+Banana' }).shortcut).toBe('Ctrl+Alt+B')
+  })
+})
+
+describe('applySettingsPatch: a value of the right type but no meaning', () => {
+  it('keeps the current setting, as a value of the wrong type does', () => {
+    const mine = applySettingsPatch(DEFAULT_SETTINGS, { shortcut: 'Ctrl+Alt+N', layout: 'report' })
+    expect(applySettingsPatch(mine, { shortcut: 'Ctrl+Banana' }).shortcut).toBe('Ctrl+Alt+N')
+    expect(applySettingsPatch(mine, { layout: 'grid' }).layout).toBe('report')
   })
 })
