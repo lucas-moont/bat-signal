@@ -230,6 +230,7 @@ export function SettingsSheet({
 }) {
   // What Windows has may have moved since (Task Manager): read it again as the sheet opens.
   useEffect(() => batSignal.refreshStatus(), [])
+  const blocked = status.startup === 'blocked'
   return (
     <Sheet kicker="Bat-Computer" title="Settings" onClose={onClose}>
       <div className="settings">
@@ -276,11 +277,11 @@ export function SettingsSheet({
           <Toggle
             label="Start with Windows"
             hint={
-              status.startup === 'blocked'
-                ? 'Turned off in Task Manager: switch it back on under Startup apps'
+              blocked
+                ? 'Turned off in Task Manager: switch it on here to allow it again'
                 : 'Wakes as the disc when you sign in'
             }
-            warn={status.startup === 'blocked'}
+            warn={blocked}
             on={status.startup === 'on'}
             onChange={batSignal.setStartWithWindows}
           />
