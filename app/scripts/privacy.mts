@@ -35,9 +35,11 @@ const USER_FOLDERS = [
   // Claude Code's encoded project folders: C--Users-<you>-…, -Users-<you>-…, -home-<you>-…
   /(?:\b[A-Za-z]-|(?<![\w-]))-(?:Users|home)-([^-\\/\s"'`<>%$:]+)/g,
 ]
-const EMAIL = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
+// Not after @2x. or @3x.: those are retina asset names (icon@2x.png).
+const EMAIL = /[\w.%+-]+@(?!\d+x\.)[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
+/** Commit trailers, example addresses, and git@host, the SSH user of clone URLs. */
 const ALLOWED_EMAIL =
-  /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org))$/i
+  /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org)|git@[\w.-]+)$/i
 const TOKEN = new RegExp(
   [
     /sk-ant-[\w-]{16,}/, // Anthropic

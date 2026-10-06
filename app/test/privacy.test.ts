@@ -50,6 +50,11 @@ describe('privacy check: emails', () => {
     expect(scan('noreply@anthropic.com, 123+someone@users.noreply.github.com, bruce@example.com')).toEqual([])
   })
 
+  it('passes clone URLs and retina asset names, which only look like addresses', () => {
+    expect(scan('git clone git@github.com:owner/repo.git; ssh git@gitlab.com')).toEqual([])
+    expect(scan('<img src="icon@2x.png"> and logo@3x.webp')).toEqual([])
+  })
+
   it('flags any other address', () => {
     expect(scan(`mail me: ${mail}`)).toEqual(['1:email'])
   })
