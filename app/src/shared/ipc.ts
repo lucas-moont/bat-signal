@@ -19,4 +19,7 @@ export const IPC = {
   watchHeight: 'bat-signal:watch-height',
   hide: 'bat-signal:hide',
   openSettings: 'bat-signal:open-settings',
+  getStatus: 'bat-signal:get-status',
+  status: 'bat-signal:status',
+  recordShortcut: 'bat-signal:record-shortcut',
 } as const

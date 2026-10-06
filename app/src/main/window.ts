@@ -224,7 +224,7 @@ export class BatSignalWindows {
   }
 
   /** Sends to every page (both windows render the same data). */
-  private broadcast(channel: string, payload: unknown): void {
+  broadcast(channel: string, payload: unknown): void {
     for (const win of [this.panel, this.signal])
       if (!win.isDestroyed()) win.webContents.send(channel, payload)
   }

@@ -1,17 +1,12 @@
 // The global shortcut's registration: which accelerator Bat-Signal holds, and whether another app
 // beat it to it. Windows grants each combination to one app; Electron's globalShortcut is the host
 // in the app, a fake one in the tests.
+import type { ShortcutStatus } from '../shared/status'
 
 export interface ShortcutHost {
   /** False when the combination is already taken. */
   register(accelerator: string, callback: () => void): boolean
   unregister(accelerator: string): void
-}
-
-/** What the settings sheet shows: the shortcut, and whether it works (taken: another app has it). */
-export interface ShortcutStatus {
-  accelerator: string
-  state: 'off' | 'active' | 'taken'
 }
 
 export function createShortcut(host: ShortcutHost, onPress: () => void) {
