@@ -38,10 +38,10 @@ const ctx = (on: NewsGroup[] = [...NEWS_GROUPS], panelFocused = false): Announce
 })
 
 /** Feeds snapshots in order and returns every toast that came out. */
-function toasts(snapshots: StoreSnapshot[], context: AnnounceContext | AnnounceContext[]) {
+function toasts(snapshots: StoreSnapshot[], context: AnnounceContext) {
   let state = emptyAnnouncer()
-  return snapshots.flatMap((s, i) => {
-    const out = announce(state, s, Array.isArray(context) ? context[i]! : context)
+  return snapshots.flatMap((s) => {
+    const out = announce(state, s, context)
     state = out.state
     return out.toast ? [out.toast] : []
   })
@@ -65,9 +65,7 @@ describe('announce', () => {
   })
 
   it('stays quiet while the panel is in front: the user already sees it', () => {
-    expect(
-      toasts([quiet, snap([session('a')], [alert('a', 'error')])], ctx(NEWS_GROUPS.slice(), true)),
-    ).toEqual([])
+    expect(toasts([quiet, snap([session('a')], [alert('a', 'error')])], ctx(undefined, true))).toEqual([])
   })
 
   it('sends one toast per burst: the most urgent, with a count of the rest', () => {
@@ -92,9 +90,14 @@ describe('announce', () => {
   it('never brings the same news back, even if it was not shown the first time', () => {
     const news = snap([session('a')], [alert('a', 'waiting')])
     // Seen while the panel was in front, gone, then back: still the same news.
-    expect(toasts([quiet, news, quiet, news], [ctx(), ctx(NEWS_GROUPS.slice(), true), ctx(), ctx()])).toEqual(
-      [],
-    )
+    const steps: [StoreSnapshot, AnnounceContext][] = [
+      [quiet, ctx()],
+      [news, ctx(undefined, true)],
+      [quiet, ctx()],
+    ]
+    let state = emptyAnnouncer()
+    for (const [snapshot, context] of steps) state = announce(state, snapshot, context).state
+    expect(announce(state, news, ctx()).toast).toBeUndefined()
   })
 })
 
