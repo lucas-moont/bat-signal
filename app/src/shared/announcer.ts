@@ -39,7 +39,7 @@ export interface Toast {
 }
 
 /** The sounds Bat-Signal makes. */
-export type Cue = 'wings' | 'thump'
+export type Cue = 'light' | 'thump'
 
 /** A sound for the signal window to play, at the user's volume (0 to 1). */
 export interface CuePlay {
@@ -49,10 +49,10 @@ export interface CuePlay {
 
 /** The sound each kind of news makes; a case opening or closing makes none. */
 const CUE_OF_KIND: Partial<Record<NoticeKind, Cue>> = {
-  permission: 'wings',
-  error: 'wings',
-  waiting: 'wings',
-  reply: 'wings',
+  permission: 'light',
+  error: 'light',
+  waiting: 'light',
+  reply: 'light',
   'task-done': 'thump',
 }
 
@@ -76,7 +76,7 @@ export function announce(
   }
 }
 
-/** The sound for a burst of news: its most urgent sound (the wings over a thump), or none. */
+/** The sound for a burst of news: its most urgent sound (the spotlight over a thump), or none. */
 export function cueFor(news: readonly Notice[]): Cue | undefined {
   const loudest = [...news].sort(byUrgency).find((n) => CUE_OF_KIND[n.kind])
   return loudest && CUE_OF_KIND[loudest.kind]

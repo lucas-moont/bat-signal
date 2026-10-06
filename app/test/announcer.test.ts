@@ -193,9 +193,9 @@ describe('announce: sound', () => {
 })
 
 describe('cueFor', () => {
-  it('beats the wings for news that needs you or a reply, over anything else in the burst', () => {
-    expect(cueFor([notice('task-done'), notice('reply')])).toBe('wings')
-    expect(cueFor([notice('permission')])).toBe('wings')
+  it('turns the spotlight on for news that needs you or a reply, over anything else in the burst', () => {
+    expect(cueFor([notice('task-done'), notice('reply')])).toBe('light')
+    expect(cueFor([notice('permission')])).toBe('light')
   })
 
   it('gives a thump for a task done on its own', () => {
@@ -212,13 +212,13 @@ describe('pickCue', () => {
   const T0 = 1_000_000
 
   it('plays the burst’s cue and remembers when', () => {
-    expect(pickCue({}, [notice('reply')], T0)).toEqual({ cue: 'wings', state: { lastAt: T0 } })
+    expect(pickCue({}, [notice('reply')], T0)).toEqual({ cue: 'light', state: { lastAt: T0 } })
   })
 
   it('stays quiet within SOUND_GAP_MS of the last sound, so a burst is one sound', () => {
     const { state } = pickCue({}, [notice('reply')], T0)
     expect(pickCue(state, [notice('permission')], T0 + SOUND_GAP_MS - 1)).toEqual({ state })
-    expect(pickCue(state, [notice('permission')], T0 + SOUND_GAP_MS).cue).toBe('wings')
+    expect(pickCue(state, [notice('permission')], T0 + SOUND_GAP_MS).cue).toBe('light')
   })
 
   it('keeps the last time when there is nothing to play', () => {

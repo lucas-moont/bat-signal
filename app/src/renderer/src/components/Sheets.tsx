@@ -315,7 +315,7 @@ export function SettingsSheet({
         <Section title="Sound">
           <Toggle
             label="Sound"
-            hint="Wings when Claude needs you or replies, a thump when a task is done"
+            hint="A spotlight coming on when Claude needs you or replies, a thump when a task is done"
             on={settings.announce.sound}
             onChange={(sound) => onChange({ announce: { sound } })}
           />
@@ -331,8 +331,8 @@ export function SettingsSheet({
             />
             <button
               className="icon-button icon-button--labelled"
-              onClick={() => playCue('wings', settings.announce.volume)}
-              title="Play the wings at this volume"
+              onClick={() => playCue('light', settings.announce.volume)}
+              title="Play the spotlight at this volume"
             >
               <Icon name="sound" />
               Test
