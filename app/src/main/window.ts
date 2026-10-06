@@ -253,31 +253,35 @@ export class BatSignalWindows {
   setMode(mode: WindowMode, focusSessionId?: string): void {
     const spec = MODES[mode]
     const entering = mode !== this.current
-    this.cancelStrip()
-    // The pages hear of the mode first, so the panel window can render what it is about to show.
-    if (entering) {
-      this.current = mode
-      this.broadcast(IPC.mode, mode)
-    }
+    // The strip opening anew is held back until its page has measured it (see setWatchHeight),
+    // so it never shows at a stale height, or with the panel still in it, and then jumps.
+    const holdStrip = entering && spec.panel?.size === 'watch'
+    if (entering) this.cancelStrip() // opening the strip again while it is held keeps the hold
     if (spec.panel) {
       // Opening silences the cards; the hidden page may never finish their exit.
       this.setClickThrough(false)
       this.noticeOut = false
-      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
       this.preparePanel(spec.panel)
-      if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+      if (holdStrip) {
+        // Out of sight and at the strip's width, so the page measures the rows it will show.
+        this.panel.hide()
+        this.panel.setBounds(this.watchRect())
+      }
+      // The latest snapshot before the mode, so the page lays out the sessions of now.
+      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
     } else {
       this.panel.hide()
     }
-    // The strip opening anew waits for its page to measure it, so it never shows at a stale
-    // height (or with the panel still in it) and then jumps. setWatchHeight shows it, with
-    // Bat-Clawd's perch; the disc steps out meanwhile, its page already drawing the perch.
-    if (spec.panel?.size === 'watch' && entering) {
-      this.signal.hide()
-      this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
-    } else {
-      this.show()
+    if (entering) {
+      this.current = mode
+      // A held strip is news only to its own page for now: the disc stays the disc until the
+      // strip shows, and turns into the perch then (revealStrip).
+      if (holdStrip) this.panel.webContents.send(IPC.mode, mode)
+      else this.broadcast(IPC.mode, mode)
     }
+    if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+    if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
+    else if (!this.stripPending) this.show()
     // A notice card opening the panel on one case is not the user picking the panel.
     if (opens(mode) && !focusSessionId && mode !== this.lastOpened) {
       this.lastOpened = mode
@@ -317,6 +321,7 @@ export class BatSignalWindows {
   /** Shows the strip held back by setMode, at the height its page measured (or the last one). */
   private revealStrip(): void {
     this.cancelStrip()
+    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.mode, this.current)
     this.show()
   }
 
