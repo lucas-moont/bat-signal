@@ -17,7 +17,6 @@ npm run dev
 ```bash
 cd app
 npm run format:check
-npm run privacy
 npm run lint
 npm run typecheck
 npm test
@@ -41,6 +40,6 @@ Small commits, one topic each.
 
 Bat-Signal reads files from the user's `~/.claude/` folder. **Never** put real transcript excerpts, personal paths, prompts or tokens in issues, PRs or test fixtures. The fixtures in `app/test/fixtures/` are synthetic on purpose.
 
-`npm run privacy` scans every tracked file for real user folders, personal emails, tokens, your username and the ids of your Claude sessions (those last two are read on your machine at run time and never stored). Use the fictional people the fixtures already use (`bruce`, `alfred`). A test that needs made-up leaks starts with a `// privacy-check: synthetic leaks` line.
+`npm test` also scans every tracked file for real user folders, personal emails, tokens, your username and the ids of your Claude sessions (those last two are read on your machine at run time and never stored). `npm run privacy` runs that scan alone and lists what it found. Use the fictional people the fixtures already use (`bruce`, `alfred`); a test that needs a made-up leak builds it at run time (see `app/test/privacy.test.ts`).
 
 The `~/.claude/sessions/*.key` files hold secrets and must **never** be read by the app.
