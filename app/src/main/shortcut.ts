@@ -22,7 +22,9 @@ export function createShortcut(host: ShortcutHost, onPress: () => void) {
 
   /** Holds `wanted` if it can (it is not paused), and says how that went. */
   const sync = (): ShortcutStatus => {
-    if (paused || held === wanted) return status
+    // Already holding what is wanted. (Holding nothing is no reason to keep the status: it may
+    // still say a shortcut that was released or taken.)
+    if (paused || (held && held === wanted)) return status
     release()
     if (!wanted) return (status = SHORTCUT_OFF)
     if (!host.register(wanted, onPress)) return (status = { accelerator: wanted, state: 'taken' })

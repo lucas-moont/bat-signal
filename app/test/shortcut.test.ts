@@ -105,4 +105,20 @@ describe('createShortcut', () => {
     shortcut.apply('Ctrl+Alt+N')
     expect(shortcut.status).not.toBe(before)
   })
+
+  it('says it is off once turned off while recording', () => {
+    const { shortcut } = setup()
+    shortcut.apply('Ctrl+Alt+B')
+    shortcut.pause(true)
+    shortcut.apply('')
+    shortcut.pause(false)
+    expect(shortcut.status).toEqual({ accelerator: '', state: 'off' })
+  })
+
+  it('says it is off once a taken shortcut is turned off', () => {
+    const { shortcut } = setup(['Ctrl+Alt+B'])
+    shortcut.apply('Ctrl+Alt+B')
+    shortcut.apply('')
+    expect(shortcut.status).toEqual({ accelerator: '', state: 'off' })
+  })
 })
