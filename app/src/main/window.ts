@@ -224,6 +224,11 @@ export class BatSignalWindows {
     return this.current
   }
 
+  /** The panel or the strip is the window in front: the user sees the news already. */
+  get panelInFront(): boolean {
+    return Boolean(MODES[this.current].panel) && !this.panel.isDestroyed() && this.panel.isFocused()
+  }
+
   /** Sends to every page (both windows render the same data). */
   private broadcast(channel: string, payload: unknown): void {
     for (const win of [this.panel, this.signal])
