@@ -1,12 +1,12 @@
 // What news goes beyond the Bat-Signal itself, as a Windows toast: the switches the user turned
 // on, and none while the panel is in front. Pure: the main process passes the snapshots and the
-// moment's context, and shows what comes out.
+// moment's context, and gathers what comes out into one toast per burst.
 import { byUrgency, diffNotices, freshen, type Notice, type NoticeKind } from './notices'
 import type { AnnouncePrefs, NewsGroup } from './settings'
 import type { StoreSnapshot } from './types'
 
 /** The switch each kind of news answers to. */
-export const NEWS_GROUP: Record<NoticeKind, NewsGroup> = {
+export const GROUP_OF_KIND: Record<NoticeKind, NewsGroup> = {
   permission: 'needsYou',
   error: 'needsYou',
   waiting: 'needsYou',
@@ -27,7 +27,7 @@ export const emptyAnnouncer = (): Announcer => ({ announced: new Set() })
 
 export interface AnnounceContext {
   prefs: AnnouncePrefs
-  /** The panel is the window in front (the strip never takes the focus): the user sees the news already. */
+  /** The user sees the news already (see BatSignalWindows.panelFocused). */
   panelFocused: boolean
 }
 
@@ -38,28 +38,29 @@ export interface Toast {
   body: string
 }
 
-type Gate = (notice: Notice, ctx: AnnounceContext) => boolean
-
-/** Every one must pass for a piece of news to become a toast. */
-const TOAST_GATES: Gate[] = [(notice, ctx) => ctx.prefs.toast[NEWS_GROUP[notice.kind]]]
-
-/** The cards' own words: the stamp and the case, then the line, then how much else came. */
-const toastOf = (first: Notice, more: number): Toast => ({
-  sessionId: first.sessionId,
-  title: `${first.stamp} · ${first.title}`,
-  body: more ? `${first.line}\n+${more} more` : first.line,
-})
-
-/** Takes a new snapshot: the news in it is remembered, and what passes the gates comes out as one toast. */
+/** Takes a new snapshot: all its news is remembered, and the news the user picked for a toast comes out. */
 export function announce(
   state: Announcer,
   snapshot: StoreSnapshot,
   ctx: AnnounceContext,
-): { state: Announcer; toast?: Toast } {
+): { state: Announcer; toast: Notice[] } {
   const { fresh, announced } = freshen(state.announced, diffNotices(state.prev, snapshot))
   const next = { prev: snapshot, announced }
   // With the panel in front, the news is remembered all the same: it was seen there.
-  if (ctx.panelFocused) return { state: next }
-  const [first, ...rest] = fresh.filter((n) => TOAST_GATES.every((gate) => gate(n, ctx))).sort(byUrgency)
-  return first ? { state: next, toast: toastOf(first, rest.length) } : { state: next }
+  if (ctx.panelFocused) return { state: next, toast: [] }
+  return { state: next, toast: fresh.filter((n) => ctx.prefs.toast[GROUP_OF_KIND[n.kind]]) }
+}
+
+/**
+ * One toast for a burst of news, however many pushes it came in: the most urgent, in the cards'
+ * own words (the stamp and the case, then the line), with a count of the rest.
+ */
+export function toastFor(news: readonly Notice[]): Toast | undefined {
+  const [first, ...rest] = [...news].sort(byUrgency)
+  if (!first) return undefined
+  return {
+    sessionId: first.sessionId,
+    title: `${first.stamp} · ${first.title}`,
+    body: rest.length ? `${first.line}\n+${rest.length} more` : first.line,
+  }
 }

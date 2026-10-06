@@ -112,6 +112,7 @@ function start(): void {
   app.once('before-quit', stop)
   app.once('will-quit', () => {
     clearInterval(retry)
+    toasts.dispose()
     shortcut.dispose()
   })
 }
