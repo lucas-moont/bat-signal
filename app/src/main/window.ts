@@ -34,6 +34,47 @@ const ON_TOP_EVERY_MS = 3000
 /** What the disc opens: the full panel or the watch strip, whichever was used last. */
 type OpenMode = Exclude<WindowMode, 'signal'>
 
+/** How a mode shows the panel window (the full panel and the watch strip share it). */
+interface PanelSpec {
+  /** The size the user dragged the panel to, or the strip's own (see setWatchHeight). */
+  size: 'user' | 'watch'
+  minSize: Size
+  resizable: boolean
+  /**
+   * Whether it takes the keyboard. The strip never does: Windows demotes the active window behind
+   * everything after a screenshot, and the strip needs no keys (its rows take clicks regardless).
+   */
+  focusable: boolean
+}
+
+/**
+ * What each mode does with the two windows: the panel window shown one way or hidden, and the
+ * signal window as the disc, as Bat-Clawd's perch on the strip's top edge, or hidden.
+ */
+const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 'hidden' }> = {
+  signal: { signal: 'disc' },
+  panel: {
+    panel: {
+      size: 'user',
+      minSize: { width: PANEL.minWidth, height: PANEL.minHeight },
+      resizable: true,
+      focusable: true,
+    },
+    signal: 'hidden',
+  },
+  watch: {
+    panel: {
+      size: 'watch',
+      minSize: { width: WATCH.width, height: WATCH.minHeight },
+      resizable: false,
+      focusable: false,
+    },
+    signal: 'perch',
+  },
+}
+
+const opens = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
+
 interface Place {
   anchor?: Anchor
   panel: Size
@@ -133,7 +174,7 @@ export class BatSignalWindows {
     this.panel.on('moved', () => this.followPanel())
     // Bat-Clawd rides along while the strip is dragged.
     this.panel.on('move', () => {
-      if (this.current === 'watch') this.placePerch()
+      if (MODES[this.current].signal === 'perch') this.placePerch()
     })
     this.panel.on('resized', () => this.followPanel())
     const onTopTimer = setInterval(() => this.keepOnTop(), ON_TOP_EVERY_MS)
@@ -175,7 +216,7 @@ export class BatSignalWindows {
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
     if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (this.current !== 'signal' && !this.panel.isDestroyed())
+    if (MODES[this.current].panel && !this.panel.isDestroyed())
       this.panel.webContents.send(IPC.snapshot, snapshot)
   }
 
@@ -206,47 +247,47 @@ export class BatSignalWindows {
 
   /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
   setMode(mode: WindowMode, focusSessionId?: string): void {
-    if (mode === 'panel' || mode === 'watch') {
+    const spec = MODES[mode]
+    if (spec.panel) {
       // Opening silences the cards; the hidden page may never finish their exit.
       this.setClickThrough(false)
       this.noticeOut = false
       if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
-      if (mode === 'panel') {
-        this.panel.setMinimumSize(PANEL.minWidth, PANEL.minHeight)
-        this.panel.setResizable(true)
-        this.panel.setBounds(this.rect(this.panelSize))
-      } else {
-        this.panel.setResizable(false)
-        this.panel.setMinimumSize(WATCH.width, WATCH.minHeight)
-        this.panel.setBounds(this.watchRect())
-      }
-      if (mode === 'panel') {
-        this.panel.setFocusable(true)
-        this.panel.show()
-        this.panel.focus()
-        this.signal.hide()
-      } else {
-        // The strip never takes the focus: Windows demotes the active window behind everything
-        // after a screenshot, and the strip needs no keyboard (its rows take clicks regardless).
-        this.panel.setFocusable(false)
-        this.panel.showInactive()
-        this.placePerch()
-      }
+      this.showPanel(spec.panel)
       if (focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
-      // A notice card opening the panel on one case is not the user picking the panel.
-      if (!focusSessionId && mode !== this.lastOpened) {
-        this.lastOpened = mode
-        this.scheduleSave()
-      }
     } else {
       this.panel.hide()
+    }
+    if (spec.signal === 'disc') {
       this.signal.setIgnoreMouseEvents(false) // the perch let every click through; the disc takes them
       this.placeSignal()
       this.signal.showInactive()
+    } else if (spec.signal === 'perch') {
+      this.placePerch()
+    } else {
+      this.signal.hide()
+    }
+    // A notice card opening the panel on one case is not the user picking the panel.
+    if (opens(mode) && !focusSessionId && mode !== this.lastOpened) {
+      this.lastOpened = mode
+      this.scheduleSave()
     }
     if (mode !== this.current) {
       this.current = mode
       this.broadcast(IPC.mode, mode)
+    }
+  }
+
+  private showPanel(spec: PanelSpec): void {
+    this.panel.setResizable(spec.resizable)
+    this.panel.setMinimumSize(spec.minSize.width, spec.minSize.height)
+    this.panel.setBounds(spec.size === 'user' ? this.rect(this.panelSize) : this.watchRect())
+    this.panel.setFocusable(spec.focusable)
+    if (spec.focusable) {
+      this.panel.show()
+      this.panel.focus()
+    } else {
+      this.panel.showInactive()
     }
   }
 
@@ -258,7 +299,7 @@ export class BatSignalWindows {
     if (out !== this.noticeOut) {
       this.setClickThrough(out)
       this.noticeOut = out
-      if (this.current === 'signal') this.placeSignal()
+      if (MODES[this.current].signal === 'disc') this.placeSignal()
     }
     const { below, right } = noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst())
     return { below, right }
@@ -324,17 +365,18 @@ export class BatSignalWindows {
     const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
     if (next === this.watchHeight) return
     this.watchHeight = next
-    if (this.current === 'watch') {
+    if (MODES[this.current].panel?.size === 'watch') {
       this.panel.setBounds(this.watchRect())
       this.placePerch()
     }
   }
 
   private followPanel(): void {
-    if (this.current === 'signal') return
+    const panel = MODES[this.current].panel
+    if (!panel) return
     const b = this.panel.getBounds()
     this.anchor = cornerOf(b)
-    if (this.current === 'panel') this.panelSize = { width: b.width, height: b.height }
+    if (panel.size === 'user') this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()
   }
 
