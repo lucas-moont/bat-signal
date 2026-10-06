@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc'
 import type { NoticeLayout, Settings, SettingsPatch, ViewMode, WindowMode } from '../shared/settings'
+import type { AppStatus } from '../shared/status'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 
 /** Subscribes to a push channel; returns an unsubscribe function. */
@@ -23,6 +24,10 @@ const api = {
   getSettings: (): Promise<Settings> => ipcRenderer.invoke(IPC.getSettings),
   setSettings: (patch: SettingsPatch): void => ipcRenderer.send(IPC.setSettings, patch),
   onSettings: (callback: (settings: Settings) => void) => subscribe(IPC.settings, callback),
+  getStatus: (): Promise<AppStatus> => ipcRenderer.invoke(IPC.getStatus),
+  onStatus: (callback: (status: AppStatus) => void) => subscribe(IPC.status, callback),
+  /** On while the settings sheet records a shortcut: the current one then lets its keys through. */
+  recordShortcut: (on: boolean): void => ipcRenderer.send(IPC.recordShortcut, on),
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   /** Shows the panel (optionally opened on one case) or folds back into the signal. */

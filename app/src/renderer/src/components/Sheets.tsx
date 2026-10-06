@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
+import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import { Section } from './Section'
+import { SettingRow } from './SettingRow'
+import { ShortcutField } from './ShortcutField'
 import './Sheets.css'
 
 /** A drawer that rises from the bottom over a dimmed backdrop. */
@@ -204,23 +207,21 @@ function Toggle({
   onChange: (on: boolean) => void
 }) {
   return (
-    <label className="toggle">
-      <span className="toggle__text">
-        <span className="toggle__label">{label}</span>
-        <span className="toggle__hint">{hint}</span>
-      </span>
+    <SettingRow as="label" className="toggle" label={label} hint={hint}>
       <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span className="toggle__track" aria-hidden />
-    </label>
+    </SettingRow>
   )
 }
 
 export function SettingsSheet({
   settings,
+  status,
   onChange,
   onClose,
 }: {
   settings: Settings
+  status: AppStatus
   onChange: (patch: SettingsPatch) => void
   onClose: () => void
 }) {
@@ -253,7 +254,7 @@ export function SettingsSheet({
             onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
           />
           <label className="slider">
-            <span className="toggle__label">Opacity</span>
+            <span className="setting__label">Opacity</span>
             <input
               type="range"
               min={OPACITY_MIN * 100}
@@ -264,6 +265,9 @@ export function SettingsSheet({
             />
             <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
           </label>
+        </Section>
+        <Section title="Comfort">
+          <ShortcutField status={status.shortcut} onChange={(shortcut) => onChange({ shortcut })} />
         </Section>
       </div>
     </Sheet>

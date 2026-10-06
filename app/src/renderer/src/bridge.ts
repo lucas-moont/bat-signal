@@ -11,6 +11,7 @@ import {
   type Settings,
   type WindowMode,
 } from '@shared/settings'
+import type { AppStatus } from '@shared/status'
 import type { StoreSnapshot } from '@shared/types'
 import type { BatSignalApi } from '../../preload/index'
 
@@ -54,6 +55,12 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     ...DEFAULT_SETTINGS,
     layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
   })
+  // The stand-in holds the shortcut it is given: no other app competes for it here.
+  const statusOf = ({ shortcut }: Settings): AppStatus => ({
+    shortcut: { accelerator: shortcut, state: shortcut ? 'active' : 'off' },
+  })
+  const status = observable(statusOf(settings.current()))
+  settings.on((next) => status.set(statusOf(next)))
   const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
   let lastOpened: OpenMode = 'panel'
   return {
@@ -65,6 +72,9 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     getSettings: settings.get,
     setSettings: (patch) => settings.set(applySettingsPatch(settings.current(), patch)),
     onSettings: settings.on,
+    getStatus: status.get,
+    onStatus: status.on,
+    recordShortcut: () => undefined,
     getMode: mode.get,
     setMode: (next) => {
       if (isOpenMode(next)) lastOpened = next

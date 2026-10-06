@@ -13,12 +13,13 @@ import { PluginHint } from './components/PluginHint'
 import { WatchStrip } from './components/WatchStrip'
 import { DetailSheet, SettingsSheet } from './components/Sheets'
 import { CalmContext, useCalm } from './calm'
-import { useNow, useSettings, useSnapshot, useWindowMode } from './hooks'
+import { useNow, useSettings, useSnapshot, useStatus, useWindowMode } from './hooks'
 import './App.css'
 
 export function App() {
   const snapshot = useSnapshot()
   const [settings, changeSettings, settingsLoaded] = useSettings()
+  const status = useStatus()
   const calm = useCalm(settings)
   const mode = useWindowMode()
   // Hidden keeps the view the window had, rather than mounting the panel nobody sees; showing it
@@ -181,6 +182,7 @@ export function App() {
                 <SettingsSheet
                   key="settings"
                   settings={settings}
+                  status={status}
                   onChange={changeSettings}
                   onClose={() => setSettingsOpen(false)}
                 />

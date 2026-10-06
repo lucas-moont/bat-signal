@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { DEFAULT_SETTINGS, type Settings, type SettingsPatch, type WindowMode } from '@shared/settings'
+import { DEFAULT_STATUS, type AppStatus } from '@shared/status'
 import type { StoreSnapshot } from '@shared/types'
 import { batSignal } from './bridge'
 
@@ -33,6 +34,10 @@ export const useSnapshotState = (): [StoreSnapshot, boolean] =>
   useBridgedState(EMPTY, batSignal.getSnapshot, batSignal.onSnapshot)
 
 export const useSnapshot = (): StoreSnapshot => useSnapshotState()[0]
+
+/** What is happening now (the shortcut held or taken), pushed by the main process. */
+export const useStatus = (): AppStatus =>
+  useBridgedState(DEFAULT_STATUS, batSignal.getStatus, batSignal.onStatus)[0]
 
 /** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
 export function useSettings(): [Settings, (patch: SettingsPatch) => void, boolean] {

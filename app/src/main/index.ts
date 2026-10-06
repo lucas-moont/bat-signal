@@ -1,11 +1,17 @@
-import { app, ipcMain } from 'electron'
+import { app, globalShortcut, ipcMain } from 'electron'
+import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import { applySettingsPatch, parseViewMode } from '../shared/settings'
+import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
+import { createShortcut } from './shortcut'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
+
+/** How often a shortcut another app holds is tried again. */
+const SHORTCUT_RETRY_MS = 60_000
 
 /** Brings Bat-Signal forward when it is launched again; nothing to bring until it has started. */
 let summon = (): void => undefined
@@ -20,12 +26,58 @@ function start(): void {
     windows.publish(snapshot)
     tray.update(snapshot)
   })
+  // The global shortcut opens what the disc would, and folds it back.
+  const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
+  shortcut.apply(settings.shortcut)
+  // What is happening now, read from each feature; sent to the pages only when it changed (each
+  // feature keeps the same object until then).
+  const readStatus = (): AppStatus => ({ shortcut: shortcut.status })
+  let published = readStatus()
+  const publishStatus = () => {
+    const next = readStatus()
+    if ((Object.keys(next) as (keyof AppStatus)[]).every((key) => next[key] === published[key])) return
+    published = next
+    windows.publishStatus(next)
+  }
+  // A shortcut another app held is tried again now and then: that app may have let it go.
+  const retry = setInterval(() => {
+    if (shortcut.status.state !== 'taken') return
+    shortcut.apply(settings.shortcut)
+    publishStatus()
+  }, SHORTCUT_RETRY_MS)
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
     settingsFile.save(settings)
     windows.apply(settings)
+    // Only a patch that names the shortcut touches it (and retries it, if another app had it).
+    if ('shortcut' in obj(patch)) {
+      shortcut.apply(settings.shortcut)
+      publishStatus()
+    }
+  })
+  ipcMain.handle(IPC.getStatus, () => readStatus())
+  // While the settings sheet records a new shortcut, the current one must reach it as keys. A page
+  // that reloads or dies mid-recording never says it stopped: its going ends the pause.
+  let stopWatching = (): void => undefined
+  const record = (on: boolean) => {
+    stopWatching()
+    shortcut.pause(on)
+    publishStatus()
+  }
+  ipcMain.on(IPC.recordShortcut, (event, on: unknown) => {
+    record(on === true)
+    if (on !== true) return
+    const page = event.sender
+    const resume = () => record(false)
+    page.once('did-start-loading', resume)
+    page.once('render-process-gone', resume)
+    stopWatching = () => {
+      page.off('did-start-loading', resume)
+      page.off('render-process-gone', resume)
+      stopWatching = () => undefined
+    }
   })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
@@ -45,6 +97,10 @@ function start(): void {
 
   summon = () => windows.act('summon')
   app.once('before-quit', stop)
+  app.once('will-quit', () => {
+    clearInterval(retry)
+    shortcut.dispose()
+  })
 }
 
 if (!app.requestSingleInstanceLock()) {

@@ -128,21 +128,25 @@
 }
 
 /* Switches: a red light that comes on. */
-.toggle {
+/* A settings line: label and hint, then its control. */
+.setting {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+/* A switch's whole line toggles it. */
+.toggle {
   cursor: pointer;
 }
-.toggle__text {
+.setting__text {
   flex: 1;
   display: grid;
 }
-.toggle__label {
+.setting__label {
   font-weight: 600;
   color: var(--bone);
 }
-.toggle__hint {
+.setting__hint {
   font-size: 12px;
   color: var(--ash);
 }
@@ -197,4 +201,40 @@
 .slider input {
   flex: 1;
   accent-color: var(--signal);
+}
+
+/* The global shortcut: its keys in a small well; a click records new ones. */
+.shortcut__keys {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 26px;
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+}
+.shortcut__keys:hover {
+  border-color: var(--signal);
+}
+.shortcut__keys:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 2px;
+}
+.shortcut__keys--recording {
+  border-color: var(--signal-hot);
+}
+.shortcut__word {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ash);
+}
+.shortcut__keys--recording .shortcut__word {
+  color: var(--bone);
+}
+.setting__hint--warn {
+  color: var(--signal-hot);
 }
