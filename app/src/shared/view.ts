@@ -54,6 +54,9 @@ const humanize = (code: string): string => {
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
 
+/** "5 need you", "1 needs you": the count the disc, the header, the strip and the tray all show. */
+export const needsYouCount = (count: number): string => `${count} need${count === 1 ? 's' : ''} you`
+
 /** The stamp and detail line of a needs-you card. */
 export function attentionCopy(item: AttentionItem): CardCopy {
   switch (item.kind) {

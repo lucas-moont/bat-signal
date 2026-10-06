@@ -2,13 +2,14 @@
 // without a tray (tray.ts turns it into Electron's icon, tooltip and menu).
 import type { WindowMode } from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
+import { needsYouCount } from '../shared/view'
 
 /** The icon lights up while something needs you, like the disc. */
 export function trayLook({ attention }: StoreSnapshot): { lit: boolean; tooltip: string } {
   const count = attention.length
   return {
     lit: count > 0,
-    tooltip: `Bat-Signal · ${count ? `${count} need${count === 1 ? 's' : ''} you` : 'all quiet'}`,
+    tooltip: `Bat-Signal · ${count ? needsYouCount(count) : 'all quiet'}`,
   }
 }
 
