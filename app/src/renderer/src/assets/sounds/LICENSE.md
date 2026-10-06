@@ -1,0 +1,8 @@
+# Sounds
+
+Both sounds are in the public domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). No credit is required; it is given here anyway.
+
+| File        | What it is                                                     | Source                                                                                                                                                                       | Author      | Changes                                                                                            |
+| ----------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `wings.ogg` | One beat of large wings: Claude needs you, or a reply is ready | [Large Wings Flap](https://opengameart.org/content/large-wings-flap) (`wings_flap_large.ogg`), itself from [fast simple chop 5](https://freesound.org/s/127197/) by dave.des | AntumDeluge | The first of its three beats (0.55 s) with a short fade-out; peak raised to -3 dB; mono Ogg Vorbis |
+| `thump.ogg` | A soft, heavy thump: a task is done                            | [Impact Sounds](https://kenney.nl/assets/impact-sounds) (`impactSoft_heavy_000.ogg`)                                                                                         | Kenney      | Peak lowered to -3 dB; mono Ogg Vorbis                                                             |
