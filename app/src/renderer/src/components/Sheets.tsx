@@ -1,6 +1,13 @@
 import { useEffect, type ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
+import {
+  NEWS_GROUPS,
+  OPACITY_MAX,
+  OPACITY_MIN,
+  type NewsGroup,
+  type Settings,
+  type SettingsPatch,
+} from '@shared/settings'
 import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
@@ -217,6 +224,14 @@ function Toggle({
   )
 }
 
+/** A Windows notification switch per kind of news (none while the panel is in front). */
+const TOAST_SWITCHES: Record<NewsGroup, { label: string; hint: string }> = {
+  needsYou: { label: 'Claude needs you', hint: 'A permission, an error or a question' },
+  reply: { label: 'Reply ready', hint: 'Claude finished replying' },
+  taskDone: { label: 'Task done', hint: 'A task checked off on a case' },
+  sessions: { label: 'Case opened or closed', hint: 'A session starts or ends' },
+}
+
 export function SettingsSheet({
   settings,
   status,
@@ -285,6 +300,16 @@ export function SettingsSheet({
             on={status.startup === 'on'}
             onChange={batSignal.setStartWithWindows}
           />
+        </Section>
+        <Section title="Windows notifications">
+          {NEWS_GROUPS.map((group) => (
+            <Toggle
+              key={group}
+              {...TOAST_SWITCHES[group]}
+              on={settings.announce.toast[group]}
+              onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
+            />
+          ))}
         </Section>
       </div>
     </Sheet>
