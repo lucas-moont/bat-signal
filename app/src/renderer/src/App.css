@@ -7,6 +7,8 @@
   overflow: hidden;
   /* Own stacking context, so the atmosphere can sit behind everything at z-index -1. */
   isolation: isolate;
+  /* The panel adapts to its own width, not the window's (inside the 1px border: 2px less). */
+  container: app / inline-size;
 }
 
 /* Header: doubles as the title bar of the frameless window. */
@@ -70,7 +72,7 @@
   flex: none;
 }
 /* The title bar fits the compact default width (320px) with the mascot; only the minimum drops it. */
-@media (max-width: 360px) {
+@container app (max-width: 358px) {
   .header {
     gap: 7px;
   }
@@ -82,7 +84,7 @@
 .tabs__settings {
   margin-left: auto;
 }
-@media (max-width: 310px) {
+@container app (max-width: 308px) {
   .header {
     gap: 6px;
     padding-left: 10px;
