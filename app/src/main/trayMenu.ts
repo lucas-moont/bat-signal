@@ -14,31 +14,19 @@ export function trayLook({ attention }: StoreSnapshot): { lit: boolean; tooltip:
 
 export type TrayAction = 'showHide' | 'signal' | 'panel' | 'watch' | 'settings' | 'quit'
 
-export type TrayItem =
-  | { kind: 'item'; label: string; action: TrayAction }
-  | { kind: 'radio'; label: string; action: TrayAction; checked: boolean }
-  | { kind: 'separator' }
-
-const VIEWS = [
-  ['signal', 'Disc'],
-  ['panel', 'Panel'],
-  ['watch', 'Watch strip'],
-] as const
+/** A menu line, or a separator. A line with `checked` is one of a radio group. */
+export type TrayItem = 'separator' | { label: string; action: TrayAction; checked?: boolean }
 
 export function trayMenu(mode: WindowMode): TrayItem[] {
-  const separator = { kind: 'separator' } as const
   return [
-    { kind: 'item', label: mode === 'hidden' ? 'Show Bat-Signal' : 'Hide Bat-Signal', action: 'showHide' },
-    separator,
-    ...VIEWS.map(([view, label]): TrayItem => ({
-      kind: 'radio',
-      label,
-      action: view,
-      checked: mode === view,
-    })),
-    separator,
-    { kind: 'item', label: 'Settings…', action: 'settings' },
-    separator,
-    { kind: 'item', label: 'Quit Bat-Signal', action: 'quit' },
+    { label: mode === 'hidden' ? 'Show Bat-Signal' : 'Hide Bat-Signal', action: 'showHide' },
+    'separator',
+    { label: 'Disc', action: 'signal', checked: mode === 'signal' },
+    { label: 'Panel', action: 'panel', checked: mode === 'panel' },
+    { label: 'Watch strip', action: 'watch', checked: mode === 'watch' },
+    'separator',
+    { label: 'Settings…', action: 'settings' },
+    'separator',
+    { label: 'Quit Bat-Signal', action: 'quit' },
   ]
 }

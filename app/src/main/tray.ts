@@ -1,7 +1,6 @@
 // Bat-Signal's icon by the clock: the way back when every window is hidden, lit while something
 // needs you. What it shows and offers comes from trayMenu.ts; this only talks to Electron.
-import { app, Menu, Tray, type MenuItemConstructorOptions } from 'electron'
-import type { WindowMode } from '../shared/settings'
+import { app, Menu, Tray } from 'electron'
 import type { StoreSnapshot } from '../shared/types'
 import { trayLook, trayMenu, type TrayAction } from './trayMenu'
 import type { BatSignalWindows } from './window'
@@ -12,14 +11,13 @@ export class BatSignalTray {
   /** Held here for the app's life: a Tray left to the garbage collector vanishes from the taskbar. */
   private readonly tray: Tray
   private lit = false
-  private tooltip = ''
 
   constructor(private readonly windows: BatSignalWindows) {
     this.tray = new Tray(restIcon)
     this.tray.setToolTip('Bat-Signal')
     this.tray.on('click', () => windows.act('trayClick'))
-    this.setMenu(windows.mode)
-    windows.onModeChange((mode) => this.setMenu(mode))
+    // Built as it opens, so it always ticks the view on screen.
+    this.tray.on('right-click', () => this.tray.popUpContextMenu(this.menu()))
   }
 
   /** A new snapshot: light the icon (or put it out) and update the count in its tooltip. */
@@ -29,24 +27,22 @@ export class BatSignalTray {
       this.lit = lit
       this.tray.setImage(lit ? litIcon : restIcon)
     }
-    if (tooltip !== this.tooltip) {
-      this.tooltip = tooltip
-      this.tray.setToolTip(tooltip)
-    }
+    this.tray.setToolTip(tooltip)
   }
 
-  private setMenu(mode: WindowMode): void {
-    const template = trayMenu(mode).map((item): MenuItemConstructorOptions =>
-      item.kind === 'separator'
-        ? { type: 'separator' }
-        : {
-            label: item.label,
-            type: item.kind === 'radio' ? 'radio' : 'normal',
-            checked: item.kind === 'radio' && item.checked,
-            click: () => this.run(item.action),
-          },
+  private menu(): Menu {
+    return Menu.buildFromTemplate(
+      trayMenu(this.windows.mode).map((item) =>
+        item === 'separator'
+          ? { type: 'separator' }
+          : {
+              label: item.label,
+              type: item.checked === undefined ? 'normal' : 'radio',
+              checked: item.checked,
+              click: () => this.run(item.action),
+            },
+      ),
     )
-    this.tray.setContextMenu(Menu.buildFromTemplate(template))
   }
 
   private run(action: TrayAction): void {

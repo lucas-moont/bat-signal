@@ -145,7 +145,6 @@ export class BatSignalWindows {
   private quitting = false
   private onTop = true
   private saveTimer?: NodeJS.Timeout
-  private readonly modeListeners = new Set<(mode: WindowMode) => void>()
   /** Set while the strip waits for its first height (see setMode). */
   private stripPending?: NodeJS.Timeout
 
@@ -266,11 +265,6 @@ export class BatSignalWindows {
     this.setMode(nextMode({ mode, lastOpened, beforeHidden }, action))
   }
 
-  /** Calls back on every change of mode (the tray ticks the view on screen). */
-  onModeChange(callback: (mode: WindowMode) => void): void {
-    this.modeListeners.add(callback)
-  }
-
   /** Opens the panel with its settings sheet up (the tray's Settings…). */
   openSettings(): void {
     this.setMode('panel')
@@ -307,7 +301,6 @@ export class BatSignalWindows {
       // strip shows, and turns into the perch then (revealStrip).
       if (holdStrip) this.panel.webContents.send(IPC.mode, mode)
       else this.broadcast(IPC.mode, mode)
-      for (const listener of this.modeListeners) listener(mode)
     }
     if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
     if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)

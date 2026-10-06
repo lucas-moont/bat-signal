@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { demoSnapshot, quietDemoSnapshot } from '../src/shared/demo'
+import type { WindowMode } from '../src/shared/settings'
 import { trayLook, trayMenu } from '../src/main/trayMenu'
 
 describe('trayLook', () => {
@@ -16,8 +17,7 @@ describe('trayLook', () => {
 })
 
 describe('trayMenu', () => {
-  const labels = (mode: Parameters<typeof trayMenu>[0]) =>
-    trayMenu(mode).map((item) => (item.kind === 'separator' ? '—' : item.label))
+  const labels = (mode: WindowMode) => trayMenu(mode).map((item) => (item === 'separator' ? '—' : item.label))
 
   it('offers to hide, the three views, settings and quit', () => {
     expect(labels('watch')).toEqual([
@@ -38,8 +38,8 @@ describe('trayMenu', () => {
   })
 
   it('ticks the view on screen, and none while hidden', () => {
-    const ticked = (mode: Parameters<typeof trayMenu>[0]) =>
-      trayMenu(mode).flatMap((item) => (item.kind === 'radio' && item.checked ? [item.action] : []))
+    const ticked = (mode: WindowMode) =>
+      trayMenu(mode).flatMap((item) => (item !== 'separator' && item.checked ? [item.action] : []))
     expect(ticked('signal')).toEqual(['signal'])
     expect(ticked('panel')).toEqual(['panel'])
     expect(ticked('watch')).toEqual(['watch'])
