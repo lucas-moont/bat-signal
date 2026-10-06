@@ -3,7 +3,7 @@
 // ids of real Claude sessions) is gathered at run time and never written anywhere. npm test runs
 // the same scan (test/privacy.test.ts), so it never depends on someone remembering this command.
 import { execFileSync } from 'node:child_process'
-import { readdirSync, readFileSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { homedir, userInfo } from 'node:os'
 import { basename, join } from 'node:path'
 
@@ -93,20 +93,33 @@ function localSessionIds(): string[] {
   }
 }
 
-/** Scans every tracked text file of the repository this runs in. */
+/** A file's text, or undefined when it is binary, gone from disk or not a file (a submodule). */
+function readText(path: string): string | undefined {
+  try {
+    if (!statSync(path).isFile()) return undefined
+  } catch {
+    return undefined // deleted, not yet staged
+  }
+  const bytes = readFileSync(path)
+  return bytes.subarray(0, 8000).includes(0) ? undefined : bytes.toString('utf8')
+}
+
+/**
+ * Scans the text files of the repository this runs in: the tracked ones and the new ones not yet
+ * added (the rules only this machine knows never reach CI, so they must see a file before git does).
+ */
 export function scanRepo(): (Leak & { file: string })[] {
   const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8' })
   const root = git('rev-parse', '--show-toplevel').trim()
   // The profile folder can differ from the account name (renamed or Microsoft accounts).
   const names = [userInfo().username, basename(homedir())]
   const findLeaks = leakFinder({ names, ids: localSessionIds() })
-  return git('-C', root, 'ls-files', '-z')
+  return git('-C', root, 'ls-files', '-z', '--cached', '--others', '--exclude-standard')
     .split('\0')
     .filter(Boolean)
     .flatMap((file) => {
-      const bytes = readFileSync(join(root, file))
-      if (bytes.subarray(0, 8000).includes(0)) return [] // binary
-      return findLeaks(bytes.toString('utf8')).map((leak) => ({ file, ...leak }))
+      const text = readText(join(root, file))
+      return text === undefined ? [] : findLeaks(text).map((leak) => ({ file, ...leak }))
     })
 }
 
