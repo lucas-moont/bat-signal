@@ -171,12 +171,6 @@ export const TYPED_BOX: Record<TaskStatus, string> = {
   deleted: '[-]',
 }
 
-export const TASK_GLYPH: Record<TaskStatus, string> = {
-  pending: '○',
-  in_progress: '◐',
-  completed: '✓',
-  deleted: '×',
-}
 export const RUN_STATUS_LABEL: Record<RunStatus, string> = {
   running: 'Running',
   completed: 'Done',
