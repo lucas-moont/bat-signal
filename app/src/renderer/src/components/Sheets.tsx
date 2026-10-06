@@ -7,6 +7,7 @@ import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
 import { Section } from './Section'
+import { SettingRow } from './SettingRow'
 import { ShortcutField } from './ShortcutField'
 import './Sheets.css'
 
@@ -206,14 +207,10 @@ function Toggle({
   onChange: (on: boolean) => void
 }) {
   return (
-    <label className="toggle">
-      <span className="toggle__text">
-        <span className="toggle__label">{label}</span>
-        <span className="toggle__hint">{hint}</span>
-      </span>
+    <SettingRow as="label" label={label} hint={hint}>
       <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span className="toggle__track" aria-hidden />
-    </label>
+    </SettingRow>
   )
 }
 

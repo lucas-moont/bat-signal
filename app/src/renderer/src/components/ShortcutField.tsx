@@ -4,6 +4,7 @@ import { useEffect, useEffectEvent, useState } from 'react'
 import { acceleratorFromKey, keycaps } from '@shared/accelerator'
 import type { ShortcutStatus } from '@shared/status'
 import { batSignal } from '../bridge'
+import { SettingRow } from './SettingRow'
 
 const HINTS: Record<ShortcutStatus['state'], string> = {
   active: 'Opens and folds Bat-Signal from any app',
@@ -18,8 +19,9 @@ export function ShortcutField({
   status: ShortcutStatus
   onChange: (shortcut: string) => void
 }) {
-  const [recording, setRecording] = useState(false)
-  const [problem, setProblem] = useState('')
+  // null while not recording; while recording, what was wrong with the last keys ('' if nothing).
+  const [problem, setProblem] = useState<string | null>(null)
+  const recording = problem !== null
   // The sheet re-renders with every snapshot: recording must not restart (and let the shortcut
   // go and come back) each time.
   const commit = useEffectEvent(onChange)
@@ -36,7 +38,7 @@ export function ShortcutField({
       if (recorded.kind === 'invalid') return setProblem(recorded.reason)
       if (recorded.kind === 'ok') commit(recorded.accelerator)
       if (recorded.kind === 'clear') commit('')
-      setRecording(false)
+      setProblem(null)
     }
     window.addEventListener('keydown', onKey, { capture: true })
     return () => {
@@ -45,36 +47,29 @@ export function ShortcutField({
     }
   }, [recording])
 
-  const hint = recording ? problem || 'Esc cancels · Backspace turns it off' : HINTS[status.state]
+  const word = recording ? 'Press keys' : status.accelerator ? '' : 'Off'
   return (
-    <div className="toggle shortcut">
-      <span className="toggle__text">
-        <span className="toggle__label">Global shortcut</span>
-        <span className={`toggle__hint${status.state === 'taken' && !recording ? ' shortcut__warn' : ''}`}>
-          {hint}
-        </span>
-      </span>
+    <SettingRow
+      label="Global shortcut"
+      hint={recording ? problem || 'Esc cancels · Backspace turns it off' : HINTS[status.state]}
+      warn={!recording && status.state === 'taken'}
+    >
       <button
         className={`shortcut__keys${recording ? ' shortcut__keys--recording' : ''}`}
-        onClick={() => {
-          setProblem('')
-          setRecording(true)
-        }}
-        onBlur={() => setRecording(false)}
+        onClick={() => setProblem('')}
+        onBlur={() => setProblem(null)}
         aria-label={recording ? 'Press the new shortcut' : 'Change the global shortcut'}
       >
-        {recording ? (
-          <span className="shortcut__listening">Press keys</span>
-        ) : status.accelerator ? (
+        {word ? (
+          <span className="shortcut__word">{word}</span>
+        ) : (
           keycaps(status.accelerator).map((key) => (
-            <kbd key={key} className="shortcut__key">
+            <kbd key={key} className="chip">
               {key}
             </kbd>
           ))
-        ) : (
-          <span className="shortcut__listening">Off</span>
         )}
       </button>
-    </div>
+    </SettingRow>
   )
 }

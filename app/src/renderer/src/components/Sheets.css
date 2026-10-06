@@ -223,22 +223,18 @@
 .shortcut__keys--recording {
   border-color: var(--signal);
 }
-.shortcut__key {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  padding: 1px 5px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
+/* The keys are chips, lit like the label they belong to. */
+.shortcut__keys .chip {
   color: var(--bone);
 }
-.shortcut__listening {
+.shortcut__word {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--ash);
 }
-.shortcut__keys--recording .shortcut__listening {
+.shortcut__keys--recording .shortcut__word {
   color: var(--bone);
 }
-.shortcut__warn {
+.toggle__hint--warn {
   color: var(--ink-hot);
 }
