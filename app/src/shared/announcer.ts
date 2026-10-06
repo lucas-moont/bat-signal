@@ -1,8 +1,7 @@
 // What news goes beyond the Bat-Signal itself, as a Windows toast: the switches the user turned
 // on, and none while the panel is in front. Pure: the main process passes the snapshots and the
 // moment's context, and shows what comes out.
-import { freshen } from './noticeQueue'
-import { byUrgency, diffNotices, type Notice, type NoticeKind } from './notices'
+import { byUrgency, diffNotices, freshen, type Notice, type NoticeKind } from './notices'
 import type { AnnouncePrefs, NewsGroup } from './settings'
 import type { StoreSnapshot } from './types'
 

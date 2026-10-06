@@ -1,10 +1,8 @@
 // The order in which the Bat-Signal shows its notice cards. Pure: callers pass the time.
-import { byUrgency, type Notice } from './notices'
+import { byUrgency, freshen, type Notice } from './notices'
 
 /** How long each notice card stays out before the next one (or the signal alone). */
 export const NOTICE_MS = 6000
-/** How many announced keys to remember: far more than ever change between two snapshots. */
-const MEMORY = 500
 
 export interface NoticeQueue {
   showing?: { notice: Notice; since: number }
@@ -14,19 +12,6 @@ export interface NoticeQueue {
 }
 
 export const emptyQueue = (): NoticeQueue => ({ waiting: [], announced: new Set() })
-
-/**
- * The notices not announced before, and the memory with them added: the most recent MEMORY keys,
- * or the very same memory when nothing is new.
- */
-export function freshen(
-  announced: ReadonlySet<string>,
-  notices: readonly Notice[],
-): { fresh: Notice[]; announced: ReadonlySet<string> } {
-  const fresh = notices.filter((n) => !announced.has(n.key))
-  if (!fresh.length) return { fresh, announced }
-  return { fresh, announced: new Set([...announced, ...fresh.map((n) => n.key)].slice(-MEMORY)) }
-}
 
 /** Shows the next waiting notice from `now`, or nothing. */
 function showNext(queue: NoticeQueue, now: number): NoticeQueue {
