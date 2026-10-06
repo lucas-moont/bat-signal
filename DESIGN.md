@@ -145,7 +145,7 @@ A black-on-black noir palette with one family of reds that work as light and ink
 
 ### Primary
 - **Signal Red** (signal): the measured red of the film's title logo. Masthead wordmark, focus outlines in the files layout, checked toggles, card hover borders, the lit disc's lens, text selection.
-- **Hot Signal** (signal-hot): only for small lit things where Signal Red reads too dark on black: urgent card rules, active tab underline, live status dots, the in-progress glyph, the default stamp ink, the disc's count border.
+- **Hot Signal** (signal-hot): only for small lit things where Signal Red reads too dark on black: urgent card rules, active tab underline, live status dots, the in-progress task mark, the default stamp ink, the disc's count border.
 - **Signal Glow** (signal-glow): the translucent red used for every halo: card hover glow, header count, tab underline, sheet edge, toggle thumb.
 
 ### Secondary
