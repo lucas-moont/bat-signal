@@ -1,6 +1,6 @@
-// What news goes beyond the Bat-Signal itself, as a Windows toast: the switches the user turned
-// on, and none while the panel is in front. Pure: the main process passes the snapshots and the
-// moment's context, and gathers what comes out into one toast per burst.
+// What news goes beyond the Bat-Signal itself: a Windows toast for the kinds the user switched on,
+// a sound when sound is on, and neither while the panel is in front. Pure: the main process passes
+// the snapshots and the moment's context, and makes one toast and one sound of each burst.
 import { byUrgency, diffNotices, freshen, type Notice, type NoticeKind } from './notices'
 import type { AnnouncePrefs, NewsGroup } from './settings'
 import type { StoreSnapshot } from './types'
@@ -38,17 +38,56 @@ export interface Toast {
   body: string
 }
 
-/** Takes a new snapshot: all its news is remembered, and the news the user picked for a toast comes out. */
+/** The sounds Bat-Signal makes. */
+export type Cue = 'wings' | 'thump'
+
+/** The sound each kind of news makes; a case opening or closing makes none. */
+const CUE_OF_KIND: Partial<Record<NoticeKind, Cue>> = {
+  permission: 'wings',
+  error: 'wings',
+  waiting: 'wings',
+  reply: 'wings',
+  'task-done': 'thump',
+}
+
+/**
+ * Takes a new snapshot: all its news is remembered, and out come the news the user picked for a
+ * toast and the news that makes a sound.
+ */
 export function announce(
   state: Announcer,
   snapshot: StoreSnapshot,
   ctx: AnnounceContext,
-): { state: Announcer; toast: Notice[] } {
+): { state: Announcer; toast: Notice[]; sound: Notice[] } {
   const { fresh, announced } = freshen(state.announced, diffNotices(state.prev, snapshot))
   const next = { prev: snapshot, announced }
   // With the panel in front, the news is remembered all the same: it was seen there.
-  if (ctx.panelFocused) return { state: next, toast: [] }
-  return { state: next, toast: fresh.filter((n) => ctx.prefs.toast[GROUP_OF_KIND[n.kind]]) }
+  if (ctx.panelFocused) return { state: next, toast: [], sound: [] }
+  return {
+    state: next,
+    toast: fresh.filter((n) => ctx.prefs.toast[GROUP_OF_KIND[n.kind]]),
+    sound: ctx.prefs.sound ? fresh.filter((n) => CUE_OF_KIND[n.kind]) : [],
+  }
+}
+
+/** The sound for a burst of news: its most urgent sound (the wings over a thump), or none. */
+export function cueFor(news: readonly Notice[]): Cue | undefined {
+  const loudest = [...news].sort(byUrgency).find((n) => CUE_OF_KIND[n.kind])
+  return loudest && CUE_OF_KIND[loudest.kind]
+}
+
+/** Sounds this close together are one burst: only the first plays. */
+export const SOUND_GAP_MS = 4000
+
+/** A sound to play now for this news, if one played long enough ago; `lastAt` remembers when. */
+export function pickCue(
+  state: { lastAt?: number },
+  news: readonly Notice[],
+  now: number,
+): { cue?: Cue; state: { lastAt?: number } } {
+  const cue = cueFor(news)
+  if (!cue || (state.lastAt !== undefined && now - state.lastAt < SOUND_GAP_MS)) return { state }
+  return { cue, state: { lastAt: now } }
 }
 
 /**
