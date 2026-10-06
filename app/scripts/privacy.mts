@@ -7,16 +7,19 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { homedir, userInfo } from 'node:os'
 import { join } from 'node:path'
 
-export interface Personal {
+/** What only this machine knows, gathered at run time and never written anywhere. */
+export interface LocalIdentity {
   /** Local usernames, matched as whole words. */
   names: readonly string[]
   /** Ids of real Claude Code sessions on this machine. */
   ids: readonly string[]
 }
 
+export type Rule = 'user folder' | 'email' | 'token' | 'username' | 'session id'
+
 export interface Leak {
   line: number
-  rule: string
+  rule: Rule
 }
 
 /** The fictional people the docs and synthetic fixtures use in a user folder. */
@@ -27,31 +30,38 @@ const EMAIL = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org))$/i
 const TOKEN = /sk-ant-[\w-]{16,}|ghp_\w{30,}|github_pat_\w{30,}|xox[abp]-[\w-]{10,}|AKIA[0-9A-Z]{16}/
-const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
+const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 const UUID_WORD = new RegExp(`\\b${UUID.source}\\b`, 'gi')
 const TRANSCRIPT = new RegExp(`(?:^|[\\\\/])(${UUID.source})\\.jsonl$`, 'i')
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-/** Every rule each line breaks, each once, in rule order. */
-export function findLeaks(text: string, personal: Personal): Leak[] {
-  const ids = new Set(personal.ids.map((id) => id.toLowerCase()))
-  const names = personal.names.length
-    ? new RegExp(`\\b(?:${personal.names.map(escape).join('|')})\\b`, 'i')
+/** Whether the line holds a match of `pattern` (a global regex) that is not allowed. */
+const anyBut = (line: string, pattern: RegExp, allowed: (match: RegExpExecArray) => boolean) =>
+  [...line.matchAll(pattern)].some((m) => !allowed(m))
+
+/**
+ * The scanner for one machine: built once, then run on each file. Returns every rule each line
+ * breaks, each once, in rule order.
+ */
+export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
+  const ids = new Set(local.ids.map((id) => id.toLowerCase()))
+  const names = local.names.length
+    ? new RegExp(`\\b(?:${local.names.map(escapeRegExp).join('|')})\\b`, 'i')
     : undefined
-  const rules: [string, (line: string) => boolean][] = [
-    [
-      'user folder',
-      (l) => [...l.matchAll(USER_FOLDER)].some((m) => !FICTIONAL_USERS.has(m[1]!.toLowerCase())),
-    ],
-    ['email', (l) => [...l.matchAll(EMAIL)].some((m) => !ALLOWED_EMAIL.test(m[0]))],
+  const rules: [Rule, (line: string) => boolean][] = [
+    ['user folder', (l) => anyBut(l, USER_FOLDER, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))],
+    ['email', (l) => anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
     ['token', (l) => TOKEN.test(l)],
     ['username', (l) => names?.test(l) ?? false],
-    ['session id', (l) => [...l.matchAll(UUID_WORD)].some((m) => ids.has(m[0].toLowerCase()))],
+    ['session id', (l) => anyBut(l, UUID_WORD, (m) => !ids.has(m[0].toLowerCase()))],
   ]
-  return text
-    .split(/\r?\n/)
-    .flatMap((line, i) => rules.filter(([, breaks]) => breaks(line)).map(([rule]) => ({ line: i + 1, rule })))
+  return (text) =>
+    text
+      .split(/\r?\n/)
+      .flatMap((line, i) =>
+        rules.filter(([, breaks]) => breaks(line)).map(([rule]) => ({ line: i + 1, rule })),
+      )
 }
 
 /** Ids of the Claude Code sessions on this machine, from transcript file names (never their contents). */
@@ -69,14 +79,14 @@ function localSessionIds(): string[] {
 export function scanRepo(): (Leak & { file: string })[] {
   const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8' })
   const root = git('rev-parse', '--show-toplevel').trim()
-  const personal: Personal = { names: [userInfo().username], ids: localSessionIds() }
+  const findLeaks = leakFinder({ names: [userInfo().username], ids: localSessionIds() })
   return git('-C', root, 'ls-files', '-z')
     .split('\0')
     .filter(Boolean)
     .flatMap((file) => {
       const bytes = readFileSync(join(root, file))
       if (bytes.subarray(0, 8000).includes(0)) return [] // binary
-      return findLeaks(bytes.toString('utf8'), personal).map((leak) => ({ file, ...leak }))
+      return findLeaks(bytes.toString('utf8')).map((leak) => ({ file, ...leak }))
     })
 }
 

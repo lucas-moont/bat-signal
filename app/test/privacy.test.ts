@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { findLeaks, scanRepo, type Personal } from '../scripts/privacy.mts'
+import { leakFinder, scanRepo, type LocalIdentity } from '../scripts/privacy.mts'
 
-const nobody: Personal = { names: [], ids: [] }
-const scan = (text: string, personal: Personal = nobody) =>
-  findLeaks(text, personal).map((l) => `${l.line}:${l.rule}`)
+const nobody: LocalIdentity = { names: [], ids: [] }
+const scan = (text: string, local: LocalIdentity = nobody) =>
+  leakFinder(local)(text).map((l) => `${l.line}:${l.rule}`)
 
 // The leaks are built at run time, so this file passes the scan it specifies.
 const jdoe = 'jdoe'
@@ -52,7 +52,7 @@ describe('privacy check: tokens', () => {
 })
 
 describe('privacy check: what only this machine knows', () => {
-  const me: Personal = { names: [jdoe], ids: ['0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b'] }
+  const me: LocalIdentity = { names: [jdoe], ids: ['0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b'] }
 
   it('flags the local username as a whole word, in any case', () => {
     expect(scan('owner: JDoe', me)).toEqual(['1:username'])
