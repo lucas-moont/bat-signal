@@ -15,6 +15,10 @@ export interface NoticeQueue {
 
 export const emptyQueue = (): NoticeQueue => ({ waiting: [], announced: new Set() })
 
+/** Adds what was just announced to the memory, keeping only the most recent MEMORY keys. */
+export const remember = (announced: ReadonlySet<string>, keys: readonly string[]): ReadonlySet<string> =>
+  new Set([...announced, ...keys].slice(-MEMORY))
+
 /** Shows the next waiting notice from `now`, or nothing. */
 function showNext(queue: NoticeQueue, now: number): NoticeQueue {
   const [next, ...rest] = queue.waiting
@@ -29,7 +33,10 @@ export function enqueue(queue: NoticeQueue, notices: Notice[], now: number): Not
   const next = {
     ...queue,
     waiting,
-    announced: new Set([...queue.announced, ...fresh.map((n) => n.key)].slice(-MEMORY)),
+    announced: remember(
+      queue.announced,
+      fresh.map((n) => n.key),
+    ),
   }
   return next.showing ? next : showNext(next, now)
 }
