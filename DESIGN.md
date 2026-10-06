@@ -203,7 +203,7 @@ A single column inside a frameless window with a 1px warm border (#1d1714). The 
 
 The Night Report keeps the tab row and replaces the cards with one typed article per tab. A 114px margin column holds right-aligned stamps and ages, a 1px Dried Blood rule runs down the sheet at the margin, and the words start 12px after it. A double rule (3px double, Line) closes the dateline; entries carry 5px vertical padding.
 
-Responsive behavior has one breakpoint, max-width 330px: the header tightens, Bat-Clawd steps out before the buttons give up any room, and the Night Report margin shrinks to 100px with tighter tracking on stamps and headings. The minimum window is 300x360.
+Responsive behavior follows the panel's own width (container queries on `.app`, not the window), at three steps: under 360px the header title tightens; under 330px the Night Report margin shrinks to 100px with tighter tracking on stamps and headings; under 310px Bat-Clawd steps out before the buttons give up any room. The minimum window is 300x360.
 
 The signal window is transparent, with the 64px disc 16px from its corner. The 300px notice card rides above it on a red beam and flips below or to the right near screen edges.
 
