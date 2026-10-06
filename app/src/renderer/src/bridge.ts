@@ -56,12 +56,11 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
   })
   // The stand-in holds the shortcut it is given: no other app competes for it here.
-  const status = observable<AppStatus>({
-    shortcut: { accelerator: settings.current().shortcut, state: 'active' },
+  const statusOf = ({ shortcut }: Settings): AppStatus => ({
+    shortcut: { accelerator: shortcut, state: shortcut ? 'active' : 'off' },
   })
-  settings.on(({ shortcut }) =>
-    status.set({ shortcut: { accelerator: shortcut, state: shortcut ? 'active' : 'off' } }),
-  )
+  const status = observable(statusOf(settings.current()))
+  settings.on((next) => status.set(statusOf(next)))
   const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
   let lastOpened: OpenMode = 'panel'
   return {

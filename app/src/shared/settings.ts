@@ -63,7 +63,7 @@ function parseAnnounce(raw: unknown, defaults: AnnouncePrefs): AnnouncePrefs {
 /** A shortcut as settings hold it: written the one way, '' for none, undefined if it is no shortcut. */
 const parseShortcut = (raw: unknown): string | undefined => {
   const text = str(raw)
-  return text === '' ? '' : text === undefined ? undefined : normalizeAccelerator(text)
+  return text && normalizeAccelerator(text)
 }
 
 const parseLayout = (raw: unknown): PanelLayout | undefined =>

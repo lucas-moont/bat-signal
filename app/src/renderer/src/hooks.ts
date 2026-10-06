@@ -35,11 +35,11 @@ export const useSnapshotState = (): [StoreSnapshot, boolean] =>
 
 export const useSnapshot = (): StoreSnapshot => useSnapshotState()[0]
 
-/** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
 /** What is happening now (the shortcut held or taken), pushed by the main process. */
 export const useStatus = (): AppStatus =>
   useBridgedState(DEFAULT_STATUS, batSignal.getStatus, batSignal.onStatus)[0]
 
+/** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
 export function useSettings(): [Settings, (patch: SettingsPatch) => void, boolean] {
   const [settings, loaded] = useBridgedState(DEFAULT_SETTINGS, batSignal.getSettings, batSignal.onSettings)
   return [settings, batSignal.setSettings, loaded]

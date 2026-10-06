@@ -38,13 +38,15 @@ const MODIFIER_ALIASES: Record<string, Modifier> = {
 }
 
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i)
+/** The modifiers that keep a shortcut from being typing. */
+const TRIGGERS = ['Ctrl', 'Alt', 'Super'] as const satisfies readonly Modifier[]
 
 /** The keys a shortcut may end in, by KeyboardEvent.code, with their Electron names. */
 const KEYS = new Map<string, string>([
-  ...range(65, 90).map((c): [string, string] => [`Key${String.fromCharCode(c)}`, String.fromCharCode(c)]),
-  ...range(0, 9).map((d): [string, string] => [`Digit${d}`, `${d}`]),
-  ...range(0, 9).map((d): [string, string] => [`Numpad${d}`, `num${d}`]),
-  ...range(1, 24).map((n): [string, string] => [`F${n}`, `F${n}`]),
+  ...[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map((letter) => [`Key${letter}`, letter] as const),
+  ...range(0, 9).map((d) => [`Digit${d}`, `${d}`] as const),
+  ...range(0, 9).map((d) => [`Numpad${d}`, `num${d}`] as const),
+  ...range(1, 24).map((n) => [`F${n}`, `F${n}`] as const),
   ['ArrowUp', 'Up'],
   ['ArrowDown', 'Down'],
   ['ArrowLeft', 'Left'],
@@ -60,7 +62,7 @@ const MODIFIER_CODES = /^(Control|Alt|Shift|Meta)(Left|Right)$/
 const standsAlone = (key: string) => /^F(1[3-9]|2[0-4])$/.test(key)
 
 function compose(modifiers: ReadonlySet<Modifier>, key: string): Recorded {
-  if (!standsAlone(key) && !['Ctrl', 'Alt', 'Super'].some((m) => modifiers.has(m as Modifier)))
+  if (!standsAlone(key) && !TRIGGERS.some((m) => modifiers.has(m)))
     return { kind: 'invalid', reason: 'Add Ctrl, Alt or Win, so typing never triggers it' }
   return { kind: 'ok', accelerator: [...MODIFIERS.filter((m) => modifiers.has(m)), key].join('+') }
 }
