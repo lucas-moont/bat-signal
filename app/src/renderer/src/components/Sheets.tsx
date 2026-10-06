@@ -226,44 +226,46 @@ export function SettingsSheet({
 }) {
   return (
     <Sheet kicker="Bat-Computer" title="Settings" onClose={onClose}>
-      <Section title="Look">
-        <Toggle
-          label="Animations"
-          hint="Intro, flying mascot, typewriter and transitions"
-          on={settings.animations}
-          onChange={(animations) => onChange({ animations })}
-        />
-        <Toggle
-          label="Rain"
-          hint="Gotham weather behind the cases"
-          on={settings.rain}
-          onChange={(rain) => onChange({ rain })}
-        />
-        <Toggle
-          label="Night report"
-          hint="Read the panel as one typed report instead of case files"
-          on={settings.layout === 'report'}
-          onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
-        />
-        <Toggle
-          label="Always on top"
-          hint="Keep the window above everything else"
-          on={settings.alwaysOnTop}
-          onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
-        />
-        <label className="slider">
-          <span className="toggle__label">Opacity</span>
-          <input
-            type="range"
-            min={OPACITY_MIN * 100}
-            max={OPACITY_MAX * 100}
-            step={5}
-            value={Math.round(settings.opacity * 100)}
-            onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}
+      <div className="settings">
+        <Section title="Look">
+          <Toggle
+            label="Animations"
+            hint="Intro, flying mascot, typewriter and transitions"
+            on={settings.animations}
+            onChange={(animations) => onChange({ animations })}
           />
-          <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
-        </label>
-      </Section>
+          <Toggle
+            label="Rain"
+            hint="Gotham weather behind the cases"
+            on={settings.rain}
+            onChange={(rain) => onChange({ rain })}
+          />
+          <Toggle
+            label="Night report"
+            hint="Read the panel as one typed report instead of case files"
+            on={settings.layout === 'report'}
+            onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
+          />
+          <Toggle
+            label="Always on top"
+            hint="Keep the window above everything else"
+            on={settings.alwaysOnTop}
+            onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
+          />
+          <label className="slider">
+            <span className="toggle__label">Opacity</span>
+            <input
+              type="range"
+              min={OPACITY_MIN * 100}
+              max={OPACITY_MAX * 100}
+              step={5}
+              value={Math.round(settings.opacity * 100)}
+              onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}
+            />
+            <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
+          </label>
+        </Section>
+      </div>
     </Sheet>
   )
 }

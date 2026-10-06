@@ -1,4 +1,4 @@
-// A ruled heading over a group of rows, like the headings of a case file.
+// A ruled heading over a group of rows.
 import type { ReactNode } from 'react'
 import './Section.css'
 
