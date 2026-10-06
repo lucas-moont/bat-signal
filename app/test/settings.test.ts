@@ -24,10 +24,10 @@ describe('parseSettings: whatever the file holds', () => {
 })
 
 describe('parseSettings: a file from before Phase 4', () => {
-  it('keeps what the user chose and turns every new alert off', () => {
+  it('keeps what the user chose and turns every new announcement off', () => {
     expect(parseSettings(OLD_FILE)).toEqual({
       ...OLD_FILE,
-      alerts: {
+      announce: {
         toast: { needsYou: false, reply: false, taskDone: false, sessions: false },
         sound: false,
         volume: 0.6,
@@ -36,14 +36,14 @@ describe('parseSettings: a file from before Phase 4', () => {
   })
 })
 
-describe('parseSettings: alerts', () => {
+describe('parseSettings: how news is announced', () => {
   it('turns on only the toasts set to true, nothing truthy', () => {
-    const { alerts } = parseSettings({ alerts: { toast: { reply: true, taskDone: 'yes', needsYou: 1 } } })
-    expect(alerts.toast).toEqual({ needsYou: false, reply: true, taskDone: false, sessions: false })
+    const { announce } = parseSettings({ announce: { toast: { reply: true, taskDone: 'yes', needsYou: 1 } } })
+    expect(announce.toast).toEqual({ needsYou: false, reply: true, taskDone: false, sessions: false })
   })
 
   it('keeps the volume between 0 and 1, at 60% when unknown', () => {
-    const volume = (v: unknown) => parseSettings({ alerts: { volume: v } }).alerts.volume
+    const volume = (v: unknown) => parseSettings({ announce: { volume: v } }).announce.volume
     expect(volume(3)).toBe(1)
     expect(volume(-1)).toBe(0)
     expect(volume(0.25)).toBe(0.25)
@@ -51,34 +51,34 @@ describe('parseSettings: alerts', () => {
     expect(volume(Number.NaN)).toBe(0.6)
   })
 
-  it('falls back to the defaults when alerts is not an object', () => {
-    expect(parseSettings({ alerts: 5 }).alerts).toEqual(DEFAULT_SETTINGS.alerts)
+  it('falls back to the defaults when announce is not an object', () => {
+    expect(parseSettings({ announce: 5 }).announce).toEqual(DEFAULT_SETTINGS.announce)
   })
 })
 
 describe('applySettingsPatch: changing one switch', () => {
   const current = applySettingsPatch(DEFAULT_SETTINGS, {
-    alerts: { toast: { needsYou: true }, volume: 0.3 },
+    announce: { toast: { needsYou: true }, volume: 0.3 },
   })
 
-  it('keeps the rest of the alerts when sound is turned on', () => {
-    const next = applySettingsPatch(current, { alerts: { sound: true } })
-    expect(next.alerts).toEqual({ ...current.alerts, sound: true })
+  it('keeps the other announce settings when sound is turned on', () => {
+    const next = applySettingsPatch(current, { announce: { sound: true } })
+    expect(next.announce).toEqual({ ...current.announce, sound: true })
   })
 
   it('keeps the other toasts when one is turned on', () => {
-    const next = applySettingsPatch(current, { alerts: { toast: { taskDone: true } } })
-    expect(next.alerts.toast).toEqual({ needsYou: true, reply: false, taskDone: true, sessions: false })
-    expect(next.alerts.volume).toBe(0.3)
+    const next = applySettingsPatch(current, { announce: { toast: { taskDone: true } } })
+    expect(next.announce.toast).toEqual({ needsYou: true, reply: false, taskDone: true, sessions: false })
+    expect(next.announce.volume).toBe(0.3)
   })
 
-  it('ignores a patch of the wrong shape instead of resetting the alerts', () => {
-    expect(applySettingsPatch(current, { alerts: 5 }).alerts).toEqual(current.alerts)
-    expect(applySettingsPatch(current, { alerts: { toast: 'all' } }).alerts).toEqual(current.alerts)
+  it('ignores a patch of the wrong shape instead of resetting them', () => {
+    expect(applySettingsPatch(current, { announce: 5 }).announce).toEqual(current.announce)
+    expect(applySettingsPatch(current, { announce: { toast: 'all' } }).announce).toEqual(current.announce)
   })
 
   it('leaves the other settings alone', () => {
-    const next = applySettingsPatch(parseSettings(OLD_FILE), { alerts: { sound: true } })
+    const next = applySettingsPatch(parseSettings(OLD_FILE), { announce: { sound: true } })
     expect(next).toMatchObject(OLD_FILE)
   })
 })
@@ -86,7 +86,7 @@ describe('applySettingsPatch: changing one switch', () => {
 describe('applySettingsPatch: an untrusted patch', () => {
   it('cannot slip settings in through __proto__', () => {
     const patch: unknown = JSON.parse(
-      '{"__proto__": {"animations": false}, "alerts": {"__proto__": {"sound": true}}}',
+      '{"__proto__": {"animations": false}, "announce": {"__proto__": {"sound": true}}}',
     )
     const next = applySettingsPatch(DEFAULT_SETTINGS, patch)
     expect(next).toEqual(DEFAULT_SETTINGS)

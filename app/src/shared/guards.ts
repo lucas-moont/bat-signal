@@ -8,5 +8,7 @@ export const bool = (v: unknown): boolean | undefined => (typeof v === 'boolean'
 /** A finite number: NaN and Infinity from untrusted input count as missing. */
 export const num = (v: unknown): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) ? v : undefined
-export const obj = (v: unknown): Json => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Json) : {})
+/** A plain object: not null, not an array. */
+export const isRecord = (v: unknown): v is Json => !!v && typeof v === 'object' && !Array.isArray(v)
+export const obj = (v: unknown): Json => (isRecord(v) ? v : {})
 export const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max)

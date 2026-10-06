@@ -1,16 +1,16 @@
-import { bool, clamp, num, obj, type Json } from './guards'
+import { bool, clamp, isRecord, num, obj, type Json } from './guards'
 
 export const OPACITY_MIN = 0.5
 export const OPACITY_MAX = 1
 
 /** The kinds of news a Windows toast or a sound can carry, each switched on on its own. */
-export const ALERT_GROUPS = ['needsYou', 'reply', 'taskDone', 'sessions'] as const
-export type AlertGroup = (typeof ALERT_GROUPS)[number]
+export const NEWS_GROUPS = ['needsYou', 'reply', 'taskDone', 'sessions'] as const
+export type NewsGroup = (typeof NEWS_GROUPS)[number]
 
-/** How news reaches the user beyond the Bat-Signal itself: all off until they ask. */
-export interface AlertPrefs {
+/** How news is announced beyond the Bat-Signal itself: all off until the user asks. */
+export interface AnnouncePrefs {
   /** Windows toasts, per kind of news. */
-  toast: Record<AlertGroup, boolean>
+  toast: Record<NewsGroup, boolean>
   sound: boolean
   /** Sound volume, 0 to 1. */
   volume: number
@@ -26,7 +26,7 @@ export interface Settings {
   opacity: number
   /** How the panel reads: as case files (the approved layout) or as one typed night report. */
   layout: PanelLayout
-  alerts: AlertPrefs
+  announce: AnnouncePrefs
 }
 
 export type PanelLayout = 'files' | 'report'
@@ -37,21 +37,21 @@ export const DEFAULT_SETTINGS: Settings = {
   alwaysOnTop: true,
   opacity: 1,
   layout: 'files',
-  alerts: {
-    toast: { needsYou: false, reply: false, taskDone: false, sessions: false },
+  announce: {
+    toast: Object.fromEntries(NEWS_GROUPS.map((group) => [group, false])) as AnnouncePrefs['toast'],
     sound: false,
     volume: 0.6,
   },
 }
 
-function parseAlerts(raw: unknown): AlertPrefs {
+function parseAnnounce(raw: unknown): AnnouncePrefs {
   const o = obj(raw)
   const toast = obj(o['toast'])
-  const defaults = DEFAULT_SETTINGS.alerts
+  const defaults = DEFAULT_SETTINGS.announce
   return {
     toast: Object.fromEntries(
-      ALERT_GROUPS.map((group) => [group, bool(toast[group]) ?? defaults.toast[group]]),
-    ) as AlertPrefs['toast'],
+      NEWS_GROUPS.map((group) => [group, bool(toast[group]) ?? defaults.toast[group]]),
+    ) as AnnouncePrefs['toast'],
     sound: bool(o['sound']) ?? defaults.sound,
     volume: clamp(num(o['volume']) ?? defaults.volume, 0, 1),
   }
@@ -66,7 +66,7 @@ export function parseSettings(raw: unknown): Settings {
     alwaysOnTop: bool(o['alwaysOnTop']) ?? DEFAULT_SETTINGS.alwaysOnTop,
     opacity: clamp(num(o['opacity']) ?? DEFAULT_SETTINGS.opacity, OPACITY_MIN, OPACITY_MAX),
     layout: o['layout'] === 'report' ? 'report' : 'files',
-    alerts: parseAlerts(o['alerts']),
+    announce: parseAnnounce(o['announce']),
   }
 }
 
@@ -75,8 +75,6 @@ type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]>
 /** A change to some settings: any one switch, down to a single toast, leaving the rest as they are. */
 export type SettingsPatch = DeepPartial<Settings>
 
-const isGroup = (v: unknown): v is Json => obj(v) === v
-
 /**
  * An untrusted patch laid over a value: a group (an object) merges key by key, all the way down,
  * so one switch never resets its neighbours; anything else replaces the value. A patch that is no
@@ -84,8 +82,8 @@ const isGroup = (v: unknown): v is Json => obj(v) === v
  * every key, so nothing is lost, and no __proto__ gets in).
  */
 function mergePatch(current: unknown, patch: unknown): unknown {
-  if (!isGroup(current)) return patch
-  if (!isGroup(patch)) return current
+  if (!isRecord(current)) return patch
+  if (!isRecord(patch)) return current
   const merged: Json = { ...current }
   for (const [key, value] of Object.entries(patch))
     if (Object.hasOwn(current, key)) merged[key] = mergePatch(current[key], value)
