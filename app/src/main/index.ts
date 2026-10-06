@@ -10,6 +10,7 @@ import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
+import { warmQuiet } from './quiet'
 import { powershell } from './sources/powershell'
 import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
@@ -38,6 +39,8 @@ function start(): void {
     windows.cue({ cue, volume: settings.announce.volume })
     return true
   })
+  // With sound on, the quiet check is made ready ahead, so the first sound is not late.
+  if (settings.announce.sound) warmQuiet()
   // News is found once, and what each way of announcing it wants comes out of the same list.
   let announcer = emptyAnnouncer()
   const stop = startBatSignal((snapshot) => {
@@ -77,6 +80,7 @@ function start(): void {
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
+    if (settings.announce.sound) warmQuiet()
     settingsFile.save(settings)
     windows.apply(settings)
     // Only a patch that names the shortcut touches it (and retries it, if another app had it).

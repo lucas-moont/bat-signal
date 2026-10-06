@@ -3,6 +3,9 @@
 // Not Disturb is not among its answers, and nothing public reports it, so it is not read.
 import { powershell } from './sources/powershell'
 
+/** How long a sound waits for Windows' answer (a busy or cold PowerShell): then it plays. */
+const QUIET_WAIT_MS = 1500
+
 /** SHQueryUserNotificationState's answers that mean quiet: full screen (2, 3, 7), presenting (4), quiet time (6). */
 const QUIET_STATES = new Set([2, 3, 4, 6, 7])
 
@@ -15,5 +18,12 @@ const SCRIPT = [
   'if ([BatSignal.Quiet]::SHQueryUserNotificationState([ref]$state) -eq 0) { $state }',
 ].join('\n')
 
-/** Asks Windows; any failure counts as no answer. */
-export const quietNow = (): Promise<boolean> => powershell.run(SCRIPT).then(wantsQuiet, () => false)
+/** Asks Windows; no answer in QUIET_WAIT_MS, or any failure, counts as no answer. */
+export const quietNow = (): Promise<boolean> =>
+  Promise.race([
+    powershell.run(SCRIPT).then(wantsQuiet, () => false),
+    new Promise<boolean>((resolve) => setTimeout(() => resolve(false), QUIET_WAIT_MS)),
+  ])
+
+/** Gets the answer ready ahead of the first sound (PowerShell started, the call compiled). */
+export const warmQuiet = (): void => powershell.warm(SCRIPT)
