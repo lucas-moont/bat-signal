@@ -77,6 +77,16 @@ describe('applySettingsPatch: changing one switch', () => {
     expect(applySettingsPatch(current, { announce: { toast: 'all' } }).announce).toEqual(current.announce)
   })
 
+  it('keeps the current value when one switch gets a bad or missing value', () => {
+    const tuned = applySettingsPatch(current, { opacity: 0.7, announce: { sound: true } })
+    const bad = (patch: unknown) => applySettingsPatch(tuned, patch)
+    expect(bad({ opacity: 'x' }).opacity).toBe(0.7)
+    expect(bad({ opacity: undefined }).opacity).toBe(0.7)
+    expect(bad({ announce: { volume: 'loud' } }).announce.volume).toBe(0.3)
+    expect(bad({ announce: { sound: 'yes' } }).announce.sound).toBe(true)
+    expect(bad({ announce: { toast: { needsYou: 'yes' } } }).announce.toast.needsYou).toBe(true)
+  })
+
   it('leaves the other settings alone', () => {
     const next = applySettingsPatch(parseSettings(OLD_FILE), { announce: { sound: true } })
     expect(next).toMatchObject(OLD_FILE)

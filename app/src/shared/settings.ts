@@ -76,13 +76,12 @@ type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]>
 export type SettingsPatch = DeepPartial<Settings>
 
 /**
- * An untrusted patch laid over a value: a group (an object) merges key by key, all the way down,
- * so one switch never resets its neighbours; anything else replaces the value. A patch that is no
- * group cannot replace one, and only keys the value already has are taken (settings always hold
- * every key, so nothing is lost, and no __proto__ gets in).
+ * An untrusted patch laid over a value, key by key, all the way down: a value of the wrong type
+ * (or none) keeps the current one, and only keys the settings already have are taken, so no
+ * __proto__ gets in. A map that must gain keys (per-project rules, one day) needs its own rule.
  */
 function mergePatch(current: unknown, patch: unknown): unknown {
-  if (!isRecord(current)) return patch
+  if (!isRecord(current)) return typeof patch === typeof current ? patch : current
   if (!isRecord(patch)) return current
   const merged: Json = { ...current }
   for (const [key, value] of Object.entries(patch))
