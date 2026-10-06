@@ -4,8 +4,8 @@ import {
   cueFor,
   emptyAnnouncer,
   GROUP_OF_KIND,
-  pickCue,
   SOUND_GAP_MS,
+  soundGapOpen,
   toastFor,
   type AnnounceContext,
 } from '../src/shared/announcer'
@@ -155,8 +155,8 @@ describe('GROUP_OF_KIND', () => {
   })
 })
 
-/** Sound on (every toast switch off), the panel not in front unless asked. */
-const soundCtx = (sound = true, panelFocused = false): AnnounceContext => ({
+/** Sound on unless said (every toast switch off), the panel not in front unless said. */
+const soundCtx = ({ sound = true, panelFocused = false } = {}): AnnounceContext => ({
   prefs: { ...ctx([]).prefs, sound },
   panelFocused,
 })
@@ -187,8 +187,8 @@ describe('announce: sound', () => {
 
   it('is silent while sound is off, or while the panel is in front', () => {
     const { snapshot } = NEWS_OF.needsYou
-    expect(soundKinds([quiet, snapshot], soundCtx(false))).toEqual([])
-    expect(soundKinds([quiet, snapshot], soundCtx(true, true))).toEqual([])
+    expect(soundKinds([quiet, snapshot], soundCtx({ sound: false }))).toEqual([])
+    expect(soundKinds([quiet, snapshot], soundCtx({ panelFocused: true }))).toEqual([])
   })
 })
 
@@ -206,22 +206,29 @@ describe('cueFor', () => {
     expect(cueFor([notice('session-opened')])).toBeUndefined()
     expect(cueFor([])).toBeUndefined()
   })
+
+  it.each([
+    ['permission', 'light'],
+    ['error', 'light'],
+    ['waiting', 'light'],
+    ['reply', 'light'],
+    ['task-done', 'thump'],
+    ['session-opened', undefined],
+    ['session-closed', undefined],
+  ] as [NoticeKind, string | undefined][])('sounds %s as %s', (kind, cue) => {
+    expect(cueFor([notice(kind)])).toBe(cue)
+  })
 })
 
-describe('pickCue', () => {
+describe('soundGapOpen', () => {
   const T0 = 1_000_000
 
-  it('plays the burst’s cue and remembers when', () => {
-    expect(pickCue({}, [notice('reply')], T0)).toEqual({ cue: 'light', state: { lastAt: T0 } })
+  it('lets the first sound play', () => {
+    expect(soundGapOpen(undefined, T0)).toBe(true)
   })
 
-  it('stays quiet within SOUND_GAP_MS of the last sound, so a burst is one sound', () => {
-    const { state } = pickCue({}, [notice('reply')], T0)
-    expect(pickCue(state, [notice('permission')], T0 + SOUND_GAP_MS - 1)).toEqual({ state })
-    expect(pickCue(state, [notice('permission')], T0 + SOUND_GAP_MS).cue).toBe('light')
-  })
-
-  it('keeps the last time when there is nothing to play', () => {
-    expect(pickCue({ lastAt: T0 }, [notice('session-closed')], T0 + 1)).toEqual({ state: { lastAt: T0 } })
+  it('keeps sounds SOUND_GAP_MS apart, counted from the last one played', () => {
+    expect(soundGapOpen(T0, T0 + SOUND_GAP_MS - 1)).toBe(false)
+    expect(soundGapOpen(T0, T0 + SOUND_GAP_MS)).toBe(true)
   })
 })
