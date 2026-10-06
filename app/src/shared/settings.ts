@@ -1,4 +1,5 @@
-import { bool, clamp, isRecord, num, obj, type Json } from './guards'
+import { normalizeAccelerator } from './accelerator'
+import { bool, clamp, isRecord, num, obj, str, type Json } from './guards'
 
 export const OPACITY_MIN = 0.5
 export const OPACITY_MAX = 1
@@ -26,6 +27,8 @@ export interface Settings {
   opacity: number
   /** How the panel reads: as case files (the approved layout) or as one typed night report. */
   layout: PanelLayout
+  /** The global shortcut that opens and folds Bat-Signal, as Electron writes it; '' for none. */
+  shortcut: string
   announce: AnnouncePrefs
 }
 
@@ -37,6 +40,7 @@ export const DEFAULT_SETTINGS: Settings = {
   alwaysOnTop: true,
   opacity: 1,
   layout: 'files',
+  shortcut: 'Ctrl+Alt+B',
   announce: {
     toast: Object.fromEntries(NEWS_GROUPS.map((group) => [group, false])) as AnnouncePrefs['toast'],
     sound: false,
@@ -44,10 +48,9 @@ export const DEFAULT_SETTINGS: Settings = {
   },
 }
 
-function parseAnnounce(raw: unknown): AnnouncePrefs {
+function parseAnnounce(raw: unknown, defaults: AnnouncePrefs): AnnouncePrefs {
   const o = obj(raw)
   const toast = obj(o['toast'])
-  const defaults = DEFAULT_SETTINGS.announce
   return {
     toast: Object.fromEntries(
       NEWS_GROUPS.map((group) => [group, bool(toast[group]) ?? defaults.toast[group]]),
@@ -57,16 +60,29 @@ function parseAnnounce(raw: unknown): AnnouncePrefs {
   }
 }
 
-/** Settings from untrusted JSON: unknown keys dropped, bad values replaced by defaults. */
-export function parseSettings(raw: unknown): Settings {
+/** A shortcut as settings hold it: written the one way, '' for none, undefined if it is no shortcut. */
+const parseShortcut = (raw: unknown): string | undefined => {
+  const text = str(raw)
+  return text === '' ? '' : text === undefined ? undefined : normalizeAccelerator(text)
+}
+
+const parseLayout = (raw: unknown): PanelLayout | undefined =>
+  raw === 'files' || raw === 'report' ? raw : undefined
+
+/**
+ * Settings from untrusted JSON: unknown keys dropped, bad values replaced by the fallback (the
+ * defaults for a file, the current settings for a patch).
+ */
+export function parseSettings(raw: unknown, fallback: Settings = DEFAULT_SETTINGS): Settings {
   const o = obj(raw)
   return {
-    animations: bool(o['animations']) ?? DEFAULT_SETTINGS.animations,
-    rain: bool(o['rain']) ?? DEFAULT_SETTINGS.rain,
-    alwaysOnTop: bool(o['alwaysOnTop']) ?? DEFAULT_SETTINGS.alwaysOnTop,
-    opacity: clamp(num(o['opacity']) ?? DEFAULT_SETTINGS.opacity, OPACITY_MIN, OPACITY_MAX),
-    layout: o['layout'] === 'report' ? 'report' : 'files',
-    announce: parseAnnounce(o['announce']),
+    animations: bool(o['animations']) ?? fallback.animations,
+    rain: bool(o['rain']) ?? fallback.rain,
+    alwaysOnTop: bool(o['alwaysOnTop']) ?? fallback.alwaysOnTop,
+    opacity: clamp(num(o['opacity']) ?? fallback.opacity, OPACITY_MIN, OPACITY_MAX),
+    layout: parseLayout(o['layout']) ?? fallback.layout,
+    shortcut: parseShortcut(o['shortcut']) ?? fallback.shortcut,
+    announce: parseAnnounce(o['announce'], fallback.announce),
   }
 }
 
@@ -89,9 +105,9 @@ function mergePatch(current: unknown, patch: unknown): unknown {
   return merged
 }
 
-/** Applies an untrusted partial update, validated like everything else. */
+/** Applies an untrusted partial update, validated like everything else: a bad value keeps the current one. */
 export const applySettingsPatch = (current: Settings, patch: unknown): Settings =>
-  parseSettings(mergePatch(current, patch))
+  parseSettings(mergePatch(current, patch), current)
 
 /** Which way a notice card opens from the disc: up and left unless the display has no room. */
 export interface NoticeLayout {
