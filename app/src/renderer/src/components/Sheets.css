@@ -56,14 +56,8 @@
   padding: 0 16px 20px;
   display: grid;
   gap: 14px;
-}
-/* Settings come in ruled groups, spaced like the rows of the sheet itself. */
-.sheet__body > .section {
-  display: grid;
-  gap: 14px;
-}
-.sheet__body > .section .section__title {
-  margin: 0;
+  /* Settings come in ruled groups, spaced like the rows of the sheet itself. */
+  --section-gap: 14px;
 }
 
 .field {
