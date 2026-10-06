@@ -77,6 +77,8 @@ The bat by the clock is Bat-Signal's tray icon, lit red while something needs yo
 
 **Windows notifications** (Settings → Windows notifications, all off at first) add a Windows toast to the Bat-Signal for the kinds of news you pick: Claude needs you, a reply is ready, a task is done, a case opened or closed. A burst of news is one toast (the most urgent, with a count of the rest), the same news never comes twice, and none come while the panel is the window in front. Click one to open its case.
 
+**Sound** (Settings → Sound, off at first) gives news a voice: a spotlight coming on when Claude needs you or replies, a soft thump when a task is done. A burst of news is one sound, at most one every four seconds, at the volume you set (Test plays it). It keeps quiet while the panel is in front, while something runs full screen or a presentation is on. Windows 11's Do Not Disturb is not reported to apps, so it does not hush the sound; the toasts do follow it. The sounds are CC0 recordings, credited in [`app/src/renderer/src/assets/sounds/`](app/src/renderer/src/assets/sounds/LICENSE.md).
+
 ## Light on resources
 
 A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
