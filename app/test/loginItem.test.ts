@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { AT_LOGIN, launchOptions, loginItemFor, startupState } from '../src/main/loginItem'
+import {
+  APP_ID,
+  approvedByTaskManager,
+  AT_LOGIN,
+  launchOptions,
+  loginItemFor,
+  startupState,
+} from '../src/main/loginItem'
 
 const packaged = {
   isPackaged: true,
@@ -18,6 +25,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: packaged.execPath,
       args: [AT_LOGIN],
+      name: APP_ID,
     })
   })
 
@@ -26,6 +34,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: dev.execPath,
       args: [dev.appPath, AT_LOGIN],
+      name: APP_ID,
     })
   })
 
@@ -46,16 +55,36 @@ describe('launchOptions', () => {
   })
 })
 
+describe('approvedByTaskManager: reading what Task Manager wrote (reg query)', () => {
+  const row = (bytes: string) =>
+    `\r\nHKEY_CURRENT_USER\\Software\\...\\StartupApproved\\Run\r\n    ${APP_ID}    REG_BINARY    ${bytes}\r\n\r\n`
+
+  it('takes an even first byte for switched on', () => {
+    expect(approvedByTaskManager(row('020000000000000000000000'))).toBe(true)
+    expect(approvedByTaskManager(row('060000000000000000000000'))).toBe(true)
+  })
+
+  it('takes an odd first byte for switched off', () => {
+    expect(approvedByTaskManager(row('030000000000000000000000'))).toBe(false)
+    expect(approvedByTaskManager(row('0300000072A54D5B1D3DD901'))).toBe(false)
+  })
+
+  it('takes an entry Task Manager never touched for switched on', () => {
+    expect(approvedByTaskManager('')).toBe(true)
+  })
+})
+
 describe('startupState: what the settings switch shows', () => {
-  it('is on when Windows will start Bat-Signal at sign-in', () => {
-    expect(startupState({ openAtLogin: true, executableWillLaunchAtLogin: true })).toBe('on')
+  it('is on when the entry is there and Task Manager allows it', () => {
+    expect(startupState({ openAtLogin: true, approved: true })).toBe('on')
   })
 
   it('is off when there is no entry', () => {
-    expect(startupState({ openAtLogin: false, executableWillLaunchAtLogin: false })).toBe('off')
+    expect(startupState({ openAtLogin: false, approved: true })).toBe('off')
+    expect(startupState({ openAtLogin: false, approved: false })).toBe('off')
   })
 
   it('is blocked when the entry is there but Task Manager turned it off', () => {
-    expect(startupState({ openAtLogin: true, executableWillLaunchAtLogin: false })).toBe('blocked')
+    expect(startupState({ openAtLogin: true, approved: false })).toBe('blocked')
   })
 })
