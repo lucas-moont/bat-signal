@@ -1,0 +1,32 @@
+/* A heading and its rows, spaced by the section (a place can widen it with --section-gap). The
+   column may shrink below its content, so long rows still end in an ellipsis. */
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--section-gap, 6px);
+}
+
+/* Section titles read like the ruled headings of a case file. */
+.section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.section__title::after {
+  content: '';
+  order: 1;
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+}
+.section__aside {
+  order: 2;
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}

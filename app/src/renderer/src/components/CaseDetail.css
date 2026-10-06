@@ -69,31 +69,6 @@
   white-space: nowrap;
 }
 
-/* Section titles read like the ruled headings of a case file. */
-.section__title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 6px;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ash);
-}
-.section__title::after {
-  content: '';
-  order: 1;
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--line), transparent);
-}
-.section__aside {
-  order: 2;
-  font-family: var(--font-mono);
-  letter-spacing: 0;
-}
-
 .rows {
   list-style: none;
   margin: 0;

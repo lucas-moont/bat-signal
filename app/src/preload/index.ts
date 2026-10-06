@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc'
-import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
+import type { NoticeLayout, Settings, SettingsPatch, WindowMode } from '../shared/settings'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 
 /** Subscribes to a push channel; returns an unsubscribe function. */
@@ -21,7 +21,7 @@ const api = {
   warmTerminal: (): void => ipcRenderer.send(IPC.warmTerminal),
 
   getSettings: (): Promise<Settings> => ipcRenderer.invoke(IPC.getSettings),
-  setSettings: (patch: Partial<Settings>): void => ipcRenderer.send(IPC.setSettings, patch),
+  setSettings: (patch: SettingsPatch): void => ipcRenderer.send(IPC.setSettings, patch),
   onSettings: (callback: (settings: Settings) => void) => subscribe(IPC.settings, callback),
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
