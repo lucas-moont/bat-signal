@@ -3,7 +3,14 @@
 // (screenshots) it serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
 // window stays empty rather than showing fake sessions as if they were real.
 import { beforeNewsDemoSnapshot, busyDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
-import { applySettingsPatch, DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
+import {
+  applySettingsPatch,
+  DEFAULT_SETTINGS,
+  isOpenMode,
+  type OpenMode,
+  type Settings,
+  type WindowMode,
+} from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import type { BatSignalApi } from '../../preload/index'
 
@@ -48,7 +55,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     layout: flags.has('report') ? 'report' : DEFAULT_SETTINGS.layout,
   })
   const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
-  let lastOpened: WindowMode = 'panel'
+  let lastOpened: OpenMode = 'panel'
   return {
     getSnapshot: snapshot.get,
     onSnapshot: snapshot.on,
@@ -60,7 +67,7 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
     onSettings: settings.on,
     getMode: mode.get,
     setMode: (next) => {
-      if (next === 'panel' || next === 'watch') lastOpened = next
+      if (isOpenMode(next)) lastOpened = next
       mode.set(next)
     },
     onFocusCase: () => () => undefined,

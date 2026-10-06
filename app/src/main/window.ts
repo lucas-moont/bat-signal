@@ -2,10 +2,17 @@ import { join } from 'node:path'
 import { app, BrowserWindow, screen } from 'electron'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
-import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
+import {
+  isOpenMode,
+  type NoticeLayout,
+  type OpenMode,
+  type Settings,
+  type ViewMode,
+  type WindowMode,
+} from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
-import { nextMode, type ModeAction, type OpenMode, type VisibleMode } from './modes'
+import { nextMode, type ModeAction } from './modes'
 import {
   anchoredRect,
   cornerOf,
@@ -75,8 +82,6 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
   hidden: { signal: 'hidden' },
 }
 
-const isOpenMode = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
-
 interface Place {
   anchor?: Anchor
   panel: Size
@@ -133,7 +138,7 @@ export class BatSignalWindows {
   /** What the disc opens: the panel or the strip, whichever the user picked last. */
   private lastOpened: OpenMode
   /** What was showing when Bat-Signal hid, to show again. Never saved: every launch wakes as the disc. */
-  private beforeHidden: VisibleMode = 'signal'
+  private beforeHidden: ViewMode = 'signal'
   private watchHeight: number = WATCH.initialHeight
   private noticeOut = false
   private latest?: StoreSnapshot

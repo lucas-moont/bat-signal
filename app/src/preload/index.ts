@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc'
-import type { NoticeLayout, Settings, SettingsPatch, WindowMode } from '../shared/settings'
+import type { NoticeLayout, Settings, SettingsPatch, ViewMode, WindowMode } from '../shared/settings'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 
 /** Subscribes to a push channel; returns an unsubscribe function. */
@@ -26,7 +26,7 @@ const api = {
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   /** Shows the panel (optionally opened on one case) or folds back into the signal. */
-  setMode: (mode: WindowMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
+  setMode: (mode: ViewMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
   onMode: (callback: (mode: WindowMode) => void) => subscribe(IPC.mode, callback),
   onFocusCase: (callback: (sessionId: string) => void) => subscribe(IPC.focusCase, callback),
   /** The tray's Settings…: open the settings sheet. */

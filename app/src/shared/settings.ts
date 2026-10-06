@@ -99,12 +99,15 @@ export interface NoticeLayout {
   right: boolean
 }
 
-/**
- * Which window shows: the Bat-Signal disc at rest, the full panel, the narrow watch strip, or
- * nothing but the tray icon (hidden).
- */
-export type WindowMode = 'signal' | 'panel' | 'watch' | 'hidden'
+/** What can be on screen: the Bat-Signal disc at rest, the full panel, or the narrow watch strip. */
+export type ViewMode = 'signal' | 'panel' | 'watch'
+/** The views, or nothing but the tray icon: hiding is the main process's call (the tray, closing). */
+export type WindowMode = ViewMode | 'hidden'
+/** What the disc opens: the full panel or the watch strip, whichever was used last. */
+export type OpenMode = Extract<ViewMode, 'panel' | 'watch'>
 
-/** A mode a page may ask for. Hiding is the main process's call (the tray, closing the disc). */
-export const parseWindowMode = (raw: unknown): WindowMode | undefined =>
-  raw === 'signal' || raw === 'panel' || raw === 'watch' ? raw : undefined
+export const isOpenMode = (mode: WindowMode): mode is OpenMode => mode === 'panel' || mode === 'watch'
+
+/** A view a page asks for. */
+export const parseViewMode = (raw: unknown): ViewMode | undefined =>
+  raw === 'signal' || isOpenMode(raw as WindowMode) ? (raw as ViewMode) : undefined

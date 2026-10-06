@@ -1,6 +1,6 @@
 import { app, ipcMain } from 'electron'
 import { IPC } from '../shared/ipc'
-import { applySettingsPatch, parseWindowMode } from '../shared/settings'
+import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { migrateUserData } from './userData'
@@ -26,7 +26,7 @@ function start(): void {
   })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
-    const next = parseWindowMode(mode)
+    const next = parseViewMode(mode)
     if (next) windows.setMode(next, typeof sessionId === 'string' ? sessionId : undefined)
   })
   ipcMain.handle(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))

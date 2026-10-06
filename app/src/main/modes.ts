@@ -1,16 +1,12 @@
 // Which mode each thing the user does leads to: the disc, the panel, the watch strip, or hidden
 // in the tray. Pure, so the moves are tested without windows (window.ts carries them out).
-import type { WindowMode } from '../shared/settings'
-
-/** What the disc opens: the full panel or the watch strip, whichever was used last. */
-export type OpenMode = Extract<WindowMode, 'panel' | 'watch'>
-/** A mode with something on screen: what hiding remembers, to come back to. */
-export type VisibleMode = Exclude<WindowMode, 'hidden'>
+import { isOpenMode, type OpenMode, type ViewMode, type WindowMode } from '../shared/settings'
 
 export interface ModeState {
   mode: WindowMode
   lastOpened: OpenMode
-  beforeHidden: VisibleMode
+  /** What was on screen before hiding, to come back to. */
+  beforeHidden: ViewMode
 }
 
 /**
@@ -22,12 +18,10 @@ export interface ModeState {
  */
 export type ModeAction = 'shortcut' | 'trayClick' | 'trayShowHide' | 'closeDisc' | 'closeButton' | 'summon'
 
-const isOpen = (mode: WindowMode): mode is OpenMode => mode === 'panel' || mode === 'watch'
-
 export function nextMode({ mode, lastOpened, beforeHidden }: ModeState, action: ModeAction): WindowMode {
   switch (action) {
     case 'shortcut':
-      return isOpen(mode) ? 'signal' : lastOpened
+      return isOpenMode(mode) ? 'signal' : lastOpened
     case 'trayClick':
       return mode === 'panel' ? 'signal' : 'panel'
     case 'trayShowHide':
@@ -36,6 +30,6 @@ export function nextMode({ mode, lastOpened, beforeHidden }: ModeState, action: 
     case 'closeButton':
       return 'hidden'
     case 'summon':
-      return isOpen(mode) ? mode : lastOpened
+      return isOpenMode(mode) ? mode : lastOpened
   }
 }
