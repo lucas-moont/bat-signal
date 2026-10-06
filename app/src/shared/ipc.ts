@@ -22,4 +22,7 @@ export const IPC = {
   getStatus: 'bat-signal:get-status',
   status: 'bat-signal:status',
   recordShortcut: 'bat-signal:record-shortcut',
+  setStartWithWindows: 'bat-signal:set-start-with-windows',
+  /** Read again what may have changed outside the app (Task Manager's startup switch). */
+  refreshStatus: 'bat-signal:refresh-status',
 } as const

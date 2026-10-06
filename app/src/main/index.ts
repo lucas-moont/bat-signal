@@ -5,7 +5,9 @@ import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
+import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
+import { createStartup } from './startup'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
@@ -29,11 +31,14 @@ function start(): void {
   // The global shortcut opens what the disc would, and folds it back.
   const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
   shortcut.apply(settings.shortcut)
+  // Starting with Windows: what Windows has (Task Manager can change it too), read when the
+  // settings sheet, the one place that shows it, opens.
+  const startup = createStartup(() => publishStatus())
   // What is happening now, read from each feature; sent to the pages only when it changed (each
-  // feature keeps the same object until then).
-  const readStatus = (): AppStatus => ({ shortcut: shortcut.status })
+  // feature keeps the same value until then).
+  const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup.state })
   let published = readStatus()
-  const publishStatus = () => {
+  function publishStatus(): void {
     const next = readStatus()
     if ((Object.keys(next) as (keyof AppStatus)[]).every((key) => next[key] === published[key])) return
     published = next
@@ -58,6 +63,9 @@ function start(): void {
     }
   })
   ipcMain.handle(IPC.getStatus, () => readStatus())
+  // The settings sheet opened: what it shows is read again from Windows (Task Manager may have
+  // moved the switch since); a change goes out as status.
+  ipcMain.on(IPC.refreshStatus, () => void startup.refresh())
   // While the settings sheet records a new shortcut, the current one must reach it as keys. A page
   // that reloads or dies mid-recording never says it stopped: its going ends the pause.
   let stopWatching = (): void => undefined
@@ -79,6 +87,7 @@ function start(): void {
       stopWatching = () => undefined
     }
   })
+  ipcMain.on(IPC.setStartWithWindows, (_event, on: unknown) => startup.set(on === true))
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
     const next = parseViewMode(mode)
@@ -106,10 +115,13 @@ function start(): void {
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.setAppUserModelId('com.lucasmoont.bat-signal')
+  app.setAppUserModelId(APP_ID)
   // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
   // for from the start, since a second launch can come while this one is still getting ready.
-  app.on('second-instance', () => summon())
+  // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
+  app.on('second-instance', (_event, argv) => {
+    if (!isLoginLaunch(argv)) summon()
+  })
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())
 }

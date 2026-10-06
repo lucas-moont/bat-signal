@@ -24,6 +24,8 @@ npm test
 
 CI runs exactly these commands.
 
+In development, Start with Windows registers this checkout's `electron.exe` with the app folder, which loads `out/`: run `npm run build` before signing out to try it, and switch it off before moving the checkout.
+
 The tray icons in `app/resources/tray/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
 
 ## Commits
