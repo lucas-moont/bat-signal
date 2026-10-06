@@ -1,107 +1,10 @@
 // Brings a session's terminal to the front on Windows: the Windows Terminal window and tab titled
 // with its name, or else the window its process tree leads to. The decisions are the pure rules
 // in ../terminal; this file only asks Windows and acts.
-import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import { clipboard } from 'electron'
 import type { TerminalOutcome } from '../../shared/types'
 import { findWindowOwner, pickWindowTab, type ProcessInfo, type TerminalWindow } from '../terminal'
-
-const SCRIPT_TIMEOUT_MS = 10_000
-
-interface Pending {
-  end: string
-  out: string
-  resolve: (out: string) => void
-  reject: (err: Error) => void
-  timer: NodeJS.Timeout
-}
-
-/**
- * One PowerShell kept open for the app's lifetime. Starting PowerShell costs ~270ms and Windows'
- * process queries are slow until warm, so a fresh one per click took ~3s; a warm one answers in a
- * fraction of that. Scripts run one at a time, each sent as one base64 line.
- */
-class PowerShellHost {
-  private child?: ChildProcessWithoutNullStreams
-  private pending?: Pending
-  private queue: Promise<unknown> = Promise.resolve()
-  private runs = 0
-
-  run(script: string): Promise<string> {
-    const next = this.queue.then(() => this.send(script))
-    this.queue = next.catch(() => undefined)
-    return next
-  }
-
-  /** Starts PowerShell ahead of a likely request and runs `prelude`, so even the first is quick. */
-  warm(prelude: string): void {
-    if (!this.child) void this.run(prelude).catch(() => undefined)
-  }
-
-  close(): void {
-    this.stop(this.child, new Error('PowerShell host closed'))
-  }
-
-  /** Kills `child` (only if it is still the current one) and fails what it was running. */
-  private stop(child: ChildProcessWithoutNullStreams | undefined, err: Error): void {
-    if (!child || child !== this.child) return
-    this.child = undefined
-    child.kill()
-    const pending = this.pending
-    this.pending = undefined
-    if (pending) {
-      clearTimeout(pending.timer)
-      pending.reject(err)
-    }
-  }
-
-  private start(): ChildProcessWithoutNullStreams {
-    if (this.child) return this.child
-    const child = spawn('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '-'], {
-      windowsHide: true,
-    })
-    this.child = child
-    child.stdout.setEncoding('utf8') // a glyph split across chunks must not turn into U+FFFD
-    child.stdout.on('data', (chunk: string) => this.onOutput(chunk))
-    child.stderr.resume() // nobody reads it, but an undrained pipe would block PowerShell
-    const fail = (err: Error) => this.stop(child, err)
-    child.on('error', fail) // PowerShell missing or blocked by policy
-    child.stdin.on('error', fail) // the pipe broke under a write
-    child.on('exit', () => fail(new Error('PowerShell exited')))
-    child.stdin.write('[Console]::OutputEncoding = [Text.Encoding]::UTF8\n')
-    return child
-  }
-
-  private onOutput(chunk: string): void {
-    const pending = this.pending
-    if (!pending) return
-    pending.out += chunk
-    const at = pending.out.indexOf(pending.end)
-    if (at < 0) return
-    this.pending = undefined
-    clearTimeout(pending.timer)
-    pending.resolve(pending.out.slice(0, at))
-  }
-
-  private send(script: string): Promise<string> {
-    const child = this.start()
-    const end = `<<bat-signal-end-${++this.runs}>>`
-    const encoded = Buffer.from(script, 'utf8').toString('base64')
-    return new Promise((resolve, reject) => {
-      // A stuck script takes its own host with it; the next request starts afresh.
-      const timer = setTimeout(
-        () => this.stop(child, new Error('PowerShell did not answer in time')),
-        SCRIPT_TIMEOUT_MS,
-      )
-      this.pending = { end, out: '', resolve, reject, timer }
-      child.stdin.write(
-        `try { iex ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encoded}'))) | Out-String -Width 4096 } catch { "PS-ERROR: $($_.Exception.Message)" }; '${end}'\n`,
-      )
-    })
-  }
-}
-
-const host = new PowerShellHost()
+import { powershell } from './powershell'
 
 /**
  * Compiled once per host: a process table straight from the kernel, and every visible titled
@@ -225,9 +128,7 @@ function target(
 }
 
 /** Starts the PowerShell host before a request (the pointer reached a terminal button). */
-export const warmTerminal = (): void => host.warm(PRELUDE)
-/** Stops the PowerShell host (the app is quitting). */
-export const closeTerminalHost = (): void => host.close()
+export const warmTerminal = (): void => powershell.warm(PRELUDE)
 
 /** Brings the terminal of a session to the front, or copies the command that resumes it. */
 export async function goToTerminal(session: {
@@ -241,9 +142,9 @@ export async function goToTerminal(session: {
   }
   try {
     if (session.pid <= 0) return copy()
-    const found = target(JSON.parse(await host.run(surveyScript(session.pid))) as Survey, session)
+    const found = target(JSON.parse(await powershell.run(surveyScript(session.pid))) as Survey, session)
     if (!found) return copy()
-    const result = await host.run(focusScript(found.handle, found.tab))
+    const result = await powershell.run(focusScript(found.handle, found.tab))
     return result.includes('focused') ? 'focused' : copy()
   } catch (err) {
     console.warn('[bat-signal] could not reach the terminal:', err)
