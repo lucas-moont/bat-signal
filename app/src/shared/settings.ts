@@ -110,4 +110,4 @@ export const isOpenMode = (mode: WindowMode): mode is OpenMode => mode === 'pane
 
 /** A view a page asks for. */
 export const parseViewMode = (raw: unknown): ViewMode | undefined =>
-  raw === 'signal' || isOpenMode(raw as WindowMode) ? (raw as ViewMode) : undefined
+  raw === 'signal' || raw === 'panel' || raw === 'watch' ? raw : undefined

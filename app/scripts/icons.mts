@@ -1,4 +1,4 @@
-// npm run icons: draws the tray icons (and the toast icon) from the bat emblem, so the bat has
+// npm run icons: draws the tray icons from the bat emblem, so the bat has
 // one source (BatEmblem.tsx). A disc like the Bat-Signal's own: dark glass at rest, lit red
 // with the bat in shadow when something needs you. resvg (WebAssembly) renders each size, and
 // the sizes Windows picks from per DPI are packed into one .ico (PNG entries, Vista and later).
@@ -72,9 +72,7 @@ async function main(): Promise<void> {
       png: new Resvg(svg, { fitTo: { mode: 'width', value: size } }).render().asPng(),
     }))
     writeFileSync(join(OUT, `${name}.ico`), ico(images))
-    // A large PNG too: Windows toasts take an image file, not an .ico.
-    writeFileSync(join(OUT, `${name}.png`), images.at(-1)!.png)
-    console.log(`  ${name}.ico, ${name}.png`)
+    console.log(`  ${name}.ico`)
   }
 }
 

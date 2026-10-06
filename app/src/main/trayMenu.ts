@@ -1,6 +1,6 @@
 // What the tray icon shows and offers, from the snapshot and the mode. Pure, so it is tested
 // without a tray (tray.ts turns it into Electron's icon, tooltip and menu).
-import type { WindowMode } from '../shared/settings'
+import type { ViewMode, WindowMode } from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { needsYouCount } from '../shared/view'
 
@@ -13,7 +13,7 @@ export function trayLook({ attention }: StoreSnapshot): { lit: boolean; tooltip:
   }
 }
 
-export type TrayAction = 'showHide' | 'signal' | 'panel' | 'watch' | 'settings' | 'quit'
+export type TrayAction = 'showHide' | ViewMode | 'settings' | 'quit'
 
 /** A menu line, or a separator. A line with `checked` is one of a radio group. */
 export type TrayItem = 'separator' | { label: string; action: TrayAction; checked?: boolean }
