@@ -280,10 +280,13 @@ export class BatSignalWindows {
     // so it never shows at a stale height, or with the panel still in it, and then jumps.
     const holdStrip = entering && spec.panel?.size === 'fitted'
     if (entering) this.cancelStrip() // opening the strip again while it is held keeps the hold
-    if (spec.panel) {
-      // Opening silences the cards; the hidden page may never finish their exit.
+    if (spec.signal !== 'disc') {
+      // Leaving the disc (for the panel, the strip or the tray) silences the cards, and the
+      // hidden page may never finish their exit: put the card's room and click-through away now.
       this.setClickThrough(false)
       this.noticeOut = false
+    }
+    if (spec.panel) {
       this.preparePanel(spec.panel)
       if (holdStrip) {
         // Out of sight and at the strip's width, so the page measures the rows it will show.
