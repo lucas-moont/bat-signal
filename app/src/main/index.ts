@@ -1,16 +1,25 @@
 import { app, ipcMain } from 'electron'
 import { IPC } from '../shared/ipc'
-import { applySettingsPatch, parseWindowMode } from '../shared/settings'
+import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { migrateUserData } from './userData'
+import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
+
+/** Brings Bat-Signal forward when it is launched again; nothing to bring until it has started. */
+let summon = (): void => undefined
 
 function start(): void {
   migrateUserData()
   let settings = settingsFile.load()
   const windows = new BatSignalWindows(settings)
-  const stop = startBatSignal((snapshot) => windows.publish(snapshot))
+  // Before anything can hide the windows: the tray is the way back.
+  const tray = new BatSignalTray(windows)
+  const stop = startBatSignal((snapshot) => {
+    windows.publish(snapshot)
+    tray.update(snapshot)
+  })
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
@@ -20,7 +29,7 @@ function start(): void {
   })
   ipcMain.handle(IPC.getMode, () => windows.mode)
   ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
-    const next = parseWindowMode(mode)
+    const next = parseViewMode(mode)
     if (next) windows.setMode(next, typeof sessionId === 'string' ? sessionId : undefined)
   })
   ipcMain.handle(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
@@ -32,8 +41,9 @@ function start(): void {
   ipcMain.on(IPC.watchHeight, (_event, height: unknown) => {
     if (typeof height === 'number') windows.setWatchHeight(height)
   })
-  ipcMain.on(IPC.closeWindow, () => app.quit())
+  ipcMain.on(IPC.hide, () => windows.act('close'))
 
+  summon = () => windows.act('summon')
   app.once('before-quit', stop)
 }
 
@@ -41,6 +51,9 @@ if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
   app.setAppUserModelId('com.lucasmoont.bat-signal')
+  // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
+  // for from the start, since a second launch can come while this one is still getting ready.
+  app.on('second-instance', () => summon())
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())
 }

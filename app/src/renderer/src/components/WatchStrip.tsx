@@ -3,7 +3,7 @@
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import type { PanelLayout } from '@shared/settings'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
-import { orderCases, watchRow, type WatchRow } from '@shared/view'
+import { needsYouCount, orderCases, watchRow, type WatchRow } from '@shared/view'
 import { batSignal } from '../bridge'
 import { BatEmblem } from './BatEmblem'
 import { Icon } from './Icon'
@@ -55,11 +55,7 @@ export function WatchStrip({
       <header ref={bar} className="watch__bar">
         <BatEmblem size={22} />
         <h1 className="watch__name">Bat-Signal</h1>
-        {needsYou > 0 && (
-          <span className="watch__count">
-            {needsYou} need{needsYou === 1 ? 's' : ''} you
-          </span>
-        )}
+        {needsYou > 0 && <span className="watch__count">{needsYouCount(needsYou)}</span>}
         <nav className="watch__actions">
           <button
             className="icon-button"

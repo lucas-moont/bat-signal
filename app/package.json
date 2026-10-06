@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "privacy": "node scripts/privacy.mts",
+    "icons": "node scripts/icons.mts",
     "screenshot": "electron-vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/screenshot.ps1",
     "shots": "electron-vite build && electron scripts/shots.cjs",
     "test:watch": "vitest"
@@ -26,6 +27,7 @@
     "@fontsource/barlow-semi-condensed": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/special-elite": "^5.3.0",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@types/node": "^24.19.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.2.0",

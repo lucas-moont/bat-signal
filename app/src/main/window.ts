@@ -2,9 +2,17 @@ import { join } from 'node:path'
 import { app, BrowserWindow, screen } from 'electron'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
-import type { NoticeLayout, Settings, WindowMode } from '../shared/settings'
+import {
+  isOpenMode,
+  type NoticeLayout,
+  type OpenMode,
+  type Settings,
+  type ViewMode,
+  type WindowMode,
+} from '../shared/settings'
 import type { StoreSnapshot } from '../shared/types'
 import { jsonFile } from './jsonFile'
+import { nextMode, type ModeAction } from './modes'
 import {
   anchoredRect,
   cornerOf,
@@ -32,9 +40,6 @@ const WATCH_SHOW_FALLBACK_MS = 150
  * window that was active, dropping it behind everything; reasserting is one cheap z-order call.
  */
 const ON_TOP_EVERY_MS = 3000
-
-/** What the disc opens: the full panel or the watch strip, whichever was used last. */
-type OpenMode = Exclude<WindowMode, 'signal'>
 
 /** How a mode shows the panel window (the full panel and the watch strip share it). */
 interface PanelSpec {
@@ -73,9 +78,9 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
     },
     signal: 'perch',
   },
+  // Nothing on screen but the tray icon.
+  hidden: { signal: 'hidden' },
 }
-
-const isOpenMode = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
 
 interface Place {
   anchor?: Anchor
@@ -132,6 +137,8 @@ export class BatSignalWindows {
   private panelSize: Size
   /** What the disc opens: the panel or the strip, whichever the user picked last. */
   private lastOpened: OpenMode
+  /** What was showing when Bat-Signal hid, to show again. Never saved: every launch wakes as the disc. */
+  private beforeHidden: ViewMode = 'signal'
   private watchHeight: number = WATCH.initialHeight
   private noticeOut = false
   private latest?: StoreSnapshot
@@ -188,16 +195,25 @@ export class BatSignalWindows {
       this.quitting = true
       this.saveNow()
     })
-    // Alt+F4 on the panel folds it away (with no window left the app would run invisibly);
-    // on the signal it quits, as the close button does.
+    // Alt+F4 on the panel folds it away; on the disc it hides Bat-Signal to the tray, as the
+    // close button does. Quitting is the tray's Quit.
     this.panel.on('close', (e) => {
       if (this.quitting) return
       e.preventDefault()
-      this.setMode('signal')
+      this.act('fold')
     })
-    this.signal.on('close', () => {
-      if (!this.quitting) app.quit()
+    this.signal.on('close', (e) => {
+      if (this.quitting) return
+      e.preventDefault()
+      this.act('close')
     })
+    // Windows ending the session (shutting down, restarting, signing out) closes for real: hiding
+    // to the tray instead would keep it waiting on Bat-Signal.
+    for (const win of [this.panel, this.signal])
+      win.on('session-end', () => {
+        this.quitting = true
+        app.quit()
+      })
 
     load(this.panel, 'panel')
     load(this.signal, 'signal')
@@ -250,18 +266,41 @@ export class BatSignalWindows {
     this.setMode(this.lastOpened)
   }
 
-  /** Shows the panel (optionally on one case) or the watch strip, or folds back into the signal. */
-  setMode(mode: WindowMode, focusSessionId?: string): void {
+  /**
+   * Does what the user's action leads to (see modes.ts): the shortcut, the tray, closing, a
+   * relaunch. None of them is the user picking a view for the disc to open.
+   */
+  act(action: ModeAction): void {
+    const { current: mode, lastOpened, beforeHidden } = this
+    this.setMode(nextMode({ mode, lastOpened, beforeHidden }, action), undefined, false)
+  }
+
+  /** Opens the panel with its settings sheet up (the tray's Settings…). */
+  openSettings(): void {
+    this.setMode('panel', undefined, false)
+    this.panel.webContents.send(IPC.openSettings)
+  }
+
+  /**
+   * Shows the panel (optionally on one case) or the watch strip, folds back into the signal, or
+   * hides. `picked`: the user chose this view (a header button, the tray's Panel or Watch strip),
+   * so the disc opens it from now on; a notice card opening one case is no such choice.
+   */
+  setMode(mode: WindowMode, focusSessionId?: string, picked = !focusSessionId): void {
     const spec = MODES[mode]
     const entering = mode !== this.current
+    if (mode === 'hidden' && this.current !== 'hidden') this.beforeHidden = this.current
     // The strip opening anew is held back until its page has measured it (see setWatchHeight),
     // so it never shows at a stale height, or with the panel still in it, and then jumps.
     const holdStrip = entering && spec.panel?.size === 'fitted'
     if (entering) this.cancelStrip() // opening the strip again while it is held keeps the hold
-    if (spec.panel) {
-      // Opening silences the cards; the hidden page may never finish their exit.
+    if (spec.signal !== 'disc') {
+      // Leaving the disc (for the panel, the strip or the tray) silences the cards, and the
+      // hidden page may never finish their exit: put the card's room and click-through away now.
       this.setClickThrough(false)
       this.noticeOut = false
+    }
+    if (spec.panel) {
       this.preparePanel(spec.panel)
       if (holdStrip) {
         // Out of sight and at the strip's width, so the page measures the rows it will show.
@@ -283,8 +322,7 @@ export class BatSignalWindows {
     if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
     if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
     else if (!this.stripPending) this.show()
-    // A notice card opening the panel on one case is not the user picking the panel.
-    if (isOpenMode(mode) && !focusSessionId && mode !== this.lastOpened) {
+    if (picked && isOpenMode(mode) && mode !== this.lastOpened) {
       this.lastOpened = mode
       this.scheduleSave()
     }

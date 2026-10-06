@@ -9,7 +9,7 @@ import type { StoreSnapshot } from '@shared/types'
 import { batSignal } from '../bridge'
 import { CalmContext, useCalm } from '../calm'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
-import { mascotMood } from '@shared/view'
+import { mascotMood, needsYouCount } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { BatEmblem } from './BatEmblem'
 import { Glow } from './Live'
@@ -210,7 +210,7 @@ function Disc({
   return (
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
-      aria-label={count ? `Open Bat-Signal: ${count} need${count === 1 ? 's' : ''} you` : 'Open Bat-Signal'}
+      aria-label={count ? `Open Bat-Signal: ${needsYouCount(count)}` : 'Open Bat-Signal'}
       title="Open Bat-Signal · drag to move"
       {...interactive}
       onPointerDown={(e) => {

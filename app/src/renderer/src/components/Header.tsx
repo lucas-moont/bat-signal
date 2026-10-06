@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react'
-import type { MascotMood } from '@shared/view'
+import { needsYouCount, type MascotMood } from '@shared/view'
 import { BatClawd } from './BatClawd'
 import { BatEmblem } from './BatEmblem'
 import { Icon } from './Icon'
@@ -9,11 +9,11 @@ interface HeaderProps {
   mood: MascotMood
   onFold: () => void
   onWatch: () => void
-  onClose: () => void
+  onHide: () => void
 }
 
 /** Title bar of the frameless window: drag it to move. */
-export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps) {
+export function Header({ needsYou, mood, onFold, onWatch, onHide }: HeaderProps) {
   return (
     <header className="header">
       {/* The needs-you count hangs off the emblem like a stamp, taking no room in the row. */}
@@ -24,7 +24,7 @@ export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps
             <motion.span
               key={needsYou}
               className="header__count"
-              title={`${needsYou} need${needsYou === 1 ? 's' : ''} you`}
+              title={needsYouCount(needsYou)}
               initial={{ scale: 1.8, opacity: 0, rotate: -14 }}
               animate={{ scale: 1, opacity: 1, rotate: -5 }}
               exit={{ opacity: 0, scale: 0.6 }}
@@ -56,7 +56,12 @@ export function Header({ needsYou, mood, onFold, onWatch, onClose }: HeaderProps
         >
           <Icon name="fold" />
         </button>
-        <button className="icon-button icon-button--danger" onClick={onClose} aria-label="Quit" title="Quit">
+        <button
+          className="icon-button icon-button--danger"
+          onClick={onHide}
+          aria-label="Hide to tray"
+          title="Hide to tray"
+        >
           <Icon name="close" />
         </button>
       </nav>

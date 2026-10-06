@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc'
-import type { NoticeLayout, Settings, SettingsPatch, WindowMode } from '../shared/settings'
+import type { NoticeLayout, Settings, SettingsPatch, ViewMode, WindowMode } from '../shared/settings'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 
 /** Subscribes to a push channel; returns an unsubscribe function. */
@@ -26,9 +26,11 @@ const api = {
 
   getMode: (): Promise<WindowMode> => ipcRenderer.invoke(IPC.getMode),
   /** Shows the panel (optionally opened on one case) or folds back into the signal. */
-  setMode: (mode: WindowMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
+  setMode: (mode: ViewMode, sessionId?: string): void => ipcRenderer.send(IPC.setMode, mode, sessionId),
   onMode: (callback: (mode: WindowMode) => void) => subscribe(IPC.mode, callback),
   onFocusCase: (callback: (sessionId: string) => void) => subscribe(IPC.focusCase, callback),
+  /** The tray's Settings…: open the settings sheet. */
+  onOpenSettings: (callback: () => void) => subscribe(IPC.openSettings, callback),
   /** Grows the signal for a notice card (or shrinks it back); resolves once done, with the card's side. */
   setNoticeOut: (out: boolean): Promise<NoticeLayout> => ipcRenderer.invoke(IPC.noticeOut, out),
   /** The signal takes clicks only while the pointer is over the disc or a card. */
@@ -38,7 +40,8 @@ const api = {
   reopen: (): void => ipcRenderer.send(IPC.reopen),
   /** The watch strip's rows changed height: fit the window to them. */
   setWatchHeight: (height: number): void => ipcRenderer.send(IPC.watchHeight, height),
-  closeWindow: (): void => ipcRenderer.send(IPC.closeWindow),
+  /** Hides Bat-Signal to the tray (the header's close button). */
+  hide: (): void => ipcRenderer.send(IPC.hide),
 }
 
 export type BatSignalApi = typeof api

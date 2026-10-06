@@ -21,6 +21,10 @@ export function App() {
   const [settings, changeSettings, settingsLoaded] = useSettings()
   const calm = useCalm(settings)
   const mode = useWindowMode()
+  // Hidden keeps the view the window had, rather than mounting the panel nobody sees; showing it
+  // again finds it as it was.
+  const [view, setView] = useState(mode)
+  if (mode !== 'hidden' && mode !== view) setView(mode)
   const now = useNow()
 
   const [tab, setTab] = useState<Tab | null>(null)
@@ -59,6 +63,7 @@ export function App() {
   // A click on a notice card opens the panel on that case.
   const onFocusCase = useEffectEvent((sessionId: string) => open(sessionId))
   useEffect(() => batSignal.onFocusCase((sessionId) => onFocusCase(sessionId)), [])
+  useEffect(() => batSignal.onOpenSettings(() => setSettingsOpen(true)), [])
 
   const openAttention = (item: AttentionItem) =>
     open(item.sessionId, item.kind === 'stalled' && item.taskId ? { kind: 'task', id: item.taskId } : null)
@@ -80,7 +85,7 @@ export function App() {
   // than flashing an intro or rain the user may have turned off.
   if (!settingsLoaded) return <main className="app" />
 
-  if (mode === 'watch') {
+  if (view === 'watch') {
     return (
       <CalmContext value={calm}>
         <WatchStrip sessions={sessions} attention={attention} layout={settings.layout} />
@@ -98,7 +103,7 @@ export function App() {
             mood={mood}
             onFold={fold}
             onWatch={() => batSignal.setMode('watch')}
-            onClose={batSignal.closeWindow}
+            onHide={batSignal.hide}
           />
           <Tabs
             tab={activeTab}
