@@ -29,7 +29,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
     })
   })
 
-  it('starts Electron on this checkout in development, so it works before Phase 5 packages it', () => {
+  it('starts Electron on this checkout in development, so it works before the app is packaged', () => {
     expect(loginItemFor(true, dev)).toEqual({
       openAtLogin: true,
       path: dev.execPath,
