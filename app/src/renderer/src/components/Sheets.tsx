@@ -13,6 +13,7 @@ import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/typ
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { batSignal } from '../bridge'
+import { playCue } from '../cues'
 import { Icon } from './Icon'
 import { Section } from './Section'
 import { SettingRow } from './SettingRow'
@@ -310,6 +311,33 @@ export function SettingsSheet({
               onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
             />
           ))}
+        </Section>
+        <Section title="Sound">
+          <Toggle
+            label="Sound"
+            hint="Wings when Claude needs you or replies, a thump when a task is done"
+            on={settings.announce.sound}
+            onChange={(sound) => onChange({ announce: { sound } })}
+          />
+          <label className="slider">
+            <span className="setting__label">Volume</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={Math.round(settings.announce.volume * 100)}
+              onChange={(e) => onChange({ announce: { volume: Number(e.target.value) / 100 } })}
+            />
+            <button
+              className="icon-button icon-button--labelled"
+              onClick={() => playCue('wings', settings.announce.volume)}
+              title="Play the wings at this volume"
+            >
+              <Icon name="sound" />
+              Test
+            </button>
+          </label>
         </Section>
       </div>
     </Sheet>
