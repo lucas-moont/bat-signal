@@ -10,6 +10,7 @@ import { APP_ID, isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
+import { powershell } from './sources/powershell'
 import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
@@ -132,6 +133,7 @@ function start(): void {
     clearInterval(retry)
     toasts.dispose()
     cues.dispose()
+    powershell.close()
     shortcut.dispose()
   })
 }

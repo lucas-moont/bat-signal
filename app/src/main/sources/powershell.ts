@@ -23,6 +23,8 @@ class PowerShellHost {
   private pending?: Pending
   private queue: Promise<unknown> = Promise.resolve()
   private runs = 0
+  /** Preludes already run in the current PowerShell: each user warms its own, once. */
+  private warmed = new Set<string>()
 
   run(script: string): Promise<string> {
     const next = this.queue.then(() => this.send(script))
@@ -30,9 +32,14 @@ class PowerShellHost {
     return next
   }
 
-  /** Starts PowerShell ahead of a likely request and runs `prelude`, so even the first is quick. */
+  /**
+   * Starts PowerShell ahead of a likely request and runs `prelude` in it, so even the first is
+   * quick; once per PowerShell, whoever started it.
+   */
   warm(prelude: string): void {
-    if (!this.child) void this.run(prelude).catch(() => undefined)
+    if (this.child && this.warmed.has(prelude)) return
+    this.warmed.add(prelude)
+    void this.run(prelude).catch(() => this.warmed.delete(prelude))
   }
 
   close(): void {
@@ -43,6 +50,7 @@ class PowerShellHost {
   private stop(child: ChildProcessWithoutNullStreams | undefined, err: Error): void {
     if (!child || child !== this.child) return
     this.child = undefined
+    this.warmed.clear()
     child.kill()
     const pending = this.pending
     this.pending = undefined
@@ -100,6 +108,3 @@ class PowerShellHost {
 
 /** The one PowerShell the app keeps: the terminal button and the quiet check share it. */
 export const powershell = new PowerShellHost()
-
-/** Stops the PowerShell host (the app is quitting). */
-export const closePowerShell = (): void => powershell.close()
