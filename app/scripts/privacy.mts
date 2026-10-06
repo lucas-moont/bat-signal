@@ -24,8 +24,17 @@ export interface Leak {
 
 /** The fictional people the docs and synthetic fixtures use in a user folder. */
 const FICTIONAL_USERS = new Set(['bruce', 'alfred', 'public'])
-// Placeholders such as <you>, %USERNAME% or $HOME never match: the name stops at < % $.
-const USER_FOLDER = /(?:\b[a-z]:|^|[\s"'`(=])[\\/]+(?:users|home)[\\/]+([^\\/\s"'`<>%$]+)/gi
+// Each captures the user. Placeholders such as <you>, %USERNAME% or $HOME never match: a name
+// stops at < % $.
+const USER_FOLDERS = [
+  // Windows, in any case and escaping: C:\Users\<you>, c:/users/<you>, C:\\Users\\<you>
+  /\b[a-z]:[\\/]+users[\\/]+([^\\/\s"'`<>%$:]+)/gi,
+  // macOS and Linux homes at a path root, wherever the path sits (file:///Users/<you>,
+  // PATH=…:/home/<you>). Case-sensitive, so a web route such as /users/42 passes.
+  /(?<![\w.~-])\/+(?:Users|home)\/+([^\\/\s"'`<>%$:]+)/g,
+  // Claude Code's encoded project folders: C--Users-<you>-…, -Users-<you>-…, -home-<you>-…
+  /(?:\b[A-Za-z]-|(?<![\w-]))-(?:Users|home)-([^-\\/\s"'`<>%$:]+)/g,
+]
 const EMAIL = /[\w.%+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org))$/i
@@ -68,7 +77,10 @@ export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
     ? new RegExp(`(?<![\\p{L}\\p{N}_])(?:${own.map(escapeRegExp).join('|')})(?![\\p{L}\\p{N}_])`, 'iu')
     : undefined
   const rules: [Rule, (line: string) => boolean][] = [
-    ['user folder', (l) => anyBut(l, USER_FOLDER, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))],
+    [
+      'user folder',
+      (l) => USER_FOLDERS.some((re) => anyBut(l, re, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))),
+    ],
     ['email', (l) => anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
     ['token', (l) => TOKEN.test(l)],
     ['username', (l) => names?.test(l) ?? false],

@@ -26,6 +26,23 @@ describe('privacy check: user folders', () => {
     expect(scan(JSON.stringify({ cwd: 'C:\\Users\\' + jdoe }))).toEqual(['1:user folder'])
     expect(scan(`c:/users/${jdoe}/code`)).toEqual(['1:user folder'])
   })
+
+  it('flags user folders inside URLs, PATH lists and markup', () => {
+    expect(scan(`file:///Users/${jdoe}/x`)).toEqual(['1:user folder'])
+    expect(scan(`PATH=/usr/bin:/home/${jdoe}/bin`)).toEqual(['1:user folder'])
+    expect(scan(`<code>/home/${jdoe}</code>`)).toEqual(['1:user folder'])
+  })
+
+  it("flags Claude Code's encoded project folders, but not the fictional ones", () => {
+    expect(scan(`C--Users-${jdoe}-Documents-proj`)).toEqual(['1:user folder'])
+    expect(scan(`projects/-Users-${jdoe}-code/`)).toEqual(['1:user folder'])
+    expect(scan(`projects/-home-${jdoe}-code/`)).toEqual(['1:user folder'])
+    expect(scan('C--Users-bruce-wayne-enterprises and var(--home-accent)')).toEqual([])
+  })
+
+  it('passes web routes that only look like user folders', () => {
+    expect(scan('fetch("/users/42") and GET /users/octocat')).toEqual([])
+  })
 })
 
 describe('privacy check: emails', () => {
