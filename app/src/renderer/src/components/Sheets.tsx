@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
+import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
@@ -220,7 +220,7 @@ export function SettingsSheet({
   onClose,
 }: {
   settings: Settings
-  onChange: (patch: Partial<Settings>) => void
+  onChange: (patch: SettingsPatch) => void
   onClose: () => void
 }) {
   return (
