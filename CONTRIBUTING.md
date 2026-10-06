@@ -4,7 +4,7 @@ Thanks for your interest. The project is small, and so are the rules.
 
 ## Running locally
 
-Requirements: Windows 10/11, Node.js 24+ and Claude Code installed.
+Requirements: Windows 10/11, Node.js 24.2+ (the privacy check runs TypeScript directly and uses `import.meta.main`) and Claude Code installed.
 
 ```bash
 cd app
