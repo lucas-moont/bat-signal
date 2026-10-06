@@ -38,8 +38,8 @@ type OpenMode = Exclude<WindowMode, 'signal'>
 
 /** How a mode shows the panel window (the full panel and the watch strip share it). */
 interface PanelSpec {
-  /** The size the user dragged the panel to, or the strip's own (see setWatchHeight). */
-  size: 'user' | 'watch'
+  /** As the user dragged it (the panel), or fitted to its rows (the strip, see setWatchHeight). */
+  size: 'dragged' | 'fitted'
   minSize: Size
   resizable: boolean
   /**
@@ -57,7 +57,7 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
   signal: { signal: 'disc' },
   panel: {
     panel: {
-      size: 'user',
+      size: 'dragged',
       minSize: { width: PANEL.minWidth, height: PANEL.minHeight },
       resizable: true,
       focusable: true,
@@ -66,7 +66,7 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
   },
   watch: {
     panel: {
-      size: 'watch',
+      size: 'fitted',
       minSize: { width: WATCH.width, height: WATCH.minHeight },
       resizable: false,
       focusable: false,
@@ -75,7 +75,7 @@ const MODES: Record<WindowMode, { panel?: PanelSpec; signal: 'disc' | 'perch' | 
   },
 }
 
-const opens = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
+const isOpenMode = (mode: WindowMode): mode is OpenMode => MODES[mode].panel !== undefined
 
 interface Place {
   anchor?: Anchor
@@ -255,7 +255,7 @@ export class BatSignalWindows {
     const entering = mode !== this.current
     // The strip opening anew is held back until its page has measured it (see setWatchHeight),
     // so it never shows at a stale height, or with the panel still in it, and then jumps.
-    const holdStrip = entering && spec.panel?.size === 'watch'
+    const holdStrip = entering && spec.panel?.size === 'fitted'
     if (entering) this.cancelStrip() // opening the strip again while it is held keeps the hold
     if (spec.panel) {
       // Opening silences the cards; the hidden page may never finish their exit.
@@ -283,7 +283,7 @@ export class BatSignalWindows {
     if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
     else if (!this.stripPending) this.show()
     // A notice card opening the panel on one case is not the user picking the panel.
-    if (opens(mode) && !focusSessionId && mode !== this.lastOpened) {
+    if (isOpenMode(mode) && !focusSessionId && mode !== this.lastOpened) {
       this.lastOpened = mode
       this.scheduleSave()
     }
@@ -299,7 +299,7 @@ export class BatSignalWindows {
   private show(): void {
     const { panel, signal } = MODES[this.current]
     if (panel) {
-      this.panel.setBounds(panel.size === 'user' ? this.rect(this.panelSize) : this.watchRect())
+      this.panel.setBounds(panel.size === 'dragged' ? this.rect(this.panelSize) : this.watchRect())
       if (panel.focusable) {
         this.panel.show()
         this.panel.focus()
@@ -411,7 +411,7 @@ export class BatSignalWindows {
     }
     if (next === this.watchHeight) return
     this.watchHeight = next
-    if (MODES[this.current].panel?.size === 'watch') {
+    if (MODES[this.current].panel?.size === 'fitted') {
       this.panel.setBounds(this.watchRect())
       this.placePerch()
     }
@@ -422,7 +422,7 @@ export class BatSignalWindows {
     if (!panel) return
     const b = this.panel.getBounds()
     this.anchor = cornerOf(b)
-    if (panel.size === 'user') this.panelSize = { width: b.width, height: b.height }
+    if (panel.size === 'dragged') this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()
   }
 
