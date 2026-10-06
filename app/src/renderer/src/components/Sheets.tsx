@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { OPACITY_MAX, OPACITY_MIN, type Settings } from '@shared/settings'
+import { OPACITY_MAX, OPACITY_MIN, type Settings, type SettingsPatch } from '@shared/settings'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { Icon } from './Icon'
+import { Section } from './Section'
 import './Sheets.css'
 
 /** A drawer that rises from the bottom over a dimmed backdrop. */
@@ -220,47 +221,51 @@ export function SettingsSheet({
   onClose,
 }: {
   settings: Settings
-  onChange: (patch: Partial<Settings>) => void
+  onChange: (patch: SettingsPatch) => void
   onClose: () => void
 }) {
   return (
     <Sheet kicker="Bat-Computer" title="Settings" onClose={onClose}>
-      <Toggle
-        label="Animations"
-        hint="Intro, flying mascot, typewriter and transitions"
-        on={settings.animations}
-        onChange={(animations) => onChange({ animations })}
-      />
-      <Toggle
-        label="Rain"
-        hint="Gotham weather behind the cases"
-        on={settings.rain}
-        onChange={(rain) => onChange({ rain })}
-      />
-      <Toggle
-        label="Night report"
-        hint="Read the panel as one typed report instead of case files"
-        on={settings.layout === 'report'}
-        onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
-      />
-      <Toggle
-        label="Always on top"
-        hint="Keep the window above everything else"
-        on={settings.alwaysOnTop}
-        onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
-      />
-      <label className="slider">
-        <span className="toggle__label">Opacity</span>
-        <input
-          type="range"
-          min={OPACITY_MIN * 100}
-          max={OPACITY_MAX * 100}
-          step={5}
-          value={Math.round(settings.opacity * 100)}
-          onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}
-        />
-        <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
-      </label>
+      <div className="settings">
+        <Section title="Look">
+          <Toggle
+            label="Animations"
+            hint="Intro, flying mascot, typewriter and transitions"
+            on={settings.animations}
+            onChange={(animations) => onChange({ animations })}
+          />
+          <Toggle
+            label="Rain"
+            hint="Gotham weather behind the cases"
+            on={settings.rain}
+            onChange={(rain) => onChange({ rain })}
+          />
+          <Toggle
+            label="Night report"
+            hint="Read the panel as one typed report instead of case files"
+            on={settings.layout === 'report'}
+            onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
+          />
+          <Toggle
+            label="Always on top"
+            hint="Keep the window above everything else"
+            on={settings.alwaysOnTop}
+            onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
+          />
+          <label className="slider">
+            <span className="toggle__label">Opacity</span>
+            <input
+              type="range"
+              min={OPACITY_MIN * 100}
+              max={OPACITY_MAX * 100}
+              step={5}
+              value={Math.round(settings.opacity * 100)}
+              onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}
+            />
+            <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
+          </label>
+        </Section>
+      </div>
     </Sheet>
   )
 }

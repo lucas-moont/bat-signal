@@ -57,6 +57,13 @@
   display: grid;
   gap: 14px;
 }
+/* Settings come in ruled groups: rows spaced like the sheet's own, groups further apart, so each
+   heading reads with the rows under it. */
+.settings {
+  display: grid;
+  gap: 24px;
+  --section-gap: 14px;
+}
 
 .field {
   display: grid;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DEFAULT_SETTINGS, type Settings, type WindowMode } from '@shared/settings'
+import { DEFAULT_SETTINGS, type Settings, type SettingsPatch, type WindowMode } from '@shared/settings'
 import type { StoreSnapshot } from '@shared/types'
 import { batSignal } from './bridge'
 
@@ -35,7 +35,7 @@ export const useSnapshotState = (): [StoreSnapshot, boolean] =>
 export const useSnapshot = (): StoreSnapshot => useSnapshotState()[0]
 
 /** The settings, a setter, and whether the saved settings have arrived (render nothing before). */
-export function useSettings(): [Settings, (patch: Partial<Settings>) => void, boolean] {
+export function useSettings(): [Settings, (patch: SettingsPatch) => void, boolean] {
   const [settings, loaded] = useBridgedState(DEFAULT_SETTINGS, batSignal.getSettings, batSignal.onSettings)
   return [settings, batSignal.setSettings, loaded]
 }
