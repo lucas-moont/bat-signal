@@ -22,7 +22,7 @@ Bat-Signal rests in a corner of your screen as a small signal disc. When somethi
 - gathers everything that **needs you** in one place (permission prompts, Claude waiting for input, errors);
 - takes you **to the session's terminal** in one click, bringing its Windows Terminal window and tab to the front;
 - shrinks to a **watch strip**, one line per session, to follow the work from the corner;
-- has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open, showing its red lining, when something needs you.
+- has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open when something needs you: black inside too, but for a thin red thread along its hem.
 
 The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all.
 
@@ -42,7 +42,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Bat-Clawd asleep | On patrol | Needs you |
 |---|---|---|
-| <img src="docs/screenshots/clawd-sleeping.png" width="190" alt="Bat-Clawd asleep, sitting wrapped in his cape"> | <img src="docs/screenshots/clawd-flying.png" width="190" alt="Bat-Clawd flying, his cape streaming behind him"> | <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="Bat-Clawd alarmed, his black cape flung open to show its red lining"> |
+| <img src="docs/screenshots/clawd-sleeping.png" width="190" alt="Bat-Clawd asleep, sitting wrapped in his cape"> | <img src="docs/screenshots/clawd-flying.png" width="190" alt="Bat-Clawd flying, his cape streaming behind him"> | <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="Bat-Clawd alarmed, his black cape flung open, a thin red thread along its hem"> |
 
 Screenshots use made-up data (`npm run shots`), never real sessions.
 
