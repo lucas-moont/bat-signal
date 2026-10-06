@@ -1,12 +1,13 @@
-// privacy-check: synthetic leaks (this file holds made-up leaks for the check to find)
 import { describe, expect, it } from 'vitest'
-import { findLeaks, SYNTHETIC_MARK, type Personal } from '../scripts/privacy.mts'
+import { findLeaks, scanRepo, type Personal } from '../scripts/privacy.mts'
 
 const nobody: Personal = { names: [], ids: [] }
 const scan = (text: string, personal: Personal = nobody) =>
-  findLeaks('notes.md', text, personal).map((l) => `${l.line}:${l.rule}`)
+  findLeaks(text, personal).map((l) => `${l.line}:${l.rule}`)
 
-// Built at run time, so this file never carries a real-looking secret itself.
+// The leaks are built at run time, so this file passes the scan it specifies.
+const jdoe = 'jdoe'
+const mail = `${jdoe}@mail.test`
 const fake = (prefix: string, length: number) => prefix + 'x'.repeat(length)
 
 describe('privacy check: user folders', () => {
@@ -20,10 +21,10 @@ describe('privacy check: user folders', () => {
   })
 
   it('flags a real-looking user folder, in any spelling', () => {
-    expect(scan(String.raw`log at C:\Users\jdoe\AppData`)).toEqual(['1:user folder'])
-    expect(scan('line one\n/home/jdoe/src')).toEqual(['2:user folder'])
-    expect(scan('{"cwd":"C:\\\\Users\\\\jdoe\\\\code"}')).toEqual(['1:user folder'])
-    expect(scan('c:/users/jdoe/code')).toEqual(['1:user folder'])
+    expect(scan('log at C:\\Users\\' + jdoe + '\\AppData')).toEqual(['1:user folder'])
+    expect(scan(`line one\n/home/${jdoe}/src`)).toEqual(['2:user folder'])
+    expect(scan(JSON.stringify({ cwd: 'C:\\Users\\' + jdoe }))).toEqual(['1:user folder'])
+    expect(scan(`c:/users/${jdoe}/code`)).toEqual(['1:user folder'])
   })
 })
 
@@ -33,7 +34,7 @@ describe('privacy check: emails', () => {
   })
 
   it('flags any other address', () => {
-    expect(scan('mail me: jdoe@mail.test')).toEqual(['1:email'])
+    expect(scan(`mail me: ${mail}`)).toEqual(['1:email'])
   })
 })
 
@@ -51,7 +52,7 @@ describe('privacy check: tokens', () => {
 })
 
 describe('privacy check: what only this machine knows', () => {
-  const me: Personal = { names: ['jdoe'], ids: ['0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b'] }
+  const me: Personal = { names: [jdoe], ids: ['0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b'] }
 
   it('flags the local username as a whole word, in any case', () => {
     expect(scan('owner: JDoe', me)).toEqual(['1:username'])
@@ -64,15 +65,12 @@ describe('privacy check: what only this machine knows', () => {
   })
 
   it('reports each rule once per line', () => {
-    expect(scan('jdoe@mail.test, then jdoe@mail.test', me)).toEqual(['1:email', '1:username'])
+    expect(scan(`${mail}, then ${mail}`, me)).toEqual(['1:email', '1:username'])
   })
 })
 
-describe('privacy check: files of synthetic leaks', () => {
-  it('skips a file that marks itself as made-up leaks', () => {
-    expect(
-      scan(`// ${SYNTHETIC_MARK}
-mail me: jdoe@mail.test`),
-    ).toEqual([])
+describe('privacy check: this repository', () => {
+  it('has no leak in any tracked file', () => {
+    expect(scanRepo()).toEqual([])
   })
 })
