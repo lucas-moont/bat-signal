@@ -77,7 +77,7 @@ function start(): void {
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
     if (settings.announce.sound) warmQuiet()
-    settingsFile.save(settings)
+    settingsFile.saveSoon(settings)
     windows.apply(settings)
     // Only a patch that names the shortcut touches it (and retries it, if another app had it).
     if ('shortcut' in obj(patch)) shortcut.apply(settings.shortcut)
@@ -126,6 +126,7 @@ function start(): void {
   summon = () => windows.act('summon')
   app.once('before-quit', stop)
   app.once('will-quit', () => {
+    settingsFile.flush()
     toasts.dispose()
     cues.dispose()
     powershell.close()
