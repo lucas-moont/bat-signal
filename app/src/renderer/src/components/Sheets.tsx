@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useId, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import {
   NEWS_GROUPS,
@@ -225,6 +225,44 @@ function Toggle({
   )
 }
 
+/** A value from 0 to 1 set in steps of 5%, shown as a percentage; `children` sit at its end. */
+function PercentSlider({
+  label,
+  min = 0,
+  max = 1,
+  value,
+  onChange,
+  children,
+}: {
+  label: string
+  min?: number
+  max?: number
+  value: number
+  onChange: (value: number) => void
+  children?: ReactNode
+}) {
+  const id = useId()
+  const percent = Math.round(value * 100)
+  return (
+    <div className="slider">
+      <label className="setting__label" htmlFor={id}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type="range"
+        min={min * 100}
+        max={max * 100}
+        step={5}
+        value={percent}
+        onChange={(e) => onChange(Number(e.target.value) / 100)}
+      />
+      <span className="card__time">{percent}%</span>
+      {children}
+    </div>
+  )
+}
+
 /** A Windows notification switch per kind of news (none while the panel is in front). */
 const TOAST_SWITCHES: Record<NewsGroup, { label: string; hint: string }> = {
   needsYou: { label: 'Claude needs you', hint: 'A permission, an error or a question' },
@@ -275,18 +313,13 @@ export function SettingsSheet({
             on={settings.alwaysOnTop}
             onChange={(alwaysOnTop) => onChange({ alwaysOnTop })}
           />
-          <label className="slider">
-            <span className="setting__label">Opacity</span>
-            <input
-              type="range"
-              min={OPACITY_MIN * 100}
-              max={OPACITY_MAX * 100}
-              step={5}
-              value={Math.round(settings.opacity * 100)}
-              onChange={(e) => onChange({ opacity: Number(e.target.value) / 100 })}
-            />
-            <span className="card__time">{Math.round(settings.opacity * 100)}%</span>
-          </label>
+          <PercentSlider
+            label="Opacity"
+            min={OPACITY_MIN}
+            max={OPACITY_MAX}
+            value={settings.opacity}
+            onChange={(opacity) => onChange({ opacity })}
+          />
         </Section>
         <Section title="Comfort">
           <ShortcutField status={status.shortcut} onChange={(shortcut) => onChange({ shortcut })} />
@@ -319,20 +352,11 @@ export function SettingsSheet({
             on={settings.announce.sound}
             onChange={(sound) => onChange({ announce: { sound } })}
           />
-          <div className="slider">
-            <label className="setting__label" htmlFor="volume">
-              Volume
-            </label>
-            <input
-              id="volume"
-              type="range"
-              min={0}
-              max={100}
-              step={5}
-              value={Math.round(settings.announce.volume * 100)}
-              onChange={(e) => onChange({ announce: { volume: Number(e.target.value) / 100 } })}
-            />
-            <span className="card__time">{Math.round(settings.announce.volume * 100)}%</span>
+          <PercentSlider
+            label="Volume"
+            value={settings.announce.volume}
+            onChange={(volume) => onChange({ announce: { volume } })}
+          >
             <button
               className="icon-button icon-button--labelled"
               onClick={() => playEveryCue(settings.announce.volume)}
@@ -341,7 +365,7 @@ export function SettingsSheet({
               <Icon name="sound" />
               Test
             </button>
-          </div>
+          </PercentSlider>
         </Section>
       </div>
     </Sheet>
