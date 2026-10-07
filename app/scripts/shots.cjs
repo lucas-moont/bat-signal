@@ -40,7 +40,7 @@ const SHOTS = [
       click('[aria-label=Settings]'),
       later(
         700,
-        `const body = document.querySelector('.sheet__body'); const comfort = [...document.querySelectorAll('.section__title')].find((t) => t.textContent.includes('Comfort')); body.scrollTop = comfort.getBoundingClientRect().top - body.getBoundingClientRect().top - 8`,
+        `const body = document.querySelector('.sheet__body'); const comfort = [...document.querySelectorAll('.section__title')].find((t) => t.textContent.includes('Comfort')); if (!comfort) throw new Error('settings-comfort: no Comfort section to scroll to'); body.scrollTop = comfort.getBoundingClientRect().top - body.getBoundingClientRect().top - 8`,
       ),
     ],
   },

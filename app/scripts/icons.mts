@@ -15,6 +15,8 @@ const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
 const TOAST_SIZE = 96
 /** The README's picture of the tray icon, at rest and lit, drawn (not a screenshot of a taskbar). */
 const TRAY_PREVIEW = join(APP, '..', 'docs', 'screenshots', 'tray.png')
+/** Its width in pixels: the 112-unit strip at 2x, like the README's other pictures. */
+const TRAY_PREVIEW_WIDTH = 224
 /** The bat the icons were drawn from, kept beside them so a test can tell when they fall behind. */
 export const DRAWN_FROM = join(OUT, 'drawn-from.txt')
 
@@ -50,7 +52,7 @@ export function trayPreviewSvg(wings: string): string {
       .replace('id="face"', `id="face-${x}"`)
       .replace('url(#face)', `url(#face-${x})`)
   return `<svg xmlns="http://www.w3.org/2000/svg" width="112" height="56" viewBox="0 0 112 56">
-  <rect width="112" height="56" rx="8" fill="#1f1f1f"/>
+  <rect width="112" height="56" rx="8" fill="#1f1f1f"/><!-- a dark taskbar's grey, not a Bat-Signal ink -->
   ${at(16, false)}
   ${at(64, true)}
 </svg>`
@@ -98,7 +100,9 @@ async function main(): Promise<void> {
   const toast = new Resvg(iconSvg(wings, true), { fitTo: { mode: 'width', value: TOAST_SIZE } }).render()
   writeFileSync(join(OUT, 'toast.png'), toast.asPng())
   console.log('  toast.png')
-  const preview = new Resvg(trayPreviewSvg(wings), { fitTo: { mode: 'width', value: 224 } }).render()
+  const preview = new Resvg(trayPreviewSvg(wings), {
+    fitTo: { mode: 'width', value: TRAY_PREVIEW_WIDTH },
+  }).render()
   writeFileSync(TRAY_PREVIEW, preview.asPng())
   console.log('  ../docs/screenshots/tray.png')
 }
