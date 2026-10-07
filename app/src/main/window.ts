@@ -276,7 +276,9 @@ export class BatSignalWindows {
     // Only the panel window: the signal window is click-through (as the perch) or inactive (as
     // the disc), and the overlay leaves those alone; toggling it would only redraw a transparent window.
     const win = this.panel
-    if (win.isDestroyed() || !win.isVisible()) return
+    // isAlwaysOnTop reads Windows' own flag, so asking is free; setting it again makes Windows
+    // redraw the windows, about 1% of a core every 3 s, so it happens only once the overlay cleared it.
+    if (win.isDestroyed() || !win.isVisible() || win.isAlwaysOnTop()) return
     // Electron skips a repeat of the same level, so drop it and set it again to reach Windows.
     win.setAlwaysOnTop(false)
     win.setAlwaysOnTop(true, 'floating')
