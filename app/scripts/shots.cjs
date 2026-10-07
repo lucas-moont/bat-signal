@@ -32,6 +32,18 @@ const SHOTS = [
     ],
   },
   { name: 'settings', steps: [click('[aria-label=Settings]')] },
+  // Further down the sheet: the shortcut, starting with Windows, the toasts and the sound.
+  {
+    name: 'settings-comfort',
+    size: [320, 880],
+    steps: [
+      click('[aria-label=Settings]'),
+      later(
+        700,
+        `const body = document.querySelector('.sheet__body'); const comfort = [...document.querySelectorAll('.section__title')].find((t) => t.textContent.includes('Comfort')); body.scrollTop = comfort.getBoundingClientRect().top - body.getBoundingClientRect().top - 8`,
+      ),
+    ],
+  },
   { name: 'all-quiet', hash: 'demo-quiet', steps: [] },
   // The night report theme, and a case opened in place.
   { name: 'night-report', hash: 'demo-report', steps: [] },
