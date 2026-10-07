@@ -1,7 +1,7 @@
 // Whether Windows wants quiet right now: something full screen, a presentation, or its own quiet
 // time. Asked through SHQueryUserNotificationState, the shell's answer for this. Windows 11's Do
 // Not Disturb is not among its answers, and nothing public reports it, so it is not read.
-import { powershell } from './sources/powershell'
+import { powershell } from './powershell'
 
 /** How long a sound waits for Windows' answer (a busy or cold PowerShell): then it plays. */
 const QUIET_WAIT_MS = 1500
