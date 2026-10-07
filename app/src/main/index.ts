@@ -124,9 +124,12 @@ function start(): void {
   ipcMain.on(IPC.hide, () => windows.act('close'))
 
   summon = () => windows.act('summon')
-  app.once('before-quit', stop)
-  app.once('will-quit', () => {
+  // Written at before-quit: Windows ending the session may close the app before will-quit.
+  app.once('before-quit', () => {
     settingsFile.flush()
+    stop()
+  })
+  app.once('will-quit', () => {
     toasts.dispose()
     cues.dispose()
     powershell.close()
