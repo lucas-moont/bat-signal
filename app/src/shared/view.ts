@@ -248,8 +248,11 @@ const lineOf = (task: Task | undefined) => (task ? { line: taskLabel(task) } : {
 export const currentTask = (session: SessionSnapshot): Task | undefined =>
   session.tasks.find((t) => t.status === 'in_progress')
 
+/** How many sessions finished a whole turn without a hook (see pluginSilent). */
+export const unheardCount = (snapshot: StoreSnapshot): number => snapshot.unheard?.length ?? 0
+
 /**
  * The plugin is silent for some session: it finished a whole turn without a hook (with the plugin,
  * every turn sends them). Then Needs you cannot show that session's prompts or waits, and says so.
  */
-export const pluginSilent = (snapshot: StoreSnapshot): boolean => (snapshot.unheard?.length ?? 0) > 0
+export const pluginSilent = (snapshot: StoreSnapshot): boolean => unheardCount(snapshot) > 0

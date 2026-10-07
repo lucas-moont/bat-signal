@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import type { AttentionItem } from '@shared/types'
-import { mascotMood, pluginSilent } from '@shared/view'
+import { mascotMood, pluginSilent, unheardCount } from '@shared/view'
 import { batSignal } from './bridge'
 import { Atmosphere } from './components/Atmosphere'
 import { BatSignalIntro } from './components/BatSignalIntro'
@@ -120,12 +120,12 @@ export function App() {
           <div className="stage">
             <div className="stage__scroll">
               {!report && activeTab === 'needs' && pluginSilent(snapshot) && (
-                <PluginHint sessions={snapshot.unheard?.length ?? 0} />
+                <PluginHint sessions={unheardCount(snapshot)} />
               )}
               {report ? (
                 <NightReport
                   tab={activeTab}
-                  unheard={snapshot.unheard?.length ?? 0}
+                  unheard={unheardCount(snapshot)}
                   sessions={sessions}
                   attention={attention}
                   now={now}
