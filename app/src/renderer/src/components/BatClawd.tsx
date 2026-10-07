@@ -228,13 +228,9 @@ export function BatClawd({
   const { pose, transform } = watching
     ? { pose: (step.gust ? POSES.flying[1] : undefined) ?? POSES.flying[0], transform: '' }
     : MOTION[mood](frame, POSES[mood])
-  const eyes = calm
-    ? { x: 0, y: 0 }
-    : watching
-      ? { x: step.look, y: 0 }
-      : mood === 'sleeping'
-        ? { x: 0, y: 0 }
-        : gaze
+  // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
+  const stillEyes = calm || (!watching && mood === 'sleeping')
+  const eyes = stillEyes ? { x: 0, y: 0 } : watching ? { x: step.look, y: 0 } : gaze
   // Asleep only the breath changes, so it skips React: the CSS `translate` property composes
   // with the `transform` React sets.
   const mover = useLiveStyle<HTMLSpanElement>(!calm && !perched && mood === 'sleeping', (el, now) => {
