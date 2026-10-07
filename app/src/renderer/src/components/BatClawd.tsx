@@ -159,8 +159,20 @@ const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; 
 
 /** How far the eyes may slide toward the pointer, in grid units. */
 const GAZE = 0.6
-/** On watch from the rooftop: the eyes sweep left, back, right, back, one step a second. */
-const SCAN = [-GAZE, -GAZE, 0, GAZE, GAZE, 0]
+/**
+ * On watch from the rooftop, one step a second: mostly still, then a gust lifts the cape and he
+ * glances along the street. Every change redraws the perch's transparent window, so there are
+ * four in twelve seconds rather than one a second.
+ */
+const WATCH: { gust: boolean; look: number }[] = [
+  ...Array.from({ length: 6 }, () => ({ gust: false, look: 0 })),
+  { gust: true, look: 0 },
+  { gust: false, look: 0 },
+  { gust: false, look: -GAZE },
+  { gust: false, look: -GAZE },
+  { gust: false, look: 0 },
+  { gust: false, look: 0 },
+]
 const LABEL: Record<MascotMood, string> = {
   sleeping: 'Bat-Clawd is asleep',
   flying: 'Bat-Clawd is on patrol',
@@ -210,15 +222,16 @@ export function BatClawd({
   // On the perch he keeps watch whatever happens, until something needs you.
   const watching = perched && mood !== 'alarmed'
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
-  // costs more to redraw, the watch moves once a second (gusts of wind) and an alarm twice.
+  // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
   const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
+  const step = WATCH[frame % WATCH.length] ?? { gust: false, look: 0 }
   const { pose, transform } = watching
-    ? { pose: POSES.flying[frame % 2] ?? POSES.flying[0], transform: '' }
+    ? { pose: (step.gust ? POSES.flying[1] : undefined) ?? POSES.flying[0], transform: '' }
     : MOTION[mood](frame, POSES[mood])
   const eyes = calm
     ? { x: 0, y: 0 }
     : watching
-      ? { x: SCAN[frame % SCAN.length] ?? 0, y: 0 }
+      ? { x: step.look, y: 0 }
       : mood === 'sleeping'
         ? { x: 0, y: 0 }
         : gaze
