@@ -164,14 +164,15 @@ const GAZE = 0.6
  * glances along the street. Every change redraws the perch's transparent window, so there are
  * four in twelve seconds rather than one a second.
  */
+const STILL = { gust: false, look: 0 }
 const WATCH: { gust: boolean; look: number }[] = [
-  ...Array.from({ length: 6 }, () => ({ gust: false, look: 0 })),
+  ...Array.from({ length: 6 }, () => STILL),
   { gust: true, look: 0 },
-  { gust: false, look: 0 },
+  STILL,
   { gust: false, look: -GAZE },
   { gust: false, look: -GAZE },
-  { gust: false, look: 0 },
-  { gust: false, look: 0 },
+  STILL,
+  STILL,
 ]
 const LABEL: Record<MascotMood, string> = {
   sleeping: 'Bat-Clawd is asleep',
@@ -224,7 +225,7 @@ export function BatClawd({
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
   const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
-  const step = WATCH[frame % WATCH.length] ?? { gust: false, look: 0 }
+  const step = WATCH[frame % WATCH.length] ?? STILL
   const { pose, transform } = watching
     ? { pose: (step.gust ? POSES.flying[1] : undefined) ?? POSES.flying[0], transform: '' }
     : MOTION[mood](frame, POSES[mood])
