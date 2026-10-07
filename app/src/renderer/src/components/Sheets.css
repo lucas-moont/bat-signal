@@ -200,7 +200,11 @@
 }
 .slider input {
   flex: 1;
+  min-width: 0; /* in a tight row the slider gives way, not the button beside it */
   accent-color: var(--signal);
+}
+.slider .icon-button {
+  flex: none;
 }
 
 /* The global shortcut: its keys in a small well; a click records new ones. */

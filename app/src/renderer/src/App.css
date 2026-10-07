@@ -115,6 +115,10 @@
     color 0.15s,
     background 0.15s;
 }
+/* The icon keeps its size in a tight row; the text gives way first. */
+.icon-button--labelled > svg {
+  flex: none;
+}
 .icon-button--labelled {
   width: auto;
   display: inline-flex;
