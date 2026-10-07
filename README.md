@@ -36,9 +36,13 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 |---|---|---|
 | <img src="docs/screenshots/watch.png" width="240" alt="The watch strip: one row per session with its stamp, title, progress and pending request"> | <img src="docs/screenshots/night-report.png" width="240" alt="The night report: what awaits your signature, typed, with stamps in the margin and a red pen under each request"> | <img src="docs/screenshots/night-report-case.png" width="240" alt="Case notes with one case opened in place: its file line, a terminal button and typed task boxes"> |
 
-| Settings | The Bat-Signal at rest |
-|---|---|
-| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+| Settings | Comfort, notifications and sound | The Bat-Signal at rest |
+|---|---|---|
+| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, a Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+
+| The tray icon, at rest and lit |
+|---|
+| <img src="docs/screenshots/tray.png" width="112" alt="The tray icon: a dark disc with a pale bat at rest, a red disc with a black bat when something needs you"> |
 
 | Bat-Clawd asleep | On patrol | Needs you |
 |---|---|---|
@@ -81,7 +85,15 @@ The bat by the clock is Bat-Signal's tray icon, lit red while something needs yo
 
 ## Light on resources
 
-A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included): about **1% of one CPU core** at rest, whether the signal is dark or lit. The disc only pulses for the few seconds an urgent notice is out.
+A window parked in a corner all day has to be cheap. Every looping effect runs off one clock ticking eight times a second instead of 60 fps CSS animations, Bat-Clawd is a flip-book of finished poses, and the rain only falls while you are looking. Measured on the real windows (all Bat-Signal processes, GPU included, 30-second samples):
+
+| | At rest | Something needs you |
+|---|---|---|
+| The disc | 0.1–0.2% of one core | 0.1–0.8% |
+| The watch strip, Bat-Clawd on the perch | 0.4–0.8% | 0.2–0.5% |
+| The panel open | | 0.7–2.0% |
+
+The disc only pulses for the few seconds an urgent notice is out, and Bat-Clawd keeps watch from the perch mostly still.
 
 ---
 

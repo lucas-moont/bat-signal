@@ -59,9 +59,8 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
    * wins when it lands; past that, it stands as the turn's end and the session counts as unheard.
    */
   private readonly flips = new Map<string, string>()
+  /** When each session without hooks last ended a turn: its keys are the unheard sessions. */
   private readonly inferredStop = new Map<string, string>()
-  /** Sessions that finished a turn without sending a single hook. */
-  private readonly unheard = new Set<string>()
 
   /**
    * Resolves once the first registry listing has been read. Snapshots taken before it are not the
@@ -140,7 +139,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   async handleHook(event: unknown): Promise<void> {
     const sessionId = str(obj(event)['session_id'])
     if (!sessionId) return
-    const wasUnheard = this.unheard.has(sessionId)
+    const wasUnheard = this.inferredStop.has(sessionId)
     this.forgetFlip(sessionId) // the session speaks for itself from now on
     const before = this.signals.get(sessionId)?.signals ?? {}
     const after = applyHookEvent(before, event, this.sources.clock().toISOString())
@@ -177,7 +176,7 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
         signals,
       })),
       attention: deriveAttention(views, this.sources.clock()),
-      unheard: [...this.unheard].filter((id) => this.sessions.has(id)),
+      unheard: [...this.inferredStop.keys()].filter((id) => this.sessions.has(id)),
     }
   }
 
@@ -190,7 +189,6 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
       this.flips.delete(id)
       if (this.signals.has(id)) continue
       this.inferredStop.set(id, at)
-      this.unheard.add(id)
       settled = true
     }
     return settled
@@ -199,7 +197,6 @@ export class SessionStore extends EventEmitter<{ update: [] }> {
   private forgetFlip(id: string): void {
     this.flips.delete(id)
     this.inferredStop.delete(id)
-    this.unheard.delete(id)
   }
 
   private inferredSignals(id: string): SessionSignals {

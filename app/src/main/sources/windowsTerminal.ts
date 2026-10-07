@@ -4,7 +4,7 @@
 import { clipboard } from 'electron'
 import type { TerminalOutcome } from '../../shared/types'
 import { findWindowOwner, pickWindowTab, type ProcessInfo, type TerminalWindow } from '../terminal'
-import { powershell } from './powershell'
+import { powershell } from '../powershell'
 
 /**
  * Compiled once per host: a process table straight from the kernel, and every visible titled

@@ -11,14 +11,11 @@ import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
 import { warmQuiet } from './quiet'
-import { powershell } from './sources/powershell'
+import { powershell } from './powershell'
 import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
-
-/** How often a shortcut another app holds is tried again. */
-const SHORTCUT_RETRY_MS = 60_000
 
 /** Brings Bat-Signal forward when it is launched again; nothing to bring until it has started. */
 let summon = (): void => undefined
@@ -54,9 +51,13 @@ function start(): void {
     toasts.add(out.toast)
     cues.add(out.sound)
   })
-  // The global shortcut opens what the disc would, and folds it back.
-  const shortcut = createShortcut(globalShortcut, () => windows.act('shortcut'))
-  shortcut.apply(settings.shortcut)
+  // The global shortcut opens what the disc would, and folds it back (applied below, once the
+  // status it tells of can be sent).
+  const shortcut = createShortcut(
+    globalShortcut,
+    () => windows.act('shortcut'),
+    () => publishStatus(),
+  )
   // Starting with Windows: what Windows has (Task Manager can change it too), read when the
   // settings sheet, the one place that shows it, opens.
   const startup = createStartup(() => publishStatus())
@@ -70,24 +71,16 @@ function start(): void {
     published = next
     windows.publishStatus(next)
   }
-  // A shortcut another app held is tried again now and then: that app may have let it go.
-  const retry = setInterval(() => {
-    if (shortcut.status.state !== 'taken') return
-    shortcut.apply(settings.shortcut)
-    publishStatus()
-  }, SHORTCUT_RETRY_MS)
+  shortcut.apply(settings.shortcut)
 
   ipcMain.handle(IPC.getSettings, () => settings)
   ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
     if (settings.announce.sound) warmQuiet()
-    settingsFile.save(settings)
+    settingsFile.saveSoon(settings)
     windows.apply(settings)
     // Only a patch that names the shortcut touches it (and retries it, if another app had it).
-    if ('shortcut' in obj(patch)) {
-      shortcut.apply(settings.shortcut)
-      publishStatus()
-    }
+    if ('shortcut' in obj(patch)) shortcut.apply(settings.shortcut)
   })
   ipcMain.handle(IPC.getStatus, () => readStatus())
   // The settings sheet opened: what it shows is read again from Windows (Task Manager may have
@@ -99,7 +92,6 @@ function start(): void {
   const record = (on: boolean) => {
     stopWatching()
     shortcut.pause(on)
-    publishStatus()
   }
   ipcMain.on(IPC.recordShortcut, (event, on: unknown) => {
     record(on === true)
@@ -132,9 +124,12 @@ function start(): void {
   ipcMain.on(IPC.hide, () => windows.act('close'))
 
   summon = () => windows.act('summon')
-  app.once('before-quit', stop)
+  // Written at before-quit: Windows ending the session may close the app before will-quit.
+  app.once('before-quit', () => {
+    settingsFile.flush()
+    stop()
+  })
   app.once('will-quit', () => {
-    clearInterval(retry)
     toasts.dispose()
     cues.dispose()
     powershell.close()

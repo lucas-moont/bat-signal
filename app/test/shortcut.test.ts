@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { createShortcut, type ShortcutHost } from '../src/main/shortcut'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createShortcut, SHORTCUT_RETRY_MS, type ShortcutHost } from '../src/main/shortcut'
 
 /** Windows' global hotkeys, in miniature: some combinations already belong to other apps. */
 function fakeHost(takenByOthers: string[] = []) {
@@ -134,5 +134,63 @@ describe('createShortcut', () => {
     const before = shortcut.status
     shortcut.apply('Ctrl+Alt+B')
     expect(shortcut.status).toBe(before)
+  })
+})
+
+describe('createShortcut: telling and retrying', () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it('tells of each change, and of nothing else', () => {
+    const windows = fakeHost()
+    let told = 0
+    const shortcut = createShortcut(
+      windows.host,
+      () => undefined,
+      () => told++,
+    )
+    shortcut.apply('Ctrl+Alt+B')
+    shortcut.apply('Ctrl+Alt+B')
+    expect(told).toBe(1)
+    shortcut.pause(true)
+    shortcut.pause(false)
+    shortcut.apply('')
+    expect(told).toBe(2)
+  })
+
+  it('tries a taken shortcut again every SHORTCUT_RETRY_MS, and tells once it holds it', () => {
+    const windows = fakeHost(['Ctrl+Alt+B'])
+    let told = 0
+    const shortcut = createShortcut(
+      windows.host,
+      () => undefined,
+      () => told++,
+    )
+    shortcut.apply('Ctrl+Alt+B')
+    vi.advanceTimersByTime(SHORTCUT_RETRY_MS)
+    expect(told).toBe(1) // still taken: nothing new to tell
+    windows.takenByOthers.length = 0
+    vi.advanceTimersByTime(SHORTCUT_RETRY_MS)
+    expect(shortcut.status).toEqual({ accelerator: 'Ctrl+Alt+B', state: 'active' })
+    expect(told).toBe(2)
+  })
+
+  it('tries again only while another app has it', () => {
+    const { windows, shortcut } = setup()
+    shortcut.apply('Ctrl+Alt+B')
+    windows.calls.length = 0
+    vi.advanceTimersByTime(SHORTCUT_RETRY_MS * 3)
+    expect(windows.calls).toEqual([])
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it('stops trying once the shortcut is turned off, or the app quits', () => {
+    const { shortcut } = setup(['Ctrl+Alt+B'])
+    shortcut.apply('Ctrl+Alt+B')
+    shortcut.apply('')
+    expect(vi.getTimerCount()).toBe(0)
+    shortcut.apply('Ctrl+Alt+B')
+    shortcut.dispose()
+    expect(vi.getTimerCount()).toBe(0)
   })
 })

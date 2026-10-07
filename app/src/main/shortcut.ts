@@ -9,19 +9,41 @@ export interface ShortcutHost {
   unregister(accelerator: string): void
 }
 
-export function createShortcut(host: ShortcutHost, onPress: () => void) {
+/** How often a shortcut another app holds is tried again: that app may have let it go. */
+export const SHORTCUT_RETRY_MS = 60_000
+
+/** onChange: the status changed (and only then). */
+export function createShortcut(
+  host: ShortcutHost,
+  onPress: () => void,
+  onChange: () => void = () => undefined,
+) {
   let wanted = ''
   let held = ''
   let paused = false
   let status = SHORTCUT_OFF
+  let retry: ReturnType<typeof setInterval> | undefined
 
   const release = () => {
     if (held) host.unregister(held)
     held = ''
   }
 
-  /** Holds `wanted` if it can (it is not paused), and notes how that went in `status`. */
+  /** Holds `wanted` if it can, tells of a new status, and keeps trying while another app has it. */
   const sync = (): void => {
+    const before = status
+    take()
+    if (status !== before) onChange()
+    const taken = status.state === 'taken'
+    if (taken && !retry) retry = setInterval(sync, SHORTCUT_RETRY_MS)
+    if (!taken && retry) {
+      clearInterval(retry)
+      retry = undefined
+    }
+  }
+
+  /** Holds `wanted` if it can (it is not paused), and notes how that went in `status`. */
+  const take = (): void => {
     // Already holding what is wanted. (Holding nothing is no reason to keep the status: it may
     // still say a shortcut that was released or taken.)
     if (paused || (held && held === wanted)) return
@@ -33,7 +55,9 @@ export function createShortcut(host: ShortcutHost, onPress: () => void) {
         status = { accelerator: wanted, state: 'taken' }
     } else {
       held = wanted
-      status = { accelerator: wanted, state: 'active' }
+      // Held again after a pause: the same status, so nothing is told for it.
+      if (status.state !== 'active' || status.accelerator !== wanted)
+        status = { accelerator: wanted, state: 'active' }
     }
   }
 
@@ -54,6 +78,8 @@ export function createShortcut(host: ShortcutHost, onPress: () => void) {
       sync()
     },
     dispose(): void {
+      clearInterval(retry)
+      retry = undefined
       release()
     },
   }

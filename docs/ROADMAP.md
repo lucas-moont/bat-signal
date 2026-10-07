@@ -6,16 +6,18 @@ Where Bat-Signal can go. The order inside each version is a suggestion. After v1
 
 Observe only. Never acts on sessions.
 
-- [ ] List of active Claude Code sessions with status (working / idle / needs you)
-- [ ] Session detail: tasks, subagents, background commands, latest messages
-- [ ] Task detail (click): description, status history
-- [ ] "Needs you" panel: permission prompts, Claude waiting for input, errors
-- [ ] Bat-Signal notices: needs you, finished replying, task completed, session opened/closed (Windows toasts optional)
-- [ ] Claude Code plugin with HTTP hooks (alerts at the exact moment)
-- [ ] "Go to terminal": brings the session's window to the front
-- [ ] Bat-Clawd, the caped mascot, with states (sleeping, flying, alarmed)
-- [ ] Animations: Bat-Signal intro, rain, transitions
-- [ ] System tray, global shortcut, start with Windows
+Where it stands (v0.7.0): everything but the installer, which comes with v1.0.
+
+- [x] List of active Claude Code sessions with status (working / idle / needs you)
+- [x] Session detail: tasks, subagents, background commands, latest messages
+- [x] Task detail (click): description, status history
+- [x] "Needs you" panel: permission prompts, Claude waiting for input, errors
+- [x] Bat-Signal notices: needs you, finished replying, task completed, session opened/closed (Windows toasts optional)
+- [x] Claude Code plugin with HTTP hooks (alerts at the exact moment)
+- [x] "Go to terminal": brings the session's window to the front
+- [x] Bat-Clawd, the caped mascot, with states (sleeping, flying, alarmed)
+- [x] Animations: Bat-Signal intro, rain, transitions
+- [x] System tray, global shortcut, start with Windows
 - [ ] Windows installer
 
 ## v2: "the cave answers back"

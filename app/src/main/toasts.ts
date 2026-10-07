@@ -1,6 +1,6 @@
 // Windows toasts for the news the user picked. What becomes a toast is announcer.ts's call; this
 // gathers each burst into one toast, shows it, and opens its case when it is clicked.
-import { Notification } from 'electron'
+import { nativeImage, Notification } from 'electron'
 import { toastFor } from '../shared/announcer'
 import type { Notice } from '../shared/notices'
 import { Burst } from './burst'
@@ -26,7 +26,10 @@ export class BatSignalToasts {
     const toast = toastFor(news)
     if (!toast || !Notification.isSupported()) return
     // Silent: Bat-Signal's own sound, when the user turns it on, is the one to hear.
-    const shown = new Notification({ title: toast.title, body: toast.body, icon: toastIcon, silent: true })
+    // The lit disc, handed over loaded: given as a path, Windows dropped it from the toast whenever
+    // the path had a space (this checkout's folder), and showed only text.
+    const icon = nativeImage.createFromPath(toastIcon)
+    const shown = new Notification({ title: toast.title, body: toast.body, icon, silent: true })
     shown.on('click', () => this.openCase(toast.sessionId))
     this.kept.push(shown)
     // One let go would sit in the Action Center with a click that does nothing: it goes too.

@@ -34,7 +34,6 @@ const WATCH = { width: 280, minHeight: 56, initialHeight: 160, maxShare: 0.7 }
 const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
 /** In watch mode the transparent signal window is Bat-Clawd's perch, on the strip's top edge. */
 const PERCH = { width: 88, height: 56 }
-const SAVE_DEBOUNCE_MS = 500
 /** How long the strip, opening, waits for its page to measure it before showing anyway. */
 const WATCH_SHOW_FALLBACK_MS = 150
 /**
@@ -146,7 +145,6 @@ export class BatSignalWindows {
   private latest?: StoreSnapshot
   private quitting = false
   private onTop = true
-  private saveTimer?: NodeJS.Timeout
   /** Set while the strip waits for its first height (see setMode). */
   private stripPending?: NodeJS.Timeout
 
@@ -235,10 +233,14 @@ export class BatSignalWindows {
     return this.panelShown && this.panel.isFocused()
   }
 
+  /** Sends to one page, unless its window is already gone (the app is quitting). */
+  private send(win: BrowserWindow, channel: string, payload?: unknown): void {
+    if (!win.isDestroyed()) win.webContents.send(channel, payload)
+  }
+
   /** Sends to every page (both windows render the same data). */
   private broadcast(channel: string, payload: unknown): void {
-    for (const win of [this.panel, this.signal])
-      if (!win.isDestroyed()) win.webContents.send(channel, payload)
+    for (const win of [this.panel, this.signal]) this.send(win, channel, payload)
   }
 
   /**
@@ -248,13 +250,13 @@ export class BatSignalWindows {
    */
   publish(snapshot: StoreSnapshot): void {
     this.latest = snapshot
-    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.snapshot, snapshot)
-    if (this.panelShown) this.panel.webContents.send(IPC.snapshot, snapshot)
+    this.send(this.signal, IPC.snapshot, snapshot)
+    if (this.panelShown) this.send(this.panel, IPC.snapshot, snapshot)
   }
 
   /** A sound, to the signal window: the page that is always loaded. */
   cue(play: CuePlay): void {
-    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.cue, play)
+    this.send(this.signal, IPC.cue, play)
   }
 
   /** What is happening now (the shortcut held or taken), to every page. */
@@ -276,7 +278,9 @@ export class BatSignalWindows {
     // Only the panel window: the signal window is click-through (as the perch) or inactive (as
     // the disc), and the overlay leaves those alone; toggling it would only redraw a transparent window.
     const win = this.panel
-    if (win.isDestroyed() || !win.isVisible()) return
+    // isAlwaysOnTop reads Windows' own flag, so asking is free; setting it again makes Windows
+    // redraw the windows, about 1% of a core every 3 s, so it happens only once the overlay cleared it.
+    if (win.isDestroyed() || !win.isVisible() || win.isAlwaysOnTop()) return
     // Electron skips a repeat of the same level, so drop it and set it again to reach Windows.
     win.setAlwaysOnTop(false)
     win.setAlwaysOnTop(true, 'floating')
@@ -299,7 +303,7 @@ export class BatSignalWindows {
   /** Opens the panel with its settings sheet up (the tray's Settings…). */
   openSettings(): void {
     this.setMode('panel', undefined, false)
-    this.panel.webContents.send(IPC.openSettings)
+    this.send(this.panel, IPC.openSettings)
   }
 
   /**
@@ -329,7 +333,7 @@ export class BatSignalWindows {
         this.panel.setBounds(this.watchRect())
       }
       // The latest snapshot before the mode, so the page lays out the sessions of now.
-      if (this.latest) this.panel.webContents.send(IPC.snapshot, this.latest)
+      if (this.latest) this.send(this.panel, IPC.snapshot, this.latest)
     } else {
       this.panel.hide()
     }
@@ -337,10 +341,10 @@ export class BatSignalWindows {
       this.current = mode
       // A held strip is news only to its own page for now: the disc stays the disc until the
       // strip shows, and turns into the perch then (revealStrip).
-      if (holdStrip) this.panel.webContents.send(IPC.mode, mode)
+      if (holdStrip) this.send(this.panel, IPC.mode, mode)
       else this.broadcast(IPC.mode, mode)
     }
-    if (spec.panel && focusSessionId) this.panel.webContents.send(IPC.focusCase, focusSessionId)
+    if (spec.panel && focusSessionId) this.send(this.panel, IPC.focusCase, focusSessionId)
     if (holdStrip) this.stripPending = setTimeout(() => this.revealStrip(), WATCH_SHOW_FALLBACK_MS)
     else if (!this.stripPending) this.show()
     if (picked && isOpenMode(mode) && mode !== this.lastOpened) {
@@ -381,7 +385,7 @@ export class BatSignalWindows {
   /** Shows the strip held back by setMode, at the height its page measured (or the last one). */
   private revealStrip(): void {
     this.cancelStrip()
-    if (!this.signal.isDestroyed()) this.signal.webContents.send(IPC.mode, this.current)
+    this.send(this.signal, IPC.mode, this.current)
     this.show()
   }
 
@@ -486,13 +490,16 @@ export class BatSignalWindows {
     this.scheduleSave()
   }
 
+  private get place(): Place {
+    return { anchor: this.anchor, panel: this.panelSize, open: this.lastOpened }
+  }
+
+  /** A move or resize: written once the window settles. */
   private scheduleSave(): void {
-    clearTimeout(this.saveTimer)
-    this.saveTimer = setTimeout(() => this.saveNow(), SAVE_DEBOUNCE_MS)
+    placeFile.saveSoon(this.place)
   }
 
   private saveNow(): void {
-    clearTimeout(this.saveTimer)
-    placeFile.save({ anchor: this.anchor, panel: this.panelSize, open: this.lastOpened })
+    placeFile.save(this.place)
   }
 }
