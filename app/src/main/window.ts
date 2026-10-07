@@ -34,7 +34,6 @@ const WATCH = { width: 280, minHeight: 56, initialHeight: 160, maxShare: 0.7 }
 const SIGNAL = { disc: { width: 96, height: 96 }, notice: { width: 320, height: 230 } }
 /** In watch mode the transparent signal window is Bat-Clawd's perch, on the strip's top edge. */
 const PERCH = { width: 88, height: 56 }
-const SAVE_DEBOUNCE_MS = 500
 /** How long the strip, opening, waits for its page to measure it before showing anyway. */
 const WATCH_SHOW_FALLBACK_MS = 150
 /**
@@ -146,7 +145,6 @@ export class BatSignalWindows {
   private latest?: StoreSnapshot
   private quitting = false
   private onTop = true
-  private saveTimer?: NodeJS.Timeout
   /** Set while the strip waits for its first height (see setMode). */
   private stripPending?: NodeJS.Timeout
 
@@ -492,13 +490,16 @@ export class BatSignalWindows {
     this.scheduleSave()
   }
 
+  private get place(): Place {
+    return { anchor: this.anchor, panel: this.panelSize, open: this.lastOpened }
+  }
+
+  /** A move or resize: written once the window settles. */
   private scheduleSave(): void {
-    clearTimeout(this.saveTimer)
-    this.saveTimer = setTimeout(() => this.saveNow(), SAVE_DEBOUNCE_MS)
+    placeFile.saveSoon(this.place)
   }
 
   private saveNow(): void {
-    clearTimeout(this.saveTimer)
-    placeFile.save({ anchor: this.anchor, panel: this.panelSize, open: this.lastOpened })
+    placeFile.save(this.place)
   }
 }
