@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { ipcMain } from 'electron'
-import { beforeNewsDemoSnapshot, demoSnapshot } from '../shared/demo'
+import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
@@ -32,15 +32,23 @@ export function startBatSignal(publish: Publish): () => void {
 /** A few seconds in, the demo night brings news, so the Bat-Signal has something to announce. */
 const DEMO_NEWS_MS = 4000
 
-/** Serves the made-up Gotham night instead of real sessions (screenshots, demos). */
+/**
+ * Serves the made-up Gotham night instead of real sessions (screenshots, demos). With
+ * BAT_SIGNAL_DEMO=quiet it serves the calm night, nothing pending and no news coming: Bat-Signal
+ * at rest, to measure.
+ */
 function startDemo(publish: Publish): () => void {
+  const quiet = process.env['BAT_SIGNAL_DEMO'] === 'quiet'
+  const before = quiet ? quietDemoSnapshot() : beforeNewsDemoSnapshot()
   let news = false
-  publish(beforeNewsDemoSnapshot()) // the state to find news against, as for a live start
-  const newsTimer = setTimeout(() => {
-    news = true
-    publish(demoSnapshot())
-  }, DEMO_NEWS_MS)
-  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : beforeNewsDemoSnapshot()))
+  publish(before) // the state to find news against, as for a live start
+  const newsTimer = quiet
+    ? undefined
+    : setTimeout(() => {
+        news = true
+        publish(demoSnapshot())
+      }, DEMO_NEWS_MS)
+  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : before))
   ipcMain.on(IPC.markSeen, () => undefined)
   // The demo's sessions have no terminal: always the resume command.
   ipcMain.handle(IPC.goToTerminal, (_event, sessionId: unknown) =>
