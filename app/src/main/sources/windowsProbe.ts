@@ -15,7 +15,9 @@ interface CachedStart {
 
 /**
  * ProcessProbe backed by the real OS. Start times are looked up with one PowerShell
- * call per batch and cached while the pid keeps being asked about.
+ * call per batch and cached while the pid keeps being asked about. It starts its own PowerShell,
+ * not the shared host (../powershell): a batch in the host's one-at-a-time queue would hold up the
+ * sound's quiet check, which waits only a moment before playing.
  */
 export function createWindowsProbe(): ProcessProbe {
   const cache = new Map<number, CachedStart>()
