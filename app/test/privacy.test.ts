@@ -61,6 +61,11 @@ describe('privacy check: emails', () => {
     expect(scan(notice)).toEqual(['1:email'])
   })
 
+  it("still flags an address anywhere else in package-lock.json, such as a dependency's URL", () => {
+    const url = `      "resolved": "git+https://${mail}@github.test/owner/repo.git",`
+    expect(scan(url, nobody, 'app/package-lock.json')).toEqual(['1:email'])
+  })
+
   it('still looks for everything else in package-lock.json', () => {
     const resolved = `      "resolved": "file:C:/Users/${jdoe}/pkg",`
     expect(scan(resolved, nobody, 'app/package-lock.json')).toEqual(['1:user folder'])

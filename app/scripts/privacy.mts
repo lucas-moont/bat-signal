@@ -40,8 +40,10 @@ const EMAIL = /[\w.%+-]+@(?!\d+x\.)[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 /** Commit trailers, example addresses, and git@host, the SSH user of clone URLs. */
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org)|git@[\w.-]+)$/i
-/** npm writes the lockfile from the registry: its addresses are packages' own (deprecation notices). */
+/** npm writes the lockfile from the registry, copying in each package's deprecation notice. */
 const NPM_LOCKFILE = /(?:^|\/)package-lock\.json$/
+/** A deprecation notice: the package's own words, its author's address and all. */
+const NPM_NOTICE = /^\s*"deprecated": "/
 const TOKEN = new RegExp(
   [
     /sk-ant-[\w-]{16,}/, // Anthropic
@@ -102,11 +104,14 @@ export function leakFinder(local: LocalIdentity): (text: string, file: string) =
     ['session id', (l) => anyBut(l, UUID_WORD, (m) => !ids.has(m[0].toLowerCase()))],
   ]
   return (text, file) => {
-    const checked = NPM_LOCKFILE.test(file) ? rules.filter(([rule]) => rule !== 'email') : rules
+    const lockfile = NPM_LOCKFILE.test(file)
+    const spared = (rule: Rule, line: string) => lockfile && rule === 'email' && NPM_NOTICE.test(line)
     return text
       .split(/\r?\n/)
       .flatMap((line, i) =>
-        checked.filter(([, breaks]) => breaks(line)).map(([rule]) => ({ line: i + 1, rule })),
+        rules
+          .filter(([rule, breaks]) => !spared(rule, line) && breaks(line))
+          .map(([rule]) => ({ line: i + 1, rule })),
       )
   }
 }
