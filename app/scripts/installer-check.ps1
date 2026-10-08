@@ -1,7 +1,8 @@
 # Installs the built installer silently, as a user would get it, and checks what it leaves behind:
 # the Start menu shortcut carries the app id (toasts depend on it), the installed app starts and
 # listens for the plugin, an update keeps the login entry, and uninstalling takes the login entry
-# but keeps the settings. Runs in CI: a PC with Smart App Control on blocks the unsigned installer.
+# but keeps the settings. Runs in CI: a PC with Smart App Control on blocks the unsigned installer,
+# and it replaces, then removes, the Bat-Signal it finds, so it refuses a PC where one is installed.
 # Usage (from app/, after npm run dist): powershell -File scripts/installer-check.ps1
 $ErrorActionPreference = 'Stop'
 
@@ -50,6 +51,7 @@ function Get-ShortcutAppId([string]$path) {
 }
 
 if (-not (Test-Path $setup)) { throw "No $setup`: run npm run dist first." }
+if (Get-Installed) { throw "$name is installed here, and this check would remove it: run it on a PC without it, as CI does." }
 Write-Host "Installing $(Split-Path $setup -Leaf)"
 Install-BatSignal
 $installed = Get-Installed
