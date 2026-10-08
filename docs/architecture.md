@@ -65,7 +65,7 @@ The model lives in `app/src/main/model/` and is pure:
 
 - `sessionReducer.ts`: `applyTranscriptLine` folds transcript lines into a `TrackedSession`. A custom title beats an AI title. Only the last 20 messages are kept. **Tasks** come from `TaskCreate`/`TaskUpdate` results, each with a status history. **Subagents** come from `Agent` calls. **Background jobs** come from `Bash` calls that return a `backgroundTaskId`. Runs finish on `TaskStop` or a `<task-notification>`. `applySubagentLine` adds a subagent's latest reply from its own transcript. The reducer's bookkeeping (`pending`) never leaves the main process: `toSessionState` strips it.
 - `hookSignals.ts`: `applyHookEvent` folds a hook payload into `SessionSignals` (`pendingPermission`, `waitingSince`, `error`, `lastStopAt`).
-- `attention.ts`: `deriveAttention` turns sessions into `AttentionItem`s of kind `permission`, `error`, `waiting`, `reply` or `stalled` (an in-progress task with no news for 30 minutes), sorted by `ATTENTION_URGENCY`. A `waiting` or `reply` item the user has already seen (`seenAt`) is left out.
+- `attention.ts`: `deriveAttention` turns sessions into `AttentionItem`s of kind `permission`, `error`, `waiting`, `reply` or `stalled` (an in-progress task, in a session that is not busy, where neither the task nor the session has moved for 30 minutes), sorted by `ATTENTION_URGENCY`. A `waiting` or `reply` item the user has already seen (`seenAt`) is left out.
 
 What leaves the store is a `StoreSnapshot` (`app/src/shared/types.ts`): `sessions` (one `SessionSnapshot` per case), `attention` (the Needs you list) and `unheard`. Snapshots are pushed at most every 100 ms, and re-pushed every minute because `stalled` depends on the clock.
 
