@@ -6,27 +6,28 @@ Where Bat-Signal can go. The order inside each version is a suggestion. After v1
 
 Observe only. Never acts on sessions.
 
-Where it stands (v0.7.0): everything but the installer, which comes with v1.0.
+Shipped in v1.0.0, with a Windows installer from [Releases](https://github.com/lucas-moont/bat-signal/releases).
 
 - [x] List of active Claude Code sessions with status (working / idle / needs you)
 - [x] Session detail: tasks, subagents, background commands, latest messages
 - [x] Task detail (click): description, status history
 - [x] "Needs you" panel: permission prompts, Claude waiting for input, errors
 - [x] Bat-Signal notices: needs you, finished replying, task completed, session opened/closed (Windows toasts optional)
-- [x] Claude Code plugin with HTTP hooks (alerts at the exact moment)
-- [x] "Go to terminal": brings the session's window to the front
+- [x] Claude Code plugin with hooks (alerts at the exact moment), which give Claude Code nothing back
+- [x] "Go to terminal": brings the session's window to the front and selects its Windows Terminal tab
 - [x] Bat-Clawd, the caped mascot, with states (sleeping, flying, alarmed)
 - [x] Animations: Bat-Signal intro, rain, transitions
 - [x] System tray, global shortcut, start with Windows
-- [ ] Windows installer
+- [x] Windows installer (per user, unsigned for now) and releases built from a tag
+
+After v1.0: sign the installer through SignPath Foundation, so Smart App Control lets it run; see [code-signing.md](research/code-signing.md).
 
 ## v2: "the cave answers back"
 
 Move from watching to acting, carefully and always with explicit confirmation.
 
-- **Approve/deny permissions from the window.** The `PermissionRequest` hook waits for the app's answer with a safe timeout: if the app doesn't answer, Claude falls back to the normal terminal flow.
+- **Approve/deny permissions from the window.** Today's hooks discard every reply on purpose (any program could answer on the port), so this needs a channel that proves the answer comes from Bat-Signal, designed before anything is built. If the app doesn't answer, Claude falls back to the normal terminal flow.
 - **Quick reply.** Send "continue" or a short message to an idle session.
-- **The right Windows Terminal tab.** Today only the window comes to the front. Research Windows Terminal automation to select the exact tab.
 - **History and search.** What each session did today, a per-session timeline, full-text search.
 - **Cost and tokens.** Per-session and per-day panel, from the transcript's `cost-state` lines.
 - **Agent teams and jobs.** Show `~/.claude/teams/` (agent teams, inboxes) and `~/.claude/jobs/` (background jobs).
