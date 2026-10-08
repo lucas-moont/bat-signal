@@ -4,6 +4,11 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Security
+
+- The plugin's hooks post each event from a background command and discard the reply, so no program that answers on port 47777 can approve a permission, block a turn or add to Claude's context. Before plugin 0.4.0 they were HTTP hooks, whose replies Claude Code acts on. Update the plugin with `claude plugin update bat-signal@bat-signal`.
+- Bat-Signal's windows refuse to navigate away from its own page or open new windows, and only its own page can talk to the app.
+
 ## [1.0.0-rc.1] - 2026-10-07
 
 The first build anyone can install: a release candidate for v1.0.

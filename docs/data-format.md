@@ -58,7 +58,7 @@ Next to a transcript, `<sessionId>/subagents/agent-<agentId>.jsonl` holds each s
 
 ## Hook events (with the plugin)
 
-Each hook arrives as a JSON `POST` on `127.0.0.1:47777` (see [plugin.md](plugin.md)). Bat-Signal uses `session_id`, `hook_event_name`, and, by event, `tool_name`, `tool_input`, `tool_use_id`, `notification_type` and `error_type` (`app/src/main/model/hookSignals.ts`). Of `tool_input` it keeps one field (the command, file path, notebook path, URL, pattern, query, description or prompt, in that order: `DETAIL_FIELDS` in `hookSignals.ts`), squeezed to one line of at most 120 characters. Everything else in the payload, including the prompt text of `UserPromptSubmit` and `transcript_path`, is ignored.
+Each hook arrives as a JSON `POST` on `127.0.0.1:47777`, sent by the plugin's background `curl.exe` (see [plugin.md](plugin.md)). Bat-Signal uses `session_id`, `hook_event_name`, and, by event, `tool_name`, `tool_input`, `tool_use_id`, `notification_type` and `error_type` (`app/src/main/model/hookSignals.ts`). Of `tool_input` it keeps one field (the command, file path, notebook path, URL, pattern, query, description or prompt, in that order: `DETAIL_FIELDS` in `hookSignals.ts`), squeezed to one line of at most 120 characters. Everything else in the payload, including the prompt text of `UserPromptSubmit` and `transcript_path`, is ignored.
 
 ```json
 {"session_id":"00000000-0000-4000-8000-000000000001","hook_event_name":"PermissionRequest","tool_name":"Bash","tool_input":{"command":"npm test"},"tool_use_id":"toolu_03"}
