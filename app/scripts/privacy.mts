@@ -41,7 +41,7 @@ const EMAIL = /[\w.%+-]+@(?!\d+x\.)[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org)|git@[\w.-]+)$/i
 /** npm writes the lockfile from the registry: its addresses are packages' own (deprecation notices). */
-const NO_EMAIL_CHECK = /(?:^|\/)package-lock\.json$/
+const NPM_LOCKFILE = /(?:^|\/)package-lock\.json$/
 const TOKEN = new RegExp(
   [
     /sk-ant-[\w-]{16,}/, // Anthropic
@@ -102,7 +102,7 @@ export function leakFinder(local: LocalIdentity): (text: string, file: string) =
     ['session id', (l) => anyBut(l, UUID_WORD, (m) => !ids.has(m[0].toLowerCase()))],
   ]
   return (text, file) => {
-    const checked = NO_EMAIL_CHECK.test(file) ? rules.filter(([rule]) => rule !== 'email') : rules
+    const checked = NPM_LOCKFILE.test(file) ? rules.filter(([rule]) => rule !== 'email') : rules
     return text
       .split(/\r?\n/)
       .flatMap((line, i) =>
