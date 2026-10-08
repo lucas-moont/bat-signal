@@ -32,7 +32,8 @@ function Wait-Until([scriptblock]$condition, [int]$seconds) {
 }
 
 function Install-BatSignal {
-  Start-Process $setup -ArgumentList '/S' -Wait
+  $installer = Start-Process $setup -ArgumentList '/S' -Wait -PassThru
+  Check "the installer exits cleanly (exit code $($installer.ExitCode))" ($installer.ExitCode -eq 0)
 }
 
 # The installer's own uninstall entry: where it put the app, and how Windows removes it.
@@ -81,12 +82,16 @@ if (-not (Test-Path $approved)) { New-Item $approved -Force | Out-Null } # with 
 New-ItemProperty $approved -Name $appId -PropertyType Binary -Value ([byte[]](2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) -Force | Out-Null
 
 Write-Host 'Installing again, as an update does'
+# An update moves the old folder away and unpacks a new one: the app's file is created anew.
+$before = (Get-Item $exe).CreationTimeUtc
 Install-BatSignal
+Check 'the update replaces the app' ((Test-Path $exe) -and (Get-Item $exe).CreationTimeUtc -gt $before)
 Check 'an update keeps the login entry' ($null -ne (Get-Value $run $appId))
 Check "an update keeps Task Manager's switch" ($null -ne (Get-Value $approved $appId))
 
 Write-Host 'Uninstalling, as Windows does'
-Start-Process cmd -ArgumentList '/c', (Get-Installed).QuietUninstallString -Wait
+$uninstall = Start-Process cmd -ArgumentList '/c', (Get-Installed).QuietUninstallString -Wait -PassThru
+Check "the uninstaller exits cleanly (exit code $($uninstall.ExitCode))" ($uninstall.ExitCode -eq 0)
 # The uninstaller copies itself away and carries on, so its end is the app being gone.
 Check 'the app is removed' (Wait-Until { -not (Test-Path $exe) } 60)
 Check 'the uninstall entry is removed' (Wait-Until { $null -eq (Get-Installed) } 30)
