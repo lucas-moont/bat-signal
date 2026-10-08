@@ -53,8 +53,7 @@
   "build": {
     "appId": "com.lucasmoont.bat-signal",
     "directories": {
-      "output": "release",
-      "buildResources": "build"
+      "output": "release"
     },
     "files": [
       "out/**",
@@ -64,16 +63,11 @@
       "resources/**"
     ],
     "win": {
-      "target": "nsis",
       "icon": "resources/icons/tray.ico"
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false,
-      "artifactName": "Bat-Signal-Setup-${version}.${ext}",
-      "createDesktopShortcut": false,
-      "deleteAppDataOnUninstall": false,
-      "include": "build/installer.nsh"
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "createDesktopShortcut": false
     }
   }
 }
