@@ -44,6 +44,14 @@ npm run dist   # the installer: release/Bat-Signal-Setup-<version>.exe
 
 The installer is unsigned for now (see [`docs/research/code-signing.md`](docs/research/code-signing.md)). On a PC with Smart App Control on, Windows blocks it, and `npm run dist` with it, since electron-builder runs the new installer to write its uninstaller; `npm run pack` still works there. CI builds the installer on every PR and runs [`app/scripts/installer-check.ps1`](app/scripts/installer-check.ps1): a silent install, the app started, an update, and an uninstall that removes the login entry but keeps the settings.
 
+## Releasing
+
+1. Move the notes under `## [Unreleased]` in `CHANGELOG.md` to a new `## [x.y.z] - YYYY-MM-DD` section, and add its compare link at the end.
+2. Set `"version"` in `app/package.json` (and `npm install` for the lockfile), in a `chore: version x.y.z` commit.
+3. Once that is on `main`, tag it and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
+
+The [release workflow](.github/workflows/release.yml) then checks everything, builds and checks the installer, and publishes a GitHub release with the installer, `SHA256SUMS.txt` and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that does not match `package.json`, or a version with no notes, publishes nothing.
+
 ## Commits
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
