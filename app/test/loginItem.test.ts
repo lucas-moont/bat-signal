@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { APP_ID } from '../src/main/identity'
 import {
-  APP_ID,
   approvedByTaskManager,
   AT_LOGIN,
   isLoginLaunch,
@@ -34,8 +34,12 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: dev.execPath,
       args: [dev.appPath, AT_LOGIN],
-      name: APP_ID,
+      name: `${APP_ID}.dev`,
     })
+  })
+
+  it("never takes the installed app's entry in development: each has its own name", () => {
+    expect(loginItemFor(true, dev).name).not.toBe(loginItemFor(true, packaged).name)
   })
 
   it('turns off the very entry it turned on (Windows matches path and arguments)', () => {
