@@ -18,6 +18,10 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The write token reaches only the Publish step, never .git/config, where npm's install
+          # scripts and every tool after them could read it.
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: 24
