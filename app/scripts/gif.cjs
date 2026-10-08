@@ -24,14 +24,23 @@ const centreOf = (win, selector) =>
     `(() => { const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect(); return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) } })()`,
   )
 
-/** Captures a frame every 1/FPS s for `ms`, numbering them on from `frames.count`. */
+/**
+ * Takes the latest painted frame every 1/FPS s for `ms`. The offscreen window paints only when
+ * something changes, so a still moment repeats its last frame; nothing is encoded while recording,
+ * so the clip keeps real time however slow the machine.
+ */
 async function record(win, frames, ms) {
-  const end = Date.now() + ms
-  while (Date.now() < end) {
-    const started = Date.now()
-    const image = await win.webContents.capturePage()
-    writeFileSync(join(frames.dir, `${String(frames.count++).padStart(4, '0')}.png`), image.toPNG())
-    await wait(Math.max(0, 1000 / FPS - (Date.now() - started)))
+  let latest = await win.webContents.capturePage()
+  const onPaint = (_event, _dirty, image) => (latest = image)
+  win.webContents.on('paint', onPaint)
+  try {
+    const start = Date.now()
+    for (let i = 0; i < (ms * FPS) / 1000; i++) {
+      await wait(start + (i * 1000) / FPS - Date.now())
+      frames.push(latest)
+    }
+  } finally {
+    win.webContents.off('paint', onPaint)
   }
 }
 
@@ -48,7 +57,8 @@ async function pointAt(win, selector) {
 }
 
 async function main(win) {
-  const frames = { dir: mkdtempSync(join(tmpdir(), 'bat-signal-gif-')), count: 0 }
+  const frames = []
+  const dir = mkdtempSync(join(tmpdir(), 'bat-signal-gif-'))
   try {
     // The disc at rest; the news arrives and a notice card rises up its beam.
     await open(win, 'signal', 'demo-news')
@@ -65,14 +75,15 @@ async function main(win) {
     await pointAt(win, '.detail__terminal button')
     await record(win, frames, 1800)
 
+    frames.forEach((image, i) => writeFileSync(join(dir, `${String(i).padStart(4, '0')}.png`), image.toPNG()))
     execFileSync('ffmpeg', [
-      ...['-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', join(frames.dir, '%04d.png')],
+      ...['-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', join(dir, '%04d.png')],
       ...['-vf', 'split[a][b];[a]palettegen=stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=4'],
       OUT,
     ])
-    console.log(`  demo.gif (${frames.count} frames)`)
+    console.log(`  demo.gif (${frames.length} frames)`)
   } finally {
-    rmSync(frames.dir, { recursive: true, force: true })
+    rmSync(dir, { recursive: true, force: true })
   }
 }
 
