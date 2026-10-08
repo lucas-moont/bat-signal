@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { leakFinder, scanRepo, type LocalIdentity } from '../scripts/privacy.mts'
 
 const nobody: LocalIdentity = { names: [], ids: [] }
-const scan = (text: string, local: LocalIdentity = nobody) =>
-  leakFinder(local)(text).map((l) => `${l.line}:${l.rule}`)
+const scan = (text: string, local: LocalIdentity = nobody, file = 'notes.md') =>
+  leakFinder(local)(text, file).map((l) => `${l.line}:${l.rule}`)
 
 // The leaks are built at run time, so this file passes the scan it specifies.
 const jdoe = 'jdoe'
@@ -55,8 +55,15 @@ describe('privacy check: emails', () => {
     expect(scan('<img src="icon@2x.png"> and logo@3x.webp')).toEqual([])
   })
 
-  it("passes a package's deprecation notice, which npm copies into package-lock.json", () => {
-    expect(scan(`      "deprecated": "Old versions are not supported; contact ${mail}",`)).toEqual([])
+  it("passes package-lock.json's addresses, which npm copies from packages' own notices", () => {
+    const notice = `      "deprecated": "Old versions are not supported; contact ${mail}",`
+    expect(scan(notice, nobody, 'app/package-lock.json')).toEqual([])
+    expect(scan(notice)).toEqual(['1:email'])
+  })
+
+  it('still looks for everything else in package-lock.json', () => {
+    const resolved = `      "resolved": "file:C:/Users/${jdoe}/pkg",`
+    expect(scan(resolved, nobody, 'app/package-lock.json')).toEqual(['1:user folder'])
   })
 
   it('flags any other address', () => {

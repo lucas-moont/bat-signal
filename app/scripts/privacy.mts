@@ -40,8 +40,8 @@ const EMAIL = /[\w.%+-]+@(?!\d+x\.)[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 /** Commit trailers, example addresses, and git@host, the SSH user of clone URLs. */
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org)|git@[\w.-]+)$/i
-/** A package's own deprecation notice, which npm copies into package-lock.json, author address and all. */
-const NPM_DEPRECATION = /^\s*"deprecated": "/
+/** npm writes the lockfile from the registry: its addresses are packages' own (deprecation notices). */
+const NO_EMAIL_CHECK = /(?:^|\/)package-lock\.json$/
 const TOKEN = new RegExp(
   [
     /sk-ant-[\w-]{16,}/, // Anthropic
@@ -81,10 +81,10 @@ const anyBut = (line: string, pattern: RegExp, allowed: (match: RegExpExecArray)
   [...line.matchAll(pattern)].some((m) => !allowed(m))
 
 /**
- * The scanner for one machine: built once, then run on each file. Returns every rule each line
- * breaks, each once, in rule order.
+ * The scanner for one machine: built once, then run on each file (its path from the repository
+ * root, which some rules skip). Returns every rule each line breaks, each once, in rule order.
  */
-export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
+export function leakFinder(local: LocalIdentity): (text: string, file: string) => Leak[] {
   const ids = new Set(local.ids.map((id) => id.toLowerCase()))
   const own = local.names.filter((n) => n.length >= 4 && !EVERYDAY_NAMES.has(n.toLowerCase()))
   // Whole words in any script: \b alone treats an accented letter as a word boundary.
@@ -96,17 +96,19 @@ export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
       'user folder',
       (l) => USER_FOLDERS.some((re) => anyBut(l, re, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))),
     ],
-    ['email', (l) => !NPM_DEPRECATION.test(l) && anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
+    ['email', (l) => anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
     ['token', (l) => TOKEN.test(l)],
     ['username', (l) => names?.test(l) ?? false],
     ['session id', (l) => anyBut(l, UUID_WORD, (m) => !ids.has(m[0].toLowerCase()))],
   ]
-  return (text) =>
-    text
+  return (text, file) => {
+    const checked = NO_EMAIL_CHECK.test(file) ? rules.filter(([rule]) => rule !== 'email') : rules
+    return text
       .split(/\r?\n/)
       .flatMap((line, i) =>
-        rules.filter(([, breaks]) => breaks(line)).map(([rule]) => ({ line: i + 1, rule })),
+        checked.filter(([, breaks]) => breaks(line)).map(([rule]) => ({ line: i + 1, rule })),
       )
+  }
 }
 
 /** Ids of the Claude Code sessions on this machine, from transcript file names (never their contents). */
@@ -146,7 +148,7 @@ export function scanRepo(): (Leak & { file: string })[] {
     .filter(Boolean)
     .flatMap((file) => {
       const text = readText(join(root, file))
-      return text === undefined ? [] : findLeaks(text).map((leak) => ({ file, ...leak }))
+      return text === undefined ? [] : findLeaks(text, file).map((leak) => ({ file, ...leak }))
     })
 }
 
