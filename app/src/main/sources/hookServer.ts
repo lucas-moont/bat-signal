@@ -4,9 +4,10 @@ import type { AddressInfo } from 'node:net'
 export const HOOK_PORT = 47777
 
 /**
- * Receives Claude Code HTTP hooks (see plugin/bat-signal/hooks/hooks.json) on the loopback
- * interface. It is observe-only: every answer is an empty 204, which Claude Code reads as
- * "no decision", so Bat-Signal can never approve or block anything.
+ * Receives the events the plugin's hooks post (see plugin/bat-signal/hooks/hooks.json) on the
+ * loopback interface, and answers each with an empty 204. The answer decides nothing either way:
+ * the hooks are background commands that discard it, so neither this server nor any other program
+ * on the port can approve or block anything for Claude Code.
  */
 export class HookServer {
   private readonly server: Server
