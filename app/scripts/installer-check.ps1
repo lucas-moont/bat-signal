@@ -5,12 +5,16 @@
 # Usage (from app/, after npm run dist): powershell -File scripts/installer-check.ps1
 $ErrorActionPreference = 'Stop'
 
-$appId = 'com.lucasmoont.bat-signal'
+# The id and the name the installer was built with (identity.test.ts ties the id to the app's).
+$pkg = Get-Content (Join-Path $PSScriptRoot '..\package.json') -Raw | ConvertFrom-Json
+$appId = $pkg.build.appId
+$name = $pkg.productName
+$setup = Join-Path $PSScriptRoot "..\release\$name-Setup-$($pkg.version).exe"
+$settings = Join-Path $env:APPDATA $name
+$shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$name.lnk"
 $run = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-$approved = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run'
-$settings = Join-Path $env:APPDATA 'Bat-Signal'
-$shortcut = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Bat-Signal.lnk'
-$setup = Get-ChildItem (Join-Path $PSScriptRoot '..\release\Bat-Signal-Setup-*.exe') | Select-Object -First 1
+$approved = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run' # loginItem.ts
+$port = 47777 # HOOK_PORT, hookServer.ts
 $failures = 0
 
 function Check([string]$what, [bool]$ok) {
@@ -27,17 +31,17 @@ function Wait-Until([scriptblock]$condition, [int]$seconds) {
 }
 
 function Install-BatSignal {
-  Start-Process $setup.FullName -ArgumentList '/S' -Wait
+  Start-Process $setup -ArgumentList '/S' -Wait
 }
 
-# Where the installer says it put the app, from its own uninstall entry.
+# The installer's own uninstall entry: where it put the app, and how Windows removes it.
 function Get-Installed {
   Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-    Get-ItemProperty | Where-Object { $_.DisplayName -like 'Bat-Signal*' } | Select-Object -First 1
+    Get-ItemProperty | Where-Object { $_.DisplayName -like "$name*" } | Select-Object -First 1
 }
 
-function Get-Value([string]$key, [string]$name) {
-  (Get-ItemProperty $key -Name $name -ErrorAction SilentlyContinue).$name
+function Get-Value([string]$key, [string]$valueName) {
+  (Get-ItemProperty $key -Name $valueName -ErrorAction SilentlyContinue).$valueName
 }
 
 function Get-ShortcutAppId([string]$path) {
@@ -45,13 +49,15 @@ function Get-ShortcutAppId([string]$path) {
   $folder.ParseName((Split-Path $path -Leaf)).ExtendedProperty('System.AppUserModel.ID')
 }
 
-if (-not $setup) { throw 'No release\Bat-Signal-Setup-*.exe: run npm run dist first.' }
-Write-Host "Installing $($setup.Name)"
+if (-not (Test-Path $setup)) { throw "No $setup`: run npm run dist first." }
+Write-Host "Installing $(Split-Path $setup -Leaf)"
 Install-BatSignal
 $installed = Get-Installed
 Check 'the installer registers an uninstall entry' ($null -ne $installed)
-$folder = $installed.InstallLocation
-$exe = Join-Path $folder 'Bat-Signal.exe'
+if (-not $installed) { throw 'Nothing more to check without the uninstall entry.' }
+# UninstallString is "<folder>\Uninstall <name>.exe" /currentuser.
+$folder = Split-Path ([regex]'^"([^"]+)"').Match($installed.UninstallString).Groups[1].Value
+$exe = Join-Path $folder "$name.exe"
 Check "the app is installed ($exe)" (Test-Path $exe)
 Check 'the toast icon sits outside the asar, where Windows can read it' `
   (Test-Path (Join-Path $folder 'resources\app.asar.unpacked\resources\icons\toast.png'))
@@ -60,15 +66,16 @@ Check "the shortcut carries the app id $appId" ((Get-ShortcutAppId $shortcut) -e
 
 Write-Host 'Starting the installed app'
 $app = Start-Process $exe -PassThru
-$listening = Wait-Until { Get-NetTCPConnection -LocalPort 47777 -State Listen -ErrorAction SilentlyContinue } 30
-Check 'it listens for the plugin on 127.0.0.1:47777' $listening
+$listening = Wait-Until { Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue } 30
+Check "it listens for the plugin on 127.0.0.1:$port" $listening
 Check "it keeps its settings in $settings" (Wait-Until { Test-Path $settings } 10)
 Stop-Process -Id $app.Id -Force # its helper processes end with it
 Check 'it stops' (Wait-Until { -not (Get-Process -Id $app.Id -ErrorAction SilentlyContinue) } 10)
 
-# The entry "Start with Windows" writes, and Task Manager's switch beside it.
+# The entry "Start with Windows" writes (--hidden: AT_LOGIN, loginItem.ts), and Task Manager's
+# switch beside it.
 New-ItemProperty $run -Name $appId -Value "`"$exe`" --hidden" -Force | Out-Null
-New-Item $approved -Force -ErrorAction SilentlyContinue | Out-Null
+if (-not (Test-Path $approved)) { New-Item $approved | Out-Null }
 New-ItemProperty $approved -Name $appId -PropertyType Binary -Value ([byte[]](2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) -Force | Out-Null
 
 Write-Host 'Installing again, as an update does'
@@ -76,9 +83,8 @@ Install-BatSignal
 Check 'an update keeps the login entry' ($null -ne (Get-Value $run $appId))
 Check "an update keeps Task Manager's switch" ($null -ne (Get-Value $approved $appId))
 
-Write-Host 'Uninstalling'
-$uninstaller = Join-Path $folder 'Uninstall Bat-Signal.exe'
-Start-Process $uninstaller -ArgumentList '/S' -Wait
+Write-Host 'Uninstalling, as Windows does'
+Start-Process cmd -ArgumentList '/c', (Get-Installed).QuietUninstallString -Wait
 # The uninstaller copies itself away and carries on, so its end is the app being gone.
 Check 'the app is removed' (Wait-Until { -not (Test-Path $exe) } 60)
 Check 'the uninstall entry is removed' (Wait-Until { $null -eq (Get-Installed) } 30)
