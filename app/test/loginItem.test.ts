@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { appIdFor } from '../src/main/identity'
 import {
-  APP_ID,
   approvedByTaskManager,
   AT_LOGIN,
   isLoginLaunch,
@@ -25,7 +25,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: packaged.execPath,
       args: [AT_LOGIN],
-      name: APP_ID,
+      name: appIdFor(true),
     })
   })
 
@@ -34,7 +34,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: dev.execPath,
       args: [dev.appPath, AT_LOGIN],
-      name: APP_ID,
+      name: appIdFor(false),
     })
   })
 
@@ -57,7 +57,7 @@ describe('isLoginLaunch', () => {
 
 describe('approvedByTaskManager: reading what Task Manager wrote (reg query)', () => {
   const row = (bytes: string) =>
-    `\r\nHKEY_CURRENT_USER\\Software\\...\\StartupApproved\\Run\r\n    ${APP_ID}    REG_BINARY    ${bytes}\r\n\r\n`
+    `\r\nHKEY_CURRENT_USER\\Software\\...\\StartupApproved\\Run\r\n    ${appIdFor(true)}    REG_BINARY    ${bytes}\r\n\r\n`
 
   it('takes an even first byte for switched on', () => {
     expect(approvedByTaskManager(row('020000000000000000000000'))).toBe(true)

@@ -6,7 +6,8 @@ import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
-import { APP_ID, isLoginLaunch } from './loginItem'
+import { appIdFor } from './identity'
+import { isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
@@ -137,10 +138,15 @@ function start(): void {
   })
 }
 
+// A checkout keeps its settings, and the single-instance lock that lives with them, beside the
+// installed app's: each runs once. A --user-data-dir given on the command line (a test instance) wins.
+if (!app.isPackaged && !app.commandLine.hasSwitch('user-data-dir'))
+  app.setPath('userData', `${app.getPath('userData')} Dev`)
+
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.setAppUserModelId(APP_ID)
+  app.setAppUserModelId(appIdFor(app.isPackaged))
   // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
   // for from the start, since a second launch can come while this one is still getting ready.
   // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
