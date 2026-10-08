@@ -64,12 +64,13 @@ jobs:
         run: |
           $tag = $env:GITHUB_REF_NAME
           $files = "release/$env:SETUP", 'release/SHA256SUMS.txt'
-          $flags = if ($env:VERSION.Contains('-')) { @('--prerelease') } else { @() }
+          # One plain argument: splatting a one-item list (@flags) passed it letter by letter.
+          $prerelease = if ($env:VERSION.Contains('-')) { '--prerelease' } else { '--prerelease=false' }
           gh release view $tag *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload $tag @files --clobber
+            gh release upload $tag $files --clobber
           } else {
-            gh release create $tag @files --draft --title "$env:PRODUCT $env:VERSION" --notes-file release-notes.md @flags
+            gh release create $tag $files --draft --title "$env:PRODUCT $env:VERSION" --notes-file release-notes.md $prerelease
           }
           if ($LASTEXITCODE -ne 0) { throw 'The files did not reach the release.' }
           gh release edit $tag --draft=false
