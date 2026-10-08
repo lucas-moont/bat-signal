@@ -4,7 +4,7 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
-## [0.9.0-rc.1] - 2026-10-08
+## [1.0.0-rc.1] - 2026-10-08
 
 The first build anyone can install: a release candidate for v1.0.
 
@@ -22,5 +22,5 @@ The first build anyone can install: a release candidate for v1.0.
 
 - The installer is not code-signed yet, so Windows SmartScreen warns about it, and Smart App Control blocks it. See [`docs/research/code-signing.md`](docs/research/code-signing.md).
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v0.9.0-rc.1...HEAD
-[0.9.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v0.9.0-rc.1
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...HEAD
+[1.0.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0-rc.1
