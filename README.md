@@ -67,7 +67,7 @@ The plugin is observe-only and does nothing when the app is closed. Details in [
 The installer is not code-signed yet: a signing certificate costs money and identity paperwork, and this is a one-person open-source project (see [docs/research/code-signing.md](docs/research/code-signing.md)). Windows SmartScreen warns about any new, unsigned download; the warning says nothing about what the app does.
 
 1. Download the installer only from this repository's [Releases page](https://github.com/lucas-moont/bat-signal/releases).
-2. Optionally, check it against `SHA256SUMS.txt` from the same release: `Get-FileHash .\Bat-Signal-Setup-<version>.exe -Algorithm SHA256` must print the same hash (in capitals).
+2. Optionally, check it against `SHA256SUMS.txt` from the same release: `Get-FileHash .\Bat-Signal-Setup-<version>.exe -Algorithm SHA256` prints its hash in capitals and `SHA256SUMS.txt` has it in lowercase: they must match, letter for letter.
 3. If your browser says the file isn't commonly downloaded, choose to keep it.
 4. When Windows shows "Windows protected your PC", click **More info**, check the app name, then **Run anyway**.
 
