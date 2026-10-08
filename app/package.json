@@ -22,6 +22,7 @@
     "icons": "node scripts/icons.mts",
     "screenshot": "electron-vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/screenshot.ps1",
     "shots": "electron-vite build && electron scripts/shots.cjs",
+    "gif": "electron-vite build && electron scripts/gif.cjs",
     "test:watch": "vitest"
   },
   "devDependencies": {
