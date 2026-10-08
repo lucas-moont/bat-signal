@@ -5,13 +5,13 @@
 //
 // Frames are captured from an offscreen window, as npm run shots does, and ffmpeg turns them into
 // a GIF with one palette built for the whole clip.
-const { app, BrowserWindow } = require('electron')
+const { app } = require('electron')
 const { execFileSync } = require('node:child_process')
 const { mkdtempSync, rmSync, writeFileSync } = require('node:fs')
 const { tmpdir } = require('node:os')
 const { join } = require('node:path')
+const { HTML, demoWindow, click, clickText } = require('./demoWindow.cjs')
 
-const HTML = join(__dirname, '../out/renderer/index.html')
 const OUT = join(__dirname, '../../docs/screenshots/demo.gif')
 const SIZE = [320, 440] // the panel's default size; the disc scene uses the same frame
 const SCALE = 1.5 // sharp enough to read, small enough for a README GIF
@@ -58,11 +58,9 @@ async function main(win) {
     // The panel opens on Needs you, then a case, and the pointer goes to its terminal button.
     await open(win, 'panel', 'demo')
     await record(win, frames, 3400) // the Bat-Signal intro, then the list
-    await win.webContents.executeJavaScript(`document.querySelectorAll('.tabs__tab')[1].click()`)
+    await win.webContents.executeJavaScript(click('.tabs__tab', 1))
     await record(win, frames, 1200)
-    await win.webContents.executeJavaScript(
-      `[...document.querySelectorAll('.card--case')].find((el) => el.textContent.includes('Batmobile')).click()`,
-    )
+    await win.webContents.executeJavaScript(clickText('.card--case', 'Batmobile'))
     await record(win, frames, 1800)
     await pointAt(win, '.detail__terminal button')
     await record(win, frames, 1800)
@@ -79,14 +77,8 @@ async function main(win) {
 }
 
 app.whenReady().then(async () => {
-  const win = new BrowserWindow({
-    show: false,
-    frame: false,
-    backgroundColor: '#000000',
-    webPreferences: { offscreen: true, backgroundThrottling: false },
-  })
+  const win = demoWindow()
   win.setContentSize(SIZE[0] * SCALE, SIZE[1] * SCALE)
-  win.webContents.setFrameRate(30)
   try {
     await main(win)
   } catch (err) {
