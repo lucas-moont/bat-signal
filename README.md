@@ -3,16 +3,10 @@
 > A small signal in the corner of your screen that lights up when your **Claude Code** sessions need you, with a Bat-Computer panel one click away.
 
 <p align="center">
-  <img src="docs/screenshots/signal-notice.png" width="320" alt="The Bat-Signal disc lit red, sending a permission notice up its beam">
+  <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and its Terminal button lights up">
 </p>
 
-<p align="center">
-  <img src="docs/screenshots/needs-you.png" width="300" alt="The needs-you list: a permission prompt, an error, a wait, a new reply and a stalled task, each stamped in red">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/case-detail.png" width="300" alt="A case: its tasks, subagents, background commands and last words">
-</p>
-
-**Status:** under construction (v0). See the [roadmap](docs/ROADMAP.md).
+**Status:** v1.0 release candidate for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md).
 
 Bat-Signal rests in a corner of your screen as a small signal disc. When something happens, the disc lights up and a notice card rises from it; click it to open the full panel right on that case. It:
 
@@ -27,6 +21,10 @@ Bat-Signal rests in a corner of your screen as a small signal disc. When somethi
 The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all.
 
 ## A closer look
+
+| Needs you | A case | A notice from the disc |
+|---|---|---|
+| <img src="docs/screenshots/needs-you.png" width="240" alt="The needs-you list: a permission prompt, an error, a wait, a new reply and a stalled task, each stamped in red"> | <img src="docs/screenshots/case-detail.png" width="240" alt="A case: its tasks, subagents, background commands and last words"> | <img src="docs/screenshots/signal-notice.png" width="240" alt="The Bat-Signal disc lit red, sending a permission notice up its beam"> |
 
 | Cases | Task drawer | All quiet |
 |---|---|---|
@@ -50,26 +48,36 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 Screenshots use made-up data (`npm run shots`), never real sessions.
 
-## Getting started
+## Install
 
-Requirements: Windows 10/11, Node.js 24+ and Claude Code.
-
-```bash
-cd app
-npm install
-npm run dev
-```
-
-Bat-Signal already works from the files Claude Code writes. For instant alerts, including permission prompts, install the plugin:
+1. **Download** `Bat-Signal-Setup-<version>.exe` from the [Releases page](https://github.com/lucas-moont/bat-signal/releases) and run it. It installs for you alone, with no admin prompt, adds Bat-Signal to the Start menu and opens it.
+2. **Install the plugin** in Claude Code, for instant alerts:
 
 ```bash
 claude plugin marketplace add lucas-moont/bat-signal
 claude plugin install bat-signal@bat-signal
 ```
 
-Without the plugin, Bat-Signal still lists sessions, their tasks and progress, and notices when a turn ends; with it, it also shows **permission prompts**, **Claude waiting for you** and **errors** the moment they happen. Needs you says so when the plugin is silent.
+Without the plugin, Bat-Signal still works from the files Claude Code writes: it lists sessions, their tasks and progress, and notices when a turn ends; with it, it also shows **permission prompts**, **Claude waiting for you** and **errors** the moment they happen. Needs you says so when the plugin is silent.
 
 The plugin is observe-only and does nothing when the app is closed. Details in [docs/plugin.md](docs/plugin.md). Coming from Batcave? See [upgrading](docs/plugin.md#upgrading-from-batcave): the old plugin must be removed first.
+
+### "Windows protected your PC"
+
+The installer is not code-signed yet: a signing certificate costs money and identity paperwork, and this is a one-person open-source project (see [docs/research/code-signing.md](docs/research/code-signing.md)). Windows SmartScreen warns about any new, unsigned download; the warning says nothing about what the app does.
+
+1. Download the installer only from this repository's [Releases page](https://github.com/lucas-moont/bat-signal/releases).
+2. Optionally, check it against `SHA256SUMS.txt` from the same release: `Get-FileHash .\Bat-Signal-Setup-<version>.exe -Algorithm SHA256` prints its hash in capitals and `SHA256SUMS.txt` has it in lowercase: they must match, letter for letter.
+3. If your browser says the file isn't commonly downloaded, choose to keep it.
+4. When Windows shows "Windows protected your PC", click **More info**, check the app name, then **Run anyway**.
+
+If **Smart App Control** is on (Windows 11, under Windows Security → App & browser control), Windows blocks unsigned apps and offers no "Run anyway", nor any exception for one app. We'd rather you wait for a signed release than turn off a security feature for us.
+
+### Uninstall
+
+From Windows Settings → Apps. Uninstalling also removes Bat-Signal from the apps that start with Windows, and keeps your settings in `%APPDATA%\Bat-Signal` for the next install.
+
+## Using it
 
 Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report theme is in Settings.
 
@@ -94,6 +102,20 @@ A window parked in a corner all day has to be cheap. Every looping effect runs o
 | The panel open | | 0.7–2.0% |
 
 The disc only pulses for the few seconds an urgent notice is out, and Bat-Clawd keeps watch from the perch mostly still.
+
+## How it works
+
+Bat-Signal reads what Claude Code already writes under `~/.claude/` (never the `*.key` files beside your sessions, which hold secrets) and, with the plugin, what Claude Code's hooks report. It only watches: nothing leaves your PC (it listens only on `127.0.0.1` and opens no outgoing connection), and the plugin can't approve or change anything.
+
+- [Architecture](docs/architecture.md): how files and hooks become one snapshot, and where it goes
+- [What it reads and writes](docs/data-format.md)
+- [The plugin](docs/plugin.md): what it sends, and why it is safe
+- [Design](docs/design.md): the design system and the promise every change keeps
+- [Changelog](CHANGELOG.md)
+
+## Contributing
+
+Running it from source, the checks, building the installer and releasing are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 

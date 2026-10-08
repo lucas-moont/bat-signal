@@ -3,20 +3,15 @@
 //
 // The built renderer is loaded without the preload bridge and with #demo, so it serves the
 // made-up Gotham night. Offscreen rendering keeps animations running while nothing is shown on screen.
-const { app, BrowserWindow } = require('electron')
+const { app } = require('electron')
 const { mkdirSync, writeFileSync } = require('node:fs')
 const { join } = require('node:path')
+const { HTML, demoWindow, click, clickText } = require('./demoWindow.cjs')
 
-const HTML = join(__dirname, '../out/renderer/index.html')
 const OUT = join(__dirname, '../../docs/screenshots')
 const SCALE = 2 // retina-sharp images for the README
 const SETTLE_MS = 2400 // past the Bat-Signal intro
 
-const click = (selector, index = 0) =>
-  `document.querySelectorAll(${JSON.stringify(selector)})[${index}].click()`
-/** Clicks the first element matching the selector whose text contains `text`. */
-const clickText = (selector, text) =>
-  `[...document.querySelectorAll(${JSON.stringify(selector)})].find((el) => el.textContent.includes(${JSON.stringify(text)})).click()`
 const later = (ms, js) => `setTimeout(() => { ${js} }, ${ms})`
 
 const SHOTS = [
@@ -107,13 +102,7 @@ async function shoot(
 app.whenReady().then(async () => {
   mkdirSync(OUT, { recursive: true })
   // One window for every shot: each shot reloads the page from scratch.
-  const win = new BrowserWindow({
-    show: false,
-    frame: false,
-    backgroundColor: '#000000',
-    webPreferences: { offscreen: true, backgroundThrottling: false },
-  })
-  win.webContents.setFrameRate(30)
+  const win = demoWindow()
   try {
     for (const shot of SHOTS) await shoot(win, shot)
   } catch (err) {
