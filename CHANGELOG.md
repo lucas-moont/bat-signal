@@ -4,6 +4,30 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-07
+
+The first version anyone can install. Since 0.7.0:
+
+### Added
+
+- A Windows installer, `Bat-Signal-Setup-1.0.0.exe`: for the current user, with no admin prompt, in the Start menu, and an uninstall that removes the login entry and keeps your settings.
+- Releases on GitHub, built and checked from a tag, with a `SHA256SUMS.txt` to check the download against.
+- Docs on how Bat-Signal works, what it reads and writes, the plugin and the design, in [`docs/`](https://github.com/lucas-moont/bat-signal/tree/main/docs).
+
+### Changed
+
+- The installed app's toasts say "Bat-Signal" from the first one.
+- A development build runs beside an installed Bat-Signal, with its own settings.
+
+### Security
+
+- The plugin's hooks give Claude Code nothing back, so no program answering on port 47777 can approve a permission, block a turn or add to Claude's context. Update an installed plugin with `claude plugin update bat-signal@bat-signal` (0.4.0).
+- The windows stay on Bat-Signal's own page, and only that page can talk to the app.
+
+### Notes
+
+- The installer is not code-signed yet. Windows SmartScreen warns about it ("More info", then "Run anyway"), and Smart App Control blocks it. See ["Windows protected your PC"](https://github.com/lucas-moont/bat-signal#windows-protected-your-pc).
+
 ## [1.0.0-rc.2] - 2026-10-07
 
 The second release candidate for v1.0: what a security review found before it, fixed.
@@ -111,7 +135,8 @@ A corner companion.
 
 - Live sessions rebuilt from the files Claude Code already writes: titles, messages, tasks, subagents and background commands, and what needs you.
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.2...HEAD
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0
 [1.0.0-rc.2]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...v1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0-rc.1
 [0.7.0]: https://github.com/lucas-moont/bat-signal/compare/v0.6.0...v0.7.0
