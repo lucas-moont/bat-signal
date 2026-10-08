@@ -59,7 +59,10 @@ $installed = Get-Installed
 Check 'the installer registers an uninstall entry' ($null -ne $installed)
 if (-not $installed) { throw 'Nothing more to check without the uninstall entry.' }
 # UninstallString is "<folder>\Uninstall <name>.exe" /currentuser.
-$folder = Split-Path ([regex]'^"([^"]+)"').Match($installed.UninstallString).Groups[1].Value
+$quoted = ([regex]'^"([^"]+)"').Match($installed.UninstallString)
+Check 'the uninstall entry names its uninstaller' $quoted.Success
+if (-not $quoted.Success) { throw "Unexpected UninstallString: $($installed.UninstallString)" }
+$folder = Split-Path $quoted.Groups[1].Value
 $exe = Join-Path $folder "$name.exe"
 Check "the app is installed ($exe)" (Test-Path $exe)
 Check 'the toast icon sits outside the asar, where Windows can read it' `
