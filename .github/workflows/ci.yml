@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+# Read-only: CI builds and checks, and publishes nothing.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -19,6 +23,8 @@ jobs:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # npm's install scripts run next
       - uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -40,6 +46,8 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # npm's install scripts run next
       - uses: actions/setup-node@v7
         with:
           node-version: 24
