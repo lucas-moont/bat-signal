@@ -22,6 +22,9 @@ jobs:
           # The write token reaches only the Publish step, never .git/config, where npm's install
           # scripts and every tool after them could read it.
           persist-credentials: false
+          fetch-depth: 0 # the history, to tell whether the tag is on main
+      - name: The tagged commit is on main
+        run: git merge-base --is-ancestor $env:GITHUB_SHA origin/main
       - uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -31,7 +34,7 @@ jobs:
         shell: pwsh
         run: |
           $pkg = Get-Content package.json -Raw | ConvertFrom-Json
-          if ("v$($pkg.version)" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
+          if ("v$($pkg.version)" -cne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
           "VERSION=$($pkg.version)" >> $env:GITHUB_ENV
           "PRODUCT=$($pkg.productName)" >> $env:GITHUB_ENV
           # As build.nsis.artifactName names it.
