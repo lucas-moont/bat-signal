@@ -39,6 +39,8 @@ export async function isSessionAlive(entry: RegistryEntry, probe: ProcessProbe):
 
 const DEBOUNCE_MS = 150
 const ENTRY_FILE = /^\d+\.json$/ // never touch the sibling *.key files: they hold secrets
+/** A session id: it becomes a file name (its transcript) and part of a command (claude --resume). */
+const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export function parseEntry(text: string): RegistryEntry | null {
   let raw
@@ -50,7 +52,7 @@ export function parseEntry(text: string): RegistryEntry | null {
   const pid = num(raw['pid'])
   const sessionId = str(raw['sessionId'])
   const cwd = str(raw['cwd'])
-  if (pid === undefined || !sessionId || !cwd) return null
+  if (pid === undefined || !sessionId || !SESSION_ID.test(sessionId) || !cwd) return null
   const status = str(raw['status']) as LiveStatus | undefined
   return {
     pid,
