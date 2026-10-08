@@ -55,8 +55,13 @@ describe('privacy check: emails', () => {
     expect(scan('<img src="icon@2x.png"> and logo@3x.webp')).toEqual([])
   })
 
+  it("passes a package's deprecation notice, which npm copies into package-lock.json", () => {
+    expect(scan(`      "deprecated": "Old versions are not supported; contact ${mail}",`)).toEqual([])
+  })
+
   it('flags any other address', () => {
     expect(scan(`mail me: ${mail}`)).toEqual(['1:email'])
+    expect(scan(`      "author": "${mail}",`)).toEqual(['1:email'])
   })
 })
 

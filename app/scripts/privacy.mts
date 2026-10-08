@@ -40,6 +40,8 @@ const EMAIL = /[\w.%+-]+@(?!\d+x\.)[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi
 /** Commit trailers, example addresses, and git@host, the SSH user of clone URLs. */
 const ALLOWED_EMAIL =
   /^(?:noreply@anthropic\.com|[\w.+-]+@users\.noreply\.github\.com|[\w.+-]+@example\.(?:com|org)|git@[\w.-]+)$/i
+/** A package's own deprecation notice, which npm copies into package-lock.json, author address and all. */
+const NPM_DEPRECATION = /^\s*"deprecated": "/
 const TOKEN = new RegExp(
   [
     /sk-ant-[\w-]{16,}/, // Anthropic
@@ -94,7 +96,7 @@ export function leakFinder(local: LocalIdentity): (text: string) => Leak[] {
       'user folder',
       (l) => USER_FOLDERS.some((re) => anyBut(l, re, (m) => FICTIONAL_USERS.has(m[1]!.toLowerCase()))),
     ],
-    ['email', (l) => anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
+    ['email', (l) => !NPM_DEPRECATION.test(l) && anyBut(l, EMAIL, (m) => ALLOWED_EMAIL.test(m[0]))],
     ['token', (l) => TOKEN.test(l)],
     ['username', (l) => names?.test(l) ?? false],
     ['session id', (l) => anyBut(l, UUID_WORD, (m) => !ids.has(m[0].toLowerCase()))],
