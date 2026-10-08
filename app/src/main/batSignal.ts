@@ -11,6 +11,7 @@ import { listSubagentTranscripts, locateTranscript } from './sources/transcriptL
 import { TranscriptTailer } from './sources/transcriptTailer'
 import { createWindowsProbe } from './sources/windowsProbe'
 import { SessionStore } from './store'
+import { handleIpc, onIpc } from './appIpc'
 
 /** Transcripts are re-read this often, so the window stays current even without the plugin. */
 const REFRESH_MS = 2000
@@ -48,10 +49,10 @@ function startDemo(publish: Publish): () => void {
         news = true
         publish(demoSnapshot())
       }, DEMO_NEWS_MS)
-  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : before))
-  ipcMain.on(IPC.markSeen, () => undefined)
+  handleIpc(IPC.getSnapshot, () => (news ? demoSnapshot() : before))
+  onIpc(IPC.markSeen, () => undefined)
   // The demo's sessions have no terminal: always the resume command.
-  ipcMain.handle(IPC.goToTerminal, (_event, sessionId: unknown) =>
+  handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
     goToTerminal({ pid: -1, sessionId: String(sessionId) }),
   )
   return () => {
@@ -96,23 +97,20 @@ function startLive(publish: Publish): () => void {
   // news against what the pages loaded, even when nothing changes before the first news.
   void store.ready.then(() => publish(store.snapshot()))
 
-  ipcMain.handle(IPC.getSnapshot, async () => {
+  handleIpc(IPC.getSnapshot, async () => {
     await store.ready
     return store.snapshot()
   })
-  ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
+  onIpc(IPC.markSeen, (_event, sessionId: unknown) => {
     if (typeof sessionId === 'string') store.markSeen(sessionId)
   })
-  ipcMain.handle(
-    IPC.goToTerminal,
-    async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
-      if (typeof sessionId !== 'string') return undefined
-      // A session that left the snapshot can still be resumed by its id.
-      const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
-      return goToTerminal(session ?? { pid: -1, sessionId })
-    },
-  )
-  ipcMain.on(IPC.warmTerminal, warmTerminal)
+  handleIpc(IPC.goToTerminal, async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
+    if (typeof sessionId !== 'string') return undefined
+    // A session that left the snapshot can still be resumed by its id.
+    const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
+    return goToTerminal(session ?? { pid: -1, sessionId })
+  })
+  onIpc(IPC.warmTerminal, warmTerminal)
 
   registry.start()
   const refreshTimer = setInterval(() => void store.refresh(), REFRESH_MS)
