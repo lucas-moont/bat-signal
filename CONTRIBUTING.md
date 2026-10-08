@@ -52,7 +52,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 - `fix(scope): ...` bug fix
 - `test(scope): ...` tests
 - `refactor(scope): ...` internal change, same behavior
-- `docs: ...`, `style: ...`, `chore: ...`, `ci: ...`, `perf: ...`
+- `docs: ...`, `style: ...`, `chore: ...`, `ci: ...`, `perf: ...`, `build: ...` (packaging and the installer)
 
 Small commits, one topic each.
 
