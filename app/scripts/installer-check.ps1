@@ -75,7 +75,7 @@ Check 'it stops' (Wait-Until { -not (Get-Process -Id $app.Id -ErrorAction Silent
 # The entry "Start with Windows" writes (--hidden: AT_LOGIN, loginItem.ts), and Task Manager's
 # switch beside it.
 New-ItemProperty $run -Name $appId -Value "`"$exe`" --hidden" -Force | Out-Null
-if (-not (Test-Path $approved)) { New-Item $approved | Out-Null }
+if (-not (Test-Path $approved)) { New-Item $approved -Force | Out-Null } # with its parents, on a fresh PC
 New-ItemProperty $approved -Name $appId -PropertyType Binary -Value ([byte[]](2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) -Force | Out-Null
 
 Write-Host 'Installing again, as an update does'
