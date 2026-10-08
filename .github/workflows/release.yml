@@ -1,0 +1,75 @@
+name: Release
+
+# A v* tag publishes that version: the installer, its checksum and its notes from CHANGELOG.md.
+# Everything is checked first, and a tag with a "-" (v1.0.0-rc.1) makes a pre-release. Built only
+# on GitHub's own runners, from the tag, as SignPath Foundation requires for signing later.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The write token reaches only the Publish step, never .git/config, where npm's install
+          # scripts and every tool after them could read it.
+          persist-credentials: false
+          fetch-depth: 0 # the history, to tell whether the tag is on main
+      - name: The tagged commit is on main
+        run: git merge-base --is-ancestor $env:GITHUB_SHA origin/main
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: The tag names the version in package.json
+        shell: pwsh
+        run: |
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          if ("v$($pkg.version)" -cne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
+          "VERSION=$($pkg.version)" >> $env:GITHUB_ENV
+          "PRODUCT=$($pkg.productName)" >> $env:GITHUB_ENV
+          # As build.nsis.artifactName names it.
+          "SETUP=$($pkg.productName)-Setup-$($pkg.version).exe" >> $env:GITHUB_ENV
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: The notes, before anything is built
+        shell: bash # passes the notes' bytes through as they are
+        run: node scripts/release-notes.mts "$VERSION" > release-notes.md
+      - run: npm run dist
+      - run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/installer-check.ps1
+      - name: The checksum
+        shell: pwsh
+        working-directory: app/release
+        run: |
+          "$((Get-FileHash $env:SETUP -Algorithm SHA256).Hash.ToLower())  $env:SETUP" | Set-Content SHA256SUMS.txt -NoNewline
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        # A draft first, made public once both files are up: a run that fails halfway publishes
+        # nothing, and running it again replaces what the last try uploaded.
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $files = "release/$env:SETUP", 'release/SHA256SUMS.txt'
+          $flags = if ($env:VERSION.Contains('-')) { @('--prerelease') } else { @() }
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag @files --clobber
+          } else {
+            gh release create $tag @files --draft --title "$env:PRODUCT $env:VERSION" --notes-file release-notes.md @flags
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'The files did not reach the release.' }
+          gh release edit $tag --draft=false
