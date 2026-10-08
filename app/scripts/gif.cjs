@@ -44,10 +44,14 @@ async function record(win, frames, ms) {
   }
 }
 
+/** How long a fresh page takes to repaint at the new zoom, so no frame shows it at the old one. */
+const ZOOM_SETTLE_MS = 300
+
 /** Loads a view of the demo night, at the GIF's size and scale. */
 async function open(win, view, hash) {
   await win.loadFile(HTML, { hash, query: { view, gif: `${view}-${hash}` } })
   win.webContents.setZoomFactor(SCALE)
+  await wait(ZOOM_SETTLE_MS)
 }
 
 /** A real pointer move, so the page shows its hover state. */
@@ -62,7 +66,6 @@ async function main(win) {
   try {
     // The disc at rest; the news arrives and a notice card rises up its beam.
     await open(win, 'signal', 'demo-news')
-    await wait(300)
     await record(win, frames, 4200)
 
     // The panel opens on Needs you, then a case, and the pointer goes to its terminal button.
