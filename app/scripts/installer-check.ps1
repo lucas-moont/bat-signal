@@ -69,9 +69,14 @@ Check "the shortcut carries the app id $appId" ((Get-ShortcutAppId $shortcut) -e
 
 Write-Host 'Starting the installed app'
 $app = Start-Process $exe -PassThru
-$listening = Wait-Until { Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue } 30
+# The listener must be the installed app itself, not whatever else holds the port.
+$listening = Wait-Until {
+  Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+    Where-Object { (Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).Path -eq $exe }
+} 30
 Check "it listens for the plugin on 127.0.0.1:$port" $listening
-Check "it keeps its settings in $settings" (Wait-Until { Test-Path $settings } 10)
+# Chromium makes the data folder as the app starts: this is where its settings will be written.
+Check "its data folder is $settings" (Wait-Until { Test-Path $settings } 10)
 Stop-Process -Id $app.Id -Force # its helper processes end with it
 Check 'it stops' (Wait-Until { -not (Get-Process -Id $app.Id -ErrorAction SilentlyContinue) } 10)
 
