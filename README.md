@@ -105,7 +105,7 @@ The disc only pulses for the few seconds an urgent notice is out, and Bat-Clawd 
 
 ## How it works
 
-Bat-Signal reads what Claude Code already writes under `~/.claude/` (never the `*.key` files beside your sessions, which hold secrets) and, with the plugin, what Claude Code's hooks report. It only watches: it sends nothing over the network, and the plugin can't approve or change anything.
+Bat-Signal reads what Claude Code already writes under `~/.claude/` (never the `*.key` files beside your sessions, which hold secrets) and, with the plugin, what Claude Code's hooks report. It only watches: nothing leaves your PC (it listens only on `127.0.0.1` and opens no outgoing connection), and the plugin can't approve or change anything.
 
 - [Architecture](docs/architecture.md): how files and hooks become one snapshot, and where it goes
 - [What it reads and writes](docs/data-format.md)
