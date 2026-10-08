@@ -7,8 +7,7 @@ import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { appIdFor } from './identity'
-import { APP_PAGES, handleIpc, onIpc } from './appIpc'
-import { isAppPage } from './trust'
+import { handleIpc, isOwnPage, onIpc } from './appIpc'
 import { isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
@@ -149,7 +148,7 @@ if (!app.isPackaged && !app.commandLine.hasSwitch('user-data-dir'))
 // it is refused, and no page may open a window or a webview of its own.
 app.on('web-contents-created', (_event, contents) => {
   const keepToApp = (event: Electron.Event, url: string) => {
-    if (!isAppPage(url, APP_PAGES)) event.preventDefault()
+    if (!isOwnPage(url)) event.preventDefault()
   }
   contents.on('will-navigate', keepToApp)
   contents.on('will-redirect', keepToApp)

@@ -1,6 +1,5 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { ipcMain } from 'electron'
 import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
@@ -49,17 +48,17 @@ function startDemo(publish: Publish): () => void {
         news = true
         publish(demoSnapshot())
       }, DEMO_NEWS_MS)
-  handleIpc(IPC.getSnapshot, () => (news ? demoSnapshot() : before))
-  onIpc(IPC.markSeen, () => undefined)
-  // The demo's sessions have no terminal: always the resume command.
-  handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
-    goToTerminal({ pid: -1, sessionId: String(sessionId) }),
-  )
+  const off = [
+    handleIpc(IPC.getSnapshot, () => (news ? demoSnapshot() : before)),
+    onIpc(IPC.markSeen, () => undefined),
+    // The demo's sessions have no terminal: always the resume command.
+    handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
+      goToTerminal({ pid: -1, sessionId: String(sessionId) }),
+    ),
+  ]
   return () => {
     clearTimeout(newsTimer)
-    ipcMain.removeHandler(IPC.goToTerminal)
-    ipcMain.removeHandler(IPC.getSnapshot)
-    ipcMain.removeAllListeners(IPC.markSeen)
+    for (const undo of off) undo()
   }
 }
 
@@ -97,20 +96,22 @@ function startLive(publish: Publish): () => void {
   // news against what the pages loaded, even when nothing changes before the first news.
   void store.ready.then(() => publish(store.snapshot()))
 
-  handleIpc(IPC.getSnapshot, async () => {
-    await store.ready
-    return store.snapshot()
-  })
-  onIpc(IPC.markSeen, (_event, sessionId: unknown) => {
-    if (typeof sessionId === 'string') store.markSeen(sessionId)
-  })
-  handleIpc(IPC.goToTerminal, async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
-    if (typeof sessionId !== 'string') return undefined
-    // A session that left the snapshot can still be resumed by its id.
-    const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
-    return goToTerminal(session ?? { pid: -1, sessionId })
-  })
-  onIpc(IPC.warmTerminal, warmTerminal)
+  const off = [
+    handleIpc(IPC.getSnapshot, async () => {
+      await store.ready
+      return store.snapshot()
+    }),
+    onIpc(IPC.markSeen, (_event, sessionId: unknown) => {
+      if (typeof sessionId === 'string') store.markSeen(sessionId)
+    }),
+    handleIpc(IPC.goToTerminal, async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
+      if (typeof sessionId !== 'string') return undefined
+      // A session that left the snapshot can still be resumed by its id.
+      const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
+      return goToTerminal(session ?? { pid: -1, sessionId })
+    }),
+    onIpc(IPC.warmTerminal, warmTerminal),
+  ]
 
   registry.start()
   const refreshTimer = setInterval(() => void store.refresh(), REFRESH_MS)
@@ -123,9 +124,6 @@ function startLive(publish: Publish): () => void {
     clearTimeout(rereadTimer)
     registry.stop()
     void hooks.close()
-    ipcMain.removeAllListeners(IPC.warmTerminal)
-    ipcMain.removeHandler(IPC.goToTerminal)
-    ipcMain.removeHandler(IPC.getSnapshot)
-    ipcMain.removeAllListeners(IPC.markSeen)
+    for (const undo of off) undo()
   }
 }
