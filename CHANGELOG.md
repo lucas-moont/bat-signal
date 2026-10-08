@@ -20,7 +20,7 @@ The first build anyone can install: a release candidate for v1.0.
 
 ### Notes
 
-- The installer is not code-signed yet, so Windows SmartScreen warns about it, and Smart App Control blocks it. See [`docs/research/code-signing.md`](docs/research/code-signing.md).
+- The installer is not code-signed yet, so Windows SmartScreen warns about it, and Smart App Control blocks it. See [`docs/research/code-signing.md`](https://github.com/lucas-moont/bat-signal/blob/main/docs/research/code-signing.md).
 
 [Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...HEAD
 [1.0.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0-rc.1
