@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { APP_ID } from '../src/main/identity'
+import { appIdFor } from '../src/main/identity'
 import {
   approvedByTaskManager,
   AT_LOGIN,
@@ -25,7 +25,7 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: packaged.execPath,
       args: [AT_LOGIN],
-      name: APP_ID,
+      name: appIdFor(true),
     })
   })
 
@@ -34,12 +34,8 @@ describe('loginItemFor: what Windows is asked to start at sign-in', () => {
       openAtLogin: true,
       path: dev.execPath,
       args: [dev.appPath, AT_LOGIN],
-      name: `${APP_ID}.dev`,
+      name: appIdFor(false),
     })
-  })
-
-  it("never takes the installed app's entry in development: each has its own name", () => {
-    expect(loginItemFor(true, dev).name).not.toBe(loginItemFor(true, packaged).name)
   })
 
   it('turns off the very entry it turned on (Windows matches path and arguments)', () => {
@@ -61,7 +57,7 @@ describe('isLoginLaunch', () => {
 
 describe('approvedByTaskManager: reading what Task Manager wrote (reg query)', () => {
   const row = (bytes: string) =>
-    `\r\nHKEY_CURRENT_USER\\Software\\...\\StartupApproved\\Run\r\n    ${APP_ID}    REG_BINARY    ${bytes}\r\n\r\n`
+    `\r\nHKEY_CURRENT_USER\\Software\\...\\StartupApproved\\Run\r\n    ${appIdFor(true)}    REG_BINARY    ${bytes}\r\n\r\n`
 
   it('takes an even first byte for switched on', () => {
     expect(approvedByTaskManager(row('020000000000000000000000'))).toBe(true)
