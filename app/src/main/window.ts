@@ -13,7 +13,7 @@ import {
 } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import type { StoreSnapshot } from '../shared/types'
-import { RENDERER_FILE } from './appIpc'
+import { DEV_SERVER, RENDERER_FILE } from './appIpc'
 import { jsonFile } from './jsonFile'
 import { nextMode, type ModeAction } from './modes'
 import {
@@ -115,8 +115,7 @@ function displaysPrimaryFirst() {
 }
 
 function load(win: BrowserWindow, view: 'panel' | 'signal'): void {
-  if (process.env['ELECTRON_RENDERER_URL'])
-    void win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=${view}`)
+  if (DEV_SERVER) void win.loadURL(`${DEV_SERVER}?view=${view}`)
   else void win.loadFile(RENDERER_FILE, { query: { view } })
 }
 
