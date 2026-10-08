@@ -28,7 +28,7 @@ It reads the files Claude Code already writes (`~/.claude/sessions/`, the transc
 ## Operating Context
 
 - A Windows desktop, a terminal or editor in front, Bat-Signal parked in a screen corner, always on top.
-- At rest it is a 64px Bat-Signal disc. News lights it and a notice card rises from it for a few seconds. A click opens the panel (360x520 by default, resizable, minimum 300x360), anchored at the same corner.
+- At rest it is a 64px Bat-Signal disc. News lights it and a notice card rises from it for a few seconds. A click opens the panel (320x440 by default, resizable, minimum 300x360), anchored at the same corner.
 - The panel has two lists, **Needs you** (permission, error, waiting, new reply, stalled) and **Cases** (one per session), a case detail (tasks, subagents, background commands, last words), a task drawer and settings.
 - Sessions are called **cases**. Alerts read like red ink **stamps**.
 
