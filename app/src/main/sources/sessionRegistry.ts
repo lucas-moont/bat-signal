@@ -40,7 +40,7 @@ export async function isSessionAlive(entry: RegistryEntry, probe: ProcessProbe):
 const DEBOUNCE_MS = 150
 const ENTRY_FILE = /^\d+\.json$/ // never touch the sibling *.key files: they hold secrets
 
-function parseEntry(text: string): RegistryEntry | null {
+export function parseEntry(text: string): RegistryEntry | null {
   let raw
   try {
     raw = obj(JSON.parse(text))
