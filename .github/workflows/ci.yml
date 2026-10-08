@@ -31,9 +31,9 @@ jobs:
       - run: npm test
       - run: npm run build
 
-  # The installer, built and run as a user gets it: install, start, update, uninstall.
+  # The installer, built and run as a user gets it: install, start, update, uninstall. Beside
+  # check, not after it: they share nothing.
   installer:
-    needs: check
     runs-on: windows-latest
     defaults:
       run:
