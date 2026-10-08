@@ -70,7 +70,7 @@ Each hook arrives as a JSON `POST` on `127.0.0.1:47777` (see [plugin.md](plugin.
 - **Anything else under `~/.claude/`.** Bat-Signal joins exactly two folders onto it, `sessions` and `projects` (`startBatSignal` in `app/src/main/batSignal.ts`). Settings, credentials, history and todos are never opened.
 - **The text of tool results and thinking blocks**, as above.
 
-What it does show from a transcript: the last 4 messages of a case (it keeps the last 20, `MAX_MESSAGES` in `sessionReducer.ts`), skipping user text that starts with a `<tag>`, which Claude Code writes itself for commands and reminders; task subjects and descriptions; a subagent's description, prompt, latest word and summary; a background command and its description. Toasts and notice cards carry only a tool name with its one-line detail, a task subject or a folder name, never message text. All of this lives in memory and is dropped when the session ends. Nothing from `~/.claude/` is written to disk or sent anywhere.
+What it does show from a transcript: the last 4 messages of a case (it keeps the last 20, `MAX_MESSAGES` in `sessionReducer.ts`), skipping user text that starts with a `<tag>`, which Claude Code writes itself for commands and reminders; task subjects and descriptions; a subagent's description, prompt, latest word and summary; a background command and its description. Toasts and notice cards carry the case title (its custom or AI title, or the session name) and one line: a tool name with its one-line detail, an error type, a task subject or a folder name. Never message text. All of this lives in memory and is dropped when the session ends. Nothing from `~/.claude/` is written to disk or sent anywhere.
 
 ## What Bat-Signal writes
 
