@@ -17,7 +17,7 @@ Every change keeps these three:
 
 ## Screenshots
 
-`npm run shots` (from `app/`) builds the app and renders every picture in [`screenshots/`](screenshots/) from the demo night in `app/src/shared/demo.ts`, a made-up Gotham with no real sessions in it (`app/scripts/shots.cjs`). Re-run it after a visual change and commit the pictures with the change. Never take a screenshot of real sessions for the repository.
+`npm run shots` (from `app/`) builds the app and renders every picture in [`screenshots/`](screenshots/), except `tray.png` (see Icons), from the demo night in `app/src/shared/demo.ts`, a made-up Gotham with no real sessions in it (`app/scripts/shots.cjs`). Re-run it after a visual change and commit the pictures with the change. Never take a screenshot of real sessions for the repository.
 
 The renderer serves the same demo data while you work on a design: open it with `#demo`, `#demo-quiet`, `#demo-busy` or `#demo-news`, and `?view=signal` for the disc.
 
