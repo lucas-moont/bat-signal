@@ -2,16 +2,14 @@
 // whether Task Manager lets it run (read from the registry: Electron's own reading misses entries
 // with arguments). The rules are in loginItem.ts; this only asks Windows.
 import { execFile } from 'node:child_process'
-import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { app } from 'electron'
 import type { StartupState } from '../shared/status'
 import { approvedByTaskManager, loginItemFor, startupState, STARTUP_APPROVED } from './loginItem'
+import { REG } from './windowsTools'
 
 const execFileAsync = promisify(execFile)
 const REG_TIMEOUT_MS = 5_000
-/** reg.exe by its full path, not whatever a PATH lookup finds. */
-const REG = join(process.env['SystemRoot'] ?? String.raw`C:\Windows`, 'System32', 'reg.exe')
 
 /**
  * Task Manager's value for the entry, as reg prints it: '' when there is none (reg exits with 1),

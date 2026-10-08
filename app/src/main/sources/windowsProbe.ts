@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import type { ProcessProbe } from './sessionRegistry'
+import { POWERSHELL } from '../windowsTools'
 
 const execFileAsync = promisify(execFile)
 
@@ -39,7 +40,7 @@ export function createWindowsProbe(): ProcessProbe {
       `foreach ($id in @(${pids.join(',')})) { try { $p = Get-Process -Id $id -ErrorAction Stop; ` +
       `"$id $($p.StartTime.ToFileTimeUtc())" } catch {} }`
     const { stdout } = await execFileAsync(
-      'powershell.exe',
+      POWERSHELL,
       ['-NoProfile', '-NonInteractive', '-Command', script],
       {
         windowsHide: true,
