@@ -7,9 +7,9 @@
 // a GIF with one palette built for the whole clip.
 const { app } = require('electron')
 const { execFileSync } = require('node:child_process')
-const { mkdtempSync, rmSync, writeFileSync } = require('node:fs')
+const { mkdirSync, mkdtempSync, rmSync, writeFileSync } = require('node:fs')
 const { tmpdir } = require('node:os')
-const { join } = require('node:path')
+const { dirname, join } = require('node:path')
 const { HTML, demoWindow, click, clickText } = require('./demoWindow.cjs')
 
 const OUT = join(__dirname, '../../docs/screenshots/demo.gif')
@@ -78,6 +78,7 @@ async function main(win) {
     await pointAt(win, '.detail__terminal button')
     await record(win, frames, 1800)
 
+    mkdirSync(dirname(OUT), { recursive: true })
     frames.forEach((image, i) => writeFileSync(join(dir, `${String(i).padStart(4, '0')}.png`), image.toPNG()))
     execFileSync('ffmpeg', [
       ...['-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', join(dir, '%04d.png')],
