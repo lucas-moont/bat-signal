@@ -1,0 +1,56 @@
+name: Release
+
+# A v* tag publishes that version: the installer, its checksum and its notes from CHANGELOG.md.
+# Everything is checked first, and a tag with a "-" (v1.0.0-rc.1) makes a pre-release. Built only
+# on GitHub's own runners, from the tag, as SignPath Foundation requires for signing later.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: The tag names the version in package.json
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ("v$version" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $version" }
+          "VERSION=$version" >> $env:GITHUB_ENV
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: The notes, before anything is built
+        shell: bash # passes the notes' bytes through as they are
+        run: node scripts/release-notes.mts "$VERSION" > release-notes.md
+      - run: npm run dist
+      - run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/installer-check.ps1
+      - name: The checksum
+        shell: pwsh
+        working-directory: app/release
+        run: |
+          $setup = "Bat-Signal-Setup-$env:VERSION.exe"
+          "$((Get-FileHash $setup -Algorithm SHA256).Hash.ToLower())  $setup" | Set-Content SHA256SUMS.txt -NoNewline
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $flags = if ($env:VERSION.Contains('-')) { @('--prerelease') } else { @() }
+          gh release create $env:GITHUB_REF_NAME `
+            "release/Bat-Signal-Setup-$env:VERSION.exe" release/SHA256SUMS.txt `
+            --title "Bat-Signal $env:VERSION" --notes-file release-notes.md @flags
