@@ -1,6 +1,6 @@
 // Records the README's GIF from the demo night (no real sessions involved): the disc lights and a
-// notice card rises, then the panel opens on Needs you, a case is opened, and the pointer rests on
-// its terminal button. A demo has no terminal to bring forward, so the GIF stops at the button.
+// notice card rises, then the panel opens on Needs you, a case is opened, and its terminal button
+// lights up under a (not drawn) pointer. A demo has no terminal to bring forward, so it stops there.
 // Usage (from app/): npm run gif   → writes ../docs/screenshots/demo.gif (needs ffmpeg on PATH)
 //
 // Frames are captured from an offscreen window, as npm run shots does, and ffmpeg turns them into

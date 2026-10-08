@@ -3,7 +3,7 @@
 > A small signal in the corner of your screen that lights up when your **Claude Code** sessions need you, with a Bat-Computer panel one click away.
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and the pointer rests on its Terminal button">
+  <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and its Terminal button lights up">
 </p>
 
 **Status:** v1.0 release candidate for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md).
