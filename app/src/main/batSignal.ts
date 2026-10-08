@@ -5,7 +5,7 @@ import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
 import { goToTerminal, warmTerminal } from './sources/windowsTerminal'
-import { SessionRegistry } from './sources/sessionRegistry'
+import { isSessionId, SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
 import { TranscriptTailer } from './sources/transcriptTailer'
 import { createWindowsProbe } from './sources/windowsProbe'
@@ -51,9 +51,11 @@ function startDemo(publish: Publish): () => void {
   const off = [
     handleIpc(IPC.getSnapshot, () => (news ? demoSnapshot() : before)),
     onIpc(IPC.markSeen, () => undefined),
-    // The demo's sessions have no terminal: always the resume command.
+    // The demo's sessions have no terminal: always the resume command, for one of them only.
     handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
-      goToTerminal({ pid: -1, sessionId: String(sessionId) }),
+      demoSnapshot().sessions.some((s) => s.sessionId === sessionId)
+        ? goToTerminal({ pid: -1, sessionId: String(sessionId) })
+        : undefined,
     ),
   ]
   return () => {
@@ -105,7 +107,8 @@ function startLive(publish: Publish): () => void {
       if (typeof sessionId === 'string') store.markSeen(sessionId)
     }),
     handleIpc(IPC.goToTerminal, async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
-      if (typeof sessionId !== 'string') return undefined
+      // It becomes part of a command on the clipboard: a session id, or nothing.
+      if (!isSessionId(sessionId)) return undefined
       // A session that left the snapshot can still be resumed by its id.
       const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
       return goToTerminal(session ?? { pid: -1, sessionId })
