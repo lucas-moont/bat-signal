@@ -1,13 +1,14 @@
 {
-  "description": "Bat-Signal: report session activity to the Bat-Signal desktop app on 127.0.0.1:47777. Observe-only: the app always answers with an empty 204, so it never takes a permission decision. If the app isn't running, the request fails fast and Claude Code carries on.",
+  "description": "Bat-Signal: report session activity to the Bat-Signal desktop app on 127.0.0.1:47777. Observe-only: each hook posts the event in the background and discards the reply, so whatever answers on that port can never take a decision, block a turn or add context. If the app isn't running, the post fails within a second and nothing changes for Claude Code.",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -16,9 +17,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -27,9 +29,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -38,9 +41,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -49,9 +53,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -60,9 +65,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -71,9 +77,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -82,9 +89,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -93,9 +101,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -104,9 +113,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -115,9 +125,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -126,9 +137,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -137,9 +149,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
@@ -148,9 +161,10 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:47777/hook",
-            "timeout": 1
+            "type": "command",
+            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "async": true,
+            "timeout": 5
           }
         ]
       }
