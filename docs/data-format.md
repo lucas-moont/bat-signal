@@ -83,6 +83,6 @@ It never writes under `~/.claude/`.
 
 ## Network
 
-Bat-Signal listens on `127.0.0.1:47777` and nowhere else (`app/src/main/sources/hookServer.ts`). It opens no outgoing connection: the main process has no HTTP client, there is no auto-update (the installer is built with `--publish never`), and the window's Content Security Policy allows only the app's own files (`app/src/renderer/index.html`).
+Bat-Signal listens on `127.0.0.1:47777` and nowhere else (`app/src/main/sources/hookServer.ts`). It opens no outgoing connection: the main process has no HTTP client, there is no auto-update (the installer is built with `--publish never`), and the window's Content Security Policy allows connections only to the app's own files (`default-src 'self'` in `app/src/renderer/index.html`).
 
 Only one process can hold the port. When the installed app and a development run are both open, the first one started gets the hooks; the other works from the files alone.
