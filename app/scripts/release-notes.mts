@@ -6,15 +6,17 @@ import { join } from 'node:path'
 
 const CHANGELOG = join(import.meta.dirname, '..', '..', 'CHANGELOG.md')
 
-const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
 /** The section under `## [version]`, up to the next `## ` heading or the links at the end. */
 export function releaseNotes(changelog: string, version: string): string {
-  const heading = new RegExp(`^## \\[${escapeRegExp(version)}\\].*$`, 'm').exec(changelog)
-  if (!heading) throw new Error(`CHANGELOG.md has no section for ${version}`)
-  const rest = changelog.slice(heading.index + heading[0].length)
-  const end = /^(?:## |\[[^\]]+\]: )/m.exec(rest)
-  const notes = rest.slice(0, end?.index).trim()
+  const lines = changelog.split('\n')
+  const heading = lines.findIndex((line) => line.startsWith(`## [${version}]`))
+  if (heading < 0) throw new Error(`CHANGELOG.md has no section for ${version}`)
+  const rest = lines.slice(heading + 1)
+  const end = rest.findIndex((line) => /^(?:## |\[[^\]]+\]: )/.test(line))
+  const notes = rest
+    .slice(0, end < 0 ? undefined : end)
+    .join('\n')
+    .trim()
   if (!notes) throw new Error(`CHANGELOG.md's section for ${version} is empty`)
   return notes
 }
