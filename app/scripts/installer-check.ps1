@@ -65,8 +65,10 @@ if (-not $quoted.Success) { throw "Unexpected UninstallString: $($installed.Unin
 $folder = Split-Path $quoted.Groups[1].Value
 $exe = Join-Path $folder "$name.exe"
 Check "the app is installed ($exe)" (Test-Path $exe)
-Check 'the toast icon sits outside the asar, where Windows can read it' `
-  (Test-Path (Join-Path $folder 'resources\app.asar.unpacked\resources\icons\toast.png'))
+# The icons ship as plain files too (asarUnpack), so the tray's .ico never depends on being read
+# through the asar.
+Check 'the tray icons ship beside the asar' `
+  (Test-Path (Join-Path $folder 'resources\app.asar.unpacked\resources\icons\tray.ico'))
 Check 'the Start menu shortcut is there' (Test-Path $shortcut)
 Check "the shortcut carries the app id $appId" ((Get-ShortcutAppId $shortcut) -eq $appId)
 
