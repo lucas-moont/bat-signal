@@ -46,8 +46,8 @@ The installer is unsigned for now (see [`docs/research/code-signing.md`](docs/re
 
 ## Releasing
 
-1. Move the notes under `## [Unreleased]` in `CHANGELOG.md` to a new `## [x.y.z] - YYYY-MM-DD` section, and add its compare link at the end.
-2. Set `"version"` in `app/package.json` (and `npm install` for the lockfile), in a `chore: version x.y.z` commit.
+1. Move the notes under `## [Unreleased]` in `CHANGELOG.md` to a new `## [x.y.z] - YYYY-MM-DD` section. At the end, add its compare link and start the `[Unreleased]` link from `vx.y.z`. Links in the notes must be absolute (`https://github.com/...`): each section becomes a release page, where relative links break.
+2. In `app/`, run `npm version x.y.z --no-git-tag-version` (it updates the lockfile too), and commit it as `chore: version x.y.z`.
 3. Once that is on `main`, tag it and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 
 The [release workflow](.github/workflows/release.yml) then checks everything, builds and checks the installer, and publishes a GitHub release with the installer, `SHA256SUMS.txt` and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that does not match `package.json`, or a version with no notes, publishes nothing.
