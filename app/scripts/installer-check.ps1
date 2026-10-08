@@ -38,7 +38,8 @@ function Install-BatSignal {
 
 # The installer's own uninstall entry: where it put the app, and how Windows removes it.
 function Get-Installed {
-  Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+  # A fresh PC has no per-user uninstall key until something is installed.
+  Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' -ErrorAction SilentlyContinue |
     Get-ItemProperty | Where-Object { $_.DisplayName -like "$name*" } | Select-Object -First 1
 }
 
