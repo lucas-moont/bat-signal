@@ -4,6 +4,10 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+## [1.0.0-rc.2] - 2026-10-07
+
+The second release candidate for v1.0: what a security review found before it, fixed.
+
 ### Security
 
 - The plugin's hooks post each event from a background command and discard the reply, so no program that answers on port 47777 can approve a permission, block a turn or add to Claude's context. Before plugin 0.4.0 they were HTTP hooks, whose replies Claude Code acts on. Update the plugin with `claude plugin update bat-signal@bat-signal`.
@@ -107,7 +111,8 @@ A corner companion.
 
 - Live sessions rebuilt from the files Claude Code already writes: titles, messages, tasks, subagents and background commands, and what needs you.
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...HEAD
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.2...HEAD
+[1.0.0-rc.2]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...v1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0-rc.1
 [0.7.0]: https://github.com/lucas-moont/bat-signal/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/lucas-moont/bat-signal/compare/v0.5.0...v0.6.0
