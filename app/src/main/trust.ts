@@ -19,5 +19,9 @@ export function isAppPage(url: string, pages: AppPages): boolean {
   }
   if (pages.devServer && parsed.origin === new URL(pages.devServer).origin) return true
   const built = new URL(pages.page)
-  return parsed.protocol === 'file:' && parsed.pathname === built.pathname
+  return parsed.protocol === 'file:' && parsed.host === built.host && samePath(parsed, built)
 }
+
+/** File paths compared as Windows does: decoded, and whatever their case (C: and c: are one drive). */
+const samePath = (a: URL, b: URL): boolean =>
+  decodeURIComponent(a.pathname).toLowerCase() === decodeURIComponent(b.pathname).toLowerCase()
