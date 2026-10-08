@@ -6,7 +6,7 @@
   <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and its Terminal button lights up">
 </p>
 
-**Status:** v1.0 release candidate for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md).
+**Status:** v1.0 for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md).
 
 Bat-Signal rests in a corner of your screen as a small signal disc. When something happens, the disc lights up and a notice card rises from it; click it to open the full panel right on that case. It:
 
