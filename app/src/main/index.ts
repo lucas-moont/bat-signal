@@ -1,4 +1,4 @@
-import { app, globalShortcut, ipcMain } from 'electron'
+import { app, globalShortcut } from 'electron'
 import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import { announce, emptyAnnouncer } from '../shared/announcer'
@@ -7,6 +7,7 @@ import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { appIdFor } from './identity'
+import { handleIpc, isOwnPage, onIpc } from './appIpc'
 import { isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
@@ -74,8 +75,8 @@ function start(): void {
   }
   shortcut.apply(settings.shortcut)
 
-  ipcMain.handle(IPC.getSettings, () => settings)
-  ipcMain.on(IPC.setSettings, (_event, patch: unknown) => {
+  handleIpc(IPC.getSettings, () => settings)
+  onIpc(IPC.setSettings, (_event, patch: unknown) => {
     settings = applySettingsPatch(settings, patch)
     if (settings.announce.sound) warmQuiet()
     settingsFile.saveSoon(settings)
@@ -83,10 +84,10 @@ function start(): void {
     // Only a patch that names the shortcut touches it (and retries it, if another app had it).
     if ('shortcut' in obj(patch)) shortcut.apply(settings.shortcut)
   })
-  ipcMain.handle(IPC.getStatus, () => readStatus())
+  handleIpc(IPC.getStatus, () => readStatus())
   // The settings sheet opened: what it shows is read again from Windows (Task Manager may have
   // moved the switch since); a change goes out as status.
-  ipcMain.on(IPC.refreshStatus, () => void startup.refresh())
+  onIpc(IPC.refreshStatus, () => void startup.refresh())
   // While the settings sheet records a new shortcut, the current one must reach it as keys. A page
   // that reloads or dies mid-recording never says it stopped: its going ends the pause.
   let stopWatching = (): void => undefined
@@ -94,7 +95,7 @@ function start(): void {
     stopWatching()
     shortcut.pause(on)
   }
-  ipcMain.on(IPC.recordShortcut, (event, on: unknown) => {
+  onIpc(IPC.recordShortcut, (event, on: unknown) => {
     record(on === true)
     if (on !== true) return
     const page = event.sender
@@ -107,22 +108,22 @@ function start(): void {
       stopWatching = () => undefined
     }
   })
-  ipcMain.on(IPC.setStartWithWindows, (_event, on: unknown) => startup.set(on === true))
-  ipcMain.handle(IPC.getMode, () => windows.mode)
-  ipcMain.on(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
+  onIpc(IPC.setStartWithWindows, (_event, on: unknown) => startup.set(on === true))
+  handleIpc(IPC.getMode, () => windows.mode)
+  onIpc(IPC.setMode, (_event, mode: unknown, sessionId: unknown) => {
     const next = parseViewMode(mode)
     if (next) windows.setMode(next, typeof sessionId === 'string' ? sessionId : undefined)
   })
-  ipcMain.handle(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
-  ipcMain.on(IPC.interactive, (_event, on: unknown) => windows.setInteractive(on === true))
-  ipcMain.on(IPC.moveSignal, (_event, dx: unknown, dy: unknown) => {
+  handleIpc(IPC.noticeOut, (_event, out: unknown) => windows.setNoticeOut(out === true))
+  onIpc(IPC.interactive, (_event, on: unknown) => windows.setInteractive(on === true))
+  onIpc(IPC.moveSignal, (_event, dx: unknown, dy: unknown) => {
     if (typeof dx === 'number' && typeof dy === 'number') windows.moveSignalBy(dx, dy)
   })
-  ipcMain.on(IPC.reopen, () => windows.reopen())
-  ipcMain.on(IPC.watchHeight, (_event, height: unknown) => {
+  onIpc(IPC.reopen, () => windows.reopen())
+  onIpc(IPC.watchHeight, (_event, height: unknown) => {
     if (typeof height === 'number') windows.setWatchHeight(height)
   })
-  ipcMain.on(IPC.hide, () => windows.act('close'))
+  onIpc(IPC.hide, () => windows.act('close'))
 
   summon = () => windows.act('summon')
   // Written at before-quit: Windows ending the session may close the app before will-quit.
@@ -142,6 +143,18 @@ function start(): void {
 // installed app's: each runs once. A --user-data-dir given on the command line (a test instance) wins.
 if (!app.isPackaged && !app.commandLine.hasSwitch('user-data-dir'))
   app.setPath('userData', `${app.getPath('userData')} Dev`)
+
+// The windows show Bat-Signal's own page and nothing else: a dropped link or a redirect away from
+// it is refused, and no page may open a window or a webview of its own.
+app.on('web-contents-created', (_event, contents) => {
+  const keepToApp = (event: Electron.Event, url: string) => {
+    if (!isOwnPage(url)) event.preventDefault()
+  }
+  contents.on('will-navigate', keepToApp)
+  contents.on('will-redirect', keepToApp)
+  contents.setWindowOpenHandler(() => ({ action: 'deny' }))
+  contents.on('will-attach-webview', (event) => event.preventDefault())
+})
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()

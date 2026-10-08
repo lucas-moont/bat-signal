@@ -2,6 +2,7 @@
 // (which window is a session's terminal, whether Windows wants quiet). Scripts carry what they
 // need (each Add-Type guarded), so any of them can be the first the host runs.
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
+import { POWERSHELL } from './windowsTools'
 
 const SCRIPT_TIMEOUT_MS = 10_000
 
@@ -62,7 +63,7 @@ class PowerShellHost {
 
   private start(): ChildProcessWithoutNullStreams {
     if (this.child) return this.child
-    const child = spawn('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '-'], {
+    const child = spawn(POWERSHELL, ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '-'], {
       windowsHide: true,
     })
     this.child = child

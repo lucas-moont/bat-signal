@@ -13,6 +13,7 @@ import {
 } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import type { StoreSnapshot } from '../shared/types'
+import { DEV_SERVER, isOwnPage, RENDERER_FILE } from './appIpc'
 import { jsonFile } from './jsonFile'
 import { nextMode, type ModeAction } from './modes'
 import {
@@ -114,9 +115,8 @@ function displaysPrimaryFirst() {
 }
 
 function load(win: BrowserWindow, view: 'panel' | 'signal'): void {
-  if (process.env['ELECTRON_RENDERER_URL'])
-    void win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=${view}`)
-  else void win.loadFile(join(__dirname, '../renderer/index.html'), { query: { view } })
+  if (DEV_SERVER) void win.loadURL(`${DEV_SERVER}?view=${view}`)
+  else void win.loadFile(RENDERER_FILE, { query: { view } })
 }
 
 const webPreferences = {
@@ -233,9 +233,12 @@ export class BatSignalWindows {
     return this.panelShown && this.panel.isFocused()
   }
 
-  /** Sends to one page, unless its window is already gone (the app is quitting). */
+  /**
+   * Sends to one page, unless its window is already gone (the app is quitting) or holds a page that
+   * is not Bat-Signal's (the windows refuse to leave it, but sessions are never sent on that alone).
+   */
   private send(win: BrowserWindow, channel: string, payload?: unknown): void {
-    if (!win.isDestroyed()) win.webContents.send(channel, payload)
+    if (!win.isDestroyed() && isOwnPage(win.webContents.getURL())) win.webContents.send(channel, payload)
   }
 
   /** Sends to every page (both windows render the same data). */

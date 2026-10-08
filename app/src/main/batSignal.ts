@@ -1,16 +1,16 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { ipcMain } from 'electron'
 import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '../shared/demo'
 import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
 import { goToTerminal, warmTerminal } from './sources/windowsTerminal'
-import { SessionRegistry } from './sources/sessionRegistry'
+import { isSessionId, SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
 import { TranscriptTailer } from './sources/transcriptTailer'
 import { createWindowsProbe } from './sources/windowsProbe'
 import { SessionStore } from './store'
+import { handleIpc, onIpc } from './appIpc'
 
 /** Transcripts are re-read this often, so the window stays current even without the plugin. */
 const REFRESH_MS = 2000
@@ -48,17 +48,19 @@ function startDemo(publish: Publish): () => void {
         news = true
         publish(demoSnapshot())
       }, DEMO_NEWS_MS)
-  ipcMain.handle(IPC.getSnapshot, () => (news ? demoSnapshot() : before))
-  ipcMain.on(IPC.markSeen, () => undefined)
-  // The demo's sessions have no terminal: always the resume command.
-  ipcMain.handle(IPC.goToTerminal, (_event, sessionId: unknown) =>
-    goToTerminal({ pid: -1, sessionId: String(sessionId) }),
-  )
+  const off = [
+    handleIpc(IPC.getSnapshot, () => (news ? demoSnapshot() : before)),
+    onIpc(IPC.markSeen, () => undefined),
+    // The demo's sessions have no terminal: always the resume command, for one of them only.
+    handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
+      demoSnapshot().sessions.some((s) => s.sessionId === sessionId)
+        ? goToTerminal({ pid: -1, sessionId: String(sessionId) })
+        : undefined,
+    ),
+  ]
   return () => {
     clearTimeout(newsTimer)
-    ipcMain.removeHandler(IPC.goToTerminal)
-    ipcMain.removeHandler(IPC.getSnapshot)
-    ipcMain.removeAllListeners(IPC.markSeen)
+    for (const undo of off) undo()
   }
 }
 
@@ -96,23 +98,23 @@ function startLive(publish: Publish): () => void {
   // news against what the pages loaded, even when nothing changes before the first news.
   void store.ready.then(() => publish(store.snapshot()))
 
-  ipcMain.handle(IPC.getSnapshot, async () => {
-    await store.ready
-    return store.snapshot()
-  })
-  ipcMain.on(IPC.markSeen, (_event, sessionId: unknown) => {
-    if (typeof sessionId === 'string') store.markSeen(sessionId)
-  })
-  ipcMain.handle(
-    IPC.goToTerminal,
-    async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
-      if (typeof sessionId !== 'string') return undefined
+  const off = [
+    handleIpc(IPC.getSnapshot, async () => {
+      await store.ready
+      return store.snapshot()
+    }),
+    onIpc(IPC.markSeen, (_event, sessionId: unknown) => {
+      if (typeof sessionId === 'string') store.markSeen(sessionId)
+    }),
+    handleIpc(IPC.goToTerminal, async (_event, sessionId: unknown): Promise<TerminalOutcome | undefined> => {
+      // It becomes part of a command on the clipboard: a session id, or nothing.
+      if (!isSessionId(sessionId)) return undefined
       // A session that left the snapshot can still be resumed by its id.
       const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
       return goToTerminal(session ?? { pid: -1, sessionId })
-    },
-  )
-  ipcMain.on(IPC.warmTerminal, warmTerminal)
+    }),
+    onIpc(IPC.warmTerminal, warmTerminal),
+  ]
 
   registry.start()
   const refreshTimer = setInterval(() => void store.refresh(), REFRESH_MS)
@@ -125,9 +127,6 @@ function startLive(publish: Publish): () => void {
     clearTimeout(rereadTimer)
     registry.stop()
     void hooks.close()
-    ipcMain.removeAllListeners(IPC.warmTerminal)
-    ipcMain.removeHandler(IPC.goToTerminal)
-    ipcMain.removeHandler(IPC.getSnapshot)
-    ipcMain.removeAllListeners(IPC.markSeen)
+    for (const undo of off) undo()
   }
 }

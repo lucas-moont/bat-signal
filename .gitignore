@@ -17,3 +17,6 @@ Thumbs.db
 # Impeccable working files (review captures, decision pages); the product and surface briefs are kept
 .impeccable/review/
 .impeccable/questions/
+
+# gstack working files (local security reports)
+.gstack/

@@ -44,7 +44,7 @@ The installed app carries your Batcave settings and window place over on its fir
 
 ## What it sends
 
-Each hook is a `POST http://127.0.0.1:47777/hook` with the JSON payload Claude Code gives every hook (session id, cwd, event name and the event's own fields). The payload can hold more than Bat-Signal needs, such as your prompt on `UserPromptSubmit` or a tool's full input. Bat-Signal keeps only the event name, the tool name, one line of the tool's input (at most 120 characters), the tool call id, the notification type and the error type, in memory; the rest is dropped. [data-format.md](data-format.md) has the details. Events used:
+Each hook runs `curl.exe` in the background to `POST http://127.0.0.1:47777/hook` the JSON payload Claude Code gives every hook (session id, cwd, event name and the event's own fields). The payload can hold more than Bat-Signal needs, such as your prompt on `UserPromptSubmit` or a tool's full input. Bat-Signal keeps only the event name, the tool name, one line of the tool's input (at most 120 characters), the tool call id, the notification type and the error type, in memory; the rest is dropped. [data-format.md](data-format.md) has the details. Events used:
 
 | Event | Used for |
 |---|---|
@@ -60,8 +60,10 @@ Each hook is a `POST http://127.0.0.1:47777/hook` with the JSON payload Claude C
 
 ## Safety
 
-- **Observe-only.** The app answers every event with an empty `204`, which Claude Code treats as "no decision". A request it rejects (see below) gets an empty error status instead, which carries no decision either. Bat-Signal can't approve, deny or change anything.
-- **Fails open.** Every hook has a 1-second timeout. If Bat-Signal isn't running, the connection is refused at once and Claude Code carries on as if the plugin weren't there.
+- **Observe-only, whoever answers.** Each hook is a background command (`"async": true`) that posts the event, sends the reply to `NUL` and exits with `0`. Claude Code gets no output and no exit code to act on, so nothing that answers on port 47777, Bat-Signal or any other program, can approve or deny a permission, block a turn or add to Claude's context. (Until plugin 0.4.0 the hooks were HTTP hooks, whose replies Claude Code does act on: a program holding the port while Bat-Signal was closed could have answered them. Update with `claude plugin update bat-signal@bat-signal`.) Bat-Signal itself answers with an empty `204` anyway.
+- **Order.** Each hook is its own background process, so two events fired a few milliseconds apart (a stop and the next prompt) can arrive in either order. What the panel shows doesn't depend on it: a finished reply only shows once Claude Code's own session file says the session is idle, and the next stop brings it up to date.
+- **Fails open.** The hooks never make Claude Code wait. If Bat-Signal isn't running, `curl` gives up within a second, in the background.
+- **Needs `curl.exe`,** which Windows 10 (since 1803) and Windows 11 include, as does Git for Windows. The command reads the same in Git Bash and in PowerShell, the two shells Claude Code runs hooks in on Windows.
 - **Local only.** The server listens on `127.0.0.1` and rejects requests from web pages (any `Origin` header, or a `Host` other than `127.0.0.1`/`localhost`, which defeats DNS rebinding), non-JSON bodies and bodies over 1 MB. Other programs on your machine could still post fake events; since Bat-Signal only displays them, the worst case is a wrong alert.
 - **Never reads secrets.** In `~/.claude/sessions/` Bat-Signal only opens `<pid>.json`, never the `*.key` files next to them (`app/src/main/sources/sessionRegistry.ts`). Outside it, it reads only the transcripts in `~/.claude/projects/`.
 

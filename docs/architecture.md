@@ -1,6 +1,6 @@
 # Architecture
 
-Bat-Signal is a Windows Electron app that watches your Claude Code sessions from a corner of the screen. It reads what Claude Code already writes under `~/.claude/` and, when the plugin is installed, what Claude Code's hooks report the moment they fire. It turns both into one snapshot: the live sessions ("cases" in the UI), what each is doing, and what needs you. It never acts on a session. The plugin only posts events to a local HTTP server, and every hook that server accepts gets an empty `204`, which Claude Code reads as "no decision" (`app/src/main/sources/hookServer.ts`). Requests it rejects get a bodiless `4xx`, which decides nothing either.
+Bat-Signal is a Windows Electron app that watches your Claude Code sessions from a corner of the screen. It reads what Claude Code already writes under `~/.claude/` and, when the plugin is installed, what Claude Code's hooks report the moment they fire. It turns both into one snapshot: the live sessions ("cases" in the UI), what each is doing, and what needs you. It never acts on a session. The plugin's hooks post each event to a local HTTP server from a background command that discards the reply, so whatever answers can't decide anything for Claude Code (`plugin/bat-signal/hooks/hooks.json`).
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
   wt["Windows Terminal"]
 
   files --> fileSrc --> store
-  hooks --> plugin -->|POST JSON, 204| hookSrv --> store
+  hooks --> plugin -->|curl POST, reply discarded| hookSrv --> store
   store -->|snapshot| wiring
   wiring --> tray & toasts & cues & shortcut & startup
   wiring <-->|IPC| preload
@@ -45,7 +45,7 @@ flowchart LR
 
 The store re-reads every transcript every 2 seconds (`REFRESH_MS` in `app/src/main/batSignal.ts`). That alone keeps the window current.
 
-**Hooks (with the plugin).** `plugin/bat-signal/hooks/hooks.json` subscribes to 14 events, each one an HTTP hook to `http://127.0.0.1:47777/hook` with a 1-second timeout. `HookServer` takes only `POST /hook` with a JSON body under 1 MB, and refuses any request with an `Origin` header or a `Host` other than `127.0.0.1`/`localhost`, so a web page can't post to it. It answers `204` before it handles the event. After each hook the store reads that session's transcript, and reads it again 300 ms later (`AFTER_HOOK_REREAD_MS`), because Claude Code can fire a hook before it writes the matching line. `HOOK_EVENTS` in `app/src/main/model/hookSignals.ts` must match `hooks.json`; `app/test/plugin.test.ts` checks it. See [docs/plugin.md](plugin.md) for what each event is used for.
+**Hooks (with the plugin).** `plugin/bat-signal/hooks/hooks.json` subscribes to 14 events. Each one is a background command (`"async": true`) that posts the event with `curl.exe` to `http://127.0.0.1:47777/hook`, gives up after a second, discards the reply and exits with `0`, so Claude Code never waits and never gets a decision back. `HookServer` takes only `POST /hook` with a JSON body under 1 MB, and refuses any request with an `Origin` header or a `Host` other than `127.0.0.1`/`localhost`, so a web page can't post to it. It answers `204` before it handles the event. After each hook the store reads that session's transcript, and reads it again 300 ms later (`AFTER_HOOK_REREAD_MS`), because Claude Code can fire a hook before it writes the matching line. `HOOK_EVENTS` in `app/src/main/model/hookSignals.ts` must match `hooks.json`; `app/test/plugin.test.ts` checks it. See [docs/plugin.md](plugin.md) for what each event is used for.
 
 **How they combine.** The two sources mostly fill different fields, so there is little to arbitrate:
 
