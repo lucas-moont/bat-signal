@@ -46,6 +46,27 @@ describe("releaseNotes: a release's notes, from CHANGELOG.md", () => {
     expect(releaseNotes(changelog, '0.7.0')).toBe('- The tray')
   })
 
+  it("keep a section's own link definitions; only the last section loses the file's links", () => {
+    const linked = `## [2.0.0] - 2027-01-01
+
+- Fixed [the toast][toast]
+
+[toast]: https://github.test/issues/1
+
+- And one more
+
+## [1.0.0] - 2026-10-20
+
+- The installer
+
+[2.0.0]: https://github.test/compare/v1.0.0...v2.0.0
+`
+    expect(releaseNotes(linked, '2.0.0')).toBe(
+      '- Fixed [the toast][toast]\n\n[toast]: https://github.test/issues/1\n\n- And one more',
+    )
+    expect(releaseNotes(linked, '1.0.0')).toBe('- The installer')
+  })
+
   it('fail loudly for a version the changelog does not have, so nothing is published without notes', () => {
     expect(() => releaseNotes(changelog, '2.0.0')).toThrow(/2\.0\.0/)
   })

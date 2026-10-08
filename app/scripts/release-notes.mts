@@ -6,17 +6,22 @@ import { join } from 'node:path'
 
 const CHANGELOG = join(import.meta.dirname, '..', '..', 'CHANGELOG.md')
 
-/** The section under `## [version]`, up to the next `## ` heading or the links at the end. */
+const LINK_DEFINITION = /^\[[^\]]+\]: /
+
+/**
+ * The section under `## [version]`, up to the next `## ` heading. The last section also ends where
+ * the file's own links begin: the link definitions that close the file.
+ */
 export function releaseNotes(changelog: string, version: string): string {
   const lines = changelog.split('\n')
   const heading = lines.findIndex((line) => line.startsWith(`## [${version}]`))
   if (heading < 0) throw new Error(`CHANGELOG.md has no section for ${version}`)
   const rest = lines.slice(heading + 1)
-  const end = rest.findIndex((line) => /^(?:## |\[[^\]]+\]: )/.test(line))
-  const notes = rest
-    .slice(0, end < 0 ? undefined : end)
-    .join('\n')
-    .trim()
+  const next = rest.findIndex((line) => line.startsWith('## '))
+  const section = next < 0 ? rest : rest.slice(0, next)
+  if (next < 0)
+    while (section.length && (!section.at(-1)!.trim() || LINK_DEFINITION.test(section.at(-1)!))) section.pop()
+  const notes = section.join('\n').trim()
   if (!notes) throw new Error(`CHANGELOG.md's section for ${version} is empty`)
   return notes
 }
