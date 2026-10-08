@@ -4,7 +4,7 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
-## [1.0.0-rc.1] - 2026-10-08
+## [1.0.0-rc.1] - 2026-10-07
 
 The first build anyone can install: a release candidate for v1.0.
 
@@ -38,8 +38,14 @@ Comfort for every day.
 
 ### Changed
 
+- Working sessions are inked amber, apart from the red of what needs you.
+- Settings come in ruled groups, starting with Look, and the panel's layout follows its own width.
 - Bat-Clawd's cape is black inside, with a thin red thread along its hem.
 - Much lighter at rest: the disc uses 0.1–0.2% of one core, the watch strip 0.4–0.8%.
+
+### Fixed
+
+- The panel and the watch strip stay on top after a screenshot.
 
 ## [0.6.0] - 2026-10-04
 
@@ -69,14 +75,18 @@ A corner companion.
 
 ### Changed
 
+- The panel folds into the Bat-Signal instead of a pill.
 - Bat-Clawd wears a cape instead of wings: wrapped in it asleep, streaming behind him in flight, flung open when something needs you.
 
 ## [0.3.0] - 2026-10-04
 
 ### Added
 
-- The case-file panel: Needs you, the cases, a case's detail, a task's drawer and Settings, in the reds and blacks of *The Batman* (2022), with rain behind it.
+- The case-file panel: Needs you, the cases, a case's detail and a task's drawer, in the reds and blacks of *The Batman* (2022), with rain behind it.
 - Bat-Clawd, Claude Code's Clawd in a cowl: asleep, on patrol or alarmed.
+- Settings for animations, rain, always on top and opacity, and a calm mode with gentler motion.
+- A pill the panel folds into, opened by resting the pointer on it.
+- The window remembers its size and place.
 
 ## [0.2.0] - 2026-10-04
 
@@ -84,6 +94,7 @@ A corner companion.
 
 - The Claude Code plugin: hooks report permission prompts, waits, errors and finished replies the moment they happen. It only observes.
 - A local hook server on `127.0.0.1:47777`, and one store for every session.
+- The first window: a list of live sessions under a draggable header with the bat emblem, resizable down to 300x360.
 
 ## [0.1.0] - 2026-10-04
 
