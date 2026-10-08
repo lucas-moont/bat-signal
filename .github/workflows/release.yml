@@ -26,9 +26,12 @@ jobs:
       - name: The tag names the version in package.json
         shell: pwsh
         run: |
-          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
-          if ("v$version" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $version" }
-          "VERSION=$version" >> $env:GITHUB_ENV
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          if ("v$($pkg.version)" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
+          "VERSION=$($pkg.version)" >> $env:GITHUB_ENV
+          "PRODUCT=$($pkg.productName)" >> $env:GITHUB_ENV
+          # As build.nsis.artifactName names it.
+          "SETUP=$($pkg.productName)-Setup-$($pkg.version).exe" >> $env:GITHUB_ENV
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
@@ -43,8 +46,7 @@ jobs:
         shell: pwsh
         working-directory: app/release
         run: |
-          $setup = "Bat-Signal-Setup-$env:VERSION.exe"
-          "$((Get-FileHash $setup -Algorithm SHA256).Hash.ToLower())  $setup" | Set-Content SHA256SUMS.txt -NoNewline
+          "$((Get-FileHash $env:SETUP -Algorithm SHA256).Hash.ToLower())  $env:SETUP" | Set-Content SHA256SUMS.txt -NoNewline
       - name: Publish
         shell: pwsh
         env:
@@ -52,5 +54,5 @@ jobs:
         run: |
           $flags = if ($env:VERSION.Contains('-')) { @('--prerelease') } else { @() }
           gh release create $env:GITHUB_REF_NAME `
-            "release/Bat-Signal-Setup-$env:VERSION.exe" release/SHA256SUMS.txt `
-            --title "Bat-Signal $env:VERSION" --notes-file release-notes.md @flags
+            "release/$env:SETUP" release/SHA256SUMS.txt `
+            --title "$env:PRODUCT $env:VERSION" --notes-file release-notes.md @flags
