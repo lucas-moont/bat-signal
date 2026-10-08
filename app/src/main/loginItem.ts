@@ -2,9 +2,7 @@
 // (Task Manager can turn it off too), so the settings switch reads and writes it, and nothing is
 // saved in settings.json. Pure, so the entry and its reading are tested without Windows.
 import type { StartupState } from '../shared/status'
-
-/** Bat-Signal's app id: its Windows taskbar identity, and the name of its login entry. */
-export const APP_ID = 'com.lucasmoont.bat-signal'
+import { identityFor } from './identity'
 
 /** Where Task Manager records which login entries it lets run (one value per entry, by name). */
 export const STARTUP_APPROVED = String.raw`HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run`
@@ -35,7 +33,7 @@ export const loginItemFor = (enabled: boolean, env: LaunchEnv): LoginItem => ({
   openAtLogin: enabled,
   path: env.execPath,
   args: env.isPackaged ? [AT_LOGIN] : [env.appPath, AT_LOGIN],
-  name: APP_ID,
+  name: identityFor(env.isPackaged).id,
 })
 
 /** Whether this launch is Windows starting Bat-Signal at sign-in. */

@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import { app, globalShortcut, ipcMain } from 'electron'
 import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
@@ -6,7 +7,8 @@ import { applySettingsPatch, parseViewMode } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
-import { APP_ID, isLoginLaunch } from './loginItem'
+import { identityFor } from './identity'
+import { isLoginLaunch } from './loginItem'
 import { createShortcut } from './shortcut'
 import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
@@ -137,10 +139,16 @@ function start(): void {
   })
 }
 
+const identity = identityFor(app.isPackaged)
+// Its own folder before the lock, which lives in it: a checkout and the installed app each run
+// once. A --user-data-dir given on the command line (a test instance) wins.
+if (!app.commandLine.hasSwitch('user-data-dir'))
+  app.setPath('userData', join(app.getPath('appData'), identity.dataFolder))
+
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.setAppUserModelId(APP_ID)
+  app.setAppUserModelId(identity.id)
   // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
   // for from the start, since a second launch can come while this one is still getting ready.
   // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
