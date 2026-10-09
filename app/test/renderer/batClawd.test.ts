@@ -1,23 +1,40 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, describe, expect, it, vi } from 'vitest'
 // The shared animation clock listens to the page's visibility as it loads; a hidden page keeps it stopped.
-vi.hoisted(() => {
-  Object.assign(globalThis, { document: { hidden: true, addEventListener: () => {} } })
-})
+vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
+afterAll(() => vi.unstubAllGlobals())
 
 import { BatClawd } from '../../src/renderer/src/components/BatClawd'
 import { BatEmblem, WINGS } from '../../src/renderer/src/components/BatEmblem'
 
-const chest = (markup: string) => markup.includes(`class="clawd__emblem"`) && markup.includes(`d="${WINGS}"`)
+const POINTS = [...WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => ({
+  x: Number(m[1]),
+  y: Number(m[2]),
+}))
+
+/** Where the chest emblem lands on Bat-Clawd's 16x11 grid, or nothing if he doesn't wear it. */
+function chest(markup: string) {
+  const path = markup.match(/<path class="clawd__emblem" d="([^"]+)" transform="([^"]+)"/)
+  if (!path || path[1] !== WINGS) return undefined
+  const [tx = NaN, ty = NaN, k = NaN] = (path[2] ?? '').match(/-?[\d.]+/g)?.map(Number) ?? []
+  const xs = POINTS.map((p) => tx + p.x * k)
+  const ys = POINTS.map((p) => ty + p.y * k)
+  return { left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys), bottom: Math.max(...ys) }
+}
+
+/** The bare chest: under the cowl (which ends at row 5), above the legs (row 9), between the arms. */
+const onChest = (bat: ReturnType<typeof chest>) =>
+  !!bat && bat.left >= 3 && bat.right <= 13 && bat.top >= 5 && bat.bottom <= 9 && bat.right - bat.left >= 6
 
 describe('Bat-Clawd', () => {
   it('wears the bat on his chest whenever it shows', () => {
-    expect(chest(renderToStaticMarkup(createElement(BatClawd, { mood: 'flying' })))).toBe(true)
-    expect(chest(renderToStaticMarkup(createElement(BatClawd, { mood: 'alarmed' })))).toBe(true)
-    expect(chest(renderToStaticMarkup(createElement(BatClawd, { mood: 'sleeping', perched: true })))).toBe(
-      true,
-    )
+    for (const props of [
+      { mood: 'flying' },
+      { mood: 'alarmed' },
+      { mood: 'sleeping', perched: true },
+    ] as const)
+      expect(onChest(chest(renderToStaticMarkup(createElement(BatClawd, props))))).toBe(true)
   })
 
   it('hides it asleep, under the wrapped cape', () => {
