@@ -4,7 +4,9 @@
   display: flex;
   flex-direction: column;
   border: 1px solid #1d1714;
-  overflow: hidden;
+  /* clip, not hidden: a hidden box can still be scrolled by the browser (to show a focused element
+     that sticks out), which moves the whole panel out of the window. A clipped one can't be. */
+  overflow: clip;
   /* Own stacking context, so the atmosphere can sit behind everything at z-index -1. */
   isolation: isolate;
 }
