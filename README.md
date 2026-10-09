@@ -30,7 +30,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 |---|---|---|
 | <img src="docs/screenshots/cases.png" width="240" alt="Case cards with case numbers, status and task progress, each with a terminal button"> | <img src="docs/screenshots/task-drawer.png" width="240" alt="A drawer with a task's brief and timeline"> | <img src="docs/screenshots/all-quiet.png" width="240" alt="Nothing pending: two quiet cases, Bat-Clawd asleep in the header"> |
 
-| Watch strip | The night report theme | A case opened in the report |
+| Watch strip | The night report layout | A case opened in the report |
 |---|---|---|
 | <img src="docs/screenshots/watch.png" width="240" alt="The watch strip: one row per session with its stamp, title, progress and pending request"> | <img src="docs/screenshots/night-report.png" width="240" alt="The night report: what awaits your signature, typed, with stamps in the margin and a red pen under each request"> | <img src="docs/screenshots/night-report-case.png" width="240" alt="Case notes with one case opened in place: its file line, a terminal button and typed task boxes"> |
 
@@ -79,7 +79,7 @@ From Windows Settings → Apps. Uninstalling also removes Bat-Signal from the ap
 
 ## Using it
 
-Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report theme is in Settings.
+Bat-Signal starts as the signal disc in the bottom-right corner: drag it anywhere, click it to open the panel. The strip button shrinks the panel to the watch strip, and the disc reopens whichever you used last. Drag the panel by its header and resize it from any edge; Esc or the fold button folds it back into the signal. The night report layout is in Settings.
 
 The bat by the clock is Bat-Signal's tray icon, lit red while something needs you. Click it to open or fold the panel; its menu switches between the disc, the panel and the watch strip, hides everything, opens Settings, and quits. Closing the disc or the panel's close button hides Bat-Signal to the tray instead of quitting, and launching it again brings it back.
 

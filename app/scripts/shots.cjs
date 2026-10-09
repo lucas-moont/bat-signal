@@ -40,14 +40,14 @@ const SHOTS = [
     ],
   },
   { name: 'all-quiet', hash: 'demo-quiet', steps: [] },
-  // The night report theme, and a case opened in place.
+  // The night report layout, and a case opened in place.
   { name: 'night-report', hash: 'demo-report', steps: [] },
   {
     name: 'night-report-case',
     hash: 'demo-report',
     steps: [click('.tabs__tab', 1), later(300, clickText('.case .entry', 'Batmobile'))],
   },
-  // The watch strip in both themes, cut to its own size.
+  // The watch strip in both layouts, cut to its own size.
   { name: 'watch', hash: 'demo-watch', size: [280, 320], clip: '.watch', steps: [] },
   { name: 'watch-report', hash: 'demo-watch-report', size: [280, 320], clip: '.watch', steps: [] },
   // The signal window: the lit disc at rest, and the disc sending a notice card up its beam.
