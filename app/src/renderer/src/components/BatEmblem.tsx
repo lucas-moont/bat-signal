@@ -1,9 +1,11 @@
 // The bat emblem, after the symbol of The Batman (2022): wide wings set high above the head, their
 // upper edges sweeping down to dropped tips, a stepped lower edge, two sharp ears and a short, square
-// tail, with a scratched-metal finish. The symbol is DC's trademark; this is a fan project.
+// tail, with a lightly scratched-metal finish. The symbol is DC's trademark; this is a fan project.
 // The outline was traced from the film's symbol, simplified, and made exactly symmetric (the left
 // half mirrored at x=60), on a 120x48 grid; icons.mts draws the tray and toast icons from it, and
-// Bat-Clawd wears it on his chest.
+// Bat-Clawd wears it on his chest, all three plain: the scratches are this component's alone.
+
+import { useId } from 'react'
 
 export const WINGS =
   'M2 20 L4.5 18 L13.5 13.5 L23.5 10 L34 7 L35.5 14 L44 22.5 L46.5 23 L54.5 28.5 L55.5 24.5 ' +
@@ -43,6 +45,8 @@ export function BatEmblem({
   title?: string
   fill?: string
 }) {
+  // Its own filter id: one shared by every emblem resolves to whichever comes first on the page.
+  const wear = useId()
   return (
     <svg
       width={size}
@@ -53,8 +57,8 @@ export function BatEmblem({
       style={{ display: 'block', overflow: 'visible' }}
     >
       <defs>
-        {/* Fine noise cut out of the fill reads as wear and scratches. */}
-        <filter id="bat-wear" x="0" y="0" width="100%" height="100%">
+        {/* Fine noise dims the fill in streaks that read as wear and scratches, never cut through. */}
+        <filter id={wear} x="0" y="0" width="100%" height="100%">
           <feTurbulence type="fractalNoise" baseFrequency="1.4 0.25" numOctaves="2" seed="7" result="noise" />
           <feColorMatrix
             in="noise"
@@ -62,10 +66,14 @@ export function BatEmblem({
             values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -6 4.6"
             result="mask"
           />
-          <feComposite in="SourceGraphic" in2="mask" operator="in" />
+          {/* A scratch keeps 62.5% of the bat: worn, not holed. */}
+          <feComponentTransfer in="mask" result="wear">
+            <feFuncA type="linear" slope="0.375" intercept="0.625" />
+          </feComponentTransfer>
+          <feComposite in="SourceGraphic" in2="wear" operator="in" />
         </filter>
       </defs>
-      <path d={WINGS} fill={fill} filter="url(#bat-wear)" />
+      <path d={WINGS} fill={fill} filter={`url(#${wear})`} />
     </svg>
   )
 }

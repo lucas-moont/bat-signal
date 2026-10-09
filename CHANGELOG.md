@@ -4,6 +4,10 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Changed
+
+- The scratches on the bat emblem are softer: they dim it instead of cutting through.
+
 ## [1.1.1] - 2026-10-09
 
 ### Changed

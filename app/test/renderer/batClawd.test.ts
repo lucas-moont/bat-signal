@@ -43,6 +43,34 @@ describe('Bat-Clawd', () => {
 })
 
 describe('BatEmblem', () => {
+  it('wears scratches that dim the bat by 37.5%, never cutting through it', () => {
+    const markup = renderToStaticMarkup(createElement(BatEmblem))
+    const soft = markup.match(
+      /<feComponentTransfer in="mask" result="([^"]+)"><feFuncA type="linear" slope="([^"]+)" intercept="([^"]+)"/,
+    )
+    expect(soft).not.toBeNull()
+    const [, result, slope, intercept] = soft ?? []
+    // A scratch takes the mask to 0; the floor keeps 62.5% of the bat there, and all of it elsewhere.
+    expect([Number(slope), Number(intercept)]).toEqual([0.375, 0.625])
+    // One composite, keeping the bat where the floored mask is: the raw, holed mask is not used.
+    const composites = [...markup.matchAll(/<feComposite ([^>]*?)\/?>/g)].map((m) => m[1])
+    expect(composites).toHaveLength(1)
+    expect(composites[0]).toContain('in="SourceGraphic"')
+    expect(composites[0]).toContain(`in2="${result}"`)
+    expect(composites[0]).toContain('operator="in"')
+  })
+
+  it('gives every emblem its own wear filter, so none borrows another one', () => {
+    const markup = renderToStaticMarkup(
+      createElement('div', null, createElement(BatEmblem), createElement(BatEmblem)),
+    )
+    const ids = [...markup.matchAll(/<filter id="([^"]+)"/g)].map((m) => m[1])
+    const uses = [...markup.matchAll(/filter="url\(#([^)]+)\)"/g)].map((m) => m[1])
+    expect(ids).toHaveLength(2)
+    expect(new Set(ids).size).toBe(2)
+    expect(uses).toEqual(ids)
+  })
+
   it('draws in a box that hugs the bat, so its size is the size of the bat', () => {
     const box = renderToStaticMarkup(createElement(BatEmblem)).match(/viewBox="([^"]+)"/)?.[1] ?? ''
     const [x = NaN, y = NaN, w = NaN, h = NaN] = box.split(' ').map(Number)
