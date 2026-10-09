@@ -46,10 +46,10 @@ It reads the files Claude Code already writes (`~/.claude/sessions/`, the transc
 Binding for any design direction:
 
 - **Name:** Bat-Signal (formerly Batcave).
-- **Theme:** The Batman (2022): its reds and blacks, the noir case-file mood.
-- **Mascot:** Bat-Clawd, Claude Code's orange pixel Clawd in a black cowl outlined in red and a black cape with red accents, with white eyes and the bat emblem on his chest.
+- **Themes:** each Theme dresses Bat-Signal as one version of Batman, from a film or a comic (see `CONTEXT.md` and `docs/adr/0001-many-themes-and-the-homage-line.md`). The default is **VENGEANCE**, after The Batman (2022): its reds and blacks, the noir case-file mood. Every Theme is dark, and keeps one Alarm color for "something needs you" alone.
+- **Mascot:** Bat-Clawd, Claude Code's orange pixel Clawd with white eyes, in the costume of the active Theme's Batman: cowl, cape, the version's bat symbol on his chest, and its accessories. In VENGEANCE, a black cowl outlined in red and a black cape with red accents. Every Theme keeps Clawd's orange, his eyes and his three moods.
 - **Resting form:** the Bat-Signal disc in the screen corner that lights up.
-- This is a fan project with no affiliation to Warner Bros., DC or Anthropic. The bat emblem follows the shape of the symbol from The Batman (2022), a trademark of DC; it is used here as fan art.
+- This is a fan project with no affiliation to Warner Bros., DC or Anthropic. Each Theme's bat emblem follows the symbol of its version of Batman, redrawn as a vector and credited to DC as a trademark; it is used here as fan art. VENGEANCE's follows the symbol from The Batman (2022). Title wordmarks, film or comic images, commercial fonts and long dialogue are never used.
 
 ## Evidence on Hand
 
@@ -63,4 +63,4 @@ Binding for any design direction:
 2. **Never cry wolf.** Announce only real news, once. Old state is not news.
 3. **Watch, never touch.** Observe sessions; acting on them is a later, explicit decision.
 4. **Cheap to keep open.** Every effect earns its CPU.
-5. **Character in the details.** The theme and the mascot make it worth keeping, without slowing the glance.
+5. **Character in the details.** The themes and the mascot make it worth keeping, without slowing the glance.
