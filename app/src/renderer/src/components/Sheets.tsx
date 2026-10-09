@@ -1,12 +1,14 @@
 import { useEffect, useId, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import {
+  everyToast,
   NEWS_GROUPS,
   OPACITY_MAX,
   OPACITY_MIN,
   type NewsGroup,
   type Settings,
   type SettingsPatch,
+  toastsOn,
 } from '@shared/settings'
 import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
@@ -225,6 +227,29 @@ function Toggle({
   )
 }
 
+/**
+ * One switch for every kind of news below it: on when all are, and a click from any other state
+ * turns them all on (from all on, all off). Some on reads as a count, so it is never a mystery.
+ */
+function AllToasts({
+  toast,
+  onChange,
+}: {
+  toast: Settings['announce']['toast']
+  onChange: (patch: SettingsPatch) => void
+}) {
+  const on = toastsOn(toast)
+  const all = on === NEWS_GROUPS.length
+  return (
+    <Toggle
+      label="All notifications"
+      hint={on === 0 || all ? 'Every kind of news below' : `${on} of ${NEWS_GROUPS.length} on`}
+      on={all}
+      onChange={(next) => onChange(everyToast(next))}
+    />
+  )
+}
+
 /** A value from 0 to 1 set in steps of 5%, shown as a percentage; `children` sit at its end. */
 function PercentSlider({
   label,
@@ -336,14 +361,17 @@ export function SettingsSheet({
           />
         </Section>
         <Section title="Windows notifications">
-          {NEWS_GROUPS.map((group) => (
-            <Toggle
-              key={group}
-              {...TOAST_SWITCHES[group]}
-              on={settings.announce.toast[group]}
-              onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
-            />
-          ))}
+          <AllToasts toast={settings.announce.toast} onChange={onChange} />
+          <div className="toggle-group">
+            {NEWS_GROUPS.map((group) => (
+              <Toggle
+                key={group}
+                {...TOAST_SWITCHES[group]}
+                on={settings.announce.toast[group]}
+                onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
+              />
+            ))}
+          </div>
         </Section>
         <Section title="Sound">
           <Toggle
