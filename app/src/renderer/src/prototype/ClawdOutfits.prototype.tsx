@@ -17,7 +17,13 @@ interface Outfit {
   note: string
   /** Half-rows (0.5 unit tall), 16 columns (1 unit wide), starting at y = top. */
   rows: string[]
+  /** Other half-rows for a mood (the Knightmare's armour when alarmed). */
+  rowsFor?: (mood: Mood) => string[] | undefined
   top: number
+  /** The theme's page colour, behind the previews. */
+  ground?: string
+  /** The approval set, shown together in the strip. */
+  group?: 'wave1'
   legend: Record<string, string>
   /** Vector layers: behind the map (the cape) and in front of it (chest symbol, accessories). */
   behind: (mood: Mood) => ReactNode
@@ -156,6 +162,55 @@ function SuitCape({ mood }: { mood: Mood }) {
       <path d={COWL_EDGE} fill="none" stroke={RIM} strokeWidth={0.7} />
     </>
   )
+}
+
+/** The theme's Alarm color as an aura, only while something needs you. */
+const alarmAura = (rgb: string) => (mood: Mood) =>
+  mood === 'alarmed'
+    ? `drop-shadow(0 0 1.5px rgb(${rgb} / 90%)) drop-shadow(0 0 5px rgb(${rgb} / 55%))`
+    : undefined
+
+/** A theme's cape on the suit: black cloth, a neutral rim outside the body only, the back behind the legs. */
+function suitCape(o: {
+  trail: string
+  trailMirrored?: boolean
+  open: string
+  rim: string
+  edge?: (mood: Mood) => string
+}) {
+  return function Behind(mood: Mood) {
+    const id = `behind-${mood}-${o.rim.length}-${o.open.length}`
+    const d = mood === 'flying' ? o.trail : o.open
+    const halves = mood === 'flying' && !o.trailMirrored ? [undefined] : [undefined, MIRROR]
+    return (
+      <>
+        <defs>
+          <mask id={id} maskUnits="userSpaceOnUse" x={-10} y={-5} width={40} height={20}>
+            <rect x={-10} y={-5} width={40} height={20} fill="white" />
+            <rect x={3} y={5} width={10} height={7} fill="black" />
+          </mask>
+        </defs>
+        {mood === 'alarmed' && <path d="M3.4 5 L12.6 5 L12.6 11.4 L3.4 11.4 Z" fill="#000" />}
+        {halves.map((t) => (
+          <path key={t ?? 'l'} transform={t} d={d} fill="#000" />
+        ))}
+        <g mask={`url(#${id})`}>
+          {halves.map((t) => (
+            <path
+              key={t ?? 'l'}
+              transform={t}
+              d={d}
+              fill="none"
+              stroke={o.rim}
+              strokeWidth={0.35}
+              strokeLinejoin="round"
+            />
+          ))}
+        </g>
+        <path d={o.edge?.(mood) ?? COWL_EDGE} fill="none" stroke={o.rim} strokeWidth={0.7} />
+      </>
+    )
+  }
 }
 
 const OUTFITS: Outfit[] = [
@@ -359,7 +414,184 @@ const OUTFITS: Outfit[] = [
         ? 'drop-shadow(0 0 1.5px rgb(227 18 27 / 90%)) drop-shadow(0 0 5px rgb(227 18 27 / 55%))'
         : undefined,
   },
+  {
+    key: 'I',
+    group: 'wave1',
+    name: 'PALE MOONLIGHT',
+    note: "Burton's black rubber suit, lifted to a dark plum-grey with a steel sheen on the shoulders so it reads on the smog black; the rimmed oval (brass at rest, gold lit), the brass belt, the scalloped cape with a steel rim. The aura is the theme's Alarm color: gold.",
+    rows: [
+      ...twice([
+        '....c......c....',
+        '....chhccccc....',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...hSSSSSSSSh...',
+        '.gSSSSSSSSSSSSg.',
+        '...SSSSSSSSSS...',
+      ]),
+      '...SSSSSSSSSS...',
+      '...bbbbkbbbbb...',
+      '....S.S..S.S....',
+      '....g.g..g.g....',
+      ...twice(['....g.g..g.g....']),
+    ],
+    top: 0,
+    ground: '#0d0906',
+    legend: {
+      ...VENGEANCE_LEGEND,
+      c: '#0b0a0b',
+      h: '#4a5664',
+      S: '#2a2730',
+      g: '#0b0a0b',
+      b: '#7a5420',
+      k: '#948b7f',
+    },
+    behind: suitCape({
+      trail:
+        'M3 5 L13 5 L13.4 9.2 Q12.2 10.9 11 10.4 Q9 11.2 7 10 Q5 11.2 3 10.8 Q1 11.4 -1 10 Q-2.8 11.6 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
+      open: 'M3.4 5 L0.2 5.2 L-2.8 11.2 Q-2 10.1 -1.2 10.5 Q-0.4 11.7 0.4 11.3 Q1.1 10.1 1.9 10.6 Q2.6 11.7 3.4 11.2 Z',
+      rim: 'rgb(143 176 211 / 40%)',
+    }),
+    front: (mood) => OUTFITS_C_FRONT(mood),
+    aura: alarmAura('240 194 75'),
+  },
+  {
+    key: 'J',
+    group: 'wave1',
+    name: 'WATCHFUL PROTECTOR',
+    note: "The Dark Knight's segmented suit in blue-steel, the helmet cowl on a steel collar with cheek guards, black gauntlets, a flat-topped chest bat, the straight-hemmed cape gliding when flying. The aura is the draft Alarm color, Burning Bat (still to be judged next to the orange jaw).",
+    rows: [
+      ...twice([
+        '.....c....c.....',
+        '....chhccccc....',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...cnnnnnnnnc...',
+        '.gSSSSSSSSSSSSg.',
+        '...SSSSSSSSSS...',
+      ]),
+      '...bbbbkkbbbb...',
+      '...SSSSSSSSSS...',
+      '....S.S..S.S....',
+      '....g.g..g.g....',
+      ...twice(['....g.g..g.g....']),
+    ],
+    top: 0,
+    ground: '#04070b',
+    legend: {
+      ...VENGEANCE_LEGEND,
+      c: '#0a0d11',
+      h: '#2a3644',
+      n: '#3a4754',
+      S: '#27313d',
+      g: '#0a0d11',
+      b: '#1a222b',
+      k: '#56636f',
+    },
+    behind: suitCape({
+      trail: 'M3 5 L-5 4.2 L-4.3 5.4 L-4.2 7.2 L0 7.4 L2.4 8.6 L3 9 Z',
+      trailMirrored: true,
+      open: 'M3.4 5 L0.2 5.2 L-2.8 11 L3.4 11 Z',
+      rim: 'rgb(160 178 196 / 32%)',
+      edge: () => 'M3 5 L3 2 L4 2 L4 1 L5 1 L5 0 L6 0 L6 1 L10 1 L10 0 L11 0 L11 1 L12 1 L12 2 L13 2 L13 5 Z',
+    }),
+    front: () => <path d="M5.4 6.1 L10.6 6.1 L10 7 L8.7 7.1 L8 7.9 L7.3 7.1 L6 7 Z" fill="#0a0d11" />,
+    aura: alarmAura('255 83 64'),
+  },
+  {
+    key: 'K',
+    group: 'wave1',
+    name: 'KNIGHTMARE',
+    note: "Affleck's grey suit with the big black bat, short wide-set ears, a heavy straight-hemmed cape. Alarmed, he wears the armour: a squared helmet with ear nubs and a plate seam, steel pauldrons. The aura is carmine.",
+    rows: [
+      ...twice([
+        '................',
+        '....cc....cc....',
+        '...chhccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...SSSSSSSSSS...',
+        '.gSSSSSSSSSSSSg.',
+        '...SSSSSSSSSS...',
+      ]),
+      '...bbbbkkbbbb...',
+      '...SSSSSSSSSS...',
+      '....S.S..S.S....',
+      '....g.g..g.g....',
+      ...twice(['....g.g..g.g....']),
+    ],
+    rowsFor: (mood) =>
+      mood === 'alarmed'
+        ? [
+            ...twice([
+              '....c......c....',
+              '...cccccccccc...',
+              '...cllllllllc...',
+              '...cceecceecc...',
+              '...cc######cc...',
+              '.pppSSSSSSSSppp.',
+              '.gSSSSSSSSSSSSg.',
+              '...SSSSSSSSSS...',
+            ]),
+            '...bbbbkkbbbb...',
+            '...SSSSSSSSSS...',
+            '....S.S..S.S....',
+            '....g.g..g.g....',
+            ...twice(['....g.g..g.g....']),
+          ]
+        : undefined,
+    top: 0,
+    ground: '#0c0c0b',
+    legend: {
+      ...VENGEANCE_LEGEND,
+      c: '#1d1c1a',
+      h: '#2e2c29',
+      e: '#fcffff',
+      l: '#3a3835',
+      p: '#6e6b66',
+      S: '#5a5751',
+      g: '#141413',
+      b: '#1d1c1a',
+      k: '#6b665e',
+    },
+    behind: suitCape({
+      trail: 'M3 5 L13 5 L13.4 9.6 L8 10.8 L2 10.4 L-4.4 10.9 L-3.6 8.6 L-5.4 7.2 L-1.4 6.4 Z',
+      open: 'M3.4 5 L0.2 5.2 L-2.6 11.2 L0.4 10.7 L3.4 11.2 Z',
+      rim: 'rgb(150 146 140 / 35%)',
+      edge: (mood) =>
+        mood === 'alarmed'
+          ? 'M3 5 L3 1 L4 1 L4 0 L5 0 L5 1 L11 1 L11 0 L12 0 L12 1 L13 1 L13 5 Z'
+          : 'M3 5 L3 2 L4 2 L4 1 L6 1 L6 2 L10 2 L10 1 L12 1 L12 2 L13 2 L13 5 Z',
+    }),
+    front: () => (
+      <g fill="#141413">
+        {[4, 6, 9, 11].map((x) => (
+          <rect key={x} x={x} y={5} width={1} height={1} />
+        ))}
+        <rect x={4} y={6} width={8} height={1} />
+        <rect x={5} y={7} width={1} height={1} />
+        <rect x={7} y={7} width={2} height={1} />
+        <rect x={10} y={7} width={1} height={1} />
+      </g>
+    ),
+    aura: alarmAura('229 18 50'),
+  },
 ]
+
+const WAVE1_VENGEANCE: Outfit = {
+  ...OUTFITS.find((o) => o.key === 'H')!,
+  key: 'V',
+  name: 'VENGEANCE',
+  group: 'wave1',
+  ground: '#000000',
+}
+OUTFITS.splice(
+  OUTFITS.findIndex((o) => o.key === 'I'),
+  0,
+  WAVE1_VENGEANCE,
+)
 
 const OUTFITS_C_BEHIND = (mood: Mood) => OUTFITS.find((o) => o.key === 'C')!.behind(mood)
 const OUTFITS_C_FRONT = (mood: Mood) => OUTFITS.find((o) => o.key === 'C')!.front(mood)
@@ -392,10 +624,10 @@ function legoCape(mood: Mood) {
  * One rect per run of the same character in a half-row, and a run that repeats exactly on the
  * next half-row grows down instead of adding a rect: the whole outfit as SVG.
  */
-function mapRects(o: Outfit) {
+function mapRects(o: Outfit, mood: Mood = 'flying') {
   const out: { x: number; y: number; w: number; h: number; fill: string }[] = []
   let open = new Map<string, (typeof out)[number]>()
-  o.rows.forEach((row, r) => {
+  ;(o.rowsFor?.(mood) ?? o.rows).forEach((row, r) => {
     const next = new Map<string, (typeof out)[number]>()
     let x = 0
     while (x < row.length) {
@@ -433,7 +665,7 @@ function OutfitSvg({
   size: number
   grid?: boolean
 }) {
-  const rects = mapRects(outfit)
+  const rects = mapRects(outfit, mood)
   return (
     <svg
       viewBox="-6 -2 28 14"
@@ -531,10 +763,17 @@ export function ClawdOutfitsPrototype() {
         <span style={{ font: '21px var(--font-display)', letterSpacing: '2.5px', color: 'var(--signal)' }}>
           BAT-SIGNAL
         </span>
-        {OUTFITS.map((o) => (
+        {OUTFITS.filter((o) => o.group === outfit.group).map((o) => (
           <div
             key={o.key}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: 1 }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              background: o.ground ?? 'var(--abyss)',
+              padding: '6px 10px',
+            }}
           >
             <div style={{ display: 'flex', gap: 10 }}>
               <OutfitSvg outfit={o} mood="flying" size={54} />
@@ -557,7 +796,16 @@ export function ClawdOutfitsPrototype() {
       {(['flying', 'alarmed'] as Mood[]).map((mood) => (
         <div key={mood} style={{ marginBottom: 22 }}>
           <div style={label}>{mood}</div>
-          <div style={{ display: 'flex', gap: 36, alignItems: 'flex-end', marginTop: 8 }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 36,
+              alignItems: 'flex-end',
+              marginTop: 8,
+              background: outfit.ground ?? 'var(--abyss)',
+              padding: 12,
+            }}
+          >
             {SIZES.map((s) => (
               <div key={s} style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
                 <OutfitSvg outfit={outfit} mood={mood} size={s} />
