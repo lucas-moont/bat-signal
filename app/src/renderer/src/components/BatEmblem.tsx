@@ -12,8 +12,27 @@ export const WINGS =
   'L97 24.5 L94 31 L78 32 L73 34.5 L64 41 L56 41 L47 34.5 L42 32 L26 31 L23 24.5 L18.5 22.5 ' +
   'L8.5 19.5 L2 21.5 Z'
 
-/** The box around the bat, a unit of air on each side: the width a place gives is the bat's. */
-const BOX = { y: 6, width: 120, height: 36 }
+const xs: number[] = []
+const ys: number[] = []
+for (const [, x, y] of WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)) {
+  xs.push(Number(x))
+  ys.push(Number(y))
+}
+/** Where the bat lies on its grid, read from the outline, so a re-trace can't leave it behind. */
+const BAT = {
+  x: Math.min(...xs),
+  y: Math.min(...ys),
+  width: Math.max(...xs) - Math.min(...xs),
+  height: Math.max(...ys) - Math.min(...ys),
+}
+/** The box around the bat, with a unit of air on every side: the size a place gives is the bat's. */
+const BOX = { x: BAT.x - 1, y: BAT.y - 1, width: BAT.width + 2, height: BAT.height + 2 }
+
+/** An SVG transform that draws the bat `width` units wide, centred on (cx, cy). */
+export function batAt(cx: number, cy: number, width: number): string {
+  const k = width / BAT.width
+  return `translate(${cx - (BAT.x + BAT.width / 2) * k} ${cy - (BAT.y + BAT.height / 2) * k}) scale(${k})`
+}
 
 export function BatEmblem({
   size = 40,
@@ -28,7 +47,7 @@ export function BatEmblem({
     <svg
       width={size}
       height={(size * BOX.height) / BOX.width}
-      viewBox={`0 ${BOX.y} ${BOX.width} ${BOX.height}`}
+      viewBox={`${BOX.x} ${BOX.y} ${BOX.width} ${BOX.height}`}
       role="img"
       aria-label={title}
       style={{ display: 'block', overflow: 'visible' }}
