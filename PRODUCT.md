@@ -47,7 +47,7 @@ Binding for any design direction:
 
 - **Name:** Bat-Signal (formerly Batcave).
 - **Themes:** each Theme dresses Bat-Signal as one version of Batman, from a film or a comic (see `CONTEXT.md` and `docs/adr/0001-many-themes-and-the-homage-line.md`). The default is **VENGEANCE**, after The Batman (2022): its reds and blacks, the noir case-file mood. Every Theme is dark, and keeps one Alarm color for "something needs you" alone.
-- **Mascot:** Bat-Clawd, Claude Code's orange pixel Clawd with white eyes, in the costume of the active Theme's Batman: cowl, cape, the version's bat symbol on his chest, and its accessories. In VENGEANCE, a black cowl outlined in red and a black cape with red accents. Every Theme keeps Clawd's orange, his eyes and his three moods.
+- **Mascot:** Bat-Clawd, Claude Code's pixel Clawd in the suit of the active Theme's Batman: the suit over his body, the cowl down to his eyes, the version's bat symbol on his chest, and its cape or coat. Every Theme keeps Clawd's shape, his white eyes, his orange jaw and his three moods. Red, or the Theme's own Alarm color, reaches him only as an aura while something needs you.
 - **Resting form:** the Bat-Signal disc in the screen corner that lights up.
 - This is a fan project with no affiliation to Warner Bros., DC or Anthropic. Each Theme's bat emblem follows the symbol of its version of Batman, redrawn as a vector and credited to DC as a trademark; it is used here as fan art. VENGEANCE's follows the symbol from The Batman (2022). Title wordmarks, film or comic images, commercial fonts and long dialogue are never used.
 

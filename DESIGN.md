@@ -135,7 +135,7 @@ The approved layout, "files" and the default, presents cases as cards under two 
 
 Bat-Signal has many Themes, each one version of Batman (the words are defined in `CONTEXT.md`; the decision is `docs/adr/0001-many-themes-and-the-homage-line.md`; each Theme's research is in `docs/research/themes/`). This file specifies the default Theme, **VENGEANCE**, after The Batman (2022). Its tokens are the front matter above.
 
-**What every Theme shares:** a dark ground; one Alarm color, used for nothing but "something needs you"; light rather than lift; one 8 fps clock for every loop; machine output in mono; the stamp as the signature mark; the density of a 300x360 panel; both layouts; and Bat-Clawd's orange, white eyes and three moods.
+**What every Theme shares:** a dark ground; one Alarm color, used for nothing but "something needs you"; light rather than lift; one 8 fps clock for every loop; machine output in mono; the stamp as the signature mark; the density of a 300x360 panel; both layouts; and Bat-Clawd's shape, white eyes, orange jaw and three moods.
 
 **What a Theme swaps:** its palette tokens, its display and stamp faces, its emblem (one path per Theme, reused in the header, the disc, the intro and on Bat-Clawd's chest), the disc's lens, Bat-Clawd's costume, accessories and poses, its Atmosphere, its Voice and its Lexicon.
 
@@ -179,7 +179,9 @@ A black-on-black noir palette with one family of reds that work as light and ink
 - **Pen Hot** (ink-hot) and **Pen Soft** (ink-soft): Hot Signal and Brick Ink lifted just enough to reach 4.5:1 on black at stamp size. They ink the hand-drawn pen stroke and the margin stamps by tier. They are scoped to the report and do not replace the approved stamp inks in the files layout.
 
 ### Named Rules
-**The Alarm Color Rule.** Every Theme keeps one Alarm color for "something needs you" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm. In VENGEANCE the Alarm color is red, which gives the next rule.
+**The Alarm Color Rule.** Every Theme keeps one Alarm color for "something needs you" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm. In VENGEANCE the Alarm color is red, which gives the next rule. Bat-Clawd's aura is the one place the Alarm color may wrap the mascot, and only while something needs you or in an iconic moment.
+
+**The Bat-Clawd Costume Rule.** Bat-Clawd wears his version's suit over his body, arms and legs, with the cowl down to his eyes; Clawd's orange shows as his jaw, his eyes stay white, and his cape (or coat) hangs behind his legs. At rest a faint neutral rim lets the cowl and cape read on the Theme's ground, and no suit is so black that it vanishes there. His aura, in the Theme's Alarm color, shows only while something needs the user or in an iconic moment. The model was approved on the prototype in #95.
 
 **The Red Means Something Rule.** A red element is a light that is on, a stamp, a mark or a request. In the files layout a live dot may glow Hot Signal; in the Night Report, where red ink is kept for requests, running work shows in Bone.
 
@@ -284,6 +286,8 @@ Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px t
 - **Notice card:** 300px, a warm near-black gradient, 1px Line, a 3px left rule (Ash, or Hot Signal plus a glow when urgent), the desk-float shadow, a stamp, a 14px title and a mono line, carried on a blurred red beam from the disc.
 
 ### Bat-Clawd (signature)
+What follows is today's VENGEANCE Bat-Clawd. #88 redresses him under the Bat-Clawd Costume Rule: a charcoal suit, the orange jaw, a faint neutral rim in place of the red cowl and cape edges, and the red only as an aura when alarmed.
+
 Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. The bat emblem sits on his chest in cowl black, whenever the cape leaves the chest bare (flying, alarmed, on watch); asleep, the wrapped cape covers it. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop. Every Theme keeps his orange, his white eyes and his three moods, and dresses him in its own cowl, cape, chest symbol and accessories; a Theme may swap any pose for a homage and add a Signature pose on the perch, in the intro and on a click.
 
 ### The Night Report (alternate panel layout)

@@ -10,7 +10,7 @@ Revised 2026-10-09 after the wave 1 jury (`jury-wave-1.md` §10).
 - **Display name:** **KNIGHTMARE**. **Credit:** "after Zack Snyder's *Batman v Superman* and *Justice League*".
 - **What changed after the jury.** The first draft (*Steel and Ash*) reached for the same operations frame as the Nolan Theme: Op, Clearance, Gone dark, stencil stamps, a mono field log. The maintainer gave that frame to Nolan (jury §10.2). This Theme gives it up entirely and becomes the Knightmare resistance (jury §10.1).
 - **Palette: near-monochrome.** Neutral greys after the black-and-white *Justice Is Gray* cut, Bone as the working ink, and the desert's dust as the only warmth (the waiting ink, the haze of the Knightmare and its scarf). No cyan.
-- **Alarm color:** the poster's carmine, `#e51232`, with `#ff4d57` as the stamp ink so it passes 4.5:1 on a hovered card (jury §2). Nothing else in the palette is red.
+- **Decided after round 5 of the prototype (#95): Heat Vision `#e60f00`, and Bat-Clawd in the Knightmare's desert gear as in [`bat-clawd-knightmare-suit.md`](bat-clawd-knightmare-suit.md).** The palette rows and §7 below predate that decision; where they differ, that note wins. The earlier draft was: **Alarm color:** the poster's carmine, `#e51232`, with `#ff4d57` as the stamp ink so it passes 4.5:1 on a hovered card (jury §2). Nothing else in the palette is red.
 - **Type:** **Archivo** (OFL-1.1, on Fontsource) at its normal width for the display and the stamps. Barlow Semi Condensed for body text and the Night Report. JetBrains Mono for machine output only. Big Shoulders goes to Nolan (jury §10.3).
 - **Voice:** the weary veteran, with Alfred's dry, needling care leading the lines. **Lexicon:** Case, Your call, AUTHORIZE, DAMAGED, ORDERS?, NEW INTEL, STUCK (jury §5). Re-checked against the resistance frame; no replacement reads more clearly (§6).
 - **Bat-Clawd:** stubby cowl ears, the Wave's only bat that reads as a bat (now starting at row 6), a heavy few-point hem. **Signature pose: the Knightmare** (goggles, scarf, a duster blown sideways). **Alarmed Pose: the armour.**
@@ -164,6 +164,8 @@ The jury's words are adopted (jury §5, §10.7). This Theme renames fewer terms 
 Windows notifications and the tray keep the standard words (`CONTEXT.md` → Lexicon).
 
 ## 7. Bat-Clawd
+
+> **Superseded by [`bat-clawd-knightmare-suit.md`](bat-clawd-knightmare-suit.md)**, approved on the prototype (#95): the brown duster instead of a cape, the goggles up on the cowl, the scarf, olive cargo pants, the charcoal suit beneath, under the Bat-Clawd Costume Rule in `DESIGN.md`. The grey Batsuit and the armour below are not the Knightmare's.
 
 The body stays Clawd orange with white eyes. The grey Batsuit cannot go on the body: the grey goes into the cowl, the cape and the emblem tones. Grid references use `BatClawd.tsx` (16x11, body `[3,3,10,6]`, cowl rows 0–4, arms at y=6). Every identifying detail is at least 1 grid unit (jury §4).
 
