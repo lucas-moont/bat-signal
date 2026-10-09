@@ -272,7 +272,7 @@ Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px t
 - **Notice card:** 300px, a warm near-black gradient, 1px Line, a 3px left rule (Ash, or Hot Signal plus a glow when urgent), the desk-float shadow, a stamp, a 14px title and a mono line, carried on a blurred red beam from the disc.
 
 ### Bat-Clawd (signature)
-Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop.
+Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. The bat emblem sits on his chest in cowl black, whenever the cape leaves the chest bare (flying, alarmed, on watch); asleep, the wrapped cape covers it. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop.
 
 ### The Night Report (alternate panel layout)
 One typed column on black, read top to bottom, under the same Needs you / Cases tabs as the case files. There are no cards and no slide-in screens: a case opens in place.
