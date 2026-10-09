@@ -4,6 +4,8 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-09
+
 ### Changed
 
 - The scratches on the bat emblem are softer: they dim it instead of cutting through.
@@ -166,7 +168,8 @@ A corner companion.
 
 - Live sessions rebuilt from the files Claude Code already writes: titles, messages, tasks, subagents and background commands, and what needs you.
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/lucas-moont/bat-signal/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/lucas-moont/bat-signal/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/lucas-moont/bat-signal/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0...v1.0.1
