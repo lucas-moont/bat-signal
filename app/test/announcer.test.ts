@@ -198,8 +198,8 @@ describe('cueFor', () => {
     expect(cueFor([notice('permission')])).toBe('light')
   })
 
-  it('gives a thump for a task done on its own', () => {
-    expect(cueFor([notice('task-done')])).toBe('thump')
+  it('turns the spotlight on for a task done too: it is the one sound', () => {
+    expect(cueFor([notice('task-done')])).toBe('light')
   })
 
   it('is nothing for news without a sound', () => {
@@ -212,7 +212,7 @@ describe('cueFor', () => {
     ['error', 'light'],
     ['waiting', 'light'],
     ['reply', 'light'],
-    ['task-done', 'thump'],
+    ['task-done', 'light'],
     ['session-opened', undefined],
     ['session-closed', undefined],
   ] as [NoticeKind, string | undefined][])('sounds %s as %s', (kind, cue) => {
