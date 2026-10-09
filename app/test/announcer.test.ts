@@ -172,13 +172,18 @@ function soundKinds(snapshots: StoreSnapshot[], context: AnnounceContext): Notic
 }
 
 describe('announce: sound', () => {
-  it.each(NEWS_GROUPS.filter((g) => g !== 'sessions'))(
+  it.each(NEWS_GROUPS.filter((g) => g !== 'sessions' && g !== 'taskDone'))(
     'lets %s news make a sound when sound is on, whatever its toast switch',
     (group) => {
       const { snapshot, kind } = NEWS_OF[group]
       expect(soundKinds([before[group], snapshot], soundCtx())).toEqual([kind])
     },
   )
+
+  it('makes no sound for a task done', () => {
+    const { snapshot } = NEWS_OF.taskDone
+    expect(soundKinds([before.taskDone, snapshot], soundCtx())).toEqual([])
+  })
 
   it('makes no sound for a case opening or closing', () => {
     const { snapshot } = NEWS_OF.sessions
