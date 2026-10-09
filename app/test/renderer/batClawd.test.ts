@@ -43,6 +43,18 @@ describe('Bat-Clawd', () => {
 })
 
 describe('BatEmblem', () => {
+  it('wears scratches that dim the bat by 37.5%, never cutting through it', () => {
+    const markup = renderToStaticMarkup(createElement(BatEmblem))
+    const soft = markup.match(
+      /<feComponentTransfer in="mask" result="([^"]+)"><feFuncA type="linear" slope="([^"]+)" intercept="([^"]+)"/,
+    )
+    expect(soft).not.toBeNull()
+    const [, result, slope, intercept] = soft ?? []
+    // A scratch takes the mask to 0; the floor keeps 62.5% of the bat there, and all of it elsewhere.
+    expect([Number(slope), Number(intercept)]).toEqual([0.375, 0.625])
+    expect(markup).toContain(`in2="${result}"`)
+  })
+
   it('draws in a box that hugs the bat, so its size is the size of the bat', () => {
     const box = renderToStaticMarkup(createElement(BatEmblem)).match(/viewBox="([^"]+)"/)?.[1] ?? ''
     const [x = NaN, y = NaN, w = NaN, h = NaN] = box.split(' ').map(Number)
