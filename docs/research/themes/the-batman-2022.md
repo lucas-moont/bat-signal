@@ -105,7 +105,7 @@ Dropped: "Gotham sleeps. Bat-Clawd doesn't." (too close to Burton's empty state,
 
 ## 5. Bat-Clawd: Poses and the Signature pose
 
-Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing in two frames, bob), alarmed (cape flung open, blink, shiver), and the perch watch (flying pose, a gust and a glance, four redraws per 12 s). Grid units below match `BatClawd.tsx` (body x 3–13, y 3–9; viewBox −6…22 × −1…12). Orange body, white eyes and the cowl stay in every Pose. The chest emblem, which Bat-Clawd doesn't have today, is new.
+Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing in two frames, bob), alarmed (cape flung open, blink, shiver), and the perch watch (flying pose, a gust and a glance, four redraws per 12 s). Grid units below match `BatClawd.tsx` (body x 3–13, y 3–9; viewBox −6…22 × −1…12). Orange body, white eyes and the cowl stay in every Pose. The chest emblem shipped in v1.1.1 (#86): the real emblem path, placed with `batAt(8, 7, 7)` and drawn plain, hidden while the cape is wrapped.
 
 ### Pose swaps
 
@@ -134,7 +134,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 - **Why not the alternatives.** It is the only symmetric, front-on standing Signature in the Wave: Burton turns three-quarter under the Signal, Nolan's *Sonar* is carried by its ring and Snyder takes the Knightmare (jury §4.2), so this outline stays 2022's. The perch shows the Signature at rest, when nothing needs you (`watching = perched && mood !== 'alarmed'`), which is exactly when a held flare in the Alarm color would be wrong. The wingsuit is used for flying. The rooftop watch is already the perch's behavior.
 - **The drawing.** Bat-Clawd stands front-on with the cape draped from the shoulders, not wrapped:
   - Two panels: left `M3 5 L1.6 5.4 L1.2 10.8 L3.2 10.6 Z`, mirrored. Arms hidden behind them; `LEGS` as today; `EYES_OPEN`.
-  - The 2022 chest emblem, in `--cowl` on the orange: wings `[6, 6, 1.5, 1]` and `[8.5, 6, 1.5, 1]`, body `[7.4, 5.7, 1.2, 1.3]`. The wings are a full unit tall (about 2.1 px at the header's 60 px), as the Wave rule asks of every identifying mascot detail (jury §4, §6). At 0.6 units they read as a dark dash, not the bladed bat. The emblem shows in every unwrapped Pose; it needs judging at 60 px.
+  - The 2022 chest emblem is already on Bat-Clawd (v1.1.1, #86): the real `WINGS` path placed with `batAt(8, 7, 7)` in cowl black, not grid rects, so the 1-unit-wings draft that stood here is superseded. It shows in every unwrapped Pose; any change to its width or height is judged at 60 px.
   - Still half in the dark: a black rect over y 8–11 at 55%.
   - No red beyond the approved cowl and cape edges.
 - **On the perch** it stands still: no gusts (a draped cape has nothing to lift), only the existing `WATCH` glances. That gives fewer redraws than today on the transparent window.
@@ -164,7 +164,7 @@ A new Theme has to score "clearly different" against every other Theme on at lea
 |---|---|
 | Palette | Pure black page; warm near-blacks only as highlights; one family of reds as light and ink (Signal Red #af0006 as the base, Hot Signal #e3121b as the alarm); sodium amber for working; Clawd orange only on the mascot |
 | Type | Condensed poster capitals (Anton) + narrow working sans (Barlow Semi Condensed) + typewriter stamps (Special Elite) + mono for machine output |
-| Bat-Clawd silhouette | Short, upright cowl ears; black cowl and cape edged in Signal Red; a jagged bat-scalloped hem; black inside the cape with one Dried Blood thread; metal-plate chest emblem (new, wings 1 unit tall); ribbed wingsuit glide; Signature "Out of the dark": the Wave's only symmetric front-on stand, draped cape, half in shadow |
+| Bat-Clawd silhouette | Short, upright cowl ears; black cowl and cape edged in Signal Red; a jagged bat-scalloped hem; black inside the cape with one Dried Blood thread; metal-plate chest emblem (the real path, shipped in v1.1.1); ribbed wingsuit glide; Signature "Out of the dark": the Wave's only symmetric front-on stand, draped cape, half in shadow |
 | Atmosphere | Slanted rain from the left in three depths, a low red street-light glow, static film grain; flare-lift on alarm |
 | Voice | Bruce's night journal and a detective's case file: short, present tense, bleak; "Case", "filed", "Awaiting your signature", "All quiet in Gotham"; no Lexicon, since it defines the standard words. Display name VENGEANCE, with "I'm vengeance." only as the Signature's hover line |
 
