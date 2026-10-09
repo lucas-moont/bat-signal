@@ -36,7 +36,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Settings | Comfort, notifications and sound | The Bat-Signal at rest |
 |---|---|---|
-| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, a Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
 
 | The tray icon, at rest and lit |
 |---|
