@@ -91,6 +91,15 @@ type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]>
 /** A change to some settings: any one switch, down to a single toast, leaving the rest as they are. */
 export type SettingsPatch = DeepPartial<Settings>
 
+/** How many kinds of news are picked for a Windows toast. */
+export const toastsOn = (toast: AnnouncePrefs['toast']): number =>
+  NEWS_GROUPS.filter((group) => toast[group]).length
+
+/** The patch that picks every kind of news for a Windows toast, or none (the "All notifications" switch). */
+export const everyToast = (on: boolean): SettingsPatch => ({
+  announce: { toast: Object.fromEntries(NEWS_GROUPS.map((group) => [group, on])) },
+})
+
 /**
  * An untrusted patch laid over a value, key by key, all the way down: a value of the wrong type
  * (or none) keeps the current one, and only keys the settings already have are taken, so no
