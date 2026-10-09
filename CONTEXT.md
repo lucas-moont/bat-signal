@@ -47,8 +47,12 @@ A Theme's ambient effect behind the panel, such as rain, snow or ash.
 _Avoid_: Weather, particles, rain (as the general name)
 
 **Bat-Clawd**:
-Claude Code's orange pixel Clawd in a Batman costume, with the Theme's bat symbol on its chest; Bat-Signal's mascot. Every Theme keeps its body and changes its cowl, cape and chest symbol, and may add its version's accessories.
+Claude Code's pixel Clawd dressed as the Theme's Batman: a suit over his body, the cowl down to his eyes, the version's bat symbol on his chest and its cape or coat; Bat-Signal's mascot. Every Theme keeps Clawd's shape, his white eyes, his orange jaw and his moods.
 _Avoid_: Mascot (alone), Clawd (alone), Batman
+
+**Aura**:
+The glow in the Theme's Alarm color around Bat-Clawd, shown only while something needs the user or in an iconic moment.
+_Avoid_: Glow, halo, outline
 
 **Mood**:
 What Bat-Clawd is doing because of the cases: sleeping, flying or alarmed. Every Theme has the same moods.
