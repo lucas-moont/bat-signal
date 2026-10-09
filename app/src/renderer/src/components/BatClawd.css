@@ -20,6 +20,10 @@
   overflow: visible;
 }
 
+/* The chest emblem, in the cowl's black. */
+.clawd__emblem {
+  fill: var(--cowl);
+}
 /* A black cape: its red edge makes it read on the pure-black window. */
 .clawd__cape {
   fill: #000;

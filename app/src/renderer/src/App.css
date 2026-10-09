@@ -84,7 +84,7 @@
 .tabs__settings {
   margin-left: auto;
 }
-@container app (max-width: 310px) {
+@container app (width < 317px) {
   .header {
     gap: 6px;
     padding-left: 10px;

@@ -203,7 +203,7 @@ A single column inside a frameless window with a 1px warm border (#1d1714). The 
 
 The Night Report keeps the tab row and replaces the cards with one typed article per tab. A 114px margin column holds right-aligned stamps and ages, a 1px Dried Blood rule runs down the sheet at the margin, and the words start 12px after it. A double rule (3px double, Line) closes the dateline; entries carry 5px vertical padding.
 
-Responsive behavior follows the panel's own width (container queries on `.app`, not the window), at three steps: under 360px the header title tightens; under 330px the Night Report margin shrinks to 100px with tighter tracking on stamps and headings; under 310px Bat-Clawd steps out before the buttons give up any room. The minimum window is 300x360.
+Responsive behavior follows the panel's own width (container queries on `.app`, not the window), at three steps: under 360px the header title tightens; under 330px the Night Report margin shrinks to 100px with tighter tracking on stamps and headings; under 317px Bat-Clawd steps out before the buttons give up any room. The minimum window is 300x360.
 
 The signal window is transparent, with the 64px disc 16px from its corner. The 300px notice card rides above it on a red beam and flips below or to the right near screen edges.
 
@@ -272,7 +272,7 @@ Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px t
 - **Notice card:** 300px, a warm near-black gradient, 1px Line, a 3px left rule (Ash, or Hot Signal plus a glow when urgent), the desk-float shadow, a stamp, a 14px title and a mono line, carried on a blurred red beam from the disc.
 
 ### Bat-Clawd (signature)
-Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop.
+Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. The bat emblem sits on his chest in cowl black, whenever the cape leaves the chest bare (flying, alarmed, on watch); asleep, the wrapped cape covers it. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop.
 
 ### The Night Report (alternate panel layout)
 One typed column on black, read top to bottom, under the same Needs you / Cases tabs as the case files. There are no cards and no slide-in screens: a case opens in place.

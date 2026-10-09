@@ -53,7 +53,7 @@ export function WatchStrip({
   return (
     <main className={`watch watch--${layout}`}>
       <header ref={bar} className="watch__bar">
-        <BatEmblem size={22} />
+        <BatEmblem size={28} />
         <h1 className="watch__name">Bat-Signal</h1>
         {needsYou > 0 && <span className="watch__count">{needsYouCount(needsYou)}</span>}
         <nav className="watch__actions">
