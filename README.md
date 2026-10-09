@@ -36,7 +36,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Settings | Comfort, notifications and sound | The Bat-Signal at rest |
 |---|---|---|
-| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, a Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+| <img src="docs/screenshots/settings.png" width="240" alt="Settings: animations, rain, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
 
 | The tray icon, at rest and lit |
 |---|
@@ -87,7 +87,7 @@ The bat by the clock is Bat-Signal's tray icon, lit red while something needs yo
 
 **Start with Windows** (Settings → Comfort) has Bat-Signal wake as the disc when you sign in, without taking the focus. The switch shows what Windows will do: turn the entry off in Task Manager's Startup apps and the switch says so.
 
-**Windows notifications** (Settings → Windows notifications, all off at first) add a Windows toast to the Bat-Signal for the kinds of news you pick: Claude needs you, a reply is ready, a task is done, a case opened or closed. A burst of news is one toast (the most urgent, with a count of the rest), the same news never comes twice, and none come while the panel is the window in front. Click one to open its case.
+**Windows notifications** (Settings → Windows notifications, all off at first) add a Windows toast to the Bat-Signal for the kinds of news you pick: Claude needs you, a reply is ready, a task is done, a case opened or closed. **All notifications** turns them all on or off at once. A burst of news is one toast (the most urgent, with a count of the rest), the same news never comes twice, and none come while the panel is the window in front. Click one to open its case.
 
 **Sound** (Settings → Sound, off at first) gives news a voice: a spotlight coming on when Claude needs you or replies. A burst of news is one sound, at most one every four seconds, at the volume you set (Test plays it). It keeps quiet while the panel is in front, while something runs full screen or a presentation is on, and still plays while Bat-Signal is hidden in the tray. Windows 11's Do Not Disturb is not reported to apps, so it does not hush the sound; the toasts do follow it. To ask Windows quickly, Bat-Signal keeps one PowerShell open while sound is on (the terminal button shares it). The sound is made from CC0 recordings, credited in [`app/src/renderer/src/assets/sounds/`](app/src/renderer/src/assets/sounds/LICENSE.md).
 

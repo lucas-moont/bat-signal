@@ -34,6 +34,10 @@ export interface Settings {
 
 export type PanelLayout = 'files' | 'report'
 
+/** One switch per kind of news, set by `pick`: every kind, and no other key. */
+const toastMap = (pick: (group: NewsGroup) => boolean): AnnouncePrefs['toast'] =>
+  Object.fromEntries(NEWS_GROUPS.map((group) => [group, pick(group)])) as AnnouncePrefs['toast']
+
 export const DEFAULT_SETTINGS: Settings = {
   animations: true,
   rain: true,
@@ -42,7 +46,7 @@ export const DEFAULT_SETTINGS: Settings = {
   layout: 'files',
   shortcut: 'Ctrl+Alt+B',
   announce: {
-    toast: Object.fromEntries(NEWS_GROUPS.map((group) => [group, false])) as AnnouncePrefs['toast'],
+    toast: toastMap(() => false),
     sound: false,
     volume: 0.6,
   },
@@ -52,9 +56,7 @@ function parseAnnounce(raw: unknown, defaults: AnnouncePrefs): AnnouncePrefs {
   const o = obj(raw)
   const toast = obj(o['toast'])
   return {
-    toast: Object.fromEntries(
-      NEWS_GROUPS.map((group) => [group, bool(toast[group]) ?? defaults.toast[group]]),
-    ) as AnnouncePrefs['toast'],
+    toast: toastMap((group) => bool(toast[group]) ?? defaults.toast[group]),
     sound: bool(o['sound']) ?? defaults.sound,
     volume: clamp(num(o['volume']) ?? defaults.volume, 0, 1),
   }
@@ -90,6 +92,15 @@ type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]>
 
 /** A change to some settings: any one switch, down to a single toast, leaving the rest as they are. */
 export type SettingsPatch = DeepPartial<Settings>
+
+/** How many kinds of news are picked for a Windows toast. */
+export const toastsOn = (toast: AnnouncePrefs['toast']): number =>
+  NEWS_GROUPS.filter((group) => toast[group]).length
+
+/** The patch that picks every kind of news for a Windows toast, or none (the "All notifications" switch). */
+export const everyToast = (on: boolean): SettingsPatch => ({
+  announce: { toast: toastMap(() => on) },
+})
 
 /**
  * An untrusted patch laid over a value, key by key, all the way down: a value of the wrong type

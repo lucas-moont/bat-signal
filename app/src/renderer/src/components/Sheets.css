@@ -195,6 +195,15 @@
   outline-offset: 2px;
 }
 
+/* Switches that answer to the one above them (All notifications): set in, on a thin rule. */
+.toggle-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* long rows shrink to an ellipsis, as in .section */
+  gap: var(--section-gap, 6px);
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+
 .slider {
   display: flex;
   align-items: center;

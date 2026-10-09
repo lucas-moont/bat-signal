@@ -1,12 +1,15 @@
 import { useEffect, useId, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import {
+  everyToast,
   NEWS_GROUPS,
   OPACITY_MAX,
   OPACITY_MIN,
+  type AnnouncePrefs,
   type NewsGroup,
   type Settings,
   type SettingsPatch,
+  toastsOn,
 } from '@shared/settings'
 import type { AppStatus } from '@shared/status'
 import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/types'
@@ -209,19 +212,54 @@ function Toggle({
   hint,
   warn,
   on,
+  mixed = false,
   onChange,
 }: {
   label: string
   hint: string
   warn?: boolean
   on: boolean
+  /** Some of what it stands for is on: a switch can't say so, so it is read as a mixed checkbox. */
+  mixed?: boolean
   onChange: (on: boolean) => void
 }) {
   return (
     <SettingRow as="label" className="toggle" label={label} hint={hint} warn={warn}>
-      <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
+      <input
+        type="checkbox"
+        role={mixed ? undefined : 'switch'}
+        ref={(input) => {
+          if (input) input.indeterminate = mixed
+        }}
+        checked={on}
+        onChange={(e) => onChange(e.target.checked)}
+      />
       <span className="toggle__track" aria-hidden />
     </SettingRow>
+  )
+}
+
+/**
+ * One switch for every kind of news below it: on when all are, and a click from any other state
+ * turns them all on (from all on, all off). Some on reads as a count, so it is never a mystery.
+ */
+function AllToasts({
+  toast,
+  onChange,
+}: {
+  toast: AnnouncePrefs['toast']
+  onChange: (patch: SettingsPatch) => void
+}) {
+  const on = toastsOn(toast)
+  const all = on === NEWS_GROUPS.length
+  return (
+    <Toggle
+      label="All notifications"
+      hint={on === 0 || all ? 'Every kind of news below' : `${on} of ${NEWS_GROUPS.length} on`}
+      on={all}
+      mixed={on > 0 && !all}
+      onChange={(next) => onChange(everyToast(next))}
+    />
   )
 }
 
@@ -336,14 +374,17 @@ export function SettingsSheet({
           />
         </Section>
         <Section title="Windows notifications">
-          {NEWS_GROUPS.map((group) => (
-            <Toggle
-              key={group}
-              {...TOAST_SWITCHES[group]}
-              on={settings.announce.toast[group]}
-              onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
-            />
-          ))}
+          <AllToasts toast={settings.announce.toast} onChange={onChange} />
+          <div className="toggle-group" role="group" aria-label="Each kind of news">
+            {NEWS_GROUPS.map((group) => (
+              <Toggle
+                key={group}
+                {...TOAST_SWITCHES[group]}
+                on={settings.announce.toast[group]}
+                onChange={(on) => onChange({ announce: { toast: { [group]: on } } })}
+              />
+            ))}
+          </div>
         </Section>
         <Section title="Sound">
           <Toggle

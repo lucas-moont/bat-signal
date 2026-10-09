@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { applySettingsPatch, DEFAULT_SETTINGS, parseSettings } from '../src/shared/settings'
+import {
+  applySettingsPatch,
+  DEFAULT_SETTINGS,
+  everyToast,
+  parseSettings,
+  toastsOn,
+} from '../src/shared/settings'
 
 /** settings.json as Bat-Signal wrote it before Phase 4: five fields, nothing else. */
 const OLD_FILE = { animations: false, rain: false, alwaysOnTop: false, opacity: 0.8, layout: 'report' }
@@ -135,5 +141,23 @@ describe('applySettingsPatch: a value of the right type but no meaning', () => {
     const mine = applySettingsPatch(DEFAULT_SETTINGS, { shortcut: 'Ctrl+Alt+N', layout: 'report' })
     expect(applySettingsPatch(mine, { shortcut: 'Ctrl+Banana' }).shortcut).toBe('Ctrl+Alt+N')
     expect(applySettingsPatch(mine, { layout: 'grid' }).layout).toBe('report')
+  })
+})
+
+describe('every Windows notification at once', () => {
+  const some = applySettingsPatch(DEFAULT_SETTINGS, { announce: { toast: { needsYou: true, reply: true } } })
+
+  it('counts the kinds of news picked for a toast', () => {
+    expect(toastsOn(DEFAULT_SETTINGS.announce.toast)).toBe(0)
+    expect(toastsOn(some.announce.toast)).toBe(2)
+  })
+
+  it('turns every kind on, or every kind off, and nothing else', () => {
+    const all = applySettingsPatch(some, everyToast(true))
+    expect(all.announce.toast).toEqual({ needsYou: true, reply: true, taskDone: true, sessions: true })
+    expect(toastsOn(all.announce.toast)).toBe(4)
+    const none = applySettingsPatch(all, everyToast(false))
+    expect(toastsOn(none.announce.toast)).toBe(0)
+    expect({ ...none, announce: { ...none.announce, toast: some.announce.toast } }).toEqual(some)
   })
 })
