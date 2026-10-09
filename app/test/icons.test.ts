@@ -7,7 +7,7 @@ describe('emblemPath', () => {
   it('joins the bat out of BatEmblem.tsx, the one place it is drawn', () => {
     const source = readFileSync(join(__dirname, '../src/renderer/src/components/BatEmblem.tsx'), 'utf8')
     const path = emblemPath(source)
-    expect(path).toMatch(/^M60 12 L65 2 .* Z$/)
+    expect(path).toMatch(/^M2 20 L4\.5 18 L13\.5 13\.5 .* Z$/) // from the left wingtip, the 2022 symbol's outline
     expect(path).not.toContain("'")
   })
 

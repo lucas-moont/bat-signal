@@ -4,6 +4,14 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Added
+
+- **All notifications** in Settings turns every kind of Windows toast on or off at once, and says how many are on.
+
+### Changed
+
+- The bat emblem follows the shape of the symbol from *The Batman* (2022), in the header, the disc, the tray, the toasts and the installer.
+
 ## [1.0.1] - 2026-10-09
 
 ### Changed

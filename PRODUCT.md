@@ -49,7 +49,7 @@ Binding for any design direction:
 - **Theme:** The Batman (2022): its reds and blacks, the noir case-file mood.
 - **Mascot:** Bat-Clawd, Claude Code's orange pixel Clawd in a black cowl outlined in red and a black cape with red accents, with white eyes.
 - **Resting form:** the Bat-Signal disc in the screen corner that lights up.
-- This is a fan project with no affiliation to Warner Bros., DC or Anthropic. The bat emblem is an original drawing, not the film's logo.
+- This is a fan project with no affiliation to Warner Bros., DC or Anthropic. The bat emblem follows the shape of the symbol from The Batman (2022), a trademark of DC; it is used here as fan art.
 
 ## Evidence on Hand
 
