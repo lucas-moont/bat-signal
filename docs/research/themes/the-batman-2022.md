@@ -2,15 +2,18 @@
 
 Research note, 2026-10-09. Scope: the default Theme, written in the same format as new Themes. It records what is already built and approved (palette, type, emblem; see `DESIGN.md` and `app/src/renderer/src/styles/theme.css`) and fills in what the new Theme model adds: Voice, Lexicon, Pose homages, a Signature pose and Atmosphere. Nothing here redesigns the approved look.
 
+Revised 2026-10-09 after the wave 1 jury (`jury-wave-1.md` §10).
+
 ## TL;DR
 
-**Display name: "2022". Subtitle credit: "after Matt Reeves's The Batman" (shown together: "2022 — after Matt Reeves's The Batman").** This Theme is the baseline the others are judged against. It is a noir case file under a red light: pure black, one family of reds that act as light and ink, typewriter stamps and rain. That matches what the filmmakers said they were making: an "urban noir" with "pockets of light in every frame" ([TheWrap, Fraser](https://www.thewrap.com/the-batman-cinematography-greig-fraser-interview/)) and "a '70s noir detective story" ([The Ringer, quoting GQ](https://www.theringer.com/2022/02/23/movies/the-batman-movie-preview-comparisons-nirvana-noir-zodiac)). Decisions:
+**Display name: VENGEANCE. Credit: "after Matt Reeves's *The Batman* (2022)".** The name was the production's working title ([Wikipedia](https://en.wikipedia.org/wiki/The_Batman_(film))) and the word Batman gives himself in the first trailer (§3). Every Wave 1 name now alludes to its film, with the year and the film in the credit (jury §10.4). This Theme is the baseline the others are judged against. It is a noir case file under a red light: pure black, one family of reds that act as light and ink, typewriter stamps and rain. That matches what the filmmakers said they were making: an "urban noir" with "pockets of light in every frame" ([TheWrap, Fraser](https://www.thewrap.com/the-batman-cinematography-greig-fraser-interview/)) and "a '70s noir detective story" ([The Ringer, quoting GQ](https://www.theringer.com/2022/02/23/movies/the-batman-movie-preview-comparisons-nirvana-noir-zodiac)). Decisions:
 
 - **Lexicon: none.** The standard words in the code today (Case, Needs you, Permission, Error, Waiting, New reply, Stalled) were written for this Theme, so they are its words. Turning the Lexicon off changes nothing here.
 - **Voice:** Bruce's journal, the register the film uses for its narration ([Reeves via The Ringer](https://www.theringer.com/2022/02/23/movies/the-batman-movie-preview-comparisons-nirvana-noir-zodiac)). It is terse, nocturnal and observational, and most of the existing flavor lines already speak it.
 - **Poses:** keep sleeping as it is. Swap flying for the **wingsuit glide** and alarmed for the **raised red flare** from the flooded arena. The flare goes on alarmed and not the Signature because red light has to mean "needs you".
-- **Signature pose: "Vengeance".** He stands with the cape draped and steps out of the dark, as in the subway fight. It is still enough for the perch, uses no new red, and plays its reveal once in the intro and on click.
-- **Atmosphere:** rain stays. "Much of the movie" plays in torrential rain, partly added in post over wet-downs ([American Cinematographer](https://theasc.com/article/greig-fraser-batman/)). Two cheap refinements: a flare-lift of the existing red glow while alarmed, and an optional static flood waterline. One correction: the rain does **not** run on the shared 8 fps clock today (§6).
+- **Signature pose: "Out of the dark".** He stands with the cape draped and steps out of the dark, as in the subway fight. It is still enough for the perch, uses no new red, and plays its reveal once in the intro and on click. It was called "Vengeance" in the first draft; it is renamed so the word appears once as the display name and once in the hover line, never three times. It is the only Signature in the Wave that keeps the symmetric front-on stand (jury §4.2).
+- **Working stays amber** (`ink-live` `#e8a33d`), although Burton and Nolan use amber or gold inside Needs you. It is approved, sourced and consistent within this Theme; the picker previews each Theme's Alarm color on a stamp so the change is seen as it happens (jury §10.5).
+- **Atmosphere:** rain stays. "Much of the movie" plays in torrential rain, partly added in post over wet-downs ([American Cinematographer](https://theasc.com/article/greig-fraser-batman/)). Two cheap refinements: a flare-lift of the existing red glow while alarmed, and an optional static flood waterline. The rain moves onto the shared 8 fps clock, with longer streaks (§6); the One Clock Rule has no exception (jury §7, #77).
 
 ## 1. Visual identity and sources
 
@@ -55,7 +58,7 @@ Under the glossary rule ("it appears nowhere else", `CONTEXT.md`), Hot Signal st
 - shortcut recording border and settings warning hint (`Sheets.css:243`, `:254`)
 - end of the progress-bar gradient (`Cards.css:189`)
 
-When the Theme model lands, these should move to Signal Red, Bone or `ink-live`. That is a token swap, not a redesign. The decision belongs to the implementation phase.
+When the Theme model lands, these move to the new non-alarm `--accent` token (which 2022 maps to Signal Red, jury §7 #72), to Bone or to `ink-live`. That is a token swap, not a redesign. Which leak takes which token is decided in implementation.
 
 ## 3. Voice
 
@@ -80,9 +83,10 @@ When the Theme model lands, these should move to Signal Red, Bone or `ink-live`.
 5. "Case closed. Another one by morning." (Night Report footnote when a case ends)
 6. "Nothing on the wire tonight." (plugin hears nothing, as a heading above the existing hint)
 7. "Two cases open. None of them need you yet."
-8. "Gotham sleeps. Bat-Clawd doesn't."
 
-**Iconic line, at most one.** "I'm vengeance." (two words, from the first trailer, [Rolling Stone AU, 24 Aug 2020](https://au.rollingstone.com/movies/movie-news/the-batman-trailer-robert-pattinson-16045); the exact on-screen wording is **unverified** in writing). It may be used once, as the hover title of Bat-Clawd in the Signature pose. The screen-reader label stays descriptive ("Bat-Clawd steps out of the dark"). No other film dialogue appears. "When that light hits the sky…" ([Rolling Stone, Oct 2021](https://www.rollingstone.com/tv-movies/tv-movie-news/the-batman-new-trailer-catwoman-the-penguin-1243158)) is too long and is left out (its wording comes from a search excerpt, not a fetched page).
+Dropped: "Gotham sleeps. Bat-Clawd doesn't." (too close to Burton's empty state, "Gotham sleeps. For now.", jury §2). *Dark* and *quiet* stay reserved for "nothing needs you" across the Wave (jury §4.3); lines 2 and "All quiet in Gotham." use them only that way.
+
+**Iconic line, at most one.** "I'm vengeance." (two words, from the first trailer, [Rolling Stone AU, 24 Aug 2020](https://au.rollingstone.com/movies/movie-news/the-batman-trailer-robert-pattinson-16045); the exact on-screen wording is **unverified** in writing). It may be used once, as the hover title of Bat-Clawd in the Signature pose. The screen-reader label stays descriptive ("Bat-Clawd steps out of the dark"). **Name and line.** The display name VENGEANCE lives in the picker and the settings; the line lives only on Bat-Clawd's hover in the panel. The picker preview shows the Signature pose without the hover title, so the name and the line never sit on screen together. No other film dialogue appears. "When that light hits the sky…" ([Rolling Stone, Oct 2021](https://www.rollingstone.com/tv-movies/tv-movie-news/the-batman-new-trailer-catwoman-the-penguin-1243158)) is too long and is left out (its wording comes from a search excerpt, not a fetched page).
 
 ## 4. Lexicon
 
@@ -124,13 +128,13 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 - A static `signal-glow` circle (r 2.5) sits behind the flame.
 - The flare is the Alarm color, which is why it belongs here: red light held up means "something needs you". The shiver and blink stay.
 
-### Signature pose: "Vengeance"
+### Signature pose: "Out of the dark"
 
-- **The scene it honours.** The subway fight on Halloween night: Batman walks out of the dark toward the gang, footsteps first, then the line. It was the first footage shown, at DC FanDome in August 2020 ([Rolling Stone AU](https://au.rollingstone.com/movies/movie-news/the-batman-trailer-robert-pattinson-16045)). "Vengeance" was also the production's working title ([Wikipedia](https://en.wikipedia.org/wiki/The_Batman_(film))). Exact staging: **unverified**, from the film.
-- **Why not the alternatives.** The perch shows the Signature at rest, when nothing needs you (`watching = perched && mood !== 'alarmed'`), which is exactly when a held flare in the Alarm color would be wrong. The wingsuit is used for flying. The rooftop watch is already the perch's behavior.
+- **The scene it honours.** The subway fight on Halloween night: Batman walks out of the dark toward the gang, footsteps first, then the line. It was the first footage shown, at DC FanDome in August 2020 ([Rolling Stone AU](https://au.rollingstone.com/movies/movie-news/the-batman-trailer-robert-pattinson-16045)). "Vengeance" was also the production's working title ([Wikipedia](https://en.wikipedia.org/wiki/The_Batman_(film))), which is why it is now the display name and no longer the pose's name. Exact staging: **unverified**, from the film.
+- **Why not the alternatives.** It is the only symmetric, front-on standing Signature in the Wave: Burton turns three-quarter under the Signal, Nolan's *Sonar* is carried by its ring and Snyder takes the Knightmare (jury §4.2), so this outline stays 2022's. The perch shows the Signature at rest, when nothing needs you (`watching = perched && mood !== 'alarmed'`), which is exactly when a held flare in the Alarm color would be wrong. The wingsuit is used for flying. The rooftop watch is already the perch's behavior.
 - **The drawing.** Bat-Clawd stands front-on with the cape draped from the shoulders, not wrapped:
   - Two panels: left `M3 5 L1.6 5.4 L1.2 10.8 L3.2 10.6 Z`, mirrored. Arms hidden behind them; `LEGS` as today; `EYES_OPEN`.
-  - The 2022 chest emblem, in `--cowl` on the orange: wings `[6, 6, 1.5, 0.6]` and `[8.5, 6, 1.5, 0.6]`, body `[7.4, 5.7, 1.2, 1.3]`. It needs judging at 60 px.
+  - The 2022 chest emblem, in `--cowl` on the orange: wings `[6, 6, 1.5, 1]` and `[8.5, 6, 1.5, 1]`, body `[7.4, 5.7, 1.2, 1.3]`. The wings are a full unit tall (about 2.1 px at the header's 60 px), as the Wave rule asks of every identifying mascot detail (jury §4, §6). At 0.6 units they read as a dark dash, not the bladed bat. The emblem shows in every unwrapped Pose; it needs judging at 60 px.
   - Still half in the dark: a black rect over y 8–11 at 55%.
   - No red beyond the approved cowl and cape edges.
 - **On the perch** it stands still: no gusts (a draped cape has nothing to lift), only the existing `WATCH` glances. That gives fewer redraws than today on the transparent window.
@@ -143,7 +147,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 ## 6. Atmosphere
 
 - **Is rain right? Yes.** Rain defines this Gotham. Chinlund picked the North for its weather ([Time Out quoting Radio Times](https://www.timeout.com/news/the-batman-8-things-you-might-have-missed-030422)). "Like much of the movie, a pivotal car chase scene takes place in torrential rain." For that chase the production chose to "wet down the road and cars, and add the falling rain as a CG element in post", rather than line a runway with rain towers ([AC](https://theasc.com/article/greig-fraser-batman/)). The score's third cue is "It's Raining Vengeance" ([soundtrack](https://en.wikipedia.org/wiki/The_Batman_(soundtrack))).
-- **The rain is not on the shared clock (finding).** `Atmosphere.tsx` runs its own canvas loop at `FPS = 15` (a `setTimeout` plus `requestAnimationFrame`). It is gated to hover plus an 8 s linger, and its comment estimates "~5% of a core". `DESIGN.md` → One Clock Rule says rain is sampled from the 8 fps ticker; the code does not do that. Before rain becomes the reference Atmosphere for other Themes, either move it onto `ticker.ts` (8 fps, with streak length raised to cover the longer step) or record it in `DESIGN.md` as a deliberate exception. The other Themes' snow and ash will copy whichever it is.
+- **The rain moves onto the shared clock (decided).** `Atmosphere.tsx` runs its own canvas loop at `FPS = 15` (a `setTimeout` plus `requestAnimationFrame`). It is gated to hover plus an 8 s linger, and its comment estimates "~5% of a core". `DESIGN.md` → One Clock Rule says rain is sampled from the 8 fps ticker, and that rule has no exception (jury §7, #77). So the rain moves onto `ticker.ts` at 8 fps, with the streaks lengthened to cover the bigger step per tick. The other Themes' snow, ash and static scenes run on the same clock.
 - **Refinement 1: the flare light (recommended).** While the Mood is alarmed, the existing bottom glow (`.atmosphere__glow`, red at 16%) lifts once to about 26% over 0.45 s on the ease-out curve and stays until the alarm clears. That ties the Atmosphere to the flare pose. It is a one-off transition, not a loop: zero cost at rest.
 - **Refinement 2: the flood (optional).** For the finale, when the seawall breaks and the city floods ([Wikipedia plot](https://en.wikipedia.org/wiki/The_Batman_(film))):
   - A static waterline 18–24 px from the bottom: a 1 px Bone line at 6%, a darker band under it, and the red glow mirrored and squashed into it.
@@ -154,15 +158,15 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 
 ## 7. The baseline for distinctiveness
 
-A new Theme should differ from these on at least the first three axes:
+A new Theme has to score "clearly different" against every other Theme on at least three of these five axes (the jury's rubric, `jury-wave-1.md` §1). In wave 1, Burton clears this Theme on 5, Nolan on 4, and the Knightmare on 4, or 5 while Alfred's register leads its Voice (jury §1).
 
 | Axis | The Batman (2022) |
 |---|---|
 | Palette | Pure black page; warm near-blacks only as highlights; one family of reds as light and ink (Signal Red #af0006 as the base, Hot Signal #e3121b as the alarm); sodium amber for working; Clawd orange only on the mascot |
 | Type | Condensed poster capitals (Anton) + narrow working sans (Barlow Semi Condensed) + typewriter stamps (Special Elite) + mono for machine output |
-| Bat-Clawd silhouette | Short, upright cowl ears; black cowl and cape edged in Signal Red; a jagged bat-scalloped hem; black inside the cape with one Dried Blood thread; metal-plate chest emblem (new); Signature "Vengeance": draped cape, half in shadow |
+| Bat-Clawd silhouette | Short, upright cowl ears; black cowl and cape edged in Signal Red; a jagged bat-scalloped hem; black inside the cape with one Dried Blood thread; metal-plate chest emblem (new, wings 1 unit tall); ribbed wingsuit glide; Signature "Out of the dark": the Wave's only symmetric front-on stand, draped cape, half in shadow |
 | Atmosphere | Slanted rain from the left in three depths, a low red street-light glow, static film grain; flare-lift on alarm |
-| Voice | Bruce's night journal and a detective's case file: short, present tense, bleak; "Case", "filed", "Awaiting your signature", "All quiet in Gotham"; no Lexicon, since it defines the standard words |
+| Voice | Bruce's night journal and a detective's case file: short, present tense, bleak; "Case", "filed", "Awaiting your signature", "All quiet in Gotham"; no Lexicon, since it defines the standard words. Display name VENGEANCE, with "I'm vengeance." only as the Signature's hover line |
 
 ## Unverified items
 
@@ -171,7 +175,7 @@ A new Theme should differ from these on at least the first three axes:
 - The exact trailer wording "I'm vengeance" in a primary written source. Rolling Stone AU says only "on the search for 'vengeance'".
 - Chinlund's DIY quotes (TechRadar, Yahoo/AOL): the full articles could not be fetched; the wording comes from search excerpts.
 - Any direct statement by Giacchino on the main theme's character; only timing, track titles and critics' descriptions were retrieved.
-- The chest emblem's legibility at 60 px, and all pixel coordinates in §5: drafts to be judged when drawn.
+- The chest emblem's legibility at 60 px with 1-unit wings, and all pixel coordinates in §5: drafts to be judged when drawn.
 
 ## Sources
 
