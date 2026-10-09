@@ -4,6 +4,8 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-09
+
 ### Changed
 
 - One sound: the spotlight, when Claude needs you or replies. A task done is quiet, and the thump is gone.
@@ -143,7 +145,8 @@ A corner companion.
 
 - Live sessions rebuilt from the files Claude Code already writes: titles, messages, tasks, subagents and background commands, and what needs you.
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0
 [1.0.0-rc.2]: https://github.com/lucas-moont/bat-signal/compare/v1.0.0-rc.1...v1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/lucas-moont/bat-signal/compare/v0.7.0...v1.0.0-rc.1
