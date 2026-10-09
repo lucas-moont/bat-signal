@@ -134,8 +134,10 @@
   align-items: center;
   gap: 12px;
 }
-/* A switch's whole line toggles it. */
+/* A switch's whole line toggles it. It anchors its hidden checkbox: placed against the sheet instead,
+   a low switch's checkbox hung below the panel, and focusing it scrolled the whole panel away. */
 .toggle {
+  position: relative;
   cursor: pointer;
 }
 .setting__text {
