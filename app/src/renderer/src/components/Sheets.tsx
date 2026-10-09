@@ -13,7 +13,7 @@ import type { BackgroundJob, SessionSnapshot, Subagent, Task } from '@shared/typ
 import { ago, RUN_STATUS_LABEL, TASK_STATUS_LABEL } from '@shared/view'
 import type { SheetTarget } from './CaseDetail'
 import { batSignal } from '../bridge'
-import { playEveryCue } from '../cues'
+import { playCue } from '../cues'
 import { Icon } from './Icon'
 import { Section } from './Section'
 import { SettingRow } from './SettingRow'
@@ -348,7 +348,7 @@ export function SettingsSheet({
         <Section title="Sound">
           <Toggle
             label="Sound"
-            hint="A spotlight coming on when Claude needs you or replies, a thump when a task is done"
+            hint="A spotlight coming on when Claude needs you, replies or finishes a task"
             on={settings.announce.sound}
             onChange={(sound) => onChange({ announce: { sound } })}
           />
@@ -359,8 +359,8 @@ export function SettingsSheet({
           >
             <button
               className="icon-button icon-button--labelled"
-              onClick={() => playEveryCue(settings.announce.volume)}
-              title="Play the spotlight, then the thump, at this volume"
+              onClick={() => playCue('light', settings.announce.volume)}
+              title="Play the spotlight at this volume"
             >
               <Icon name="sound" />
               Test

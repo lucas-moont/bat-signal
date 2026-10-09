@@ -39,8 +39,8 @@ export interface Toast {
   body: string
 }
 
-/** The sounds Bat-Signal makes. */
-export type Cue = 'light' | 'thump'
+/** The sounds Bat-Signal makes: one, a spotlight coming on. */
+export type Cue = 'light'
 
 /** A sound for the signal window to play, at the user's volume (0 to 1). */
 export interface CuePlay {
@@ -57,7 +57,7 @@ const CUE_OF_KIND: Record<NoticeKind, Cue | undefined> = {
   error: 'light',
   waiting: 'light',
   reply: 'light',
-  'task-done': 'thump',
+  'task-done': 'light',
   'session-opened': undefined,
   'session-closed': undefined,
 }
@@ -82,7 +82,7 @@ export function announce(
   }
 }
 
-/** The sound for a burst of news: its most urgent sound (the spotlight over a thump), or none. */
+/** The sound for a burst of news: the sound of its most urgent news that has one, or none. */
 export function cueFor(news: readonly Notice[]): Cue | undefined {
   const loudest = [...news].sort(byUrgency).find((n) => CUE_OF_KIND[n.kind])
   return loudest && CUE_OF_KIND[loudest.kind]
