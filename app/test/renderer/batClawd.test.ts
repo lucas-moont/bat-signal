@@ -6,8 +6,8 @@ vi.hoisted(() => {
   Object.assign(globalThis, { document: { hidden: true, addEventListener: () => {} } })
 })
 
-import { BatClawd } from '../src/renderer/src/components/BatClawd'
-import { BatEmblem, WINGS } from '../src/renderer/src/components/BatEmblem'
+import { BatClawd } from '../../src/renderer/src/components/BatClawd'
+import { BatEmblem, WINGS } from '../../src/renderer/src/components/BatEmblem'
 
 const chest = (markup: string) => markup.includes(`class="clawd__emblem"`) && markup.includes(`d="${WINGS}"`)
 
@@ -27,13 +27,14 @@ describe('Bat-Clawd', () => {
 
 describe('BatEmblem', () => {
   it('draws in a box that hugs the bat, so its size is the size of the bat', () => {
-    const [x, y, w, h] = renderToStaticMarkup(createElement(BatEmblem))
-      .match(/viewBox="([^"]+)"/)![1]
-      .split(' ')
-      .map(Number)
-    const points = [...WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])])
-    const xs = points.map((p) => p[0])
-    const ys = points.map((p) => p[1])
+    const box = renderToStaticMarkup(createElement(BatEmblem)).match(/viewBox="([^"]+)"/)?.[1] ?? ''
+    const [x = NaN, y = NaN, w = NaN, h = NaN] = box.split(' ').map(Number)
+    const points = [...WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => ({
+      x: Number(m[1]),
+      y: Number(m[2]),
+    }))
+    const xs = points.map((p) => p.x)
+    const ys = points.map((p) => p.y)
     // Every point inside, and no more than 2 units of air on any side.
     expect(Math.min(...xs) - x).toBeGreaterThanOrEqual(0)
     expect(Math.min(...xs) - x).toBeLessThanOrEqual(2)
