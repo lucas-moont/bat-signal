@@ -226,7 +226,60 @@ const OUTFITS: Outfit[] = [
     ),
     front: () => <path d={WINGS} transform={batAt(8, 7, 6)} fill="#0b0908" />,
   },
+  {
+    key: 'E',
+    name: 'VENGEANCE in a full suit, orange jaw',
+    note: "A charcoal suit over the body, arms and legs; the cowl stops under the eyes and Clawd's orange shows as the jaw, like every Batman's chin. Gloves, belt and boots on the suit.",
+    rows: [
+      ...twice([
+        '....c......c....',
+        '....chhccccc....',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...SSSSSSSSSS...',
+        '.gSSSSSSSSSSSSg.',
+        '...SSSSSSSSSS...',
+      ]),
+      '...bbbbkkbbbb...',
+      '...SSSSSSSSSS...',
+      '....S.S..S.S....',
+      '....g.g..g.g....',
+      ...twice(['....g.g..g.g....']),
+    ],
+    top: 0,
+    legend: { ...VENGEANCE_LEGEND, S: '#34302d', g: '#141110', b: '#1e1916', k: '#7d6d62' },
+    behind: vengeanceBehind,
+    front: () => <path d={WINGS} transform={batAt(8, 6.9, 7)} fill="#0b0908" />,
+  },
+  {
+    key: 'F',
+    name: 'PALE MOONLIGHT in a full suit, orange jaw',
+    note: "Burton's all-black rubber suit with a steel sheen on the shoulders so it reads on the dark page, the rimmed oval, the brass belt, orange only at the jaw.",
+    rows: [
+      ...twice([
+        '....c......c....',
+        '....chhccccc....',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...hSSSSSSSSh...',
+        '.SSSSSSSSSSSSSS.',
+        '...SSSSSSSSSS...',
+      ]),
+      '...SSSSSSSSSS...',
+      '...bbbbkbbbbb...',
+      ...twice(['....S.S..S.S....', '....S.S..S.S....']),
+    ],
+    top: 0,
+    legend: { ...VENGEANCE_LEGEND, c: '#0b0a0b', h: '#3c4652', S: '#1f1d22', b: '#7a5420', k: '#948b7f' },
+    behind: (mood) => OUTFITS_C_BEHIND(mood),
+    front: (mood) => OUTFITS_C_FRONT(mood),
+  },
 ]
+
+const OUTFITS_C_BEHIND = (mood: Mood) => OUTFITS.find((o) => o.key === 'C')!.behind(mood)
+const OUTFITS_C_FRONT = (mood: Mood) => OUTFITS.find((o) => o.key === 'C')!.front(mood)
 
 function legoCape(mood: Mood) {
   return mood === 'flying' ? (
