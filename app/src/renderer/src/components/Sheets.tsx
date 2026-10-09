@@ -5,6 +5,7 @@ import {
   NEWS_GROUPS,
   OPACITY_MAX,
   OPACITY_MIN,
+  type AnnouncePrefs,
   type NewsGroup,
   type Settings,
   type SettingsPatch,
@@ -211,17 +212,28 @@ function Toggle({
   hint,
   warn,
   on,
+  mixed = false,
   onChange,
 }: {
   label: string
   hint: string
   warn?: boolean
   on: boolean
+  /** Some of what it stands for is on: a switch can't say so, so it is read as a mixed checkbox. */
+  mixed?: boolean
   onChange: (on: boolean) => void
 }) {
   return (
     <SettingRow as="label" className="toggle" label={label} hint={hint} warn={warn}>
-      <input type="checkbox" role="switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
+      <input
+        type="checkbox"
+        role={mixed ? undefined : 'switch'}
+        ref={(input) => {
+          if (input) input.indeterminate = mixed
+        }}
+        checked={on}
+        onChange={(e) => onChange(e.target.checked)}
+      />
       <span className="toggle__track" aria-hidden />
     </SettingRow>
   )
@@ -235,7 +247,7 @@ function AllToasts({
   toast,
   onChange,
 }: {
-  toast: Settings['announce']['toast']
+  toast: AnnouncePrefs['toast']
   onChange: (patch: SettingsPatch) => void
 }) {
   const on = toastsOn(toast)
@@ -245,6 +257,7 @@ function AllToasts({
       label="All notifications"
       hint={on === 0 || all ? 'Every kind of news below' : `${on} of ${NEWS_GROUPS.length} on`}
       on={all}
+      mixed={on > 0 && !all}
       onChange={(next) => onChange(everyToast(next))}
     />
   )
@@ -362,7 +375,7 @@ export function SettingsSheet({
         </Section>
         <Section title="Windows notifications">
           <AllToasts toast={settings.announce.toast} onChange={onChange} />
-          <div className="toggle-group">
+          <div className="toggle-group" role="group" aria-label="Each kind of news">
             {NEWS_GROUPS.map((group) => (
               <Toggle
                 key={group}
