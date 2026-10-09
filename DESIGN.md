@@ -1,6 +1,6 @@
 ---
 name: Bat-Signal
-description: A corner Bat-Signal that watches Claude Code sessions, drawn as a noir case file in The Batman (2022) reds and blacks.
+description: A corner Bat-Signal that watches Claude Code sessions. This is its default theme, VENGEANCE, a noir case file in The Batman (2022) reds and blacks.
 colors:
   abyss: "#000000"
   smoke: "#080808"
@@ -131,9 +131,19 @@ The panel is dense and made to be glanced at. It opens at 320x440 and shrinks to
 
 The approved layout, "files" and the default, presents cases as cards under two tabs. The alternate layout, "The Night Report" (`settings.layout: 'report'`), presents the same world as one typed column on legal paper, with stamps in the margin and a red pen under whatever waits for the user. Both share the header, the signal disc, the stamps, the palette and the mascot.
 
-**Key Characteristics:**
+### Themes
+
+Bat-Signal has many Themes, each one version of Batman (the words are defined in `CONTEXT.md`; the decision is `docs/adr/0001-many-themes-and-the-homage-line.md`; each Theme's research is in `docs/research/themes/`). This file specifies the default Theme, **VENGEANCE**, after The Batman (2022). Its tokens are the front matter above.
+
+**What every Theme shares:** a dark ground; one Alarm color, used for nothing but "something needs you"; light rather than lift; one 8 fps clock for every loop; machine output in mono; the stamp as the signature mark; the density of a 300x360 panel; both layouts; and Bat-Clawd's orange, white eyes and three moods.
+
+**What a Theme swaps:** its palette tokens, its display and stamp faces, its emblem (one path per Theme, reused in the header, the disc, the intro and on Bat-Clawd's chest), the disc's lens, Bat-Clawd's costume, accessories and poses, its Atmosphere, its Voice and its Lexicon.
+
+**Wave rules** (from the wave 1 jury): every identifying mascot detail is at least one grid unit; display and stamp families are unique to each Theme; *dark* and *quiet* mean all clear; stamp words fit the rendered width of PERMISSION in the Theme's own stamp face; no two Signature poses share an outline at 54px; display names are unique and allude to their version of Batman; a collision inside a Theme outranks one between Themes.
+
+**Key Characteristics (VENGEANCE):**
 - Pure black ground; warm near-blacks only as raised highlights.
-- Red always means something: a light that is on, a stamp, a pen mark, a request.
+- Red always means something: a light that is on, a stamp, a pen mark, a request. Red is VENGEANCE's Alarm color.
 - Typewriter ink stamps, slightly crooked and worn, are the system's signature mark.
 - Glows instead of drop shadows; light sources instead of elevation.
 - Loops run off one 8 fps clock; everything else animates once.
@@ -169,9 +179,11 @@ A black-on-black noir palette with one family of reds that work as light and ink
 - **Pen Hot** (ink-hot) and **Pen Soft** (ink-soft): Hot Signal and Brick Ink lifted just enough to reach 4.5:1 on black at stamp size. They ink the hand-drawn pen stroke and the margin stamps by tier. They are scoped to the report and do not replace the approved stamp inks in the files layout.
 
 ### Named Rules
+**The Alarm Color Rule.** Every Theme keeps one Alarm color for "something needs you" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm. In VENGEANCE the Alarm color is red, which gives the next rule.
+
 **The Red Means Something Rule.** A red element is a light that is on, a stamp, a mark or a request. In the files layout a live dot may glow Hot Signal; in the Night Report, where red ink is kept for requests, running work shows in Bone.
 
-**The Pure Black Ground Rule.** The page is #000000. Warm near-blacks (Surface, Raised) exist only as highlights laid over it, never as the page itself.
+**The Pure Black Ground Rule.** In VENGEANCE the page is #000000. Warm near-blacks (Surface, Raised) exist only as highlights laid over it, never as the page itself. Other Themes may set a dark near-black ground of their own; none is ever light.
 
 **The Small Lights Rule.** Hot Signal is for tiny lit pixels and thin rules. Large red areas use Signal Red or Dried Blood.
 
@@ -195,7 +207,7 @@ A black-on-black noir palette with one family of reds that work as light and ink
 - **Report Body** (Special Elite 400, 12.5px, line-height 1.6): the Night Report column, 12px under 330px. Its dateline name is 15px, 0.14em, uppercase; its section headings are 11px, 0.16em, uppercase, with a typed underline.
 
 ### Named Rules
-**The Machine Voice Rule.** Anything Claude Code or the shell produced (commands, paths, times, counts) is set in mono. Anything filed by the detective (stamps, case numbers, the report) is set in the typewriter.
+**The Machine Voice Rule.** Anything Claude Code or the shell produced (commands, paths, times, counts) is set in mono, in every Theme. Anything filed by the detective (stamps, case numbers, the report) is set in VENGEANCE's typewriter; other Themes file in their own stamp and report faces.
 
 ## Layout
 
@@ -272,7 +284,7 @@ Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px t
 - **Notice card:** 300px, a warm near-black gradient, 1px Line, a 3px left rule (Ash, or Hot Signal plus a glow when urgent), the desk-float shadow, a stamp, a 14px title and a mono line, carried on a blurred red beam from the disc.
 
 ### Bat-Clawd (signature)
-Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. The bat emblem sits on his chest in cowl black, whenever the cape leaves the chest bare (flying, alarmed, on watch); asleep, the wrapped cape covers it. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop.
+Claude Code's pixel Clawd in Clawd Orange, wearing a black cowl edged in Signal Red and a black cape with a Signal Red edge. The bat emblem sits on his chest in cowl black, whenever the cape leaves the chest bare (flying, alarmed, on watch); asleep, the wrapped cape covers it. Thrown open, the cape stays black inside, with only a Dried Blood thread running a step above its jagged hem, about a screen pixel wide so it reads apart from the edge at the header's size: small red details, never a red cape. Poses come from the shared clock; a click plays a single 0.7s hop. Every Theme keeps his orange, his white eyes and his three moods, and dresses him in its own cowl, cape, chest symbol and accessories; a Theme may swap any pose for a homage and add a Signature pose on the perch, in the intro and on a click.
 
 ### The Night Report (alternate panel layout)
 One typed column on black, read top to bottom, under the same Needs you / Cases tabs as the case files. There are no cards and no slide-in screens: a case opens in place.
@@ -286,7 +298,8 @@ One typed column on black, read top to bottom, under the same Needs you / Cases 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep the page pure black (#000000) and use Surface and Raised only as highlights over it.
+- **Do** keep VENGEANCE's page pure black (#000000) and use Surface and Raised only as highlights over it; keep every Theme dark.
+- **Do** spend each Theme's Alarm color only on "something needs you".
 - **Do** spend red only on meaning: a lit light, a stamp, a pen mark, a request. In the Night Report, show running work in Bone.
 - **Do** use Hot Signal for small lit details and thin rules, and Signal Red or Dried Blood for anything larger.
 - **Do** mark alert tiers with stamp ink: hot for permission and error, brick (or Pen Soft in the report) for waiting and reply, Ash for stalled.
@@ -295,7 +308,7 @@ One typed column on black, read top to bottom, under the same Needs you / Cases 
 - **Do** show depth with red glows, keeping black drop shadows for things that float over the desktop.
 - **Do** design for 300x360 first: one line per field, an ellipsis over wrapping, and the mascot giving way before the controls.
 - **Do** keep the header, the signal disc, Bat-Clawd and the stamps identical across both panel layouts.
-- **Do** keep the bat emblem to the shape of The Batman (2022) symbol, drawn once in `BatEmblem.tsx`; never redraw it per place.
+- **Do** keep each Theme's bat emblem to its version's symbol (VENGEANCE: The Batman (2022)), one path per Theme drawn once and reused in the header, the disc, the intro and on Bat-Clawd's chest; never redraw it per place.
 
 ### Don't:
 - **Don't** add infinite CSS animations or blend modes; they keep the compositor awake on a transparent always-on-top window.
