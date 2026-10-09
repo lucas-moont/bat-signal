@@ -1,0 +1,11 @@
+Bat-Signal
+Copyright (c) 2026 Lucas Monteiro
+
+The code in this repository is licensed under the MIT License (see LICENSE), with one exception:
+
+The bat emblem (the outline in app/src/renderer/src/components/BatEmblem.tsx, the icons drawn from
+it in app/resources/icons/, and the pictures in docs/screenshots/ that show it) follows the bat
+symbol from The Batman (2022), a trademark of DC Comics, used here as fan art. It is not covered
+by the MIT License, which grants no rights to it.
+
+Bat-Signal is a fan project, not affiliated with Warner Bros., DC Comics or Anthropic.
