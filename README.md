@@ -119,6 +119,6 @@ Running it from source, the checks, building the installer and releasing are in 
 
 ---
 
-Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic.
+Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbol from *The Batman* (2022) is a trademark of DC Comics, used here as fan art.
 
 License: [MIT](LICENSE).

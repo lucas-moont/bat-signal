@@ -268,7 +268,7 @@ Typewriter caps in a 1.5px box, rotated, at 92% opacity, with a noise mask so th
 Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px top corners, a warm near-black gradient, a translucent red top edge, the sheet spill glow, a 34x3 grip, and an Anton title.
 
 ### Signal Disc and Notice Card (signature)
-- **Disc:** 64px. Unlit, it is dark glass with a warm rim. Lit, a red radial lens runs from #ff3b2f through Hot Signal and Signal Red to near-black, with the original bat emblem as a shadow in it and a soft halo. The count is an Anton numeral on black in a Hot Signal box.
+- **Disc:** 64px. Unlit, it is dark glass with a warm rim. Lit, a red radial lens runs from #ff3b2f through Hot Signal and Signal Red to near-black, with the bat emblem as a shadow in it and a soft halo. The count is an Anton numeral on black in a Hot Signal box.
 - **Notice card:** 300px, a warm near-black gradient, 1px Line, a 3px left rule (Ash, or Hot Signal plus a glow when urgent), the desk-float shadow, a stamp, a 14px title and a mono line, carried on a blurred red beam from the disc.
 
 ### Bat-Clawd (signature)
@@ -301,5 +301,5 @@ One typed column on black, read top to bottom, under the same Needs you / Cases 
 - **Don't** use Hot Signal or Signal Red for running or in-progress text in the Night Report; running is news, not a request.
 - **Don't** underline Night Report actions with a CSS text underline, straight or wavy; the pen is a drawn stroke.
 - **Don't** bring cards, colored side rules or icon tiles into the Night Report; its marks are the margin rule, the stamps, the pen and typed checkboxes. Side rules remain correct in the files layout.
-- **Don't** use the film's logo; the bat emblem is an original drawing.
+- **Do** keep the bat emblem to the shape of The Batman (2022) symbol, drawn once in `BatEmblem.tsx`; never redraw it per place.
 - **Don't** round corners past 4px except on sheets, toggles, the disc and status dots.
