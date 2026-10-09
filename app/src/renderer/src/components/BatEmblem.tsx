@@ -1,9 +1,15 @@
-// An original bat emblem in the spirit of The Batman (2022): angular, low wings,
-// sharp ears and a scratched-metal finish. Not a trace of the official logo.
+// The bat emblem, after the symbol of The Batman (2022): wide wings set high above the head, their
+// upper edges sweeping down to dropped tips, a stepped lower edge, two sharp ears and a pointed
+// tail, with a scratched-metal finish. The symbol is DC's trademark; this is a fan project.
+// The outline was traced from the film's symbol and simplified, in a 120x48 box (icons.mts draws
+// the tray and toast icons from it).
 
 const WINGS =
-  'M60 12 L65 2 L68 14 L78 15 L118 6 L106 26 L96 22 L86 34 L76 30 L60 46 ' +
-  'L44 30 L34 34 L24 22 L14 26 L2 6 L42 15 L52 14 L55 2 Z'
+  'M2 20 L2.5 19 L4.5 18 L13.5 13.5 L23.5 10 L34 7 L35.5 14 L44 22.5 L46.5 23 L54.5 28.5 ' +
+  'L55.5 24.5 L57.5 20 L58.5 25.5 L59 26 L61.5 25.5 L62.5 20 L64.5 24.5 L65.5 28.5 L73.5 23 ' +
+  'L75.5 22.5 L84.5 14 L86 7 L86.5 7 L98 10.5 L109.5 15 L117 19 L118 19.5 L118 21 ' +
+  'L117.5 21.5 L114.5 20 L112 19.5 L98 24 L96.5 26 L94 31 L77 32 L64 41 L56 41 L47 34.5 ' +
+  'L42 32 L26 31 L23 24.5 L18.5 22.5 L8.5 19.5 L6.5 19.5 L2 21.5 Z'
 
 export function BatEmblem({
   size = 40,
