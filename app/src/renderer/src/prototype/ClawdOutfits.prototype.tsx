@@ -213,6 +213,55 @@ function suitCape(o: {
   }
 }
 
+/** The Knightmare's coat: a brown duster, its dark lining behind the legs, a neutral rim outside the body. */
+function KnightmareCoat({ mood }: { mood: Mood }) {
+  const coat = '#6e5338'
+  const lining = '#3b2a1b'
+  const rim = 'rgb(196 170 130 / 32%)'
+  const id = `coat-${mood}`
+  const shapes =
+    mood === 'flying'
+      ? [
+          {
+            d: 'M3 5 L13 5 L13.4 10.7 L3.2 10.7 L1 10.9 L-1.2 10.3 L-3.4 10.7 L-2.6 9.2 L-4.4 8.1 L-3 7.1 L-4.6 6.1 L-0.6 5.3 Z',
+            t: undefined,
+          },
+        ]
+      : [undefined, MIRROR].map((t) => ({
+          d: 'M3.4 5 L1.6 5.3 L-1.4 10.9 L-0.2 10.4 L1 10.9 L2.2 10.5 L3.4 10.9 Z',
+          t,
+        }))
+  return (
+    <>
+      <defs>
+        <mask id={id} maskUnits="userSpaceOnUse" x={-10} y={-5} width={40} height={20}>
+          <rect x={-10} y={-5} width={40} height={20} fill="white" />
+          <rect x={3} y={5} width={10} height={7} fill="black" />
+        </mask>
+      </defs>
+      {mood === 'alarmed' && <path d="M3.4 5 L12.6 5 L12.6 10.9 L3.4 10.9 Z" fill={lining} />}
+      {shapes.map(({ d, t }) => (
+        <path key={t ?? 'l'} transform={t} d={d} fill={coat} />
+      ))}
+      {mood === 'flying' && <path d="M4 9 L12 9 L12 10.6 L4 10.6 Z" fill={lining} />}
+      <g mask={`url(#${id})`}>
+        {shapes.map(({ d, t }) => (
+          <path
+            key={t ?? 'l'}
+            transform={t}
+            d={d}
+            fill="none"
+            stroke={rim}
+            strokeWidth={0.35}
+            strokeLinejoin="round"
+          />
+        ))}
+      </g>
+      <path d={COWL_EDGE} fill="none" stroke="rgb(150 146 140 / 35%)" strokeWidth={0.7} />
+    </>
+  )
+}
+
 const OUTFITS: Outfit[] = [
   {
     key: 'A',
@@ -458,7 +507,6 @@ const OUTFITS: Outfit[] = [
   },
   {
     key: 'J',
-    group: 'wave1',
     name: 'WATCHFUL PROTECTOR',
     note: "The Dark Knight's segmented suit in blue-steel, the helmet cowl on a steel collar with cheek guards, black gauntlets, a flat-topped chest bat, the straight-hemmed cape gliding when flying. The aura is the draft Alarm color, Burning Bat (still to be judged next to the orange jaw).",
     rows: [
@@ -502,7 +550,6 @@ const OUTFITS: Outfit[] = [
   },
   {
     key: 'K',
-    group: 'wave1',
     name: 'KNIGHTMARE',
     note: "Affleck's grey suit with the big black bat, short wide-set ears, a heavy straight-hemmed cape. Alarmed, he wears the armour: a squared helmet with ear nubs and a plate seam, steel pauldrons. The aura is carmine.",
     rows: [
@@ -577,6 +624,117 @@ const OUTFITS: Outfit[] = [
       </g>
     ),
     aura: alarmAura('229 18 50'),
+  },
+  {
+    key: 'N',
+    group: 'wave1',
+    name: 'WATCHFUL PROTECTOR (round 5)',
+    note: "After the screen suit on display: black, not blue. Lit shoulder and chest plates, near-black abs and legs, a waist mesh, the smoked-bronze belt with an oval buckle (the only warm piece), the sculpted chest bat catching light, a matte cape gliding as a three-point batwing. The aura is Blue Flame, after the blue flames that form the bat in The Dark Knight's opening.",
+    rows: [
+      ...twice([
+        '....c......c....',
+        '....chhccccc....',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+        '...pSSSSSSSSp...',
+        '.gSSSSSSSSSSSSg.',
+        '...mSSSSSSSSm...',
+      ]),
+      '...bbbbkkbbbb...',
+      '...SSSSSSSSSS...',
+      '....p.p..p.p....',
+      '....g.g..g.g....',
+      ...twice(['....g.g..g.g....']),
+    ],
+    top: 0,
+    ground: '#04070b',
+    legend: {
+      ...VENGEANCE_LEGEND,
+      c: '#0b0d10',
+      h: '#3a4047',
+      S: '#22262a',
+      p: '#485058',
+      m: '#0e1013',
+      g: '#0b0d10',
+      b: '#8a7866',
+      k: '#c4ab8a',
+    },
+    behind: suitCape({
+      trail: 'M3 5 L-5.2 4.3 L-4.5 6.9 L-3 6.2 L-1.9 8.1 L0.2 7.3 L1.5 9.2 L3 8.8 Z',
+      trailMirrored: true,
+      open: 'M3.4 5 L0.2 5.2 L-2.8 11 L3.4 11 Z',
+      rim: 'rgb(178 186 194 / 30%)',
+    }),
+    front: () => (
+      <path
+        d="M5 5.5 L11 5.5 L10.1 6 L10.1 6.5 L9.1 6.55 L8 7.15 L6.9 6.55 L5.9 6.5 L5.9 6 Z"
+        fill="#485058"
+      />
+    ),
+    aura: alarmAura('61 139 255'),
+  },
+  {
+    key: 'M',
+    group: 'wave1',
+    name: 'KNIGHTMARE (round 5)',
+    note: "The Knightmare's desert gear over a charcoal suit, no cape: a long brown leather duster worn open (its dark lining hangs behind the legs), a frayed rust scarf, flying goggles pushed up on the cowl, a utility belt with a brass buckle, olive cargo pants, black gauntlets and boots. Alarmed, the coat swings open. The aura is Heat Vision: the Knightmare is Superman's world, so its red is his.",
+    rows: [
+      ...twice([
+        '....c......c....',
+        '...ffllffllff...',
+        '...cccccccccc...',
+        '...cceecceecc...',
+        '...cc######cc...',
+      ]),
+      '...CrrrrrrrrC...',
+      '...CCrrrrrrCC...',
+      ...twice(['.gCCSSSSSSSSCCg.', '...CSSSSSSSSC...']),
+      '...CbbbkkbbbC...',
+      '...CppppppppC...',
+      '...Cp.p..p.pC...',
+      ...twice(['...Cg.g..g.gC...']),
+      '....g.g..g.g....',
+    ],
+    rowsFor: (mood) =>
+      mood === 'alarmed'
+        ? [
+            ...twice([
+              '....c......c....',
+              '...ffllffllff...',
+              '...cccccccccc...',
+              '...cceecceecc...',
+              '...cc######cc...',
+            ]),
+            '...CrrrrrrrrC...',
+            '...CCrrrrrrCC...',
+            ...twice(['.gCCSSSSSSSSCCg.', '...CSSSSSSSSC...']),
+            '...CbbbkkbbbC...',
+            '...CppppppppC...',
+            '....p.p..p.p....',
+            ...twice(['....g.g..g.g....']),
+            '....g.g..g.g....',
+          ]
+        : undefined,
+    top: 0,
+    ground: '#0c0c0b',
+    legend: {
+      ...VENGEANCE_LEGEND,
+      e: '#e4e2de',
+      c: '#1d1c1a',
+      f: '#8a6d45',
+      l: '#3e4038',
+      r: '#5c4435',
+      C: '#6e5338',
+      S: '#34322e',
+      b: '#2a2520',
+      k: '#a08850',
+      p: '#4b4530',
+      g: '#141413',
+    },
+    behind: (mood) => <KnightmareCoat mood={mood} />,
+    front: () => null,
+    aura: alarmAura('230 15 0'),
   },
 ]
 
