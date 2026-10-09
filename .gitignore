@@ -20,3 +20,6 @@ Thumbs.db
 
 # gstack working files (local security reports)
 .gstack/
+
+# Local reference images, kept out of the repository
+The-Batman-Bat-Symbol-Trademark-Filing-Europe-02.jpg

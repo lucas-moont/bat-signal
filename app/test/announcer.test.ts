@@ -172,13 +172,18 @@ function soundKinds(snapshots: StoreSnapshot[], context: AnnounceContext): Notic
 }
 
 describe('announce: sound', () => {
-  it.each(NEWS_GROUPS.filter((g) => g !== 'sessions'))(
+  it.each(NEWS_GROUPS.filter((g) => g !== 'sessions' && g !== 'taskDone'))(
     'lets %s news make a sound when sound is on, whatever its toast switch',
     (group) => {
       const { snapshot, kind } = NEWS_OF[group]
       expect(soundKinds([before[group], snapshot], soundCtx())).toEqual([kind])
     },
   )
+
+  it('makes no sound for a task done', () => {
+    const { snapshot } = NEWS_OF.taskDone
+    expect(soundKinds([before.taskDone, snapshot], soundCtx())).toEqual([])
+  })
 
   it('makes no sound for a case opening or closing', () => {
     const { snapshot } = NEWS_OF.sessions
@@ -193,13 +198,15 @@ describe('announce: sound', () => {
 })
 
 describe('cueFor', () => {
-  it('turns the spotlight on for news that needs you or a reply, over anything else in the burst', () => {
+  it('turns the spotlight on for news that needs you or a reply, whatever else is in the burst', () => {
     expect(cueFor([notice('task-done'), notice('reply')])).toBe('light')
     expect(cueFor([notice('permission')])).toBe('light')
   })
 
-  it('gives a thump for a task done on its own', () => {
-    expect(cueFor([notice('task-done')])).toBe('thump')
+  // The spotlight means "look": a task done is quiet, so it never takes the sound's turn (one per
+  // SOUND_GAP_MS) from a request that comes right after it.
+  it('stays quiet for a task done on its own', () => {
+    expect(cueFor([notice('task-done')])).toBeUndefined()
   })
 
   it('is nothing for news without a sound', () => {
@@ -212,7 +219,7 @@ describe('cueFor', () => {
     ['error', 'light'],
     ['waiting', 'light'],
     ['reply', 'light'],
-    ['task-done', 'thump'],
+    ['task-done', undefined],
     ['session-opened', undefined],
     ['session-closed', undefined],
   ] as [NoticeKind, string | undefined][])('sounds %s as %s', (kind, cue) => {

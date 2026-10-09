@@ -39,8 +39,8 @@ export interface Toast {
   body: string
 }
 
-/** The sounds Bat-Signal makes. */
-export type Cue = 'light' | 'thump'
+/** The sounds Bat-Signal makes: one, a spotlight coming on. */
+export type Cue = 'light'
 
 /** A sound for the signal window to play, at the user's volume (0 to 1). */
 export interface CuePlay {
@@ -51,13 +51,14 @@ export interface CuePlay {
 /** News this close together is one burst: a finished turn pushes its reply, then its tasks. */
 export const BURST_MS = 500
 
-/** The sound each kind of news makes; a case opening or closing makes none. */
+/** The sound each kind of news makes; a task done and a case opening or closing make none. */
 const CUE_OF_KIND: Record<NoticeKind, Cue | undefined> = {
   permission: 'light',
   error: 'light',
   waiting: 'light',
   reply: 'light',
-  'task-done': 'thump',
+  // Quiet: the spotlight means "look", and a task done must not take a request's turn to sound.
+  'task-done': undefined,
   'session-opened': undefined,
   'session-closed': undefined,
 }
@@ -82,11 +83,12 @@ export function announce(
   }
 }
 
-/** The sound for a burst of news: its most urgent sound (the spotlight over a thump), or none. */
-export function cueFor(news: readonly Notice[]): Cue | undefined {
-  const loudest = [...news].sort(byUrgency).find((n) => CUE_OF_KIND[n.kind])
-  return loudest && CUE_OF_KIND[loudest.kind]
-}
+/**
+ * The sound for a burst of news, or none. With one sound there is nothing to rank: any news that
+ * makes it does. (A second sound would bring back picking the most urgent news's sound.)
+ */
+export const cueFor = (news: readonly Notice[]): Cue | undefined =>
+  news.map((n) => CUE_OF_KIND[n.kind]).find((cue) => cue !== undefined)
 
 /** The least time between two sounds, however much news comes. */
 export const SOUND_GAP_MS = 4000

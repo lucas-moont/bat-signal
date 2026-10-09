@@ -4,6 +4,14 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Changed
+
+- One sound: the spotlight, when Claude needs you or replies. A task done is quiet, and the thump is gone.
+
+### Fixed
+
+- Turning on a switch near the bottom of Settings (Sound) no longer blacks out the panel.
+
 ## [1.0.0] - 2026-10-07
 
 The first version anyone can install. Since 0.7.0:
