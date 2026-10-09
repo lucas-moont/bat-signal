@@ -2,13 +2,16 @@
 
 Research note, 2026-10-09. Scope: one Bat-Signal Theme after Tim Burton's *Batman* (1989), with *Batman Returns* (1992) as a secondary source. It covers palette, type, Voice, Lexicon, Bat-Clawd, the emblem, the Signal and the Atmosphere, measured against the default Theme, The Batman (2022). The terms used here are defined in [`CONTEXT.md`](../../../CONTEXT.md).
 
+Revised 2026-10-09 after the wave 1 jury (`jury-wave-1.md` §10).
+
 ## 1. TL;DR
 
 - **The Theme in one sentence:** a black, art-deco-gothic Gotham under brown smog, where the only bright thing is the bronze-gold bat oval. It lights up only when something needs you, and *Returns* snow falls behind the panel.
-- **Display name:** *Gotham Gothic*. **Subtitle credit:** "1989 — after Tim Burton's *Batman*".
-- **Alarm color:** the emblem's gold, `#f0c24b` for small inks and `#d29336` for large fills. It is the hottest color in the palette, and it passes contrast where a red alternative fails (§3). Gold never appears at rest: the wordmark, focus rings and toggles move to bone and steel blue.
+- **Display name:** **PALE MOONLIGHT**. **Credit:** "after Tim Burton's *Batman* (1989)". The name alludes to the film's best-known exchange, "You ever dance with the devil in the pale moonlight?", first the Joker's and later Batman's ([Wikiquote](https://en.wikiquote.org/wiki/Batman_(1989_film))). It also describes the Theme: a pale light over a dark city.
+- **Alarm color:** the emblem's gold, `#f0c24b` for small inks and `#d29336` for large fills. It is the hottest color in the palette, and it passes contrast where a red alternative fails (§3). Gold never appears at rest: the wordmark moves to bone, and focus rings and toggles to the new `--accent` token (Bone here). **The unlit brass is not the Alarm color** (jury §10.6): it is the oval's "off" shade, like 2022's Dried Blood thread, and gold appears only when lit.
 - **Type:** two new OFL families from Fontsource. Limelight (art deco, display only) and Josefin Sans (1920s geometric, labels and stamps). Barlow Semi Condensed, Special Elite and JetBrains Mono stay.
-- **Voice, Lexicon and Signature pose:** the Voice is a night-edition newsroom (Knox and Vicki Vale at the paper). The Lexicon is Story / Front page, and the Signature pose is the film's last shot, Batman standing watch on a rooftop under the Signal.
+- **Voice, Lexicon and Signature pose:** the Voice is a night-edition newsroom (Knox and Vicki Vale at the paper). The Lexicon is Story / Your desk, with the stamps APPROVAL, TROUBLE, QUESTION, JUST IN and NO WORD (jury §5). The Signature pose is the film's last shot, turned three-quarter: Batman looking up under the Signal.
+- **Poses:** Bat-Clawd flies with the trailing two-frame cape and its rounded scallops; the *Returns* glider is dropped, since its ribbed spread overlapped 2022's wingsuit (jury §4.1).
 
 ## 2. Visual identity and sources
 
@@ -33,7 +36,7 @@ Gold is the hottest, brightest color in this world. It is also the color of the 
 - `--ink-hot` / `--signal-hot` (`#f0c24b`): the light. Used for permission and error stamps, live alarm pixels and the lit lens core.
 - `--signal` (`#d29336`): the lit fill of the emblem and of large lit areas.
 - `--ink-soft` (`#c98a3e`): the bronze. Used for the waiting and new-reply tier.
-- `--blood` (`#7a5420`): old brass, the unlit state. This is the gold that is "off", not a second alarm.
+- `--blood` (`#7a5420`): old brass, the unlit state. This is the gold that is "off", not a second alarm: decided by the maintainer (jury §10.6). It may sit at rest on the chest oval, the belt and the sky oval, provided the gold ladder above appears only when lit.
 
 ### Token map
 
@@ -50,7 +53,8 @@ Gold is the hottest, brightest color in this world. It is also the color of the 
 | `--signal-hot` | `#f0c24b` | P: between the sampled p75 `#dfbb41` and p95 `#e0cb72` | Small lit pixels, the lens core, the count box |
 | `--ink-hot` | `#f0c24b` | P: same as `--signal-hot`, already 11.8:1 with no lift needed | Permission and error stamps, the hot pen |
 | `--ink-soft` | `#c98a3e` | P: near the sampled p25 `#bf7826`, lifted | Waiting and new-reply stamps, the soft pen |
-| `--ink-live` | `#8fb0d3` | P: lifted from the *Returns* blues (S-R median `#17182c`, highlight `#bec7d8`) | Working: cold steel-blue snow light. It also takes over focus rings and checked toggles (see below) |
+| `--ink-live` | `#8fb0d3` | P: lifted from the *Returns* blues (S-R median `#17182c`, highlight `#bec7d8`) | Working: cold steel-blue snow light |
+| `--accent` | `--bone` | P: the jury's new non-alarm token (§7 #72) | Focus rings, checked toggles, sliders, the tab underline. A focus ring is not "working", so it no longer borrows `--ink-live` |
 | `--clawd` | `#d77757` | Claude Code's `clawd_body`, unchanged (from `theme.css`) | Bat-Clawd's body |
 | `--bone` | `#e9e4d8` | P: aged newsprint; S-R whites median `#dfdedc` for reference | Primary text, the wordmark |
 | `--ash` | `#948b7f` | P | Secondary text, stalled stamps |
@@ -62,8 +66,8 @@ Today `--signal` and `--signal-hot` also paint things that are not "needs you". 
 | Use today | What this Theme does instead |
 |---|---|
 | Wordmark (`App.css`) and intro title (`BatSignalIntro.css`) | `--bone`, with no glow |
-| Focus outlines (`App.css`, `Cards.css`, `CaseDetail.css`, `Sheets.css`) | `--ink-live` |
-| Checked toggles and slider accent (`Sheets.css`) | `--ink-live` track and border, `--bone` thumb |
+| Focus outlines (`App.css`, `Cards.css`, `CaseDetail.css`, `Sheets.css`) | `--accent` (Bone) |
+| Checked toggles and slider accent (`Sheets.css`) | `--accent` track and border, `--abyss` thumb |
 | Text selection (`theme.css`) | `--raised` background |
 | Card hover border and lift glow (`Cards.css`) | `--line` border with a neutral shadow; gold only on urgent cards |
 | Progress bar, `--blood` → `--signal-hot` (`Cards.css`) | `--line` → `--ink-live` (progress is not an alarm) |
@@ -113,22 +117,25 @@ Sample lines (P = ours):
 - Night Report section heads: "Above the fold" for what waits on you, "On the beat" for running work (P)
 - Night Report close: **"— 30 —"**, the newsroom's end-of-copy mark (P; a press convention, not a film line)
 - Intro tagline under the wordmark: "The city after midnight." (P)
-- Quiet Signal tooltip: "All dark over Gotham." (P)
-- One iconic line, used once: **"I'm Batman."** as the caption of the Signature-pose click, at most once per session. It is the film's best-known two words; the scene is described in [Casey, 2022](https://thejoecasey.substack.com/p/keaton-im-batman-casey-fk-yes) (secondhand). A second option for the task drawer's empty state: "Where does he get those wonderful toys?" (the Joker; quoted on [Art of the Title](https://www.artofthetitle.com/title/batman/)). Use one of them, not both.
+- Quiet Signal tooltip: "All dark over Gotham." (P). Across the Wave, *dark* and *quiet* mean only "nothing needs you" (jury §4.3); no line here uses them for a stalled Story.
+- The newsroom's own words for the stamps live here, not on the stamps: a waiting question can be introduced as "A query from the desk" in the Night Report, while the stamp says QUESTION (jury §5).
+- One iconic line, used once: **"I'm Batman."** as the caption of the Signature-pose click, at most once per session. It is the film's best-known two words; the scene is described in [Casey, 2022](https://thejoecasey.substack.com/p/keaton-im-batman-casey-fk-yes) (secondhand), and the line is listed on [Wikiquote](https://en.wikiquote.org/wiki/Batman_(1989_film)). The display name already carries the Joker's "pale moonlight", so the Joker's "Where does he get those wonderful toys?" ([Art of the Title](https://www.artofthetitle.com/title/batman/)) is no longer an option: one film line in the panel, one allusion in the name.
 
 ## 6. Lexicon
 
-Frame: the night edition of a Gotham newspaper. It is distinct from 2022's detective case file, and every word is still plain English. The test: would someone who has never seen the film understand the word on a 64px Signal or a stamp, and would it read at least as severe as the standard word?
+Frame: the night edition of a Gotham newspaper. It is distinct from 2022's detective case file, and every word is still plain English. The test: would someone who has never seen the film understand the word on a 64px Signal or a stamp, and would it read at least as severe as the standard word? The jury ran the same test for a tired developer glancing at a stamp (§5); its fixes are adopted (jury §10.7).
 
 | Standard | Themed | Verdict |
 |---|---|---|
-| Case | **Story** | Clear: one ongoing thing being followed |
-| Needs you | **Front page** | Borderline. It says "most important", not "for you". Fallback: **Your desk** |
-| Permission | **SIGN-OFF** | Clear-ish: someone must approve before it runs. Fallback: **APPROVAL** |
-| Error | **TROUBLE** | Clear and at least as severe as "error". Rejected: *MISPRINT* and *CORRECTION* read as minor typos and **fail** the severity test |
-| Waiting | **ON HOLD** | Clear ("hold the presses") |
-| New reply | **EXTRA** | Borderline. To a first-time user "extra" can mean "additional". Fallback: **NEW COPY** |
-| Stalled | **GONE COLD** | Clear: a cold story, nothing moving |
+| Case | **Story** (plural **Stories**) | Clear: one ongoing thing being followed. Kept by the jury |
+| Needs you | **Your desk** | Clear: what is on your desk is yours to handle. *Front page* was dropped: it reads as "the top stories", not "for you" |
+| Permission | **APPROVAL** | Clear: someone must approve before it runs. *SIGN-OFF* was dropped: "signed off" means already approved, "signing off" means leaving |
+| Error | **TROUBLE** | Clear and at least as severe as "error". Kept by the jury. Rejected: *MISPRINT* and *CORRECTION* read as minor typos and **fail** the severity test |
+| Waiting | **QUESTION** | Clear: Claude is asking something. *ON HOLD* was dropped: it reads as parked, the opposite of "waiting on you". *QUERY* reads as a database query, so the newsroom flavour moves to the Voice (§5) |
+| New reply | **JUST IN** | Clear: something new has arrived. *EXTRA* reads as "additional", and *NEW COPY* as a duplicate |
+| Stalled | **NO WORD** | Clear: nothing has come back. *GONE COLD* was dropped: a cold case is a closed one, 2022's own reason for rejecting it. *Dark* and *quiet* are reserved for "nothing needs you" |
+
+Every stamp word must fit the rendered width of PERMISSION in Josefin Sans caps at 0.14em, which runs wider than Special Elite. That is measured in the text catalogue's width test (jury §7, #73), not counted here.
 
 The Signal disc shows only the count, plus the stamp word on its notice card. Windows notifications and the tray keep the standard words, as `CONTEXT.md` requires.
 
@@ -137,8 +144,13 @@ The Signal disc shows only the count, plus the stamp word on its notice card. Wi
 The body, eyes, arms and legs keep their pixels (`BatClawd.tsx`: body `[3,3,10,6]`, eyes at y = 3). The Theme changes:
 
 - **Cowl.** Same footprint as today (`COWL`, ears at x = 4 and 11, y = 0). The fill is a matte rubber black, `#0b0a0b` (P). Keaton's ears are short and thick, so the ear tips stay a single pixel (do not lengthen them). **No red edge.** `COWL_EDGE` is stroked instead with a dim steel sheen, `--ink-live` at about 35% alpha, so the black reads on the warm black, and `COWL_SHINE` takes the same steel at 60%. Source: the latex suit, no tights, heavy cowl ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)).
-- **Chest oval.** A new part, over the body: a 4×2 cell oval at x = 6–9, y = 6–7, in `--blood` (old brass) at rest, with the bat as a black 2×0.6 bar at x = 7–8, y ≈ 6.7. In the **alarmed** Mood it switches to `--signal` with a `--signal-hot` pixel at its center: the oval lights. It is hidden under the wrapped cape while asleep. Source: the "yellow-ellipsed bat emblem" ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)).
-- **Belt.** A new part: one row at y = 8, x = 3–12, in `--blood` with a 1×1 `--ash` buckle at x = 7.5. No gold-family ink on the mascot at rest. Source: "brass utility belt" ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)).
+- **Chest oval.** A new part, over the body, moved up and outlined after the jury's legibility check (§6). Unlit brass is only 2.14:1 on Clawd orange and the lit gold 1.2:1, so the lit oval would vanish exactly when it should light. The fix is an outline in cowl black, which reads in both states:
+  - Rim: an ellipse in `--cowl` black, x = 5.5–10.5, y = 5.5–7.5 (a 0.5-unit rim). Half a row of orange stays between it and the cowl, which ends at y = 5, so the rim does not read as the cowl dripping.
+  - Fill: the 4×1 oval inside the rim, x = 6–10, y = 6–7, in `--blood` (old brass) at rest.
+  - Bat: a black 2×0.6 bar at x = 7–9, y = 6.2–6.8. It sits under the 1-unit Wave rule; the rimmed oval is the identifying detail, and the bar is texture inside it. Judge it at 60px.
+  - **Alarmed:** the fill switches to `--signal`, with `--signal-hot` in the two lobes beside the bat. The oval lights inside its black rim.
+  - Hidden under the wrapped cape while asleep. Source: the "yellow-ellipsed bat emblem" ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)).
+- **Belt.** A new part: a 0.6-unit band at y = 8.4–9, x = 3–13, in `--blood` with a 1×0.6 `--ash` buckle at x = 7.5. The black rim and the orange between keep the oval and the belt apart, so they no longer merge into one brass apron (jury §6). The band is thinner than the Wave's 1-unit rule because the jury asked for it; it is ten units wide, so it reads as a line. Check it at 60px. No gold-family ink on the mascot at rest. Source: "brass utility belt" ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)).
 - **Cape.** Black, with **rounded scallops** instead of 2022's jagged zigzag: replace the `L` zigzags of the hem with quadratic arcs, about 2 cells per scallop, curving up between points. No red thread: `threadLeft` is dropped, or stroked in `--line`. This silhouette rule for the hem is our reading of the classic bat-wing cape; the 1989 cape's exact hem is **unverified** (§12).
 
 **Pose swaps** (only from sourced moments):
@@ -146,16 +158,16 @@ The body, eyes, arms and legs keep their pixels (`BatClawd.tsx`: body `[3,3,10,6
 | Mood | Pose | Source moment | Grid notes |
 |---|---|---|---|
 | sleeping | Keep the wrapped cape | No confirmed 1989 sleeping image. The hanging-upside-down idea is unverified (§12) | Only the hem becomes scalloped |
-| flying | **The glider cape** (*Returns*) | "The cape could fold out on a spring-loaded framework into a glider" ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)) | The cape spreads flat and rigid to both sides at shoulder height (y = 5–6), out to x = −5 and x = 21. It has three straight rib lines per side in `--line`, and the scalloped hem between the ribs. Two frames: the whole glider 0.5 cell higher or lower (a bank), not a flutter |
+| flying | **Keep the trailing cape**, with rounded scallops | No 1989 gliding image is needed: this Batman travels by car and by Batwing ([Batplane](https://en.wikipedia.org/wiki/Batplane)). The *Returns* glider ("the cape could fold out on a spring-loaded framework into a glider", [Batsuit](https://en.wikipedia.org/wiki/Batsuit)) was dropped: a ribbed spread cape overlaps 2022's wingsuit, and *Returns* is a secondary source (jury §4.1, §10.8) | `trailA` and `trailB` as today, two frames on the flying cadence with the bob. The `L` zigzags of the hem become quadratic arcs, about 2 cells per scallop, curving up between points. No rib lines and no thread |
 | alarmed | **The giant bat** | Spread wide, the cape makes him look like "a giant bat" to criminals ([Batsuit](https://en.wikipedia.org/wiki/Batsuit)) | Arms raised (the `ARMS` pixels move to y = 4), and the cape held up in two tall wings whose peaks rise above the ears to y = −1, with the scalloped hem. The chest oval is lit gold. Keep the existing blink and shiver |
 | perch (keeps watch) | **Signature pose**, below | | |
 
-**Signature pose: "Standing watch".** It honours the film's ending, where Batman appears "standing watch over the city" while the new Bat-Signal shines ([plot, Wikipedia](https://en.wikipedia.org/wiki/Batman_(1989_film))). *Returns* ends on the same image, "The Bat-Signal shines above the city" ([*Batman Returns* plot](https://en.wikipedia.org/wiki/Batman_Returns)). On the grid:
+**Signature pose: "Under the Signal".** It honours the film's ending, where Batman appears "standing watch over the city" while the new Bat-Signal shines ([plot, Wikipedia](https://en.wikipedia.org/wiki/Batman_(1989_film))). *Returns* ends on the same image, "The Bat-Signal shines above the city" ([*Batman Returns* plot](https://en.wikipedia.org/wiki/Batman_Returns)). The first draft stood him upright and front-on; that outline belongs to 2022 alone now, so he turns three-quarter and looks up at a larger Signal (jury §4.2, §10.8). On the grid:
 
-- He stands upright, facing out, arms at his sides. The cape falls straight down **behind** him from the shoulders (y = 5), showing one cell at each side of the body (x = 2 and x = 13), with the scalloped hem at y ≈ 10.5. The body, the unlit chest oval, the belt and the legs all show.
-- The eyes shift up 0.4 cell: he looks at the sky.
-- Behind and above his right ear, outside the 16×11 grid at about (18, −1), a 3×1.5 oval in `--blood`. That is the Signal in the clouds, drawn small and unlit, since it is not an alarm.
-- The existing `WATCH` script (a gust every 12 s, a glance along the street) still applies. The gust lifts only the hem.
+- **Turned three-quarter.** The body keeps its pixels. The near (left) half of the cape swings in front of him, from the shoulder at (3, 5) down to the scalloped hem at y ≈ 10.5, covering the left arm and x = 2–5 of the body. The far (right) arm shows, with one cell of cape behind it. The chest oval and the right half of the belt stay visible. The silhouette is a dark mass on the left and orange on the right, which no other Signature in the Wave has.
+- **Looking up.** Both eyes move one full cell toward the Signal and half a cell up: `[6, 2.5, 2, 1]` and `[10, 2.5, 2, 1]`, still inside the cowl and still white. The first draft's 0.4-cell shift was under a pixel at the header's size.
+- **The Signal in the clouds.** A 6×3 oval, centred at about (19, −1.5), up and to the right of his head, in `--blood` with a 2×1 black bat bar. It is drawn on the overlay layer outside the sprite box (jury §7, #75), larger than the first draft's 3×1.5 so the pose reads as asymmetric. It stays unlit brass: the Signal in the sky is not an alarm, and brass at rest is allowed (§3).
+- **On the perch.** The `WATCH` script keeps its gust, which lifts only the hem. The glance along the street becomes a glance down to the street and back up to the Signal.
 
 The same pose plays in the intro and on click; on click the caption is "I'm Batman." (§5). It matches the perch's existing meaning, "Bat-Clawd keeps watch", so no new behavior is needed.
 
@@ -171,7 +183,7 @@ The same pose plays in the intro and on click; on click the caption is "I'm Batm
 - **Body:** ends in one sharp central tail point that nearly touches the bottom of the rim (about 92% of the height). The wings' lower edge meets the rim at about 70% height at the sides.
 - **Symmetric.** Draw the left half and mirror it at the center, as `BatEmblem.tsx` already does.
 
-**In the 120×48 box:** do not stretch it to 2.5:1. Draw the oval at **84×48, centered (x = 18–102)**. The 2022 viewBox and the component's API can stay. Draw it flat: a gold fill, a black bat and a 2px rim in `--blood`. No chrome, airbrush gradients or star glints (§11). Drop the scratched-metal `bat-wear` filter, which belongs to 2022. **Knock-on:** `icons.mts` draws the tray and toast icons from `BatEmblem`, so those icons narrow to the oval's footprint. Check them at 16px, where the oval reads better than a bare bat.
+**In the 120×48 box:** do not stretch it to 2.5:1. Draw the oval at **84×48, centered (x = 18–102)**. The 2022 viewBox and the component's API can stay. Draw it flat: a gold fill, a black bat and a 2px rim in `--blood`. No chrome, airbrush gradients or star glints (§11). Drop the scratched-metal `bat-wear` filter, which belongs to 2022. **Tray and toast icons:** they stay single, drawn from the default emblem, whatever the Theme (jury §2). This emblem does not reach `icons.mts`.
 
 **The 64px Signal disc:**
 
@@ -184,7 +196,7 @@ The same pose plays in the intro and on click; on click the caption is "I'm Batm
 
 - **Haze:** replaces the red sodium glow. A low radial haze from the bottom edge in `--blood` at about 12% opacity: brown smog lit from below. Static, no animation.
 - **Snow:** three depth layers of flakes in `--bone`, at 18%, 28% and 40% alpha, with sizes of 1px, 1.5px and 2px. Density is about 0.25 flakes per 1000 px², roughly 35 flakes at 320×440. Flakes fall almost straight down: per tick, the far layer moves 1px, the middle 2px and the near 3px, with a sideways drift of ±0.5px from the same clock (frame-indexed and precomputed, not random per frame). There is no accumulation or settling, and the snow does not collide with the cards.
-- **Cost:** the existing `Rain` is the wrong template. It runs its own 15 fps `setTimeout` loop. Snow should be sampled from the **shared 8 fps ticker** (`useFrame`/`useLiveStyle` in `ticker.ts`) and should either redraw one canvas per tick or move two pre-tiled dot layers by `transform` per tick. At 8 fps a slow snowfall looks right, which is not true of rain. Keep `Rain`'s gating: it falls while the pointer is over the window and lingers for 8 s after news. Under reduced motion or with the animations switch off, show one frozen frame. Nothing on the transparent Signal window.
+- **Cost:** the existing `Rain` is the wrong template. It runs its own 15 fps `setTimeout` loop today, and moves onto the shared clock too (jury §7, #77). Snow should be sampled from the **shared 8 fps ticker** (`useFrame`/`useLiveStyle` in `ticker.ts`) and should either redraw one canvas per tick or move two pre-tiled dot layers by `transform` per tick. At 8 fps a slow snowfall looks right, which is not true of rain. Keep `Rain`'s gating: it falls while the pointer is over the window and lingers for 8 s after news. Under reduced motion or with the animations switch off, show one frozen frame. Nothing on the transparent Signal window.
 - **Grain:** keep the static film grain.
 
 ## 10. Distinctiveness
@@ -195,15 +207,18 @@ Against **The Batman (2022)**:
 |---|---|---|
 | Palette | Pure black and reds; red means "needs you" | Warm smog black and brass; **gold** means "needs you"; steel blue for working |
 | Type | Anton condensed poster caps; Special Elite stamps | Limelight art deco display; Josefin Sans geometric caps for stamps |
-| Bat-Clawd silhouette | Red-edged cowl, jagged hem, red thread | Matte cowl with a steel sheen, **rounded scallops**, a brass belt, a chest oval that lights up; glider and giant-bat poses |
+| Bat-Clawd silhouette | Red-edged cowl, jagged hem, red thread; ribbed wingsuit; front-on Signature | Matte cowl with a steel sheen, **rounded scallops**, a brass belt, a black-rimmed chest oval that lights up; trailing-cape flight and the giant-bat alarm; a three-quarter Signature looking up at the Signal |
 | Atmosphere | Diagonal rain, red sodium haze | Slow vertical snow, brown smog haze |
-| Voice / Lexicon | Detective's case file: Case, stamps | Night-edition newsroom: Story, Front page, "— 30 —" |
+| Voice / Lexicon | Detective's case file: Case, stamps | Night-edition newsroom: Story, Your desk, JUST IN, "— 30 —" |
+
+The jury scored this Theme "clearly different" from 2022 on all five axes, and from Nolan on all five (`jury-wave-1.md` §1). Against the Knightmare it scored 4, with the Atmosphere close (slow pale flakes in both); the Knightmare's ash now drifts hard sideways under a top light, so that axis separates too (see [`snyder.md`](snyder.md) §10).
 
 **Overlap risks:**
 
 - ***Batman: The Animated Series* (1992): high.** It reused Elfman's score ([Wikipedia](https://en.wikipedia.org/wiki/Batman_(1989_film))), its art deco look grew out of this film, and its Batman also wears a yellow oval. Keep 1989 on a **black suit, brass and bronze gold, smog brown, snow**. Leave TAS its red skies, its grey and blue suit and its flat animation-cel shapes. Furst's bronze oval is the sourced 1989 trait ([The Dissolve](https://thedissolve.com/features/adventures-in-licensing/207-how-the-1989-batman-logo-helped-set-the-course-for/)), so keep the gold bronze rather than lemon yellow.
-- **Nolan (2005–2012): low.** That Batman has no oval, a tactical suit and a daylight Chicago Gotham. Avoid steel blue as the dominant color: here it is only the working ink.
-- **Snyder (2016–2017): low.** A big chest bat without an oval, a desaturated grey suit. No shared device.
+- **Nolan (WATCHFUL PROTECTOR): low.** That Batman has no oval, a tactical suit and a modernist Chicago Gotham. Steel blue is Nolan's ground; here it is only the working ink.
+- **Snyder (KNIGHTMARE): low.** A big chest bat without an oval, a near-monochrome resistance in the desert. No shared device. Its ash and Burton's snow are both pale flakes, so they must move differently: Burton's fall almost straight, the ash is blown sideways.
+- **The stalled stamp:** GONE COLD was dropped for NO WORD (§6), which also ends the clash with Nolan's old GONE DARK.
 - **Inside this Wave:** a future comics or 1960s Theme would also claim a yellow oval. This Theme owns the *bronze, flat-rimmed, wide-winged* 1989 oval, the scalloped cape and snow.
 
 ## 11. Legal note
@@ -216,7 +231,8 @@ Against **The Batman (2022)**:
   - Any melody or motif from Elfman's score in the app's sounds. The *mood* (gothic, choral, bells) is free, the notes are not.
   - Keaton's likeness: Bat-Clawd's face stays Clawd's.
   - Long dialogue. The two short lines in §5 are the ceiling.
-- **Style, free to use:** art deco and gothic architecture as a genre, gold on black, snow, a newsroom frame. Our own wording: "Story", "Front page", "— 30 —".
+- **Style, free to use:** art deco and gothic architecture as a genre, gold on black, snow, a newsroom frame. Our own wording: "Story", "Your desk", "— 30 —".
+- **Display name:** PALE MOONLIGHT is a two-word fragment of the film's dialogue, used as an allusion, not set in the film's lettering. With "I'm Batman." it is the whole of the film's words in this Theme.
 - **Fictional names:** don't use the paper's name (the *Gotham Globe*) or company names (Axis Chemicals) as mastheads. "LATE EDITION" says the same thing without borrowing.
 - **Fonts:** all OFL-1.1. Bundle their licence texts with the existing Fontsource ones.
 
@@ -227,6 +243,9 @@ Against **The Batman (2022)**:
 - **Hex codes:** sampled from small, compressed scans of printed posters. They are not measurements of film frames.
 - **The film's title and credit typeface:** not identified by any source found. Art of the Title names Richard Morrison but not the type.
 - **The 1989 cape's hem shape** (rounded scallops): our reading, not sourced.
+- **The closing shot's angle:** that Batman stands three-quarter and looks up at the Signal is from memory. The plot confirms only that he stands watch while the Signal shines.
+- **The chest oval and belt at 60px:** the black rim, the 0.6-unit belt and the 0.6-unit bat bar are drafts to judge on the real window. The belt and the bar are under the Wave's 1-unit rule.
+- **Stamp widths:** APPROVAL, QUESTION, TROUBLE, JUST IN and NO WORD against PERMISSION in Josefin Sans caps at 0.14em, to be measured in the text catalogue (#73).
 - **The 1989 sky Signal's look** (a lit oval with the bat): the plot confirms a Signal and a closing image, not its rendering.
 - **Bruce hanging upside down** (a sleeping-pose idea) and **the Batwing crossing the moon to form the symbol** (an intro idea): both remembered and not confirmed by any source found. Rewatch before using either.
 - **"I'm Batman."**: the scene is confirmed only secondhand (a blog post).
@@ -240,6 +259,8 @@ Against **The Batman (2022)**:
 - Wikipedia, ["Batman Returns"](https://en.wikipedia.org/wiki/Batman_Returns): Welch's design, the costume update, plot.
 - Wikipedia, ["Special effects of Batman Returns"](https://en.wikipedia.org/wiki/Special_effects_of_Batman_Returns): snow, Gotham Plaza, the refrigerated stages, the Returns batsuit.
 - Wikipedia, ["Batsuit"](https://en.wikipedia.org/wiki/Batsuit): the 1989 and 1992 suits, the emblem, the belt, the glider cape.
+- Wikiquote, ["Batman (1989 film)"](https://en.wikiquote.org/wiki/Batman_(1989_film)): the "pale moonlight" exchange and "I'm Batman."
+- [`jury-wave-1.md`](jury-wave-1.md): the wave 1 design jury and the maintainer's decisions (§10).
 - Wikipedia, ["Batplane"](https://en.wikipedia.org/wiki/Batplane): the Batwing by Furst and Caldow.
 - Noel Murray, ["How the 1989 Batman logo helped set the course for superhero movies"](https://thedissolve.com/features/adventures-in-licensing/207-how-the-1989-batman-logo-helped-set-the-course-for/), *The Dissolve*, 9 Oct 2013.
 - John Rain, ["Anton Furst – Hell's Architect"](https://itsjohnrain.substack.com/p/anton-furst-hells-architect), 31 Jul 2022 (secondhand Furst quotes).
