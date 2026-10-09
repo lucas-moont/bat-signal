@@ -7,6 +7,7 @@
 // blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
 import { useEffect, useRef, useState } from 'react'
 import type { MascotMood } from '@shared/view'
+import { WINGS } from './BatEmblem'
 import { useIsCalm } from '../calm'
 import { useFrame, useLiveStyle } from '../ticker'
 import './BatClawd.css'
@@ -42,6 +43,8 @@ const COWL: Px[] = [
   [3, 2, 10, 3], // over the eyes, down to the cheekbones
 ]
 const COWL_SHINE: Px[] = [[5, 1, 2, 1]]
+/** The bat emblem across the chest, between the cowl and the legs: 7 wide, centred at (8, 7). */
+const CHEST = 'translate(4.4 5.56) scale(0.06)'
 const EYES_OPEN: Px[] = [
   [5, 3, 2, 1],
   [9, 3, 2, 1],
@@ -120,6 +123,10 @@ function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: nu
       <path className="clawd__cowl-edge" d={COWL_EDGE} />
       <g fill="var(--clawd)">{rects(wrapped ? BODY : [...BODY, ...ARMS])}</g>
       <g fill="var(--clawd-shade)">{rects(wrapped ? FEET : LEGS)}</g>
+      {/* Smooth, not pixel-snapped: at this size the snapped outline breaks into blocks. */}
+      {!wrapped && (
+        <path className="clawd__emblem" d={WINGS} transform={CHEST} shapeRendering="geometricPrecision" />
+      )}
       {wrapped && (
         <>
           <path className="clawd__cape" d={CAPE.wrapped} />

@@ -21,6 +21,9 @@
 }
 
 /* A black cape: its red edge makes it read on the pure-black window. */
+.clawd__emblem {
+  fill: var(--cowl);
+}
 .clawd__cape {
   fill: #000;
   stroke: var(--signal);
