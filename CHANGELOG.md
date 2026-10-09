@@ -4,6 +4,11 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Changed
+
+- The bat beside BAT-SIGNAL is bigger, and so are the ones on the disc and the watch strip.
+- Bat-Clawd wears the bat on his chest whenever his cape leaves it bare.
+
 ## [1.1.0] - 2026-10-09
 
 ### Added
