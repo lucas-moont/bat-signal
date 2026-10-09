@@ -348,7 +348,7 @@ export function SettingsSheet({
         <Section title="Sound">
           <Toggle
             label="Sound"
-            hint="A spotlight coming on when Claude needs you, replies or finishes a task"
+            hint="A spotlight coming on when Claude needs you or replies"
             on={settings.announce.sound}
             onChange={(sound) => onChange({ announce: { sound } })}
           />

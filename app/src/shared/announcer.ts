@@ -51,13 +51,14 @@ export interface CuePlay {
 /** News this close together is one burst: a finished turn pushes its reply, then its tasks. */
 export const BURST_MS = 500
 
-/** The sound each kind of news makes; a case opening or closing makes none. */
+/** The sound each kind of news makes; a task done and a case opening or closing make none. */
 const CUE_OF_KIND: Record<NoticeKind, Cue | undefined> = {
   permission: 'light',
   error: 'light',
   waiting: 'light',
   reply: 'light',
-  'task-done': 'light',
+  // Quiet: the spotlight means "look", and a task done must not take a request's turn to sound.
+  'task-done': undefined,
   'session-opened': undefined,
   'session-closed': undefined,
 }

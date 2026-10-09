@@ -6,7 +6,7 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ### Changed
 
-- One sound for news: a task done turns the spotlight on too, and the thump is gone.
+- One sound: the spotlight, when Claude needs you or replies. A task done is quiet, and the thump is gone.
 
 ### Fixed
 
