@@ -22,6 +22,8 @@ interface Outfit {
   /** Vector layers: behind the map (the cape) and in front of it (chest symbol, accessories). */
   behind: (mood: Mood) => ReactNode
   front: (mood: Mood) => ReactNode
+  /** A CSS filter on the whole figure, per mood (an aura). */
+  aura?: (mood: Mood) => string | undefined
 }
 
 /** Each unit row twice: the same drawing as today, at half-row resolution. */
@@ -98,6 +100,63 @@ const vengeanceBehind = (mood: Mood) => (
     <path d={COWL_EDGE} fill="none" stroke="var(--signal)" strokeWidth={0.7} />
   </>
 )
+
+const RIM = 'rgb(232 225 217 / 22%)'
+
+/** The full suit with the orange jaw (outfit E), shared by G and H. */
+const SUIT_ROWS = [
+  ...twice([
+    '....c......c....',
+    '....chhccccc....',
+    '...cccccccccc...',
+    '...cceecceecc...',
+    '...cc######cc...',
+    '...SSSSSSSSSS...',
+    '.gSSSSSSSSSSSSg.',
+    '...SSSSSSSSSS...',
+  ]),
+  '...bbbbkkbbbb...',
+  '...SSSSSSSSSS...',
+  '....S.S..S.S....',
+  '....g.g..g.g....',
+  ...twice(['....g.g..g.g....']),
+]
+const SUIT_LEGEND = { ...VENGEANCE_LEGEND, S: '#34302d', g: '#141110', b: '#1e1916', k: '#7d6d62' }
+
+/**
+ * A black cape whose rim is drawn only outside the body: over the body's box the mask hides it,
+ * so the gaps between the legs show black cloth and no line, and the cape reads as behind them.
+ */
+function SuitCape({ mood }: { mood: Mood }) {
+  const id = `behind-${mood}`
+  const halves = mood === 'flying' ? [undefined] : [undefined, MIRROR]
+  const d = mood === 'flying' ? CAPE.trailA : CAPE.openLeft
+  return (
+    <>
+      <defs>
+        <mask id={id} maskUnits="userSpaceOnUse" x={-10} y={-5} width={40} height={20}>
+          <rect x={-10} y={-5} width={40} height={20} fill="white" />
+          <rect x={3} y={5} width={10} height={7} fill="black" />
+        </mask>
+      </defs>
+      {/* Open, the cape's back still hangs behind him, so black cloth fills the gaps between the legs. */}
+      {mood === 'alarmed' && <path d="M3.4 5 L12.6 5 L12.6 11.4 L3.4 11.4 Z" fill="#000" />}
+      {halves.map((t) => (
+        <g key={t ?? 'l'} transform={t}>
+          <path d={d} fill="#000" />
+        </g>
+      ))}
+      <g mask={`url(#${id})`}>
+        {halves.map((t) => (
+          <g key={t ?? 'l'} transform={t}>
+            <path d={d} fill="none" stroke={RIM} strokeWidth={0.35} strokeLinejoin="round" />
+          </g>
+        ))}
+      </g>
+      <path d={COWL_EDGE} fill="none" stroke={RIM} strokeWidth={0.7} />
+    </>
+  )
+}
 
 const OUTFITS: Outfit[] = [
   {
@@ -276,6 +335,30 @@ const OUTFITS: Outfit[] = [
     behind: (mood) => OUTFITS_C_BEHIND(mood),
     front: (mood) => OUTFITS_C_FRONT(mood),
   },
+  {
+    key: 'G',
+    name: 'VENGEANCE suit, no red: a neutral rim',
+    note: "The full suit with the orange jaw. No red on Bat-Clawd: the cowl and the cape carry a faint bone rim so they read on black. The cape's rim is masked over the body, so between the legs you see only black cape: it passes behind them.",
+    rows: SUIT_ROWS,
+    top: 0,
+    legend: SUIT_LEGEND,
+    behind: (mood) => <SuitCape mood={mood} />,
+    front: () => <path d={WINGS} transform={batAt(8, 6.9, 7)} fill="#0b0908" />,
+  },
+  {
+    key: 'H',
+    name: 'VENGEANCE suit, neutral rim, red aura when alarmed',
+    note: 'As G, and red returns as an aura around him only while something needs you: the Alarm color, never at rest.',
+    rows: SUIT_ROWS,
+    top: 0,
+    legend: SUIT_LEGEND,
+    behind: (mood) => <SuitCape mood={mood} />,
+    front: () => <path d={WINGS} transform={batAt(8, 6.9, 7)} fill="#0b0908" />,
+    aura: (mood) =>
+      mood === 'alarmed'
+        ? 'drop-shadow(0 0 1.5px rgb(227 18 27 / 90%)) drop-shadow(0 0 5px rgb(227 18 27 / 55%))'
+        : undefined,
+  },
 ]
 
 const OUTFITS_C_BEHIND = (mood: Mood) => OUTFITS.find((o) => o.key === 'C')!.behind(mood)
@@ -357,7 +440,7 @@ function OutfitSvg({
       width={size}
       height={(size * 14) / 28}
       shapeRendering="crispEdges"
-      style={{ overflow: 'visible', display: 'block' }}
+      style={{ overflow: 'visible', display: 'block', filter: outfit.aura?.(mood) }}
     >
       {outfit.behind(mood)}
       {rects.map((r, i) => (
