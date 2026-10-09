@@ -225,3 +225,17 @@ Bat-Clawd's viewBox is 28 units wide, so at the header's 60px one unit is about 
 - **A DKR brief, if option A holds, must avoid:** a gold or yellow oval alarm, "Story", any press frame (Burton); a night-blue ground (Nolan); the armour, grey suit and big chest bat (Snyder); lightning flashes (never cry wolf). It can build on Varley's painted colour, TV static as a static layer, a caption-box monologue, the lightning-leap Signature and the horse.
 - **Adam West** stays dark, per the ADR, with the comedy in its Voice. Its yellow oval runs into Burton like everything above.
 - **Every later dossier** should be written against the shipped Themes' token tables, not a projection: Snyder's Nolan column was a guess, and that guess is how the two converged.
+
+## 10. The maintainer's decisions
+
+Answered on 2026-10-09. They override the recommendations above where they differ.
+
+1. **Snyder stays, built around the Knightmare.** It drops the operations frame and becomes a guerrilla resistance against Superman's regime: a weary veteran, a near-monochrome palette, falling ash, and the Knightmare as its Signature pose. *The Dark Knight Returns* is a fan favourite, so wave 2 must find it a place of its own rather than cut it (the brief in §9 is the starting point).
+2. **Nolan owns the operations frame:** Ops, Clearance, stencil stamps, the mono log and the briefing Voice.
+3. **Fonts:** Big Shoulders goes to Nolan only; Snyder takes Archivo (open to change once seen).
+4. **Display names allude to each film,** with the year and the film in the credit: **VENGEANCE** (The Batman, 2022), **PALE MOONLIGHT** (Batman, 1989), **WATCHFUL PROTECTOR** (The Dark Knight trilogy), **KNIGHTMARE** (Batman v Superman and Justice League).
+5. **2022 keeps its amber "working" ink.** The picker previews each Theme's Alarm color.
+6. **Burton's unlit brass is not the Alarm color;** gold appears only when lit.
+7. **Every Lexicon fix in §5 is adopted.**
+8. **Poses:** Burton flies with the trailing scalloped cape; Burton's Signature is three-quarter, looking up under the Signal; Nolan's *Sonar* crouches if a source supports it, and stands otherwise.
+9. **Nolan's alarm hue is decided on screen,** at header size next to Bat-Clawd. If no red works there, the Theme may take an alarm colour other than red.
