@@ -1,6 +1,6 @@
 # Many themes, one version of Batman each, and how far the homage goes
 
-Bat-Signal stops being tied to one look. Each Theme dresses it as one version of Batman, from a film or a comic (Burton, Nolan, Snyder, The Dark Knight Returns, Absolute Batman and others, in waves), and The Batman (2022) stays the default. Themes were planned for v2 as palettes (Arkham green, Gotham night blue); we moved them into v1.x and made each one a version of the character, because a palette swap alone does not make Bat-Signal feel like another Batman, and personality is one of the four things the product promises.
+Bat-Signal stops being tied to one look. Each Theme dresses it as one version of Batman, from a film or a comic (Burton, Nolan, Snyder, The Dark Knight Returns, Absolute Batman and others, in waves), and The Batman (2022) stays the default, named VENGEANCE. Themes were planned for v2 as palettes (Arkham green, Gotham night blue); we moved them into v1.x and made each one a version of the character, because a palette swap alone does not make Bat-Signal feel like another Batman, and personality is one of the four things the product promises.
 
 ## The homage line
 
@@ -12,7 +12,7 @@ Each Theme's emblem follows that version's bat symbol closely, redrawn by us as 
 - Every Theme is dark. A light panel in a screen corner, on top of a terminal all day, would be a torch in the user's face.
 - The concepts keep their names (Case, Needs you, Stamp). A Theme may rename them through its Lexicon, which the user can turn off, and never in Windows notifications or the tray, where the words must be understood out of context.
 - Bat-Clawd keeps its orange body, its white eyes and its three moods in every Theme; a Theme changes the cowl, the cape and the emblem, and may swap poses for homages.
-- A design jury compares each new Theme with the existing ones before it is built. Where two versions overlap (Snyder's suit is drawn from The Dark Knight Returns), the maintainer picks which to honour instead of shipping two look-alikes.
+- A design jury compares each new Theme with the existing ones before it is built. Where two versions overlap (Snyder's suit is drawn from The Dark Knight Returns), the maintainer picks which to honour instead of shipping two look-alikes. In wave 1 that kept Snyder as the Knightmare and sent The Dark Knight Returns to wave 2 to find room of its own.
 
 ## Considered options
 
