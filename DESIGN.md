@@ -295,11 +295,11 @@ One typed column on black, read top to bottom, under the same Needs you / Cases 
 - **Do** show depth with red glows, keeping black drop shadows for things that float over the desktop.
 - **Do** design for 300x360 first: one line per field, an ellipsis over wrapping, and the mascot giving way before the controls.
 - **Do** keep the header, the signal disc, Bat-Clawd and the stamps identical across both panel layouts.
+- **Do** keep the bat emblem to the shape of The Batman (2022) symbol, drawn once in `BatEmblem.tsx`; never redraw it per place.
 
 ### Don't:
 - **Don't** add infinite CSS animations or blend modes; they keep the compositor awake on a transparent always-on-top window.
 - **Don't** use Hot Signal or Signal Red for running or in-progress text in the Night Report; running is news, not a request.
 - **Don't** underline Night Report actions with a CSS text underline, straight or wavy; the pen is a drawn stroke.
 - **Don't** bring cards, colored side rules or icon tiles into the Night Report; its marks are the margin rule, the stamps, the pen and typed checkboxes. Side rules remain correct in the files layout.
-- **Do** keep the bat emblem to the shape of The Batman (2022) symbol, drawn once in `BatEmblem.tsx`; never redraw it per place.
 - **Don't** round corners past 4px except on sheets, toggles, the disc and status dots.
