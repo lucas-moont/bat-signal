@@ -427,10 +427,10 @@
   ],
   "narrative": {
     "northStar": "The Noir Case File",
-    "overview": "Bat-Signal is a small, always-on-top window that reads like a detective's case file left out under a red searchlight. Everything sits on pure black. Warm near-blacks show up only as highlights over it, and the reds of The Batman (2022) carry meaning: red is a light that comes on, an ink stamp, a pen mark. It is never decoration. The type mixes three registers: Anton condensed capitals for the masthead, Barlow Semi Condensed for working text, and two machine faces (Special Elite as the typewriter and stamp ink, JetBrains Mono for paths, commands and times).\n\nThe panel is dense and made to be glanced at. It opens at 360x520 and shrinks to 300x360, so every line earns its row and ellipsis beats wrapping. Depth comes from light, not stacked material: red glows, a sodium street-light haze at the bottom, static film grain and rain behind everything. Motion is rationed. Every loop is sampled from one shared 8 fps clock, and the rest are one-off moments (a click ripple, a task flash, Bat-Clawd's hop). No infinite CSS animation exists anywhere.\n\nThe approved layout, \"files\" and the default, presents cases as cards under two tabs. The alternate layout, \"The Night Report\" (`settings.layout: 'report'`), presents the same world as one typed column on legal paper, with stamps in the margin and a red pen under whatever waits for the user. Both share the header, the signal disc, the stamps, the palette and the mascot.",
+    "overview": "This describes the default Theme, VENGEANCE, after The Batman (2022); every Theme shares a dark ground, one Alarm color, one 8 fps clock, mono for machine output, the stamp, the 300x360 density, both layouts and Bat-Clawd's orange, eyes and moods, and swaps its palette, faces, emblem, disc lens, Bat-Clawd's costume and poses, Atmosphere, Voice and Lexicon (see CONTEXT.md and docs/adr/0001). Bat-Signal is a small, always-on-top window that reads like a detective's case file left out under a red searchlight. Everything sits on pure black. Warm near-blacks show up only as highlights over it, and the reds of The Batman (2022) carry meaning: red is a light that comes on, an ink stamp, a pen mark. It is never decoration. The type mixes three registers: Anton condensed capitals for the masthead, Barlow Semi Condensed for working text, and two machine faces (Special Elite as the typewriter and stamp ink, JetBrains Mono for paths, commands and times).\n\nThe panel is dense and made to be glanced at. It opens at 360x520 and shrinks to 300x360, so every line earns its row and ellipsis beats wrapping. Depth comes from light, not stacked material: red glows, a sodium street-light haze at the bottom, static film grain and rain behind everything. Motion is rationed. Every loop is sampled from one shared 8 fps clock, and the rest are one-off moments (a click ripple, a task flash, Bat-Clawd's hop). No infinite CSS animation exists anywhere.\n\nThe approved layout, \"files\" and the default, presents cases as cards under two tabs. The alternate layout, \"The Night Report\" (`settings.layout: 'report'`), presents the same world as one typed column on legal paper, with stamps in the margin and a red pen under whatever waits for the user. Both share the header, the signal disc, the stamps, the palette and the mascot.",
     "keyCharacteristics": [
       "Pure black ground; warm near-blacks only as raised highlights.",
-      "Red always means something: a light that is on, a stamp, a pen mark, a request.",
+      "Red always means something: a light that is on, a stamp, a pen mark, a request. Red is VENGEANCE's Alarm color.",
       "Typewriter ink stamps, slightly crooked and worn, are the system's signature mark.",
       "Glows instead of drop shadows; light sources instead of elevation.",
       "Loops run off one 8 fps clock; everything else animates once.",
@@ -438,13 +438,18 @@
     ],
     "rules": [
       {
+        "name": "The Alarm Color Rule",
+        "body": "Every Theme keeps one Alarm color for \"something needs you\" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm. In VENGEANCE the Alarm color is red, which gives the next rule.",
+        "section": "colors"
+      },
+      {
         "name": "The Red Means Something Rule",
         "body": "A red element is a light that is on, a stamp, a mark or a request. In the files layout a live dot may glow Hot Signal; in the Night Report, where red ink is kept for requests, running work shows in Bone.",
         "section": "colors"
       },
       {
         "name": "The Pure Black Ground Rule",
-        "body": "The page is #000000. Warm near-blacks (Surface, Raised) exist only as highlights laid over it, never as the page itself.",
+        "body": "In VENGEANCE the page is #000000. Warm near-blacks (Surface, Raised) exist only as highlights laid over it, never as the page itself. Other Themes may set a dark near-black ground of their own; none is ever light.",
         "section": "colors"
       },
       {
@@ -454,7 +459,7 @@
       },
       {
         "name": "The Machine Voice Rule",
-        "body": "Anything Claude Code or the shell produced (commands, paths, times, counts) is set in mono. Anything filed by the detective (stamps, case numbers, the report) is set in the typewriter.",
+        "body": "Anything Claude Code or the shell produced (commands, paths, times, counts) is set in mono, in every Theme. Anything filed by the detective (stamps, case numbers, the report) is set in VENGEANCE's typewriter; other Themes file in their own stamp and report faces.",
         "section": "typography"
       },
       {
@@ -469,7 +474,8 @@
       }
     ],
     "dos": [
-      "**Do** keep the page pure black (#000000) and use Surface and Raised only as highlights over it.",
+      "**Do** keep VENGEANCE's page pure black (#000000) and use Surface and Raised only as highlights over it; keep every Theme dark.",
+      "**Do** spend each Theme's Alarm color only on \"something needs you\".",
       "**Do** spend red only on meaning: a lit light, a stamp, a pen mark, a request. In the Night Report, show running work in Bone.",
       "**Do** use Hot Signal for small lit details and thin rules, and Signal Red or Dried Blood for anything larger.",
       "**Do** mark alert tiers with stamp ink: hot for permission and error, brick (or Pen Soft in the report) for waiting and reply, Ash for stalled.",
@@ -478,7 +484,7 @@
       "**Do** show depth with red glows, keeping black drop shadows for things that float over the desktop.",
       "**Do** design for 300x360 first: one line per field, an ellipsis over wrapping, and the mascot giving way before the controls.",
       "**Do** keep the header, the signal disc, Bat-Clawd and the stamps identical across both panel layouts.",
-      "**Do** keep the bat emblem to the shape of The Batman (2022) symbol, drawn once in `BatEmblem.tsx`; never redraw it per place."
+      "**Do** keep each Theme's bat emblem to its version's symbol (VENGEANCE: The Batman (2022)), one path per Theme drawn once and reused in the header, the disc, the intro and on Bat-Clawd's chest; never redraw it per place."
     ],
     "donts": [
       "**Don't** add infinite CSS animations or blend modes; they keep the compositor awake on a transparent always-on-top window.",
