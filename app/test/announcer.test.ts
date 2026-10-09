@@ -193,13 +193,15 @@ describe('announce: sound', () => {
 })
 
 describe('cueFor', () => {
-  it('turns the spotlight on for news that needs you or a reply, over anything else in the burst', () => {
+  it('turns the spotlight on for news that needs you or a reply, whatever else is in the burst', () => {
     expect(cueFor([notice('task-done'), notice('reply')])).toBe('light')
     expect(cueFor([notice('permission')])).toBe('light')
   })
 
-  it('turns the spotlight on for a task done too: it is the one sound', () => {
-    expect(cueFor([notice('task-done')])).toBe('light')
+  // The spotlight means "look": a task done is quiet, so it never takes the sound's turn (one per
+  // SOUND_GAP_MS) from a request that comes right after it.
+  it('stays quiet for a task done on its own', () => {
+    expect(cueFor([notice('task-done')])).toBeUndefined()
   })
 
   it('is nothing for news without a sound', () => {
@@ -212,7 +214,7 @@ describe('cueFor', () => {
     ['error', 'light'],
     ['waiting', 'light'],
     ['reply', 'light'],
-    ['task-done', 'light'],
+    ['task-done', undefined],
     ['session-opened', undefined],
     ['session-closed', undefined],
   ] as [NoticeKind, string | undefined][])('sounds %s as %s', (kind, cue) => {
