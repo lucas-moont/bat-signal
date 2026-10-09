@@ -2,8 +2,8 @@
 
 Bat-Signal's look and its rules are written down in two files at the repository root. Read them before changing anything a user sees.
 
-- **[`PRODUCT.md`](../PRODUCT.md)** says who Bat-Signal is for and what it must do: one person running several Claude Code sessions, who should never miss a request and should know at a glance whether anything needs them. It holds the binding brand commitments (the name, The Batman (2022) theme, Bat-Clawd, the disc as the resting form) and five principles, such as "never cry wolf" and "watch, never touch".
-- **[`DESIGN.md`](../DESIGN.md)** is the design system, "The Noir Case File": the color tokens, type scale and component specs in its front matter, then the reasoning in prose. Red always means something, everything sits on pure black, stamps are the signature mark, and every loop runs off one shared 8 fps clock. It ends with a list of do's and don'ts. `.impeccable/design.json` is the same system in machine-readable form.
+- **[`PRODUCT.md`](../PRODUCT.md)** says who Bat-Signal is for and what it must do: one person running several Claude Code sessions, who should never miss a request and should know at a glance whether anything needs them. It holds the binding brand commitments (the name, the themes with VENGEANCE as the default, Bat-Clawd, the disc as the resting form) and five principles, such as "never cry wolf" and "watch, never touch".
+- **[`DESIGN.md`](../DESIGN.md)** is the design system: the rules every theme shares, then the default theme, VENGEANCE, "The Noir Case File": the color tokens, type scale and component specs in its front matter, then the reasoning in prose. Each theme keeps one Alarm color (red in VENGEANCE), every theme is dark, stamps are the signature mark, and every loop runs off one shared 8 fps clock. It ends with a list of do's and don'ts. `.impeccable/design.json` is the same system in machine-readable form.
 
 The words for Bat-Signal's ideas (a case, a stamp, a theme, a layout, Bat-Clawd's moods and poses) are defined once in [`CONTEXT.md`](../CONTEXT.md). Use them as written there, in the code, the docs and the UI.
 
