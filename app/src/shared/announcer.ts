@@ -83,11 +83,12 @@ export function announce(
   }
 }
 
-/** The sound for a burst of news: the sound of its most urgent news that has one, or none. */
-export function cueFor(news: readonly Notice[]): Cue | undefined {
-  const loudest = [...news].sort(byUrgency).find((n) => CUE_OF_KIND[n.kind])
-  return loudest && CUE_OF_KIND[loudest.kind]
-}
+/**
+ * The sound for a burst of news, or none. With one sound there is nothing to rank: any news that
+ * makes it does. (A second sound would bring back picking the most urgent news's sound.)
+ */
+export const cueFor = (news: readonly Notice[]): Cue | undefined =>
+  news.map((n) => CUE_OF_KIND[n.kind]).find((cue) => cue !== undefined)
 
 /** The least time between two sounds, however much news comes. */
 export const SOUND_GAP_MS = 4000
