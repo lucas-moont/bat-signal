@@ -21,7 +21,10 @@ function rgb(name: string): Rgb {
   const alias = /^var\((--[\w-]+)\)$/.exec(value)
   if (alias) return rgb(alias[1]!)
   const hex = /^#([0-9a-f]{6})$/i.exec(value)
-  if (!hex) throw new Error(`theme.css: ${name} is ${value}, not an opaque color`)
+  if (!hex)
+    throw new Error(
+      `theme.css: ${name} is ${value}, not an opaque hex: the contrast test can't measure a color-mix() or translucent text color`,
+    )
   return [0, 2, 4].map((i) => parseInt(hex[1]!.slice(i, i + 2), 16)) as Rgb
 }
 
@@ -51,7 +54,20 @@ function textColors(): string[] {
   return [...new Set(used)].sort()
 }
 
-const GROUNDS = ['--abyss', '--surface', '--raised']
+/** Every dark ground text sits on: the page, the panels, the sheet and the notice card. */
+const GROUNDS = [
+  '--abyss',
+  '--smoke',
+  '--surface',
+  '--surface-deep',
+  '--raised',
+  '--header-fade',
+  '--sheet-top',
+  '--notice-top',
+  '--notice-foot',
+  '--notice-hover-top',
+  '--notice-hover-foot',
+]
 
 /**
  * VENGEANCE's approved colors that read under 4.5:1, with the reason each was kept, so the test
