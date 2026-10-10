@@ -87,7 +87,11 @@
   position: absolute;
   inset: -10px;
   border-radius: 50%;
-  background: radial-gradient(circle in srgb, color-mix(in srgb, var(--signal-hot) 45%, transparent) 40%, transparent 70%);
+  background: radial-gradient(
+    circle in srgb,
+    color-mix(in srgb, var(--signal-hot) 45%, transparent) 40%,
+    transparent 70%
+  );
   opacity: 0;
   pointer-events: none;
 }
