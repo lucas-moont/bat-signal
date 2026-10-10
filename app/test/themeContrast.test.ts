@@ -61,6 +61,7 @@ const GROUNDS = ['--abyss', '--surface', '--raised']
 const VENGEANCE_EXCEPTIONS: Record<string, string> = {
   '--accent': 'the wordmark, in the red measured from the film title logo, at display size',
   '--signal-hot': 'small lit marks and warnings; the files-layout stamp ink',
+  '--in-progress': 'a running task in the files layout, lit in Hot Signal like the live dots',
   '--stamp-hot': 'the approved files-layout stamp ink (the Night Report lifts it to --ink-hot)',
   '--brick': 'the approved soft stamp ink, also on the failed state',
   '--stamp-soft': 'the approved files-layout soft stamp ink (the Night Report lifts it to --ink-soft)',

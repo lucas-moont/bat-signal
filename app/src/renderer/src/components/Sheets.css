@@ -122,9 +122,9 @@
   background: var(--ash);
 }
 .timeline__step--in_progress::before {
-  border-color: var(--signal-hot);
-  background: var(--signal-hot);
-  box-shadow: 0 0 6px var(--signal);
+  border-color: var(--in-progress);
+  background: var(--in-progress);
+  box-shadow: 0 0 6px var(--in-progress-glow);
 }
 
 /* Switches: a red light that comes on. */

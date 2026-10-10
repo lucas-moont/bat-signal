@@ -129,7 +129,7 @@
 }
 
 .row--in_progress .row__glyph {
-  color: var(--signal-hot);
+  color: var(--in-progress);
 }
 .row--completed .row__glyph {
   color: var(--ash);
@@ -140,7 +140,7 @@
   text-decoration-color: color-mix(in srgb, var(--ash) 55%, transparent);
 }
 .row--running .row__state {
-  color: var(--signal-hot);
+  color: var(--in-progress);
 }
 .row--failed .row__state {
   color: var(--brick);

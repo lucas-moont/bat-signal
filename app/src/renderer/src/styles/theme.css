@@ -49,6 +49,11 @@
   --stamp-soft: var(--brick);
   --stamp-quiet: var(--ash);
 
+  /* A task being worked on in the files layout (its glyph, its state, its timeline step): news,
+     not a request. VENGEANCE lights it in Hot Signal; a Theme may keep its Alarm color off it. */
+  --in-progress: var(--signal-hot);
+  --in-progress-glow: var(--signal);
+
   /* The Quit button's hover, and the Night Report's margin rule. */
   --danger: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
