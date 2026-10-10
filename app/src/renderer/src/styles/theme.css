@@ -24,7 +24,7 @@
   /* The Alarm color and its shades: "something needs you", and nothing else. */
   --blood: #8b0000;
   --signal: #af0006;
-  --signal-glow: rgb(175 0 6 / 45%);
+  --signal-glow: color-mix(in srgb, var(--signal) 45%, transparent);
   /* Only for tiny lit pixels (mascot eyes, live dots), where #af0006 reads too dark on black. */
   --signal-hot: #e3121b;
   /* Small inks for stamps and pen marks: signal-hot and the approved brick, lifted just enough
@@ -64,7 +64,7 @@
   /* Bat-Clawd's suit (see BatClawd.tsx). */
   --clawd-shade: #b85f42;
   --clawd-eye: var(--bone);
-  --clawd-eye-dim: color-mix(in srgb, var(--bone) 18%, transparent);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0908;
   --cowl-edge: var(--signal);
   --cowl-shine: var(--raised);
