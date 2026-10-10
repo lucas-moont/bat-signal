@@ -17,7 +17,7 @@
   height: 34px;
   padding: 0 4px 0 10px;
   border-bottom: 1px solid var(--line);
-  background: linear-gradient(180deg, var(--header-fade), var(--abyss));
+  background: linear-gradient(180deg in srgb, var(--header-fade), var(--abyss));
   -webkit-app-region: drag;
 }
 .watch__name {

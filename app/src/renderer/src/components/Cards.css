@@ -194,7 +194,7 @@
 .progress__fill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, var(--accent-deep), var(--accent-hot));
+  background: linear-gradient(90deg in srgb, var(--accent-deep), var(--accent-hot));
   box-shadow: 0 0 6px var(--accent-glow);
 }
 .progress__label {

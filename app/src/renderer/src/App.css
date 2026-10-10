@@ -18,7 +18,7 @@
   gap: 9px;
   height: 54px;
   padding: 0 8px 0 14px;
-  background: linear-gradient(180deg, var(--header-fade), transparent);
+  background: linear-gradient(180deg in srgb, var(--header-fade), transparent);
   -webkit-app-region: drag;
 }
 .header__title {
