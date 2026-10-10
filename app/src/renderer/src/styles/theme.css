@@ -66,7 +66,8 @@
   --bone-dim: #cfc6be;
   --ash-dim: #6f6862;
 
-  /* Bat-Clawd's suit (see BatClawd.tsx). */
+  /* Bat-Clawd's suit (see BatClawd.tsx). Its blacks match the disc's and --shadow today but are
+     written out, not aliased: #88 redresses the suit, and the disc and the shadows must not follow. */
   --clawd-shade: #b85f42;
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
