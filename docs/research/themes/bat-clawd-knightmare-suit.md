@@ -178,7 +178,7 @@ Same mechanism as the prototype: `alarmAura(rgb)`, two drop-shadows at 1.5px / 9
 ## 6. Decisions this note makes
 
 - **The armour is dropped as the alarmed Pose.** In outfit K and the dossier, Bat-Clawd switches to the armoured suit when alarmed. That suit belongs to the rain-soaked Gotham fight under the Bat-Signal, not to the desert. Mixing the two is part of what made K read as "the grey Batsuit". Alarmed is now the same Knightmare figure with the coat open and the aura on. If the maintainer wants the armour back, it fits better as a one-off iconic moment than as a Pose.
-- **No chest emblem.** The suit underneath has the *BvS* bat, but in every frame and both figures the scarf and the coat's lapels cover it. At 54px a dark bat on the charcoal centre would not read anyway. This drops the dossier's "the chest bat shows between the coat's panels".
+- **Overruled by the maintainer (2026-10-09): a chest bat is required, see "Maintainer's review" below.** The original reasoning was: **No chest emblem.** The suit underneath has the *BvS* bat, but in every frame and both figures the scarf and the coat's lapels cover it. At 54px a dark bat on the charcoal centre would not read anyway. This drops the dossier's "the chest bat shows between the coat's panels".
 - **No rifle**, by the dossier's "No weapons" rule (§[12](snyder.md)). **No binoculars**: they would cover the eyes.
 - **The goggles stay up on the cowl**, never over the eyes, as in the *ZSJL* frames, the official still and both figures. The white eyes stay visible in every Pose. This drops the dossier's "the white eyes stay as the two lenses".
 
@@ -224,3 +224,10 @@ No film image, still, trailer frame or merchandise photo goes into the repo. Thi
 - Official trailers: [*BvS* Comic-Con Trailer, Warner Bros.](https://www.youtube.com/watch?v=0WWzgGyAH6Y) · [*BvS* Official Trailer 2, Warner Bros.](https://www.youtube.com/watch?v=fis-9Zqu2Ro) · [*BvS* Official Final Trailer, Warner Bros.](https://www.youtube.com/watch?v=NhWg7AQLI_8) · [*ZSJL* Official Trailer, Warner Bros. UK & Ireland](https://www.youtube.com/watch?v=ui37YKQ9AC4) · [*ZSJL* Official Trailer #2, HBO Max](https://www.youtube.com/watch?v=ZrdQSAX2kyw) (checked; no clear Knightmare shot)
 - Merchandise (secondary): [Hot Toys MMS372, Sideshow](https://www.sideshow.com/collectibles/dc-comics-knightmare-batman-hot-toys-902770/) · [Hot Toys TMS038, Sideshow](https://www.sideshow.com/collectibles/dc-comics-knightmare-batman-and-superman-hot-toys-908013) · [Toyark on TMS038](https://news.toyark.com/2021/03/18/zack-snyders-justice-league-knightmare-batman-and-black-suit-superman-set-by-hot-toys-420821) · [Comic Crusaders on the ZSJL Hot Toys](https://comiccrusaders.com/collectibles/hot-toys-unveils-zack-snyders-justice-league-figures) · [Action Figure Barbecue, DC Multiverse Knightmare Batman](https://www.actionfigurebarbecue.com/2016/05/action-figure-review-knightmare-batman.html)
 - In this repo: [`snyder.md`](snyder.md) · `ClawdOutfits.prototype.tsx` on branch `prototype/clawd-outfits` (outfits V, I and K)
+
+## Maintainer's review (2026-10-09)
+
+After round 5 of the prototype (#95), approved with two changes for the build (#83):
+
+1. **A chest bat.** The *BvS* bat is drawn on the suit's chest between the coat's lapels and under the scarf, from the theme's own emblem path, so the Knightmare still reads as Batman at 54px. It needs enough value against the charcoal suit to read (a darker bat on a slightly lighter chest, or a faint rim), never the Alarm color at rest.
+2. **Arms and the torso's sides need contrast against the coat.** Flying, the near arm sits on the trailing coat in the same brown and disappears, so he looks one-armed. The sleeves and the torso's sides take a clear value step from the coat behind them (darker sleeves, or a dark seam between body and coat panels), so both arms read at 54px in every pose.
