@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { CSS_COLOR_NAMES } from './cssColorNames'
 import { rendererSources } from './rendererSources'
 
 type Source = { path: string; text: string }
@@ -10,16 +11,20 @@ const sources = () => rendererSources('.css', '.ts', '.tsx').filter(({ path }) =
 const withoutComments = (code: string) =>
   code.replace(/\/\*[\s\S]*?\*\/|(?<![:'"\w])\/\/.*$/gm, (comment) => comment.replace(/[^\n]/g, ' '))
 
-const COLOR =
-  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(|(?<![\w-])(?:black|white|red|gray|grey)(?![\w-])/gi
+const NAMES = CSS_COLOR_NAMES.join('|')
+const FUNCTION_OR_HEX = String.raw`#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`
+// In CSS any bare color name is a value; in TS only a quoted one is (`fill="maroon"`), not a word.
+const CSS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(?<![\w-])(?:${NAMES})(?![\w-])`, 'gi')
+const TS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(['"\x60])(?:${NAMES})\1`, 'gi')
 
-/** Every color written by hand outside the Theme, as `file:line  literal`. */
-function literals(): string[] {
-  return sources().flatMap(({ path, text }) =>
-    withoutComments(text)
+/** Every color written by hand in the files, as `file:line  literal`. */
+function literals(files: Source[]): string[] {
+  return files.flatMap(({ path, text }) => {
+    const color = path.endsWith('.css') ? CSS_COLOR : TS_COLOR
+    return withoutComments(text)
       .split('\n')
-      .flatMap((line, i) => [...line.matchAll(COLOR)].map((m) => `${path}:${i + 1}  ${m[0]}`)),
-  )
+      .flatMap((line, i) => [...line.matchAll(color)].map((m) => `${path}:${i + 1}  ${m[0]}`))
+  })
 }
 
 /**
@@ -51,7 +56,13 @@ function gradientsWithoutSpace(files: Source[]): string[] {
 describe("the renderer's colors", () => {
   // A new Theme swaps the variables in theme.css; a color written anywhere else would stay behind.
   it('all come from a Theme variable', () => {
-    expect(literals()).toEqual([])
+    expect(literals(sources())).toEqual([])
+  })
+
+  it('include every CSS color name, in CSS and in TSX strings', () => {
+    const css = { path: 'a.css', text: '.a { color: crimson; }' }
+    const tsx = { path: 'b.tsx', text: 'const b = <path fill="maroon" />' }
+    expect(literals([css, tsx])).toEqual(['a.css:1  crimson', 'b.tsx:1  "maroon"'])
   })
 
   // A color-mix() is not a legacy color, and one in a gradient switches it from sRGB to Oklab
