@@ -14,27 +14,27 @@ const variables = new Map(
   ),
 )
 
-/** A variable's colour as [r, g, b], following var() aliases down to a hex value. */
+/** A variable's color as [r, g, b], following var() aliases down to a hex value. */
 function rgb(name: string): Rgb {
   const value = variables.get(name)
   if (!value) throw new Error(`theme.css: no ${name}`)
   const alias = /^var\((--[\w-]+)\)$/.exec(value)
   if (alias) return rgb(alias[1]!)
   const hex = /^#([0-9a-f]{6})$/i.exec(value)
-  if (!hex) throw new Error(`theme.css: ${name} is ${value}, not an opaque colour`)
+  if (!hex) throw new Error(`theme.css: ${name} is ${value}, not an opaque color`)
   return [0, 2, 4].map((i) => parseInt(hex[1]!.slice(i, i + 2), 16)) as Rgb
 }
 
 /** WCAG 2 relative luminance. */
-function luminance(colour: Rgb): number {
-  const [r, g, b] = colour.map((c) => {
+function luminance(color: Rgb): number {
+  const [r, g, b] = color.map((c) => {
     const s = c / 255
     return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
   }) as Rgb
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
-/** WCAG 2 contrast ratio between two colours. */
+/** WCAG 2 contrast ratio between two colors. */
 function ratio(a: Rgb, b: Rgb): number {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number]
   return (hi + 0.05) / (lo + 0.05)
@@ -44,7 +44,7 @@ function ratio(a: Rgb, b: Rgb): number {
 const contrast = (a: string, b: string) => ratio(rgb(a), rgb(b))
 
 /** Every variable the renderer's CSS paints text (or an icon) with. */
-function textColours(): string[] {
+function textColors(): string[] {
   const used = rendererSources('.css').flatMap(({ text }) =>
     [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
   )
@@ -54,9 +54,9 @@ function textColours(): string[] {
 const GROUNDS = ['--abyss', '--surface', '--raised']
 
 /**
- * VENGEANCE's approved colours that read under 4.5:1, with the reason each was kept, so the test
- * can hold every other text colour, and every new Theme, to the line. Nothing on screen changed
- * when colours became variables (#72); whether to lift these is decided in #97.
+ * VENGEANCE's approved colors that read under 4.5:1, with the reason each was kept, so the test
+ * can hold every other text color, and every new Theme, to the line. Nothing on screen changed
+ * when colors became variables (#72); whether to lift these is decided in #97.
  */
 const VENGEANCE_EXCEPTIONS: Record<string, string> = {
   '--accent': 'the wordmark, in the red measured from the film title logo, at display size',
@@ -70,25 +70,22 @@ const VENGEANCE_EXCEPTIONS: Record<string, string> = {
   '--ink-soft': 'the soft pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',
 }
 
-describe("the Theme's text colours", () => {
-  const colours = textColours()
+describe("the Theme's text colors", () => {
+  const colors = textColors()
 
-  it.each(colours.filter((c) => !(c in VENGEANCE_EXCEPTIONS)))(
+  it.each(colors.filter((c) => !(c in VENGEANCE_EXCEPTIONS)))(
     '%s reads at 4.5:1 or better on every ground',
-    (colour) => {
+    (color) => {
       for (const ground of GROUNDS)
-        expect(contrast(colour, ground), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
+        expect(contrast(color, ground), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
     },
   )
 
-  // A stale exception would hide a colour that no longer needs one, or no longer exists.
-  it.each(Object.keys(VENGEANCE_EXCEPTIONS))(
-    '%s is a text colour that still needs its exception',
-    (colour) => {
-      expect(colours).toContain(colour)
-      expect(Math.min(...GROUNDS.map((ground) => contrast(colour, ground)))).toBeLessThan(4.5)
-    },
-  )
+  // A stale exception would hide a color that no longer needs one, or no longer exists.
+  it.each(Object.keys(VENGEANCE_EXCEPTIONS))('%s is a text color that still needs its exception', (color) => {
+    expect(colors).toContain(color)
+    expect(Math.min(...GROUNDS.map((ground) => contrast(color, ground)))).toBeLessThan(4.5)
+  })
 })
 
 describe('the contrast ratio', () => {

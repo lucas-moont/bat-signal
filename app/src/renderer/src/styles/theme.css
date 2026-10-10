@@ -1,7 +1,7 @@
 /*
- * Bat-Signal palette, from The Batman (2022): VENGEANCE, the default Theme. Every colour the
- * renderer paints is named here, by role, so a Theme can swap the lot (test/themeColours.test.ts
- * fails on a colour written anywhere else).
+ * Bat-Signal palette, from The Batman (2022): VENGEANCE, the default Theme. Every color the
+ * renderer paints is named here, by role, so a Theme can swap the lot (test/themeColors.test.ts
+ * fails on a color written anywhere else).
  * - Blacks: frame samples (framethrower.ai) — used only as highlights over pure black.
  * - --signal: average of the red pixels in the official title logo (measured: #af0006).
  * - --blood: "Batman 2022" palette on color-hex.com.

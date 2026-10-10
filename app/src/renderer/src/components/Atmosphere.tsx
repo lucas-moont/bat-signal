@@ -1,4 +1,4 @@
-// Rain, film grain and a low street-light haze behind everything, in the Theme's colours.
+// Rain, film grain and a low street-light haze behind everything, in the Theme's colors.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import './Atmosphere.css'
@@ -51,7 +51,7 @@ function Rain() {
       el.height = Math.round(height * devicePixelRatio)
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
       ctx.lineWidth = 1
-      // A canvas can't read CSS variables: it takes the Theme's rain colour as a value, and resizing
+      // A canvas can't read CSS variables: it takes the Theme's rain color as a value, and resizing
       // the canvas resets it, like the line width.
       ctx.strokeStyle = getComputedStyle(el).getPropertyValue('--rain')
       const count = Math.round(((width * height) / 1000) * DROPS_PER_1000PX2)
