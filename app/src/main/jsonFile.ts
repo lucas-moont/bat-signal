@@ -62,6 +62,12 @@ export function jsonFile<T>(name: string, parse: (raw: unknown) => T) {
       let settle: NodeJS.Timeout | undefined
       const changed = (_event: string, file: string | null) => {
         if (file !== name) return
+        // Someone else is writing it: a save still waiting must not fire before the edit is read,
+        // or it would write the old value over the edit and the edit would pass for the app's own.
+        if (read() !== written) {
+          clearTimeout(timer)
+          pending = undefined
+        }
         clearTimeout(settle)
         settle = setTimeout(() => {
           const text = read()
@@ -73,9 +79,6 @@ export function jsonFile<T>(name: string, parse: (raw: unknown) => T) {
             return
           }
           written = text
-          // The edit wins over a save still waiting, which would otherwise write the old value back.
-          clearTimeout(timer)
-          pending = undefined
           onChange(raw)
         }, SETTLE_MS)
       }
