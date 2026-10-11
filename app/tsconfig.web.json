@@ -17,5 +17,12 @@
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src/renderer/src/**/*", "src/preload/*.ts", "src/shared/**/*", "test/renderer/**/*"]
+  "include": [
+    "src/renderer/src/**/*",
+    "src/preload/*.ts",
+    "src/shared/**/*",
+    "test/renderer/**/*",
+    "test/fixtures/themes.ts",
+    "test/fixtures/words.ts"
+  ]
 }
