@@ -6,7 +6,7 @@ import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
 import { STANDARD_TERMS, STANDARD_WORDS, withLexicon } from '../src/shared/words'
-import { wearingTheme } from './fixtures/themes'
+import { standInTheme } from './fixtures/themes'
 import { opsWords, permission } from './fixtures/words'
 
 const session = (id: string, over: Partial<SessionSnapshot> = {}): SessionSnapshot =>
@@ -34,7 +34,7 @@ describe('the words', () => {
 // Neither reads the worn Theme or the Lexicon switch: they stay standard while a Theme with a
 // Lexicon is worn, the switch on as by default.
 describe('the words in a Windows toast and the tray', () => {
-  wearingTheme({ words: opsWords })
+  standInTheme({ words: opsWords })
 
   // The announcer passes STANDARD_WORDS itself (CONTEXT.md, Lexicon).
   it('are always the standard ones in a toast', () => {

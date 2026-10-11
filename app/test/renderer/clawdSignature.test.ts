@@ -9,7 +9,7 @@ import { CalmContext } from '../../src/renderer/src/calm'
 import { BatClawd } from '../../src/renderer/src/components/BatClawd'
 import { BatSignalIntro } from '../../src/renderer/src/components/BatSignalIntro'
 import { VENGEANCE_SUIT, type Pose } from '../../src/shared/suits'
-import { wearingTheme } from '../fixtures/themes'
+import { standInTheme } from '../fixtures/themes'
 
 /** A pose told apart in the markup by a path no real suit draws. */
 const marked = (mark: string): Pose => ({
@@ -19,7 +19,7 @@ const marked = (mark: string): Pose => ({
 
 // A Theme in the jury's style stands in for VENGEANCE: a homage in place of a pose, a Signature
 // pose in three ticks, and an aura.
-wearingTheme({
+standInTheme({
   suit: {
     ...VENGEANCE_SUIT,
     poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] },

@@ -13,11 +13,11 @@ import { Wearing } from '../../src/renderer/src/theme'
 import { useWords } from '../../src/renderer/src/words'
 import { DEFAULT_SETTINGS } from '../../src/shared/settings'
 import type { AppStatus } from '../../src/shared/status'
-import { wearingTheme } from '../fixtures/themes'
+import { standInTheme } from '../fixtures/themes'
 import { opsWords } from '../fixtures/words'
 
 // A Theme with a Lexicon and a Voice of its own stands in for VENGEANCE, which has neither.
-wearingTheme({ words: opsWords })
+standInTheme({ words: opsWords })
 
 /** What a panel component says: a term, and a line of the Voice. */
 function Speaker() {
