@@ -1,14 +1,17 @@
 // The resting form: a Bat-Signal disc in the corner. News lights it and sends a notice card
 // along its beam; a click on either opens the panel.
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { NoticeLayout } from '@shared/settings'
+import { THEMES } from '@shared/themes'
 import type { StoreSnapshot } from '@shared/types'
+import type { Words } from '@shared/words'
 import { batSignal } from '../bridge'
 import { playCue } from '../cues'
 import { CalmContext, useCalm } from '../calm'
+import { Wearing } from '../theme'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { useWords } from '../words'
 import { mascotMood } from '@shared/view'
@@ -28,11 +31,9 @@ const interactive = {
 }
 
 /** Turns snapshot changes into the notice card on screen, while the signal is the window showing. */
-function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean) {
+function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean, words: Words) {
   const [queue, setQueue] = useState(emptyQueue)
   const prev = useRef<StoreSnapshot | undefined>(undefined)
-  // The notice card is the Signal's: it speaks the Theme's words, where a toast keeps the standard ones.
-  const words = useWords()
 
   // Only a new snapshot can hold news; a change of mode alone must not diff it again.
   const onSnapshot = useEffectEvent((next: StoreSnapshot) => {
@@ -89,7 +90,9 @@ export function Signal() {
   useEffect(() => batSignal.onCue(({ cue, volume }) => playCue(cue, volume)), [])
   const calm = useCalm(settings)
   const mode = useWindowMode()
-  const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal')
+  // The notice card is the Signal's: it speaks the settings' Theme's words, where a toast keeps the
+  // standard ones. Built here, above Wearing, so the Theme is read from the settings themselves.
+  const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal', THEMES[settings.theme].words)
   const layout = useStagedNotice(notice)
   // The side the last card opened on, kept while it leaves.
   const [side, setSide] = useState<NoticeLayout>({ below: false, right: false })
@@ -97,51 +100,54 @@ export function Signal() {
 
   if (!settingsLoaded) return null
 
+  // Every view wears the settings' Theme and their calm.
+  const dressed = (page: ReactNode) => (
+    <Wearing theme={settings.theme}>
+      <CalmContext value={calm}>{page}</CalmContext>
+    </Wearing>
+  )
+
   // In watch mode this window is the perch over the strip: just Bat-Clawd, standing watch.
   if (mode === 'watch') {
-    return (
-      <CalmContext value={calm}>
-        <main className="perch">
-          <BatClawd mood={mascotMood(snapshot)} size={78} perched />
-        </main>
-      </CalmContext>
+    return dressed(
+      <main className="perch">
+        <BatClawd mood={mascotMood(snapshot)} size={78} perched />
+      </main>,
     )
   }
   const needsYou = snapshot.attention.length
   const shown = layout ? notice : undefined
 
-  return (
-    <CalmContext value={calm}>
-      <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
-        <main className={`signal${side.below ? ' signal--below' : ''}${side.right ? ' signal--right' : ''}`}>
-          {/* One card at a time: the next waits for the last to leave, and the window shrinks
+  return dressed(
+    <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
+      <main className={`signal${side.below ? ' signal--below' : ''}${side.right ? ' signal--right' : ''}`}>
+        {/* One card at a time: the next waits for the last to leave, and the window shrinks
               only when no card follows. */}
-          <AnimatePresence
-            mode="wait"
-            onExitComplete={() => {
-              if (!notice) void batSignal.setNoticeOut(false)
-            }}
-          >
-            {shown && (
-              <NoticeCard
-                key={shown.key}
-                notice={shown}
-                onOpen={() => batSignal.setMode('panel', shown.sessionId)}
-                onHover={setHovered}
-              />
-            )}
-          </AnimatePresence>
-          <Disc
-            lit={needsYou > 0 || !!notice}
-            // Pulsing only while urgent news is out: a pending item can wait for hours, and a
-            // transparent window is costly to redraw 8 times a second all that time.
-            pulsing={!!shown && isUrgent(shown.kind)}
-            count={needsYou}
-            onOpen={() => batSignal.reopen()}
-          />
-        </main>
-      </MotionConfig>
-    </CalmContext>
+        <AnimatePresence
+          mode="wait"
+          onExitComplete={() => {
+            if (!notice) void batSignal.setNoticeOut(false)
+          }}
+        >
+          {shown && (
+            <NoticeCard
+              key={shown.key}
+              notice={shown}
+              onOpen={() => batSignal.setMode('panel', shown.sessionId)}
+              onHover={setHovered}
+            />
+          )}
+        </AnimatePresence>
+        <Disc
+          lit={needsYou > 0 || !!notice}
+          // Pulsing only while urgent news is out: a pending item can wait for hours, and a
+          // transparent window is costly to redraw 8 times a second all that time.
+          pulsing={!!shown && isUrgent(shown.kind)}
+          count={needsYou}
+          onOpen={() => batSignal.reopen()}
+        />
+      </main>
+    </MotionConfig>,
   )
 }
 

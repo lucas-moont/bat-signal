@@ -25,4 +25,4 @@ The renderer serves the same demo data while you work on a design: open it with 
 
 ## Icons
 
-The tray and toast icons in `app/resources/icons/`, and `screenshots/tray.png`, are drawn by `npm run icons` (`app/scripts/icons.mts`) from the bat in `app/src/renderer/src/components/BatEmblem.tsx`, so the bat has one source. After changing the emblem, run it and commit the result; `app/test/icons.test.ts` fails when the icons fall behind.
+The tray and toast icons in `app/resources/icons/`, and `screenshots/tray.png`, are drawn by `npm run icons` (`app/scripts/icons.mts`) from the bat in `app/src/shared/emblems.ts` (VENGEANCE's: the tray never follows a Theme), so the bat has one source. After changing the emblem, run it and commit the result; `app/test/icons.test.ts` fails when the icons fall behind.
