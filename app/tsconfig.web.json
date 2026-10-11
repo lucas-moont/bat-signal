@@ -17,5 +17,13 @@
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src/renderer/src/**/*", "src/preload/*.ts", "src/shared/**/*", "test/renderer/**/*"]
+  // The two fixtures renderer tests share; the others (lines.ts) read main-process code.
+  "include": [
+    "src/renderer/src/**/*",
+    "src/preload/*.ts",
+    "src/shared/**/*",
+    "test/renderer/**/*",
+    "test/fixtures/themes.ts",
+    "test/fixtures/words.ts"
+  ]
 }

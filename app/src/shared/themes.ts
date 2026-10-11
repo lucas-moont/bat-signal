@@ -4,7 +4,7 @@
 // process or the renderer's code needs lives here.
 import { emblem, WINGS, type Emblem } from './emblems'
 import { VENGEANCE_SUIT, type Suit } from './suits'
-import { STANDARD_WORDS, type Words } from './words'
+import { STANDARD_WORDS, withLexicon, type Words } from './words'
 
 export const THEME_IDS = ['the-batman-2022'] as const
 export type ThemeId = (typeof THEME_IDS)[number]
@@ -36,6 +36,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     suit: VENGEANCE_SUIT,
   },
 }
+
+/** The words the panel and the Signal speak in a Theme, with its Lexicon on or off. */
+export const wordsOf = (theme: ThemeId, lexicon: boolean): Words => withLexicon(THEMES[theme].words, lexicon)
 
 /** The Theme a demo page's hash names by its flag (#demo-vengeance), if any. */
 export const themeFromFlags = (flags: ReadonlySet<string>): ThemeId | undefined =>

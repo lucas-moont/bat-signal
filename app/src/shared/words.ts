@@ -115,7 +115,9 @@ export interface Voice {
     notifications: string
     sound: string
     animations: Setting
-    atmosphere: { label: string; hint: (t: Terms) => string }
+    atmosphere: TermSetting
+    /** The Lexicon switch (CONTEXT.md, Lexicon). */
+    lexicon: TermSetting
     layout: Setting
     onTop: Setting
     opacity: string
@@ -210,6 +212,12 @@ export interface Setting {
   hint: string
 }
 
+/** A setting whose line names a term. */
+export interface TermSetting {
+  label: string
+  hint: (t: Terms) => string
+}
+
 export interface Words {
   terms: Terms
   voice: Voice
@@ -267,6 +275,24 @@ export const STANDARD_TERMS: Terms = {
   live: { busy: 'Working', idle: 'Idle', shell: 'Shell' },
   task: { pending: 'Pending', in_progress: 'In progress', completed: 'Completed', deleted: 'Deleted' },
   run: { running: 'Running', completed: 'Done', failed: 'Failed', stopped: 'Stopped' },
+}
+
+// A Theme's words with its Lexicon off, made once per Theme's words.
+const withoutLexicon = new WeakMap<Words, Words>()
+
+/**
+ * Words with a Theme's Lexicon on, or off: its Voice over the standard terms (CONTEXT.md, Lexicon).
+ * The Voice is its tone, not its names, so it stays; its lines that name a term take it from the
+ * Terms, so none of its names is left behind. Windows toasts and the tray never ask: they speak
+ * STANDARD_WORDS whatever the Theme.
+ *
+ * The same object each time for the same words: the panel memoizes on them (WatchStrip, NightReport).
+ */
+export function withLexicon(words: Words, lexicon: boolean): Words {
+  if (lexicon || words.terms === STANDARD_TERMS) return words
+  let plain = withoutLexicon.get(words)
+  if (!plain) withoutLexicon.set(words, (plain = { terms: STANDARD_TERMS, voice: words.voice }))
+  return plain
 }
 
 export const STANDARD_VOICE: Voice = {
@@ -340,6 +366,10 @@ export const STANDARD_VOICE: Voice = {
     sound: 'Sound',
     animations: { label: 'Animations', hint: 'Intro, flying mascot, typewriter and transitions' },
     atmosphere: { label: 'Rain', hint: (t) => `Gotham weather behind the ${lower(t.case.many)}` },
+    lexicon: {
+      label: 'Theme words',
+      hint: (t) => `The Theme's own names for ${lower(t.case.many)}, ${t.needsYou.label} and the stamps`,
+    },
     // "Case files" and "Night report" are the two Layouts' names (CONTEXT.md, Layout), not the Case
     // term: a Lexicon that renames Case doesn't rename the Layout.
     layout: { label: 'Night report', hint: 'Read the panel as one typed report instead of case files' },

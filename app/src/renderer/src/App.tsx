@@ -89,7 +89,7 @@ export function App() {
 
   // Every view wears the settings' Theme and their calm.
   const dressed = (page: ReactNode) => (
-    <Wearing theme={settings.theme}>
+    <Wearing theme={settings.theme} lexicon={settings.lexicon}>
       <CalmContext value={calm}>{page}</CalmContext>
     </Wearing>
   )

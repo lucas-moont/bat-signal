@@ -5,7 +5,7 @@ import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { NoticeLayout } from '@shared/settings'
-import { THEMES } from '@shared/themes'
+import { wordsOf } from '@shared/themes'
 import type { StoreSnapshot } from '@shared/types'
 import type { Words } from '@shared/words'
 import { batSignal } from '../bridge'
@@ -90,9 +90,14 @@ export function Signal() {
   useEffect(() => batSignal.onCue(({ cue, volume }) => playCue(cue, volume)), [])
   const calm = useCalm(settings)
   const mode = useWindowMode()
-  // The notice card is the Signal's: it speaks the settings' Theme's words, where a toast keeps the
-  // standard ones. Built here, above Wearing, so the Theme is read from the settings themselves.
-  const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal', THEMES[settings.theme].words)
+  // The notice card speaks the settings' Theme's words, where a toast keeps the standard ones.
+  // Built here, above Wearing, so they are read from the settings themselves.
+  const { notice, setHovered } = useNotices(
+    snapshot,
+    loaded,
+    mode === 'signal',
+    wordsOf(settings.theme, settings.lexicon),
+  )
   const layout = useStagedNotice(notice)
   // The side the last card opened on, kept while it leaves.
   const [side, setSide] = useState<NoticeLayout>({ below: false, right: false })
@@ -102,7 +107,7 @@ export function Signal() {
 
   // Every view wears the settings' Theme and their calm.
   const dressed = (page: ReactNode) => (
-    <Wearing theme={settings.theme}>
+    <Wearing theme={settings.theme} lexicon={settings.lexicon}>
       <CalmContext value={calm}>{page}</CalmContext>
     </Wearing>
   )

@@ -1,6 +1,7 @@
 // Which Theme the page wears: an attribute on <html> that scopes the Theme's stylesheet
 // (styles/themes/<id>.css), and a context for the code that reads the Theme (its words, its
-// emblem). Free of the bridge, so any component can read it and still render in a node test.
+// emblem), with whether its Lexicon is on. Free of the bridge, so any component can read it and
+// still render in a node test.
 import { createContext, createElement, useContext, useEffect, useState, type ReactNode } from 'react'
 import { DEFAULT_THEME, isThemeId, type ThemeId } from '@shared/themes'
 import { loadFonts } from './styles/themes/fonts'
@@ -28,12 +29,26 @@ const ThemeContext = createContext<ThemeId>(DEFAULT_THEME)
 /** The Theme the page wears: the default outside a Wearing (a component rendered on its own). */
 export const useTheme = (): ThemeId => useContext(ThemeContext)
 
+const LexiconContext = createContext(true)
+
+/** Whether the page speaks the Theme's Lexicon (CONTEXT.md): on outside a Wearing, as by default. */
+export const useLexicon = (): boolean => useContext(LexiconContext)
+
 /**
  * Wears the settings' Theme from here down, and on the page itself, changing live with the
  * setting: its faces load, then the page takes its colors and the components its words and
- * emblem, all at once, so no frame mixes two Themes and text never sits in a fallback face.
+ * emblem, all at once, so no frame mixes two Themes and text never sits in a fallback face. The
+ * Lexicon switch needs no faces, so it changes the words at once.
  */
-export function Wearing({ theme, children }: { theme: ThemeId; children: ReactNode }) {
+export function Wearing({
+  theme,
+  lexicon,
+  children,
+}: {
+  theme: ThemeId
+  lexicon: boolean
+  children: ReactNode
+}) {
   // The page already wears the Theme it opened with (main.tsx): only a change waits for its faces.
   const [worn, setWorn] = useState(theme)
   useEffect(() => {
@@ -49,5 +64,9 @@ export function Wearing({ theme, children }: { theme: ThemeId; children: ReactNo
       live = false
     }
   }, [theme])
-  return createElement(ThemeContext, { value: worn }, children)
+  return createElement(
+    ThemeContext,
+    { value: worn },
+    createElement(LexiconContext, { value: lexicon }, children),
+  )
 }

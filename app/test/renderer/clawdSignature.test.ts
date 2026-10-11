@@ -1,6 +1,6 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, describe, expect, it, vi } from 'vitest'
 // The shared animation clock listens to the page's visibility as it loads; a hidden page keeps it stopped.
 vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
 afterAll(() => vi.unstubAllGlobals())
@@ -9,7 +9,7 @@ import { CalmContext } from '../../src/renderer/src/calm'
 import { BatClawd } from '../../src/renderer/src/components/BatClawd'
 import { BatSignalIntro } from '../../src/renderer/src/components/BatSignalIntro'
 import { VENGEANCE_SUIT, type Pose } from '../../src/shared/suits'
-import { THEMES } from '../../src/shared/themes'
+import { standInTheme } from '../fixtures/themes'
 
 /** A pose told apart in the markup by a path no real suit draws. */
 const marked = (mark: string): Pose => ({
@@ -19,24 +19,17 @@ const marked = (mark: string): Pose => ({
 
 // A Theme in the jury's style stands in for VENGEANCE: a homage in place of a pose, a Signature
 // pose in three ticks, and an aura.
-const theme = THEMES['the-batman-2022']
-beforeAll(() => {
-  THEMES['the-batman-2022'] = {
-    ...theme,
-    suit: {
-      ...VENGEANCE_SUIT,
-      poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] },
-      signature: [
-        { pose: marked('2.22'), look: 0 },
-        { pose: marked('3.33'), look: 0 },
-        { pose: marked('4.44'), look: 0 },
-      ],
-      aura: true,
-    },
-  }
-})
-afterAll(() => {
-  THEMES['the-batman-2022'] = theme
+standInTheme({
+  suit: {
+    ...VENGEANCE_SUIT,
+    poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] },
+    signature: [
+      { pose: marked('2.22'), look: 0 },
+      { pose: marked('3.33'), look: 0 },
+      { pose: marked('4.44'), look: 0 },
+    ],
+    aura: true,
+  },
 })
 
 const draw = (props: Parameters<typeof BatClawd>[0], calm = false) =>

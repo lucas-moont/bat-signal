@@ -28,6 +28,8 @@ export interface Settings {
   opacity: number
   /** The version of Batman Bat-Signal wears (shared/themes.ts). */
   theme: ThemeId
+  /** The Theme's own names for its terms in the panel and on the Signal; off, the standard words. */
+  lexicon: boolean
   /** How the panel reads: as case files (the approved layout) or as one typed night report. */
   layout: PanelLayout
   /** The global shortcut that opens and folds Bat-Signal, as Electron writes it; '' for none. */
@@ -47,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   alwaysOnTop: true,
   opacity: 1,
   theme: DEFAULT_THEME,
+  lexicon: true,
   layout: 'files',
   shortcut: 'Ctrl+Alt+B',
   announce: {
@@ -87,6 +90,7 @@ export function parseSettings(raw: unknown, fallback: Settings = DEFAULT_SETTING
     alwaysOnTop: bool(o['alwaysOnTop']) ?? fallback.alwaysOnTop,
     opacity: clamp(num(o['opacity']) ?? fallback.opacity, OPACITY_MIN, OPACITY_MAX),
     theme: isThemeId(o['theme']) ? o['theme'] : fallback.theme,
+    lexicon: bool(o['lexicon']) ?? fallback.lexicon,
     layout: parseLayout(o['layout']) ?? fallback.layout,
     shortcut: parseShortcut(o['shortcut']) ?? fallback.shortcut,
     announce: parseAnnounce(o['announce'], fallback.announce),
