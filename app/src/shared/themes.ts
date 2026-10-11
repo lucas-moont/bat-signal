@@ -4,7 +4,7 @@
 // process or the renderer's code needs lives here.
 import { emblem, WINGS, type Emblem } from './emblems'
 import { VENGEANCE_SUIT, type Suit } from './suits'
-import { STANDARD_WORDS, type Words } from './words'
+import { STANDARD_TERMS, STANDARD_WORDS, type Words } from './words'
 
 export const THEME_IDS = ['the-batman-2022'] as const
 export type ThemeId = (typeof THEME_IDS)[number]
@@ -35,6 +35,23 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(WINGS, 'wear'),
     suit: VENGEANCE_SUIT,
   },
+}
+
+// A Theme's words with its Lexicon off, made once per Theme's words: they are compared by identity
+// downstream (the Signal diffs notices again only for new words).
+const standardTerms = new WeakMap<Words, Words>()
+
+/**
+ * The words the panel and the Signal speak in a Theme: its own, or with its Lexicon off its Voice
+ * over the standard terms (CONTEXT.md, Lexicon). Windows toasts and the tray never ask: they speak
+ * STANDARD_WORDS whatever the Theme.
+ */
+export function wordsOf(theme: ThemeId, lexicon: boolean): Words {
+  const words = THEMES[theme].words
+  if (lexicon || words.terms === STANDARD_TERMS) return words
+  let plain = standardTerms.get(words)
+  if (!plain) standardTerms.set(words, (plain = { terms: STANDARD_TERMS, voice: words.voice }))
+  return plain
 }
 
 /** The Theme a demo page's hash names by its flag (#demo-vengeance), if any. */
