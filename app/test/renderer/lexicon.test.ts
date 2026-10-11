@@ -38,7 +38,9 @@ function Speaker() {
 }
 
 const wearing = (lexicon: boolean) =>
-  renderToStaticMarkup(createElement(Wearing, { theme: 'the-batman-2022', lexicon }, createElement(Speaker)))
+  renderToStaticMarkup(
+    createElement(Wearing, { theme: 'the-batman-2022', lexicon, children: createElement(Speaker) }),
+  )
 
 describe('the panel and the Signal', () => {
   it("speak the Theme's terms while the Lexicon is on", () => {
