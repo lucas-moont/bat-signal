@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { painterFor } from '../src/renderer/src/painters'
-import { VENGEANCE_RAIN } from '../src/shared/atmospheres'
+import { painterFor } from '../../src/renderer/src/painters'
+import { VENGEANCE_RAIN } from '../../src/shared/atmospheres'
 
 /** A canvas context that records the strokes it is asked for, one list of segments per stroke(). */
 function recorder() {
@@ -59,7 +59,8 @@ describe('the rain', () => {
   })
 
   // At 8 steps a second a drop falls further between ticks than it did at the old 15: a streak
-  // too short for its step reads as dashes jumping, not rain falling.
+  // too short for its step reads as dashes jumping, not rain falling. A quarter of the step, at
+  // least, is the share the shortest streaks covered at 15.
   it('draws each streak long enough for the step it falls in a tick', () => {
     const painter = rain()
     const first = recorder()
@@ -69,9 +70,10 @@ describe('the rain', () => {
     first.strokes.forEach((stroke, depth) =>
       stroke.segments.slice(0, 20).forEach((a, i) => {
         const b = next.strokes[depth]!.segments[i]!
+        if (b.y0 < a.y0) return // came back above the top in between
         const streak = Math.hypot(a.x0 - a.x1, a.y0 - a.y1)
         const step = Math.hypot(b.x0 - a.x0, b.y0 - a.y0)
-        expect(streak / step).toBeGreaterThan(0.3)
+        expect(streak / step).toBeGreaterThan(0.25)
       }),
     )
   })
@@ -82,7 +84,7 @@ describe('the rain', () => {
     const { ctx, strokes } = recorder()
     painter.paint(ctx, TICK)
     const ys = strokes.flatMap((s) => s.segments.map((d) => d.y0))
-    expect(ys.length).toBeGreaterThan(0.9 * Math.round(((320 * 440) / 1000) * VENGEANCE_RAIN.density))
+    expect(ys.length).toBe(Math.round(((320 * 440) / 1000) * VENGEANCE_RAIN.density))
     expect(Math.min(...ys)).toBeGreaterThan(-100)
     expect(Math.max(...ys)).toBeLessThan(440 + 100)
   })
