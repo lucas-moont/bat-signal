@@ -34,6 +34,20 @@ describe('parseSettings: whatever the file holds', () => {
     expect(parseSettings({ theme: 'the-batman-2022' }).theme).toBe('the-batman-2022')
   })
 
+  // The Atmosphere was the rain until each Theme brought its own: someone who turned the rain off
+  // keeps the Atmosphere off.
+  it('turns an old rain setting into the Atmosphere', () => {
+    expect(DEFAULT_SETTINGS.atmosphere).toBe(true)
+    expect(parseSettings({ rain: false }).atmosphere).toBe(false)
+    expect(parseSettings({ rain: true }).atmosphere).toBe(true)
+    expect(parseSettings({ rain: false })).not.toHaveProperty('rain')
+  })
+
+  it('reads the Atmosphere over an old rain setting left beside it', () => {
+    expect(parseSettings({ atmosphere: true, rain: false }).atmosphere).toBe(true)
+    expect(parseSettings({ atmosphere: 'no', rain: false }).atmosphere).toBe(false)
+  })
+
   // A Theme's own names for its terms show unless the user asks for the standard words (CONTEXT.md, Lexicon).
   it('speaks the Lexicon by default, and keeps it off once turned off', () => {
     expect(DEFAULT_SETTINGS.lexicon).toBe(true)
@@ -49,8 +63,10 @@ describe('parseSettings: whatever the file holds', () => {
 
 describe('parseSettings: a file from before Phase 4', () => {
   it('keeps what the user chose, turns every new announcement off and wears the default Theme', () => {
+    const { rain, ...rest } = OLD_FILE
     expect(parseSettings(OLD_FILE)).toEqual({
-      ...OLD_FILE,
+      ...rest,
+      atmosphere: rain,
       theme: 'the-batman-2022',
       lexicon: true,
       shortcut: 'Ctrl+Alt+B',
