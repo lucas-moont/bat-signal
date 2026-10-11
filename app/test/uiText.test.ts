@@ -41,7 +41,7 @@ function textOf(node: ts.Node): string[] {
 /** BEM class names, like "card--urgent" or "row row--just-done". */
 const CLASSES = /^\s*(?:[a-z0-9]+(?:(?:--|__|-)[a-z0-9]+)*\s*)+$/
 
-/** Is this literal a class list, an import, or a message for developers rather than words? */
+/** Is this literal a class list, an import, or a message for developers (an error, a log) rather than words? */
 const isCode = (node: ts.Node): boolean => {
   if (textOf(node).every((w) => CLASSES.test(w) && /--|__/.test(w))) return true
   const parent = node.parent
@@ -49,6 +49,7 @@ const isCode = (node: ts.Node): boolean => {
   // A text prop's own literal is read by visit before it gets here: any other attribute is code.
   if (ts.isJsxAttribute(parent)) return true
   if (ts.isNewExpression(parent)) return parent.expression.getText() === 'Error'
+  if (ts.isCallExpression(parent)) return parent.expression.getText().startsWith('console.')
   return ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent)
 }
 
