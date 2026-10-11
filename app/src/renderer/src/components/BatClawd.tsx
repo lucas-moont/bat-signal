@@ -137,15 +137,13 @@ export function BatClawd({
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
   const signature = suit.signature?.steps
-  // The Signature pose's reveal, from the clock frame it started on (the intro's, from the start).
-  const [revealFrom, setRevealFrom] = useState<number | null>(reveal && signature ? 0 : null)
-  const revealClock = useFrame(!calm && revealFrom !== null, 2)
-  const revealed =
-    signature && revealFrom !== null ? scriptAt(signature, revealClock - revealFrom, calm) : undefined
+  // The Signature pose's reveal, on its own clock from its first step (the intro's, from the start).
+  const [revealing, setRevealing] = useState(reveal && !!signature)
+  const revealClock = useFrame(!calm && revealing, 2)
+  const revealed = signature && revealing ? scriptAt(signature, revealClock, calm) : undefined
   // A click's reveal ends after its last step; the intro holds it until the intro leaves. Adjusted
   // during render (React's pattern for reacting to a changed input) rather than in an effect.
-  if (!reveal && signature && revealFrom !== null && revealClock - revealFrom >= signature.length)
-    setRevealFrom(null)
+  if (!reveal && signature && revealing && revealClock >= signature.length) setRevealing(false)
 
   // Eyes follow the pointer while awake. Event-driven, so it costs nothing when the pointer rests.
   useEffect(() => {
@@ -205,7 +203,7 @@ export function BatClawd({
         if (calm) return
         // A Theme with a Signature pose shows it on a click, in place of the hop.
         if (signature) {
-          if (revealFrom === null) setRevealFrom(revealClock)
+          setRevealing(true)
           return
         }
         if (hopping) return

@@ -80,9 +80,18 @@ export function useLiveStyle<T extends HTMLElement>(
   return ref
 }
 
-/** A frame counter that advances every `every` ticks (8 ticks a second) while `active`. */
+/**
+ * A frame counter that advances every `every` ticks (8 ticks a second) while `active`, from 0
+ * each time it becomes active, so a script started twice plays from its start both times.
+ */
 export function useFrame(active: boolean, every = 1): number {
   const [frame, setFrame] = useState(0)
+  // Restarted during render (React's pattern for reacting to a changed input), not in an effect.
+  const [wasActive, setWasActive] = useState(active)
+  if (wasActive !== active) {
+    setWasActive(active)
+    if (active) setFrame(0)
+  }
   useEffect(() => {
     if (!active) return
     return onTick((t) => {
