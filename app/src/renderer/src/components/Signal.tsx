@@ -5,7 +5,9 @@ import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import { diffNotices, isUrgent, type Notice } from '@shared/notices'
 import { advance, emptyQueue, enqueue, NOTICE_MS, silence } from '@shared/noticeQueue'
 import type { NoticeLayout } from '@shared/settings'
+import { THEMES } from '@shared/themes'
 import type { StoreSnapshot } from '@shared/types'
+import type { Words } from '@shared/words'
 import { batSignal } from '../bridge'
 import { playCue } from '../cues'
 import { CalmContext, useCalm } from '../calm'
@@ -29,11 +31,9 @@ const interactive = {
 }
 
 /** Turns snapshot changes into the notice card on screen, while the signal is the window showing. */
-function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean) {
+function useNotices(snapshot: StoreSnapshot, loaded: boolean, listening: boolean, words: Words) {
   const [queue, setQueue] = useState(emptyQueue)
   const prev = useRef<StoreSnapshot | undefined>(undefined)
-  // The notice card is the Signal's: it speaks the Theme's words, where a toast keeps the standard ones.
-  const words = useWords()
 
   // Only a new snapshot can hold news; a change of mode alone must not diff it again.
   const onSnapshot = useEffectEvent((next: StoreSnapshot) => {
@@ -90,7 +90,9 @@ export function Signal() {
   useEffect(() => batSignal.onCue(({ cue, volume }) => playCue(cue, volume)), [])
   const calm = useCalm(settings)
   const mode = useWindowMode()
-  const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal')
+  // The notice card is the Signal's: it speaks the settings' Theme's words, where a toast keeps the
+  // standard ones. Built here, above Wearing, so the Theme is read from the settings themselves.
+  const { notice, setHovered } = useNotices(snapshot, loaded, mode === 'signal', THEMES[settings.theme].words)
   const layout = useStagedNotice(notice)
   // The side the last card opened on, kept while it leaves.
   const [side, setSide] = useState<NoticeLayout>({ below: false, right: false })
