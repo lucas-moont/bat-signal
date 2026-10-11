@@ -18,6 +18,7 @@ vi.mock('../../src/shared/themes', async (real) => {
     ...VENGEANCE_SUIT,
     poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] as const },
     signature: { steps: ['2.22', '3.33', '4.44'].map((mark) => ({ pose: marked(mark), look: 0 })) },
+    aura: true,
   }
   return { ...themes, THEMES: { 'the-batman-2022': { ...themes.THEMES['the-batman-2022'], suit } } }
 })
@@ -48,6 +49,18 @@ describe("a Theme's Signature pose", () => {
 
   it('opens the intro', () => {
     expect(renderToStaticMarkup(createElement(BatSignalIntro))).toContain('M0 0 L2.22 0 Z')
+  })
+})
+
+describe("a Theme's aura", () => {
+  // In the Alarm color, only while something needs the user (CONTEXT.md, Aura).
+  it('glows while he is alarmed', () => {
+    expect(draw({ mood: 'alarmed' })).toContain('clawd--aura')
+  })
+
+  it('stays off at rest', () => {
+    expect(draw({ mood: 'flying' })).not.toContain('clawd--aura')
+    expect(draw({ mood: 'sleeping', perched: true })).not.toContain('clawd--aura')
   })
 })
 
