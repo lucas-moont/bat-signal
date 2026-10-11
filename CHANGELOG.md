@@ -4,6 +4,11 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Added
+
+- `settings.json` keeps the Theme (`"theme"`, The Batman (2022) by default; an unknown one falls back to it). Only one Theme exists so far; the next ones arrive in this release.
+- Editing `settings.json` by hand while Bat-Signal runs applies at once. A file that doesn't parse is ignored, and keys left out keep their values.
+
 ## [1.1.2] - 2026-10-09
 
 ### Changed

@@ -32,7 +32,7 @@ In development, Start with Windows registers this checkout's `electron.exe` with
 
 Windows shows toasts only from an app it knows by a Start menu shortcut. In development, Electron adds one (`Electron`, for this checkout's `electron.exe`) with the first toast, and Windows drops that first one: the next ones show, under Electron's icon in their header. The installer adds Bat-Signal's own shortcut ahead of time, so the installed app's toasts say Bat-Signal from the first one.
 
-The tray and toast icons in `app/resources/icons/` are drawn from the bat in `BatEmblem.tsx`: after changing it, run `npm run icons` and commit the result.
+The tray and toast icons in `app/resources/icons/` are drawn from the bat in `app/src/shared/emblems.ts` (VENGEANCE's, since the tray never follows a Theme): after changing it, run `npm run icons` and commit the result.
 
 ## Building the installer
 
