@@ -55,6 +55,18 @@ function onTick(listener: Listener): () => void {
   }
 }
 
+/** Calls `step(now)` on every tick while `active`, bypassing React: a canvas painting a step a tick. */
+export function useEveryTick(active: boolean, step: (now: number) => void): void {
+  const stepRef = useRef(step)
+  useEffect(() => {
+    stepRef.current = step
+  })
+  useEffect(() => {
+    if (!active) return
+    return onTick((_tick, now) => stepRef.current(now))
+  }, [active])
+}
+
 /**
  * Restyles one element on every tick while `active`, bypassing React. When inactive the
  * element is reset with `apply(el, null)`.
