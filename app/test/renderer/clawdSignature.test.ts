@@ -17,7 +17,7 @@ vi.mock('../../src/shared/themes', async (real) => {
   const suit = {
     ...VENGEANCE_SUIT,
     poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] as const },
-    signature: { steps: ['2.22', '3.33', '4.44'].map((mark) => ({ pose: marked(mark), look: 0 })) },
+    signature: ['2.22', '3.33', '4.44'].map((mark) => ({ pose: marked(mark), look: 0 })),
     aura: true,
   }
   return { ...themes, THEMES: { 'the-batman-2022': { ...themes.THEMES['the-batman-2022'], suit } } }
@@ -65,18 +65,13 @@ describe("a Theme's aura", () => {
 })
 
 describe('a script on the clock', () => {
-  const steps = THEMES['the-batman-2022'].suit.signature!.steps
+  const steps = THEMES['the-batman-2022'].suit.signature!
 
   it('plays its steps in order, then holds the last', () => {
-    expect([0, 1, 2, 5].map((i) => scriptAt(steps, i, false))).toEqual([
-      steps[0],
-      steps[1],
-      steps[2],
-      steps[2],
-    ])
+    expect([0, 1, 2, 5].map((i) => scriptAt(steps, i))).toEqual([steps[0], steps[1], steps[2], steps[2]])
   })
 
-  it('is its final frame under reduced motion', () => {
-    expect(scriptAt(steps, 0, true)).toBe(steps[2])
+  it('gives its final frame for Infinity, as under reduced motion', () => {
+    expect(scriptAt(steps, Infinity)).toBe(steps[2])
   })
 })

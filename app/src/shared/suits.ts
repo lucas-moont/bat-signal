@@ -39,7 +39,12 @@ export type Poses = readonly [Pose, ...Pose[]]
 export interface Step {
   pose: Pose
   look: number
+  /** A nudge on top of the pose for this step (a footstep down, say). */
+  transform?: string
 }
+
+/** A script of steps, at least one. */
+export type Script = readonly [Step, ...Step[]]
 
 export interface Suit {
   maps: Readonly<Record<string, OutfitMap>>
@@ -49,22 +54,20 @@ export interface Suit {
   watch: readonly Step[]
   /**
    * The Theme's most iconic Pose (CONTEXT.md, Signature pose), revealed in steps on the shared
-   * clock: on the perch in place of the watch, in the intro, and on a click in place of the hop.
-   * A Theme without one keeps the watch and the hop.
+   * clock and then held: on the perch in place of the watch, in the intro, and on a click in place
+   * of the hop. A Theme without one keeps the watch and the hop.
    */
-  signature?: { steps: readonly [Step, ...Step[]] }
+  signature?: Script
   /**
    * A glow in the Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs
-   * the user or while he reveals his Signature pose. Measured on the perch's transparent window,
-   * alarmed: about one point of a core above the 2.2% he costs without it, the same as a static
-   * glow behind him, since the window redraws with every shiver either way.
+   * the user or while he reveals his Signature pose. What it costs is in DESIGN.md (Bat-Clawd).
    */
   aura?: boolean
 }
 
-/** A script's step at an index: its steps in order, then the last held; under reduced motion, the last. */
-export const scriptAt = (steps: readonly [Step, ...Step[]], index: number, calm: boolean): Step =>
-  steps[calm ? steps.length - 1 : Math.min(index, steps.length - 1)] ?? steps[0]
+/** A script's step at an index: its steps in order, then the last held (Infinity: the final frame). */
+export const scriptAt = (steps: Script, index: number): Step =>
+  steps[Math.min(index, steps.length - 1)] ?? steps[0]
 
 // --- VENGEANCE: today's Bat-Clawd, a black cowl edged in red and a black cape with a red rim. ---
 

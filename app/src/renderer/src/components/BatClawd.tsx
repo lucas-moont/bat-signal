@@ -136,11 +136,12 @@ export function BatClawd({
   const ref = useRef<HTMLSpanElement>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
-  const signature = suit.signature?.steps
+  const signature = suit.signature
   // The Signature pose's reveal, on its own clock from its first step (the intro's, from the start).
   const [revealing, setRevealing] = useState(reveal && !!signature)
   const revealClock = useFrame(!calm && revealing, 2)
-  const revealed = signature && revealing ? scriptAt(signature, revealClock, calm) : undefined
+  // Under reduced motion a reveal is its final frame.
+  const revealed = signature && revealing ? scriptAt(signature, calm ? Infinity : revealClock) : undefined
   // A click's reveal ends after its last step; the intro holds it until the intro leaves. Adjusted
   // during render (React's pattern for reacting to a changed input) rather than in an effect.
   if (!reveal && signature && revealing && revealClock >= signature.length) setRevealing(false)
@@ -175,13 +176,15 @@ export function BatClawd({
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
   const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
-  // On the perch the Theme's Signature pose stands in for the watch (its final frame when calm).
-  const perch: readonly Step[] = signature ?? suit.watch
-  const step: Step | undefined =
-    revealed ??
-    (watching ? (calm && signature ? scriptAt(signature, 0, true) : perch[frame % perch.length]) : undefined)
+  // On the perch the Theme's Signature pose stands in for the watch: revealed once, then held.
+  const perchStep = watching
+    ? signature
+      ? scriptAt(signature, calm ? Infinity : frame)
+      : suit.watch[frame % suit.watch.length]
+    : undefined
+  const step: Step | undefined = revealed ?? perchStep
   const { pose, transform } = step
-    ? { pose: step.pose, transform: '' }
+    ? { pose: step.pose, transform: step.transform ?? '' }
     : MOTION[mood](frame, suit.poses[mood])
   // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
   const stillEyes = calm || (!watching && mood === 'sleeping')
