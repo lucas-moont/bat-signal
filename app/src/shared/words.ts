@@ -277,14 +277,23 @@ export const STANDARD_TERMS: Terms = {
   run: { running: 'Running', completed: 'Done', failed: 'Failed', stopped: 'Stopped' },
 }
 
+// A Theme's words with its Lexicon off, made once per Theme's words.
+const withoutLexicon = new WeakMap<Words, Words>()
+
 /**
  * Words with a Theme's Lexicon on, or off: its Voice over the standard terms (CONTEXT.md, Lexicon).
  * The Voice is its tone, not its names, so it stays; its lines that name a term take it from the
  * Terms, so none of its names is left behind. Windows toasts and the tray never ask: they speak
  * STANDARD_WORDS whatever the Theme.
+ *
+ * The same object each time for the same words: the panel memoizes on them (WatchStrip, NightReport).
  */
-export const withLexicon = (words: Words, lexicon: boolean): Words =>
-  lexicon ? words : { terms: STANDARD_TERMS, voice: words.voice }
+export function withLexicon(words: Words, lexicon: boolean): Words {
+  if (lexicon || words.terms === STANDARD_TERMS) return words
+  let plain = withoutLexicon.get(words)
+  if (!plain) withoutLexicon.set(words, (plain = { terms: STANDARD_TERMS, voice: words.voice }))
+  return plain
+}
 
 export const STANDARD_VOICE: Voice = {
   wordmark: PRODUCT.toUpperCase(),
