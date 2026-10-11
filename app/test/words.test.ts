@@ -5,7 +5,7 @@ import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
-import { STANDARD_TERMS, withLexicon } from '../src/shared/words'
+import { STANDARD_TERMS, STANDARD_WORDS, withLexicon } from '../src/shared/words'
 import { wearingTheme } from './fixtures/themes'
 import { opsWords, permission } from './fixtures/words'
 
@@ -67,6 +67,12 @@ describe('the Lexicon', () => {
     expect(words.terms).toBe(STANDARD_TERMS)
     expect(attentionCopy(permission, words).stamp).toBe('Permission')
     expect(words.voice.wordmark).toBe('Watchful Protector')
+  })
+
+  // WatchStrip and NightReport memoize on the words: new ones each render would redo their work.
+  it('gives the same words each time it is asked', () => {
+    expect(withLexicon(opsWords, false)).toBe(withLexicon(opsWords, false))
+    expect(withLexicon(STANDARD_WORDS, false)).toBe(STANDARD_WORDS)
   })
 
   // A Voice line that names a term takes it from the Terms (#73).
