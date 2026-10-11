@@ -199,7 +199,7 @@ export function BatClawd({
       ref={ref}
       role="img"
       aria-label={watching ? said.watching : said[mood]}
-      className={`clawd${hopping ? ' clawd--hop' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || revealed) ? ' clawd--aura' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
         if (calm) return

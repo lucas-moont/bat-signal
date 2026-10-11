@@ -47,6 +47,12 @@
   fill: var(--thread);
 }
 
+/* The aura, in the Theme's Alarm color, for a suit that has one (shared/suits.ts): a still filter,
+   repainted only when the frame changes on the clock. */
+.clawd--aura .clawd__frame {
+  filter: drop-shadow(0 0 1.5px var(--aura-core)) drop-shadow(0 0 5px var(--aura-glow));
+}
+
 /* A click sends it up for a short flight: a one-off animation, not a loop. */
 .clawd--hop .clawd__mover {
   animation: clawd-hop 0.7s var(--ease-out);

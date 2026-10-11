@@ -53,6 +53,13 @@ export interface Suit {
    * A Theme without one keeps the watch and the hop.
    */
   signature?: { steps: readonly [Step, ...Step[]] }
+  /**
+   * A glow in the Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs
+   * the user or while he reveals his Signature pose. Measured on the perch's transparent window,
+   * alarmed: about one point of a core above the 2.2% he costs without it, the same as a static
+   * glow behind him, since the window redraws with every shiver either way.
+   */
+  aura?: boolean
 }
 
 /** A script's step at an index: its steps in order, then the last held; under reduced motion, the last. */
