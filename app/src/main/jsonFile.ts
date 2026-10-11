@@ -53,11 +53,12 @@ export function jsonFile<T>(name: string, parse: (raw: unknown) => T) {
       return parsed(read())
     },
     /**
-     * Hands over the file's value each time someone else changes it (edited by hand, say); the
-     * app's own saves don't count. Watches the folder, since an editor may replace the file.
-     * Returns how to stop.
+     * Hands over the file's JSON, unvalidated, each time someone else changes it (edited by hand,
+     * say), so the caller can lay it over what it holds; the app's own saves don't count, and
+     * neither does a file that doesn't parse (a typo, or a read caught mid-save). Watches the
+     * folder, since an editor may replace the file. Returns how to stop.
      */
-    watch(onChange: (value: T) => void): () => void {
+    watch(onChange: (raw: unknown) => void): () => void {
       let settle: NodeJS.Timeout | undefined
       const changed = (_event: string, file: string | null) => {
         if (file !== name) return
@@ -65,11 +66,17 @@ export function jsonFile<T>(name: string, parse: (raw: unknown) => T) {
         settle = setTimeout(() => {
           const text = read()
           if (text === undefined || text === written) return
+          let raw: unknown
+          try {
+            raw = JSON.parse(text)
+          } catch {
+            return
+          }
           written = text
           // The edit wins over a save still waiting, which would otherwise write the old value back.
           clearTimeout(timer)
           pending = undefined
-          onChange(parsed(text))
+          onChange(raw)
         }, SETTLE_MS)
       }
       let watcher: FSWatcher | undefined

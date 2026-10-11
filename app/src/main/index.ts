@@ -2,7 +2,7 @@ import { app, globalShortcut } from 'electron'
 import { obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
 import { announce, emptyAnnouncer } from '../shared/announcer'
-import { applySettingsPatch, parseViewMode, type Settings } from '../shared/settings'
+import { applySettingsPatch, parseSettings, parseViewMode, type Settings } from '../shared/settings'
 import type { AppStatus } from '../shared/status'
 import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
@@ -90,7 +90,11 @@ function start(): void {
     settingsFile.saveSoon(settings)
   })
   // settings.json edited by hand (until the Theme picker, that's how a Theme changes) applies at once.
-  settingsFile.watch((next) => adopt(next, { touchesShortcut: next.shortcut !== settings.shortcut }))
+  // Laid over the current settings, so a key left out or mistyped keeps its value, as a patch does.
+  settingsFile.watch((raw) => {
+    const next = parseSettings(raw, settings)
+    adopt(next, { touchesShortcut: next.shortcut !== settings.shortcut })
+  })
   handleIpc(IPC.getStatus, () => readStatus())
   // The settings sheet opened: what it shows is read again from Windows (Task Manager may have
   // moved the switch since); a change goes out as status.
