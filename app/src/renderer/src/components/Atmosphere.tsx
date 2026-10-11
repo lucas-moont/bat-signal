@@ -1,141 +1,79 @@
-// Rain, film grain and a low street-light haze behind everything, in the Theme's colors.
-import { useEffect, useRef, useState } from 'react'
+// The Theme's Atmosphere (its rain, for VENGEANCE), film grain and a low street-light haze behind
+// everything, in the Theme's colors.
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
+import { THEMES } from '@shared/themes'
+import { painterFor } from '../painters'
+import { useTheme } from '../theme'
+import { useEveryTick } from '../ticker'
 import './Atmosphere.css'
 
-const FPS = 15
-const DROPS_PER_1000PX2 = 0.32
-const ANGLE = 0.26 // radians from vertical, wind from the left
-// Drops come in three depths; each depth is stroked as a single path per frame.
-const LAYER_ALPHA = [0.06, 0.1, 0.16]
-
-interface Drop {
-  x: number
-  y: number
-  len: number
-  speed: number
-  layer: number
-}
-
-function Rain() {
+/** The Atmosphere's canvas, painted a step on every tick of the shared clock (which stops while hidden). */
+function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
+  // A new Atmosphere (a Theme change) starts a new scene.
+  const painter = useMemo(() => painterFor(atmosphere), [atmosphere])
   const canvas = useRef<HTMLCanvasElement>(null)
+  const last = useRef<number | null>(null)
+  useEveryTick(true, (now) => {
+    const ctx = canvas.current?.getContext('2d')
+    if (!ctx) return
+    painter.paint(ctx, last.current === null ? 0 : (now - last.current) / 1000)
+    last.current = now
+  })
 
   useEffect(() => {
     const el = canvas.current
     const ctx = el?.getContext('2d')
     if (!el || !ctx) return
-    let drops: Drop[] = []
-    let width = 0
-    let height = 0
-    let timer: ReturnType<typeof setTimeout> | undefined
-    let frame = 0
-    let last = performance.now()
-    const slant = Math.tan(ANGLE)
-    const dx = Math.sin(ANGLE)
-    const dy = Math.cos(ANGLE)
-
-    const spawn = (anywhere: boolean): Drop => {
-      const layer = Math.floor(Math.random() * LAYER_ALPHA.length)
-      return {
-        x: Math.random() * (width + height * slant) - height * slant,
-        y: anywhere ? Math.random() * height : -20,
-        len: 8 + layer * 5 + Math.random() * 6,
-        speed: 380 + layer * 110 + Math.random() * 80,
-        layer,
-      }
-    }
 
     // A canvas can't read CSS variables: it takes the Theme's rain color as a value. One it can't
     // use (none, with no Theme on the page, or something that isn't a color) keeps the last good
     // one, even across a resize, rather than the canvas's default black on a black page.
-    let rainColor = ''
+    let color = ''
     const recolor = () => {
       const rain = getComputedStyle(el).getPropertyValue('--rain').trim()
-      if (rain && CSS.supports('color', rain)) rainColor = rain
-      if (rainColor) ctx.strokeStyle = rainColor
+      if (rain && CSS.supports('color', rain)) color = rain
+      if (color) ctx.strokeStyle = color
     }
 
     const resize = () => {
-      ;({ width, height } = el.getBoundingClientRect())
+      const { width, height } = el.getBoundingClientRect()
       el.width = Math.round(width * devicePixelRatio)
       el.height = Math.round(height * devicePixelRatio)
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
       ctx.lineWidth = 1
       // Resizing the canvas resets its stroke, like the line width.
       recolor()
-      const count = Math.round(((width * height) / 1000) * DROPS_PER_1000PX2)
-      drops = Array.from({ length: count }, () => spawn(true))
-    }
-
-    const draw = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000)
-      last = now
-      ctx.clearRect(0, 0, width, height)
-      for (let layer = 0; layer < LAYER_ALPHA.length; layer++) {
-        ctx.globalAlpha = LAYER_ALPHA[layer]!
-        ctx.beginPath()
-        for (let i = 0; i < drops.length; i++) {
-          const d = drops[i]!
-          if (d.layer !== layer) continue
-          d.y += d.speed * dt
-          d.x += d.speed * dt * slant
-          if (d.y - d.len > height) {
-            drops[i] = spawn(false)
-            continue
-          }
-          ctx.moveTo(d.x, d.y)
-          ctx.lineTo(d.x - dx * d.len, d.y - dy * d.len)
-        }
-        ctx.stroke()
-      }
-      schedule()
-    }
-
-    // A timer instead of a 60Hz animation loop: the page only wakes up FPS times a second.
-    const schedule = () => {
-      timer = setTimeout(() => (frame = requestAnimationFrame(draw)), 1000 / FPS)
-    }
-    const stop = () => {
-      clearTimeout(timer)
-      cancelAnimationFrame(frame)
-    }
-    // Stop entirely while the window is hidden or in the tray.
-    const onVisibility = () => {
-      stop()
-      if (!document.hidden) {
-        last = performance.now()
-        schedule()
-      }
+      painter.resize(width, height)
+      // Painted at once, rather than blank until the next tick.
+      painter.paint(ctx, 0)
     }
 
     resize()
     const observer = new ResizeObserver(resize)
     observer.observe(el)
-    // A new Theme on the page brings its own rain: read it once the page wears it.
+    // A new Theme on the page brings its own color: read it once the page wears it.
     const themes = new MutationObserver(recolor)
     themes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-    document.addEventListener('visibilitychange', onVisibility)
-    schedule()
     return () => {
-      stop()
       observer.disconnect()
       themes.disconnect()
-      document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [])
+  }, [painter])
 
-  return <canvas ref={canvas} className="atmosphere__rain" aria-hidden />
+  return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }
 
-/** How long rain keeps falling after the pointer leaves or something changes. */
+/** How long the Atmosphere keeps moving after the pointer leaves or something changes. */
 const LINGER_MS = 8000
 
 /**
- * Rain falls while you are looking (pointer over the window) and for a few seconds after
- * `activity` changes, then stops: a canvas redrawn 15 times a second costs ~5% of a core,
+ * The Atmosphere moves while you are looking (pointer over the window) and for a few seconds after
+ * `activity` changes, then stops: a canvas redrawn on every tick costs a few points of a core,
  * which a window parked in a corner shouldn't pay all day.
  */
-function useRainVisible(enabled: boolean, activity: unknown): boolean {
+function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
   const [hovering, setHovering] = useState(false)
   const [lingering, setLingering] = useState(true)
 
@@ -169,21 +107,22 @@ function useRainVisible(enabled: boolean, activity: unknown): boolean {
 }
 
 export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
-  const raining = useRainVisible(on, activity)
+  const shown = useAtmosphereVisible(on, activity)
+  const atmosphere = THEMES[useTheme()].atmosphere
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
       <AnimatePresence>
-        {raining && (
+        {shown && (
           <motion.div
-            key="rain"
+            key="atmosphere"
             className="atmosphere__layer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2 }}
           >
-            <Rain />
+            <Painted atmosphere={atmosphere} />
           </motion.div>
         )}
       </AnimatePresence>
