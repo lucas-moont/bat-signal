@@ -57,6 +57,13 @@ describe("a Theme's Signature pose", () => {
     expect(draw({ mood: 'sleeping', perched: true }, true)).toContain('M0 0 L4.44 0 Z')
   })
 
+  // Something needs the user: the alarm's open cape and shiver win over any reveal.
+  it('gives way to the alarm on the perch', () => {
+    const alarmed = draw({ mood: 'alarmed', perched: true })
+    expect(alarmed).not.toContain('M0 0 L2.22 0 Z')
+    expect(alarmed).toContain('needs you')
+  })
+
   it('opens the intro', () => {
     expect(renderToStaticMarkup(createElement(BatSignalIntro))).toContain('M0 0 L2.22 0 Z')
   })
@@ -68,8 +75,13 @@ describe("a Theme's aura", () => {
     expect(draw({ mood: 'alarmed' })).toContain('clawd--aura')
   })
 
+  // The other iconic moment the verdict names: a Signature pose being revealed, wherever.
+  it('glows while he reveals his Signature pose on the perch', () => {
+    expect(draw({ mood: 'sleeping', perched: true })).toContain('clawd--aura')
+  })
+
   it('stays off at rest', () => {
     expect(draw({ mood: 'flying' })).not.toContain('clawd--aura')
-    expect(draw({ mood: 'sleeping', perched: true })).not.toContain('clawd--aura')
+    expect(draw({ mood: 'sleeping' })).not.toContain('clawd--aura')
   })
 })
