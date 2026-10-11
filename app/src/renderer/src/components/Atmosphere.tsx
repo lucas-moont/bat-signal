@@ -45,11 +45,14 @@ function Rain() {
       }
     }
 
-    // A canvas can't read CSS variables: it takes the Theme's rain color as a value. An empty one
-    // (no Theme on the page) keeps the last, rather than the canvas's default black on black.
+    // A canvas can't read CSS variables: it takes the Theme's rain color as a value. One it can't
+    // use (none, with no Theme on the page, or something that isn't a color) keeps the last good
+    // one, even across a resize, rather than the canvas's default black on a black page.
+    let rainColor = ''
     const recolor = () => {
       const rain = getComputedStyle(el).getPropertyValue('--rain').trim()
-      if (rain) ctx.strokeStyle = rain
+      if (rain && CSS.supports('color', rain)) rainColor = rain
+      if (rainColor) ctx.strokeStyle = rainColor
     }
 
     const resize = () => {
