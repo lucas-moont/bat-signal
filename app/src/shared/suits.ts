@@ -47,7 +47,17 @@ export interface Suit {
   poses: Readonly<Record<MascotMood, Poses>>
   /** His watch on the perch, one step a second, while nothing needs the user. */
   watch: readonly Step[]
+  /**
+   * The Theme's most iconic Pose (CONTEXT.md, Signature pose), revealed in steps on the shared
+   * clock: on the perch in place of the watch, in the intro, and on a click in place of the hop.
+   * A Theme without one keeps the watch and the hop.
+   */
+  signature?: { steps: readonly [Step, ...Step[]] }
 }
+
+/** A script's step at an index: its steps in order, then the last held; under reduced motion, the last. */
+export const scriptAt = (steps: readonly [Step, ...Step[]], index: number, calm: boolean): Step =>
+  steps[calm ? steps.length - 1 : Math.min(index, steps.length - 1)] ?? steps[0]
 
 // --- VENGEANCE: today's Bat-Clawd, a black cowl edged in red and a black cape with a red rim. ---
 

@@ -91,3 +91,9 @@
     opacity: 1;
   }
 }
+
+/* Bat-Clawd revealing the Theme's Signature pose, under the title (a Theme with one only). */
+.intro__clawd {
+  position: absolute;
+  bottom: 8%;
+}

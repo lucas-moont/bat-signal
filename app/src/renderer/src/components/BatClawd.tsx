@@ -8,7 +8,7 @@
 // blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
 import { useEffect, useRef, useState } from 'react'
 import { mapRects, type OutfitMap, type Rect } from '@shared/outfits'
-import type { Layer, Pose, Poses, Px, Suit } from '@shared/suits'
+import { scriptAt, type Layer, type Pose, type Poses, type Px, type Step, type Suit } from '@shared/suits'
 import { THEMES } from '@shared/themes'
 import type { MascotMood } from '@shared/view'
 import { batAt, useEmblem } from './BatEmblem'
@@ -19,7 +19,7 @@ import { useFrame, useLiveStyle } from '../ticker'
 import './BatClawd.css'
 
 /** The worn Theme's suit. */
-const useSuit = (): Suit => THEMES[useTheme()].suit
+export const useSuit = (): Suit => THEMES[useTheme()].suit
 
 const rects = (pixels: readonly Px[]) =>
   pixels.map(([x, y, w = 1, h = 1]) => <rect key={`${x},${y}`} x={x} y={y} width={w} height={h} />)
@@ -121,11 +121,14 @@ export function BatClawd({
   mood,
   size = 60,
   perched = false,
+  reveal = false,
 }: {
   mood: MascotMood
   size?: number
   /** Standing watch on the edge of the watch strip: the cape in the wind, the eyes sweeping. */
   perched?: boolean
+  /** Reveals the Theme's Signature pose as he appears, then holds it (the intro). */
+  reveal?: boolean
 }) {
   const suit = useSuit()
   const calm = useIsCalm()
@@ -133,6 +136,16 @@ export function BatClawd({
   const ref = useRef<HTMLSpanElement>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
+  const signature = suit.signature?.steps
+  // The Signature pose's reveal, from the clock frame it started on (the intro's, from the start).
+  const [revealFrom, setRevealFrom] = useState<number | null>(reveal && signature ? 0 : null)
+  const revealClock = useFrame(!calm && revealFrom !== null, 2)
+  const revealed =
+    signature && revealFrom !== null ? scriptAt(signature, revealClock - revealFrom, calm) : undefined
+  // A click's reveal ends after its last step; the intro holds it until the intro leaves. Adjusted
+  // during render (React's pattern for reacting to a changed input) rather than in an effect.
+  if (!reveal && signature && revealFrom !== null && revealClock - revealFrom >= signature.length)
+    setRevealFrom(null)
 
   // Eyes follow the pointer while awake. Event-driven, so it costs nothing when the pointer rests.
   useEffect(() => {
@@ -164,7 +177,11 @@ export function BatClawd({
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
   const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
-  const step = watching ? suit.watch[frame % suit.watch.length] : undefined
+  // On the perch the Theme's Signature pose stands in for the watch (its final frame when calm).
+  const perch: readonly Step[] = signature ?? suit.watch
+  const step: Step | undefined =
+    revealed ??
+    (watching ? (calm && signature ? scriptAt(signature, 0, true) : perch[frame % perch.length]) : undefined)
   const { pose, transform } = step
     ? { pose: step.pose, transform: '' }
     : MOTION[mood](frame, suit.poses[mood])
@@ -185,7 +202,13 @@ export function BatClawd({
       className={`clawd${hopping ? ' clawd--hop' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
-        if (calm || hopping) return
+        if (calm) return
+        // A Theme with a Signature pose shows it on a click, in place of the hop.
+        if (signature) {
+          if (revealFrom === null) setRevealFrom(revealClock)
+          return
+        }
+        if (hopping) return
         setHopping(true)
         setTimeout(() => setHopping(false), 700)
       }}
