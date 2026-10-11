@@ -13,7 +13,7 @@ describe('a script on the clock', () => {
     expect([0, 1, 2, 5].map((i) => scriptAt(steps, i))).toEqual([steps[0], steps[1], steps[2], steps[2]])
   })
 
-  it('gives its final frame for Infinity, as under reduced motion', () => {
+  it('gives its final step for Infinity, as under reduced motion', () => {
     expect(scriptAt(steps, Infinity)).toBe(steps[2])
   })
 })

@@ -53,7 +53,7 @@ describe("a Theme's Signature pose", () => {
     expect(draw({ mood: 'sleeping', perched: true })).toContain('M0 0 L2.22 0 Z')
   })
 
-  it('shows in its final frame on the perch under reduced motion', () => {
+  it('shows its final step on the perch under reduced motion', () => {
     expect(draw({ mood: 'sleeping', perched: true }, true)).toContain('M0 0 L4.44 0 Z')
   })
 

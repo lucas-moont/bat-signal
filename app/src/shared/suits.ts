@@ -6,7 +6,7 @@
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
-/** A rect on his 28x13 sprite: x, y, width and height in grid units (1 by default). */
+/** A rect on his 16x11 grid (layers may reach past it): x, y, width and height in units (1 by default). */
 export type Px = readonly [x: number, y: number, w?: number, h?: number]
 
 /**
@@ -61,13 +61,13 @@ export interface Suit {
    */
   signature?: Script
   /**
-   * A glow in the Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs
+   * The Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs
    * the user or while he reveals his Signature pose. What it costs is in DESIGN.md (Bat-Clawd).
    */
   aura?: boolean
 }
 
-/** A script's step at an index: its steps in order, then the last held (Infinity: the final frame). */
+/** A script's step at an index: its steps in order, then the last held (Infinity: the final step). */
 export const scriptAt = (steps: Script, index: number): Step =>
   steps[Math.min(index, steps.length - 1)] ?? steps[0]
 
