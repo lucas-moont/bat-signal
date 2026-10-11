@@ -3,6 +3,7 @@
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
 import { emblem, WINGS, type Emblem } from './emblems'
+import { VENGEANCE_SUIT, type Suit } from './suits'
 import { STANDARD_WORDS, type Words } from './words'
 
 export const THEME_IDS = ['the-batman-2022'] as const
@@ -22,6 +23,8 @@ export interface Theme {
   words: Words
   /** Its bat: in the panel's masthead, on the disc, in the intro and on Bat-Clawd's chest. */
   emblem: Emblem
+  /** Bat-Clawd dressed as this version of Batman (shared/suits.ts). */
+  suit: Suit
 }
 
 export const THEMES: Record<ThemeId, Theme> = {
@@ -30,6 +33,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     ground: '#000000',
     words: STANDARD_WORDS,
     emblem: emblem(WINGS, 'wear'),
+    suit: VENGEANCE_SUIT,
   },
 }
 

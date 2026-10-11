@@ -1,149 +1,99 @@
-// Bat-Clawd: Claude Code's orange pixel Clawd in a Batman cowl and cape, drawn on a 16x11
-// pixel grid.
+// Bat-Clawd: Claude Code's orange pixel Clawd dressed as the worn Theme's Batman, drawn on a
+// 16x11 grid from the Theme's suit (shared/suits.ts): an outfit map for his body and cowl, and
+// layers behind and in front of it.
 //
 // Animated like a flip-book: each mood has finished poses, and a slow shared clock (see
 // ticker.ts) picks the pose and the wrapper position a few times a second. Between ticks
 // nothing animates at all, so the mascot costs almost nothing while its cape flutters, it
 // blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { mapRects, type OutfitMap, type Rect } from '@shared/outfits'
+import type { Emblem } from '@shared/emblems'
+import {
+  GAZE,
+  scriptAt,
+  type Layer,
+  type Pose,
+  type Poses,
+  type Px,
+  type Step,
+  type Suit,
+} from '@shared/suits'
+import { THEMES } from '@shared/themes'
 import type { MascotMood } from '@shared/view'
 import { batAt, useEmblem } from './BatEmblem'
 import { useIsCalm } from '../calm'
+import { useTheme } from '../theme'
 import { useWords } from '../words'
 import { useFrame, useLiveStyle } from '../ticker'
 import './BatClawd.css'
 
-type Px = [x: number, y: number, w?: number, h?: number]
+/** The worn Theme's suit. */
+export const useSuit = (): Suit => THEMES[useTheme()].suit
 
-const BODY: Px[] = [[3, 3, 10, 6]] // head and body, the cowl covers the top rows
-const ARMS: Px[] = [
-  [1, 6, 2, 1],
-  [13, 6, 2, 1],
-]
-const LEGS: Px[] = [
-  [4, 9, 1, 2],
-  [6, 9, 1, 2],
-  [9, 9, 1, 2],
-  [11, 9, 1, 2],
-]
-/** Sitting, only the hands holding the wrapped cape shut and the feet show. */
-const HANDS: Px[] = [
-  [6.9, 7.6, 1, 0.8],
-  [8.1, 7.6, 1, 0.8],
-]
-const FEET: Px[] = [
-  [4.5, 10.2, 2, 0.8],
-  [9.5, 10.2, 2, 0.8],
-]
-/** The cowl's outline (ears, crown and sides) as one shape, for its red edge. */
-const COWL_EDGE = 'M3 5 L3 2 L4 2 L4 0 L5 0 L5 1 L11 1 L11 0 L12 0 L12 2 L13 2 L13 5 Z'
-const COWL: Px[] = [
-  [4, 0, 1, 1], // left ear tip
-  [11, 0, 1, 1], // right ear tip
-  [4, 1, 8, 1],
-  [3, 2, 10, 3], // over the eyes, down to the cheekbones
-]
-const COWL_SHINE: Px[] = [[5, 1, 2, 1]]
-const EYES_OPEN: Px[] = [
-  [5, 3, 2, 1],
-  [9, 3, 2, 1],
-]
-const EYES_SHUT: Px[] = [
-  [5, 3.6, 2, 0.3],
-  [9, 3.6, 2, 0.3],
-]
-// The cape hangs from the shoulders (y = 5) and ends in a jagged, bat-like hem.
-const CAPE = {
-  /** Closed around the body, in front of it: asleep. */
-  wrapped: 'M2.6 6.4 L13.4 6.4 L14.2 10.4 L12.2 9.9 L10 10.5 L8 10 L6 10.5 L3.8 9.9 L1.8 10.4 Z',
-  /** Streaming back while flying, in two frames of the same flutter. */
-  trailA: 'M3 5 L13 5 L13.4 9.2 L11 10.4 L7 10 L3 10.8 L-1 10 L-4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
-  trailB:
-    'M3 5 L13 5 L13.6 8.6 L11.2 10 L7.2 10.6 L3.2 10.2 L-0.6 10.9 L-4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
-  /** Flung back and hanging open (left half; mirrored for the right), black inside too. */
-  openLeft: 'M3.4 5 L0.2 5.2 L-2.8 11.2 L-1.2 10.5 L0.4 11.3 L1.9 10.6 L3.4 11.2 Z',
-  /**
-   * A red thread following the jagged hem a step above it, with black between: far enough from
-   * the edge to read on its own at the header's size.
-   */
-  threadLeft: 'M-2 10.1 L-1.1 9.5 L0.4 10.2 L1.9 9.6 L3.4 10.1',
-} as const
-
-type CapeStyle = 'wrapped' | 'trailA' | 'trailB' | 'open'
-
-interface Pose {
-  cape: CapeStyle
-  eyes: 'open' | 'shut'
-  eyeColor: string
-}
-
-/** Each mood's poses; the first is the resting one. */
-type Poses = readonly [Pose, ...Pose[]]
-
-const POSES: Record<MascotMood, Poses> = {
-  sleeping: [{ cape: 'wrapped', eyes: 'shut', eyeColor: 'var(--clawd-eye)' }],
-  flying: [
-    { cape: 'trailA', eyes: 'open', eyeColor: 'var(--clawd-eye)' },
-    { cape: 'trailB', eyes: 'open', eyeColor: 'var(--clawd-eye)' },
-  ],
-  alarmed: [
-    { cape: 'open', eyes: 'open', eyeColor: 'var(--clawd-eye)' },
-    { cape: 'open', eyes: 'open', eyeColor: 'var(--clawd-eye-dim)' },
-  ],
-}
-
-const rects = (pixels: Px[]) =>
+const rects = (pixels: readonly Px[]) =>
   pixels.map(([x, y, w = 1, h = 1]) => <rect key={`${x},${y}`} x={x} y={y} width={w} height={h} />)
+
+// A map's rects are worked out once: the suit is fixed data, and the frame redraws on the clock.
+const mapped = new WeakMap<OutfitMap, Rect[]>()
+function rectsOf(map: OutfitMap): Rect[] {
+  let found = mapped.get(map)
+  if (!found) mapped.set(map, (found = mapRects(map)))
+  return found
+}
 
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
-/** The cape behind the body (flying, alarmed); the wrapped cape is drawn in front instead. */
-function CapeBehind({ style }: { style: CapeStyle }) {
-  if (style === 'wrapped') return null
-  if (style !== 'open') return <path className="clawd__cape" d={CAPE[style]} />
-  return (
-    <>
-      {[undefined, MIRROR].map((transform) => (
-        <g key={transform ?? 'left'} transform={transform}>
-          <path className="clawd__cape" d={CAPE.openLeft} />
-          <path className="clawd__thread" d={CAPE.threadLeft} />
+function layerShape(layer: Layer, key: number, emblem: Emblem) {
+  switch (layer.kind) {
+    case 'path':
+      return (
+        <Fragment key={key}>
+          <path className={layer.className} d={layer.d} />
+          {layer.mirrored && <path className={layer.className} d={layer.d} transform={MIRROR} />}
+        </Fragment>
+      )
+    case 'rects':
+      return (
+        <g key={key} fill={layer.fill} className={layer.className}>
+          {rects(layer.px)}
         </g>
-      ))}
-    </>
-  )
+      )
+    case 'emblem':
+      // Smooth, not pixel-snapped: at this size the snapped outline breaks into blocks.
+      return (
+        <path
+          key={key}
+          className="clawd__emblem"
+          d={emblem.path}
+          transform={batAt(emblem, layer.cx, layer.cy, layer.width)}
+          shapeRendering="geometricPrecision"
+        />
+      )
+  }
 }
 
-function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: number }; className: string }) {
-  const wrapped = pose.cape === 'wrapped'
-  // The Theme's emblem across the chest, between the cowl and the legs.
+function Frame({
+  suit,
+  pose,
+  gaze,
+  className,
+}: {
+  suit: Suit
+  pose: Pose
+  gaze: { x: number; y: number }
+  className: string
+}) {
   const emblem = useEmblem()
   return (
     <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
-      <CapeBehind style={pose.cape} />
-      {/* Behind the face, so only the outer edge of the black cowl shows on the black window. */}
-      <path className="clawd__cowl-edge" d={COWL_EDGE} />
-      <g fill="var(--clawd)">{rects(wrapped ? BODY : [...BODY, ...ARMS])}</g>
-      <g fill="var(--clawd-shade)">{rects(wrapped ? FEET : LEGS)}</g>
-      {/* Smooth, not pixel-snapped: at this size the snapped outline breaks into blocks. */}
-      {!wrapped && (
-        <path
-          className="clawd__emblem"
-          d={emblem.path}
-          transform={batAt(emblem, 8, 7, 7)}
-          shapeRendering="geometricPrecision"
-        />
-      )}
-      {wrapped && (
-        <>
-          <path className="clawd__cape" d={CAPE.wrapped} />
-          <rect className="clawd__seam" x={7.85} y={8.4} width={0.3} height={1.6} />
-          <g fill="var(--clawd)">{rects(HANDS)}</g>
-        </>
-      )}
-      <g fill="var(--cowl)">{rects(COWL)}</g>
-      <g fill="var(--cowl-shine)">{rects(COWL_SHINE)}</g>
+      {pose.behind.map((layer, i) => layerShape(layer, i, emblem))}
+      {rectsOf(pose.map).map((r) => (
+        <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
+      ))}
+      {pose.front.map((layer, i) => layerShape(layer, i, emblem))}
       <g fill={pose.eyeColor} transform={`translate(${gaze.x} ${gaze.y})`}>
-        {rects(pose.eyes === 'open' ? EYES_OPEN : EYES_SHUT)}
+        {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
       </g>
     </svg>
   )
@@ -153,6 +103,8 @@ function Frame({ pose, gaze, className }: { pose: Pose; gaze: { x: number; y: nu
 const BREATH = [0, 0, -0.5, -1, -1, -0.5]
 const BREATH_STEP_MS = 500
 const BOB = [0, -1, -2, -1]
+/** How long a click's Signature pose holds its final step before he returns to his Mood: a second. */
+const CLICK_HOLD_STEPS = 4
 
 /** Each mood's flip-book: which pose to show and where to put it on a given frame. */
 const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; transform: string }> = {
@@ -170,43 +122,51 @@ const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; 
   }),
 }
 
-/** How far the eyes may slide toward the pointer, in grid units. */
-const GAZE = 0.6
-/**
- * On watch from the rooftop, one step a second: mostly still, then a gust lifts the cape and he
- * glances along the street. Every change redraws the perch's transparent window, so there are
- * four in twelve seconds rather than one a second.
- */
-const STILL = { gust: false, look: 0 }
-const WATCH: { gust: boolean; look: number }[] = [
-  ...Array.from({ length: 6 }, () => STILL),
-  { gust: true, look: 0 },
-  STILL,
-  { gust: false, look: -GAZE },
-  { gust: false, look: -GAZE },
-  STILL,
-  STILL,
-]
-
 export function BatClawd({
   mood,
   size = 60,
   perched = false,
+  reveal = false,
 }: {
   mood: MascotMood
   size?: number
   /** Standing watch on the edge of the watch strip: the cape in the wind, the eyes sweeping. */
   perched?: boolean
+  /** Reveals the Theme's Signature pose as he appears, then holds it (the intro). */
+  reveal?: boolean
 }) {
+  const suit = useSuit()
   const calm = useIsCalm()
   const said = useWords().voice.mascot
   const ref = useRef<HTMLSpanElement>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
+  const signature = suit.signature
+  // On the perch he keeps watch whatever happens, until something needs you.
+  const watching = perched && mood !== 'alarmed'
+  // The Signature pose's reveal, on one clock wherever it plays (four steps a second). The intro's
+  // and the perch's start at once and hold the final step; a click's holds it a moment, then lets go.
+  const holds = reveal || perched
+  const [revealing, setRevealing] = useState(holds && !!signature)
+  const [settled, setSettled] = useState(false)
+  // Something needs the user: the alarm's pose wins, and the perch's reveal waits for his watch.
+  const revealShown = !!signature && revealing && mood !== 'alarmed'
+  const revealClock = useFrame(!calm && revealShown && !settled, 2)
+  const finalStep = (signature?.length ?? 1) - 1
+  // Settled on its final step (the clock then stops), or let go; under reduced motion at once, so
+  // nothing is left half revealed. Adjusted during render (React's pattern for reacting to a changed
+  // input) rather than in an effect.
+  if (revealShown && !settled && (calm || revealClock >= finalStep + (holds ? 0 : CLICK_HOLD_STEPS))) {
+    if (holds) setSettled(true)
+    else setRevealing(false)
+  }
+  const revealed =
+    signature && revealShown ? scriptAt(signature, settled || calm ? Infinity : revealClock) : undefined
 
   // Eyes follow the pointer while awake. Event-driven, so it costs nothing when the pointer rests.
   useEffect(() => {
-    if (mood === 'sleeping' || calm || perched) return // the perch takes no pointer
+    // The perch takes no pointer, and a reveal sets where he looks.
+    if (mood === 'sleeping' || calm || perched || reveal) return
     let frame = 0
     const onMove = (e: PointerEvent) => {
       cancelAnimationFrame(frame)
@@ -227,20 +187,22 @@ export function BatClawd({
       window.removeEventListener('pointermove', onMove)
       cancelAnimationFrame(frame)
     }
-  }, [mood, calm, perched])
+  }, [mood, calm, perched, reveal])
 
-  // On the perch he keeps watch whatever happens, until something needs you.
-  const watching = perched && mood !== 'alarmed'
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
-  const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
-  const step = WATCH[frame % WATCH.length] ?? STILL
-  const { pose, transform } = watching
-    ? { pose: (step.gust ? POSES.flying[1] : undefined) ?? POSES.flying[0], transform: '' }
-    : MOTION[mood](frame, POSES[mood])
+  // A Theme's Signature pose takes the perch's place of the watch, so that clock stays off there.
+  const ticking = watching ? !signature : mood !== 'sleeping' && !revealed
+  const clock = useFrame(!calm && ticking, watching ? 8 : perched ? 4 : 2)
+  const frame = calm ? 0 : clock
+  const step: Step | undefined =
+    revealed ?? (watching && !signature ? suit.watch[frame % suit.watch.length] : undefined)
+  const { pose, transform } = step
+    ? { pose: step.pose, transform: step.transform ?? '' }
+    : MOTION[mood](frame, suit.poses[mood])
   // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
   const stillEyes = calm || (!watching && mood === 'sleeping')
-  const eyes = stillEyes ? { x: 0, y: 0 } : watching ? { x: step.look, y: 0 } : gaze
+  const eyes = stillEyes ? { x: 0, y: 0 } : step ? { x: step.look, y: 0 } : gaze
   // Asleep only the breath changes, so it skips React: the CSS `translate` property composes
   // with the `transform` React sets.
   const mover = useLiveStyle<HTMLSpanElement>(!calm && !perched && mood === 'sleeping', (el, now) => {
@@ -252,16 +214,22 @@ export function BatClawd({
       ref={ref}
       role="img"
       aria-label={watching ? said.watching : said[mood]}
-      className={`clawd${hopping ? ' clawd--hop' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || (revealed && !settled && !calm)) ? ' clawd--aura' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
-        if (calm || hopping) return
+        if (calm) return
+        // A Theme with a Signature pose shows it on a click, in place of the hop (an alarm keeps the hop).
+        if (signature && mood !== 'alarmed') {
+          setRevealing(true)
+          return
+        }
+        if (hopping) return
         setHopping(true)
         setTimeout(() => setHopping(false), 700)
       }}
     >
       <span ref={mover} className="clawd__mover" style={{ transform }}>
-        <Frame pose={pose} gaze={eyes} className="clawd__frame" />
+        <Frame suit={suit} pose={pose} gaze={eyes} className="clawd__frame" />
       </span>
     </span>
   )
