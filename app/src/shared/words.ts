@@ -368,7 +368,7 @@ export const STANDARD_VOICE: Voice = {
     atmosphere: { label: 'Rain', hint: (t) => `Gotham weather behind the ${lower(t.case.many)}` },
     lexicon: {
       label: 'Theme words',
-      hint: (t) => `The Theme's own names for ${lower(t.case.many)} and stamps`,
+      hint: (t) => `The Theme's own names for ${lower(t.case.many)}, ${t.needsYou.label} and the stamps`,
     },
     // "Case files" and "Night report" are the two Layouts' names (CONTEXT.md, Layout), not the Case
     // term: a Lexicon that renames Case doesn't rename the Layout.
