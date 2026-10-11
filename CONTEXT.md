@@ -43,7 +43,7 @@ The tone of a Theme's flavor text: empty states, headings, the night report. It 
 _Avoid_: Copy, tone, strings
 
 **Lexicon**:
-A Theme's own names for Case, Needs you, the words inside a Stamp and the other terms above, shown in the panel and on the Signal only. It is on by default; off, every Theme uses the standard words. Windows notifications and the tray always use the standard words.
+A Theme's own names for Case, Needs you, the words inside a Stamp and the other terms above, shown in the panel and on the Signal only. It is on by default; off, every Theme uses the standard terms, in its own Voice. Windows notifications and the tray always use the standard words.
 _Avoid_: Translation, aliases, slang
 
 **Atmosphere**:
