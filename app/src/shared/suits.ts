@@ -53,7 +53,7 @@ export interface Suit {
   eyes: { open: readonly Px[]; shut: readonly Px[] }
   poses: Readonly<Record<MascotMood, Poses>>
   /** His watch on the perch, one step a second, while nothing needs the user. */
-  watch: readonly Step[]
+  watch: Script
   /**
    * The Theme's most iconic Pose (CONTEXT.md, Signature pose), revealed in steps on the shared
    * clock and then held: on the perch in place of the watch, in the intro, and on a click in place
@@ -198,7 +198,8 @@ export const VENGEANCE_SUIT: Suit = {
     alarmed: [awake(open), awake(open, EYE_DIM)],
   },
   watch: [
-    ...Array<Step>(6).fill(STILL),
+    STILL,
+    ...Array<Step>(5).fill(STILL),
     { pose: flyingB, look: 0 },
     STILL,
     { pose: flyingA, look: -GAZE },

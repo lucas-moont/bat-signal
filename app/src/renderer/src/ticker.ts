@@ -82,7 +82,8 @@ export function useLiveStyle<T extends HTMLElement>(
 
 /**
  * A frame counter that advances every `every` ticks (8 ticks a second) while `active`, from 0
- * each time it becomes active, so a script started twice plays from its start both times.
+ * each time it becomes active, so a script started twice plays from its start both times. Inactive,
+ * it keeps its last value: a script held on its final step stops the clock and stays put.
  */
 export function useFrame(active: boolean, every = 1): number {
   const [frame, setFrame] = useState(0)
@@ -98,5 +99,5 @@ export function useFrame(active: boolean, every = 1): number {
       if (t % every === 0) setFrame((f) => f + 1)
     })
   }, [active, every])
-  return active ? frame : 0
+  return frame
 }

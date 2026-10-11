@@ -103,6 +103,8 @@ function Frame({
 const BREATH = [0, 0, -0.5, -1, -1, -0.5]
 const BREATH_STEP_MS = 500
 const BOB = [0, -1, -2, -1]
+/** How long a click's Signature pose holds its final step before he returns to his Mood: a second. */
+const CLICK_HOLD_STEPS = 4
 
 /** Each mood's flip-book: which pose to show and where to put it on a given frame. */
 const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; transform: string }> = {
@@ -140,18 +142,31 @@ export function BatClawd({
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
   const [hopping, setHopping] = useState(false)
   const signature = suit.signature
-  // The Signature pose's reveal, on its own clock from its first step (the intro's, from the start).
-  const [revealing, setRevealing] = useState(reveal && !!signature)
-  const revealClock = useFrame(!calm && revealing, 2)
-  // Under reduced motion a reveal is its final frame.
-  const revealed = signature && revealing ? scriptAt(signature, calm ? Infinity : revealClock) : undefined
-  // A click's reveal ends after its last step; the intro holds it until the intro leaves. Adjusted
-  // during render (React's pattern for reacting to a changed input) rather than in an effect.
-  if (!reveal && signature && revealing && revealClock >= signature.length) setRevealing(false)
+  // On the perch he keeps watch whatever happens, until something needs you.
+  const watching = perched && mood !== 'alarmed'
+  // The Signature pose's reveal, on one clock wherever it plays (four steps a second). The intro's
+  // and the perch's start at once and hold the final step; a click's holds it a moment, then lets go.
+  const holds = reveal || perched
+  const [revealing, setRevealing] = useState(holds && !!signature)
+  const [settled, setSettled] = useState(false)
+  // Something needs the user: the alarm's pose wins, and the perch's reveal waits for his watch.
+  const revealShown = !!signature && revealing && mood !== 'alarmed'
+  const revealClock = useFrame(!calm && revealShown && !settled, 2)
+  const finalStep = (signature?.length ?? 1) - 1
+  // Settled on its final step (the clock then stops), or let go; under reduced motion at once, so
+  // nothing is left half revealed. Adjusted during render (React's pattern for reacting to a changed
+  // input) rather than in an effect.
+  if (revealShown && !settled && (calm || revealClock >= finalStep + (holds ? 0 : CLICK_HOLD_STEPS))) {
+    if (holds) setSettled(true)
+    else setRevealing(false)
+  }
+  const revealed =
+    signature && revealShown ? scriptAt(signature, settled || calm ? Infinity : revealClock) : undefined
 
   // Eyes follow the pointer while awake. Event-driven, so it costs nothing when the pointer rests.
   useEffect(() => {
-    if (mood === 'sleeping' || calm || perched) return // the perch takes no pointer
+    // The perch takes no pointer, and a reveal sets where he looks.
+    if (mood === 'sleeping' || calm || perched || reveal) return
     let frame = 0
     const onMove = (e: PointerEvent) => {
       cancelAnimationFrame(frame)
@@ -172,20 +187,16 @@ export function BatClawd({
       window.removeEventListener('pointermove', onMove)
       cancelAnimationFrame(frame)
     }
-  }, [mood, calm, perched])
+  }, [mood, calm, perched, reveal])
 
-  // On the perch he keeps watch whatever happens, until something needs you.
-  const watching = perched && mood !== 'alarmed'
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
-  const frame = useFrame(!calm && (watching || mood !== 'sleeping'), watching ? 8 : perched ? 4 : 2)
-  // On the perch the Theme's Signature pose stands in for the watch: revealed once, then held.
-  const perchStep = watching
-    ? signature
-      ? scriptAt(signature, calm ? Infinity : frame)
-      : suit.watch[frame % suit.watch.length]
-    : undefined
-  const step: Step | undefined = revealed ?? perchStep
+  // A Theme's Signature pose takes the perch's place of the watch, so that clock stays off there.
+  const ticking = watching ? !signature : mood !== 'sleeping' && !revealed
+  const clock = useFrame(!calm && ticking, watching ? 8 : perched ? 4 : 2)
+  const frame = calm ? 0 : clock
+  const step: Step | undefined =
+    revealed ?? (watching && !signature ? suit.watch[frame % suit.watch.length] : undefined)
   const { pose, transform } = step
     ? { pose: step.pose, transform: step.transform ?? '' }
     : MOTION[mood](frame, suit.poses[mood])
@@ -203,12 +214,12 @@ export function BatClawd({
       ref={ref}
       role="img"
       aria-label={watching ? said.watching : said[mood]}
-      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || revealed) ? ' clawd--aura' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || (revealed && !settled && !calm)) ? ' clawd--aura' : ''}`}
       style={{ width: size, height: (size * 13) / 28 }}
       onClick={() => {
         if (calm) return
-        // A Theme with a Signature pose shows it on a click, in place of the hop.
-        if (signature) {
+        // A Theme with a Signature pose shows it on a click, in place of the hop (an alarm keeps the hop).
+        if (signature && mood !== 'alarmed') {
           setRevealing(true)
           return
         }
