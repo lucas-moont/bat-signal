@@ -346,8 +346,8 @@ export function SettingsSheet({
           <Toggle
             label={say.atmosphere.label}
             hint={say.atmosphere.hint(terms)}
-            on={settings.rain}
-            onChange={(rain) => onChange({ rain })}
+            on={settings.atmosphere}
+            onChange={(atmosphere) => onChange({ atmosphere })}
           />
           <Toggle
             label={say.lexicon.label}

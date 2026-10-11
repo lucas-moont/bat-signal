@@ -131,8 +131,9 @@ describe('applySettingsPatch: changing one switch', () => {
   })
 
   it('leaves the other settings alone', () => {
-    const next = applySettingsPatch(parseSettings(OLD_FILE), { announce: { sound: true } })
-    expect(next).toMatchObject(OLD_FILE)
+    const before = parseSettings(OLD_FILE)
+    const next = applySettingsPatch(before, { announce: { sound: true } })
+    expect({ ...next, announce: before.announce }).toEqual(before)
   })
 })
 

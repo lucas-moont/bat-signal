@@ -168,8 +168,8 @@ function useRainVisible(enabled: boolean, activity: unknown): boolean {
   return enabled && (hovering || lingering)
 }
 
-export function Atmosphere({ rain, activity }: { rain: boolean; activity: unknown }) {
-  const raining = useRainVisible(rain, activity)
+export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
+  const raining = useRainVisible(on, activity)
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
