@@ -116,6 +116,8 @@ export interface Voice {
     sound: string
     animations: Setting
     atmosphere: { label: string; hint: (t: Terms) => string }
+    /** The Lexicon switch (CONTEXT.md, Lexicon). */
+    lexicon: { label: string; hint: (t: Terms) => string }
     layout: Setting
     onTop: Setting
     opacity: string
@@ -340,6 +342,10 @@ export const STANDARD_VOICE: Voice = {
     sound: 'Sound',
     animations: { label: 'Animations', hint: 'Intro, flying mascot, typewriter and transitions' },
     atmosphere: { label: 'Rain', hint: (t) => `Gotham weather behind the ${lower(t.case.many)}` },
+    lexicon: {
+      label: 'Theme words',
+      hint: (t) => `The Theme's own names for ${lower(t.case.many)} and stamps`,
+    },
     // "Case files" and "Night report" are the two Layouts' names (CONTEXT.md, Layout), not the Case
     // term: a Lexicon that renames Case doesn't rename the Layout.
     layout: { label: 'Night report', hint: 'Read the panel as one typed report instead of case files' },

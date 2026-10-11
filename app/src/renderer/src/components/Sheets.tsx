@@ -350,6 +350,12 @@ export function SettingsSheet({
             onChange={(rain) => onChange({ rain })}
           />
           <Toggle
+            label={say.lexicon.label}
+            hint={say.lexicon.hint(terms)}
+            on={settings.lexicon}
+            onChange={(lexicon) => onChange({ lexicon })}
+          />
+          <Toggle
             {...say.layout}
             on={settings.layout === 'report'}
             onChange={(on) => onChange({ layout: on ? 'report' : 'files' })}
