@@ -3,29 +3,11 @@ import { trayLook } from '../src/main/trayMenu'
 import { announce, emptyAnnouncer, toastFor } from '../src/shared/announcer'
 import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
-import { THEMES } from '../src/shared/themes'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
-import { STANDARD_TERMS, STANDARD_WORDS, type Words } from '../src/shared/words'
-
-/** A Lexicon in the style of the jury's §5: Nolan's ops, a renamed stamp and count. */
-const opsWords: Words = {
-  ...STANDARD_WORDS,
-  terms: {
-    ...STANDARD_WORDS.terms,
-    case: { one: 'Op', many: 'Ops' },
-    needsYou: { label: 'On you', count: (n) => `${n} on you` },
-    stamp: { ...STANDARD_WORDS.terms.stamp, permission: 'Clearance', 'session-opened': 'Op opened' },
-  },
-}
-
-const permission: AttentionItem = {
-  sessionId: 's1',
-  kind: 'permission',
-  at: '2026-10-10T20:00:00.000Z',
-  toolName: 'Bash',
-  detail: 'npm test',
-}
+import { STANDARD_TERMS, withLexicon } from '../src/shared/words'
+import { wearingTheme } from './fixtures/themes'
+import { opsWords, permission } from './fixtures/words'
 
 const session = (id: string, over: Partial<SessionSnapshot> = {}): SessionSnapshot =>
   ({ sessionId: id, status: 'idle', tasks: [], messages: [], ...over }) as SessionSnapshot
@@ -47,9 +29,15 @@ describe('the words', () => {
     const [opened] = diffNotices(snapshot([]), snapshot([session('s2')]), opsWords)
     expect(opened?.stamp).toBe('Op opened')
   })
+})
 
-  // The announcer passes STANDARD_WORDS itself: a Windows toast never follows a Theme (CONTEXT.md, Lexicon).
-  it('in a Windows toast are always the standard ones', () => {
+// Neither reads the worn Theme or the Lexicon switch: they stay standard while a Theme with a
+// Lexicon is worn, the switch on as by default.
+describe('the words in a Windows toast and the tray', () => {
+  wearingTheme({ words: opsWords })
+
+  // The announcer passes STANDARD_WORDS itself (CONTEXT.md, Lexicon).
+  it('are always the standard ones in a toast', () => {
     const ctx = {
       prefs: {
         ...DEFAULT_SETTINGS.announce,
@@ -62,30 +50,28 @@ describe('the words', () => {
     expect(toastFor(toast)?.title).toBe('Case opened · Untitled case')
   })
 
-  // The tray takes no words at all: it can only speak the standard ones (CONTEXT.md, Lexicon).
-  it('in the tray are always the standard ones', () => {
+  // The tray takes no words at all (CONTEXT.md, Lexicon).
+  it('are always the standard ones in the tray', () => {
     expect(trayLook(snapshot([session('s1')], [permission])).tooltip).toBe('Bat-Signal · 1 needs you')
   })
+})
 
-  // Neither reads the worn Theme or the Lexicon switch, which is on by default.
-  it('in a Windows toast and the tray stay standard while the worn Theme has a Lexicon', () => {
-    const theme = THEMES['the-batman-2022']
-    THEMES['the-batman-2022'] = { ...theme, words: opsWords }
-    try {
-      const ctx = {
-        prefs: {
-          ...DEFAULT_SETTINGS.announce,
-          toast: { ...DEFAULT_SETTINGS.announce.toast, sessions: true },
-        },
-        panelFocused: false,
-      }
-      const { state } = announce(emptyAnnouncer(), snapshot([]), ctx)
-      expect(toastFor(announce(state, snapshot([session('s2')]), ctx).toast)?.title).toBe(
-        'Case opened · Untitled case',
-      )
-      expect(trayLook(snapshot([session('s1')], [permission])).tooltip).toBe('Bat-Signal · 1 needs you')
-    } finally {
-      THEMES['the-batman-2022'] = theme
-    }
+describe('the Lexicon', () => {
+  it("speaks the Theme's own terms when it is on", () => {
+    expect(withLexicon(opsWords, true)).toBe(opsWords)
+  })
+
+  // The stamp words are terms, so they follow the switch; the Voice is the Theme's tone, so it stays.
+  it("brings the standard terms back when it is off, stamps included, in the Theme's Voice", () => {
+    const words = withLexicon(opsWords, false)
+    expect(words.terms).toBe(STANDARD_TERMS)
+    expect(attentionCopy(permission, words).stamp).toBe('Permission')
+    expect(words.voice.wordmark).toBe('Watchful Protector')
+  })
+
+  // A Voice line that names a term takes it from the Terms (#73).
+  it('leaves no themed term in a Voice line when it is off', () => {
+    const { terms, voice } = withLexicon(opsWords, false)
+    expect(voice.empty.noCases.title(terms)).toBe('No open cases.')
   })
 })

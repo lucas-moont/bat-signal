@@ -115,9 +115,9 @@ export interface Voice {
     notifications: string
     sound: string
     animations: Setting
-    atmosphere: { label: string; hint: (t: Terms) => string }
+    atmosphere: TermSetting
     /** The Lexicon switch (CONTEXT.md, Lexicon). */
-    lexicon: { label: string; hint: (t: Terms) => string }
+    lexicon: TermSetting
     layout: Setting
     onTop: Setting
     opacity: string
@@ -212,6 +212,12 @@ export interface Setting {
   hint: string
 }
 
+/** A setting whose line names a term. */
+export interface TermSetting {
+  label: string
+  hint: (t: Terms) => string
+}
+
 export interface Words {
   terms: Terms
   voice: Voice
@@ -270,6 +276,15 @@ export const STANDARD_TERMS: Terms = {
   task: { pending: 'Pending', in_progress: 'In progress', completed: 'Completed', deleted: 'Deleted' },
   run: { running: 'Running', completed: 'Done', failed: 'Failed', stopped: 'Stopped' },
 }
+
+/**
+ * Words with a Theme's Lexicon on, or off: its Voice over the standard terms (CONTEXT.md, Lexicon).
+ * The Voice is its tone, not its names, so it stays; its lines that name a term take it from the
+ * Terms, so none of its names is left behind. Windows toasts and the tray never ask: they speak
+ * STANDARD_WORDS whatever the Theme.
+ */
+export const withLexicon = (words: Words, lexicon: boolean): Words =>
+  lexicon ? words : { terms: STANDARD_TERMS, voice: words.voice }
 
 export const STANDARD_VOICE: Voice = {
   wordmark: PRODUCT.toUpperCase(),

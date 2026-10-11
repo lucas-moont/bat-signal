@@ -90,9 +90,8 @@ export function Signal() {
   useEffect(() => batSignal.onCue(({ cue, volume }) => playCue(cue, volume)), [])
   const calm = useCalm(settings)
   const mode = useWindowMode()
-  // The notice card is the Signal's: it speaks the settings' Theme's words (with its Lexicon or
-  // without), where a toast keeps the standard ones. Built here, above Wearing, so they are read from
-  // the settings themselves.
+  // The notice card speaks the settings' Theme's words, where a toast keeps the standard ones.
+  // Built here, above Wearing, so they are read from the settings themselves.
   const { notice, setHovered } = useNotices(
     snapshot,
     loaded,
