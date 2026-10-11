@@ -34,6 +34,13 @@ describe('parseSettings: whatever the file holds', () => {
     expect(parseSettings({ theme: 'the-batman-2022' }).theme).toBe('the-batman-2022')
   })
 
+  // A Theme's own names for its terms show unless the user asks for the standard words (CONTEXT.md, Lexicon).
+  it('speaks the Lexicon by default, and keeps it off once turned off', () => {
+    expect(DEFAULT_SETTINGS.lexicon).toBe(true)
+    expect(parseSettings({ lexicon: false }).lexicon).toBe(false)
+    expect(parseSettings({ lexicon: 'no' }).lexicon).toBe(true)
+  })
+
   it('keeps the opacity between 50% and 100%', () => {
     expect(parseSettings({ opacity: 0.1 }).opacity).toBe(0.5)
     expect(parseSettings({ opacity: 3 }).opacity).toBe(1)
@@ -45,6 +52,7 @@ describe('parseSettings: a file from before Phase 4', () => {
     expect(parseSettings(OLD_FILE)).toEqual({
       ...OLD_FILE,
       theme: 'the-batman-2022',
+      lexicon: true,
       shortcut: 'Ctrl+Alt+B',
       announce: {
         toast: { needsYou: false, reply: false, taskDone: false, sessions: false },

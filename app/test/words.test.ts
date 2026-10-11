@@ -3,6 +3,7 @@ import { trayLook } from '../src/main/trayMenu'
 import { announce, emptyAnnouncer, toastFor } from '../src/shared/announcer'
 import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
+import { THEMES } from '../src/shared/themes'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
 import { STANDARD_TERMS, STANDARD_WORDS, type Words } from '../src/shared/words'
@@ -64,5 +65,27 @@ describe('the words', () => {
   // The tray takes no words at all: it can only speak the standard ones (CONTEXT.md, Lexicon).
   it('in the tray are always the standard ones', () => {
     expect(trayLook(snapshot([session('s1')], [permission])).tooltip).toBe('Bat-Signal · 1 needs you')
+  })
+
+  // Neither reads the worn Theme or the Lexicon switch, which is on by default.
+  it('in a Windows toast and the tray stay standard while the worn Theme has a Lexicon', () => {
+    const theme = THEMES['the-batman-2022']
+    THEMES['the-batman-2022'] = { ...theme, words: opsWords }
+    try {
+      const ctx = {
+        prefs: {
+          ...DEFAULT_SETTINGS.announce,
+          toast: { ...DEFAULT_SETTINGS.announce.toast, sessions: true },
+        },
+        panelFocused: false,
+      }
+      const { state } = announce(emptyAnnouncer(), snapshot([]), ctx)
+      expect(toastFor(announce(state, snapshot([session('s2')]), ctx).toast)?.title).toBe(
+        'Case opened · Untitled case',
+      )
+      expect(trayLook(snapshot([session('s1')], [permission])).tooltip).toBe('Bat-Signal · 1 needs you')
+    } finally {
+      THEMES['the-batman-2022'] = theme
+    }
   })
 })
