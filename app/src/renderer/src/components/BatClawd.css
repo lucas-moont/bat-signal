@@ -48,9 +48,11 @@
 }
 
 /* The aura, in the Theme's Alarm color, for a suit that has one (shared/suits.ts): a still filter,
-   repainted only when the frame changes on the clock. */
+   repainted only when the frame changes on the clock. A Theme may set --aura-core and --aura-glow;
+   by default both are its Hot Signal. */
 .clawd--aura .clawd__frame {
-  filter: drop-shadow(0 0 1.5px var(--aura-core)) drop-shadow(0 0 5px var(--aura-glow));
+  filter: drop-shadow(0 0 1.5px var(--aura-core, color-mix(in srgb, var(--signal-hot) 90%, transparent)))
+    drop-shadow(0 0 5px var(--aura-glow, color-mix(in srgb, var(--signal-hot) 55%, transparent)));
 }
 
 /* A click sends it up for a short flight: a one-off animation, not a loop. */

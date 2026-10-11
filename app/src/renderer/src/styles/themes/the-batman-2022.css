@@ -78,10 +78,6 @@
   --cape-rim: var(--signal);
   --thread: var(--blood);
   --chest: var(--cowl);
-  /* The aura, the Alarm color around him while something needs the user; VENGEANCE's suit wears
-     none until #88 redresses him. */
-  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
-  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
   /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
   --glass-shine: #1d1714;
