@@ -30,7 +30,7 @@ describe("the Themes' stylesheets and fonts", () => {
   })
 
   it('belong to known Themes only', () => {
-    const ids = files.flatMap((file) => /^(.+?)(?:.fonts.ts|.css)$/.exec(file)?.[1] ?? [])
+    const ids = files.flatMap((file) => /^(.+?)(?:\.fonts\.ts|\.css)$/.exec(file)?.[1] ?? [])
     for (const id of ids) expect(THEME_IDS).toContain(id)
   })
 })
