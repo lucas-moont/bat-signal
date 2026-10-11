@@ -76,8 +76,10 @@ describe('the Lexicon', () => {
   })
 
   // A Voice line that names a term takes it from the Terms (#73).
-  it('leaves no themed term in a Voice line when it is off', () => {
-    const { terms, voice } = withLexicon(opsWords, false)
-    expect(voice.empty.noCases.title(terms)).toBe('No open cases.')
+  it("leaves no themed term in the Theme's Voice lines when it is off", () => {
+    const on = withLexicon(opsWords, true)
+    const off = withLexicon(opsWords, false)
+    expect(on.voice.empty.noCases.title(on.terms)).toBe('No ops on the board.')
+    expect(off.voice.empty.noCases.title(off.terms)).toBe('No cases on the board.')
   })
 })

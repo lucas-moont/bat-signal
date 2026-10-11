@@ -9,7 +9,18 @@ export const opsWords: Words = {
     needsYou: { label: 'On you', count: (n) => `${n} on you` },
     stamp: { ...STANDARD_TERMS.stamp, permission: 'Clearance', 'session-opened': 'Op opened' },
   },
-  voice: { ...STANDARD_VOICE, wordmark: 'Watchful Protector' },
+  // A Voice line of its own that names a term, as a Theme's Voice may.
+  voice: {
+    ...STANDARD_VOICE,
+    wordmark: 'Watchful Protector',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${t.case.many.toLowerCase()} on the board.`,
+      },
+    },
+  },
 }
 
 /** Claude asking to run a command. */

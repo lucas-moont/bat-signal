@@ -52,7 +52,12 @@ describe('the Lexicon switch', () => {
       }),
     )
   /** The Look section's markup: from its heading to the next section's. */
-  const look = (html: string) => html.slice(html.indexOf('>Look<'), html.indexOf('>Comfort<'))
+  const look = (html: string) => {
+    const [start, end] = [html.indexOf('>Look<'), html.indexOf('>Comfort<')]
+    expect(start).toBeGreaterThan(-1)
+    expect(end).toBeGreaterThan(start)
+    return html.slice(start, end)
+  }
   const lexiconRow = (html: string) =>
     look(html)
       .split('<label')
