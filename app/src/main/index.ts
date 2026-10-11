@@ -91,7 +91,7 @@ function start(): void {
   })
   // settings.json edited by hand (until the Theme picker, that's how a Theme changes) applies at once.
   // Laid over the current settings, so a key left out or mistyped keeps its value, as a patch does.
-  settingsFile.watch((raw) => {
+  const stopWatchingSettings = settingsFile.watch((raw) => {
     const next = parseSettings(raw, settings)
     adopt(next, { touchesShortcut: next.shortcut !== settings.shortcut })
   })
@@ -139,6 +139,8 @@ function start(): void {
   summon = () => windows.act('summon')
   // Written at before-quit: Windows ending the session may close the app before will-quit.
   app.once('before-quit', () => {
+    // No hand edit may reach windows that are closing.
+    stopWatchingSettings()
     settingsFile.flush()
     stop()
   })
