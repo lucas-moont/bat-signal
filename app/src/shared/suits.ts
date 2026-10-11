@@ -23,8 +23,8 @@ export type Layer =
 
 /** How he is drawn in a Mood or a moment. */
 export interface Pose {
-  /** Which of the suit's maps draws his body and cowl. */
-  map: string
+  /** The outfit map that draws his body and cowl in this pose. */
+  map: OutfitMap
   behind: readonly Layer[]
   front: readonly Layer[]
   eyes: 'open' | 'shut'
@@ -43,11 +43,13 @@ export interface Step {
   transform?: string
 }
 
+/** How far his eyes may slide toward the pointer, or glance along the street, in grid units. */
+export const GAZE = 0.6
+
 /** A script of steps, at least one. */
 export type Script = readonly [Step, ...Step[]]
 
 export interface Suit {
-  maps: Readonly<Record<string, OutfitMap>>
   eyes: { open: readonly Px[]; shut: readonly Px[] }
   poses: Readonly<Record<MascotMood, Poses>>
   /** His watch on the perch, one step a second, while nothing needs the user. */
@@ -71,8 +73,9 @@ export const scriptAt = (steps: Script, index: number): Step =>
 
 // --- VENGEANCE: today's Bat-Clawd, a black cowl edged in red and a black cape with a red rim. ---
 
-const COWL = 'var(--cowl)'
-const LEGEND = { '#': 'var(--clawd)', s: 'var(--clawd-shade)', c: COWL, h: 'var(--cowl-shine)' }
+const BODY = 'var(--clawd)'
+const SHADE = 'var(--clawd-shade)'
+const LEGEND = { '#': BODY, s: SHADE, c: 'var(--cowl)', h: 'var(--cowl-shine)' }
 
 /** Each unit row twice: the grid at half-row resolution. */
 const twice = (rows: readonly string[]) => rows.flatMap((row) => [row, row])
@@ -85,6 +88,24 @@ const COWL_ROWS = [
   '...cccccccccc...',
   '...cccccccccc...',
 ]
+const TORSO = '...##########...'
+
+/** Awake: arms out at his sides and four legs. */
+const AWAKE: OutfitMap = {
+  top: 0,
+  rows: twice([
+    ...COWL_ROWS,
+    TORSO,
+    '.##############.',
+    TORSO,
+    TORSO,
+    '....s.s..s.s....',
+    '....s.s..s.s....',
+  ]),
+  legend: LEGEND,
+}
+/** Sitting, wrapped in the cape: no arms, and his feet are drawn under the hem. */
+const SEATED: OutfitMap = { top: 0, rows: twice([...COWL_ROWS, TORSO, TORSO, TORSO, TORSO]), legend: LEGEND }
 
 /** The cape hangs from the shoulders (y = 5) and ends in a jagged, bat-like hem. */
 const CAPE = {
@@ -113,8 +134,9 @@ const CHEST: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 7 }
 const behindWith = (d: string): Layer[] => [{ kind: 'path', d, className: 'clawd__cape' }, COWL_EDGE]
 
 const EYE = 'var(--clawd-eye)'
+const EYE_DIM = 'var(--clawd-eye-dim)'
 const awake = (behind: Layer[], eyeColor = EYE): Pose => ({
-  map: 'awake',
+  map: AWAKE,
   behind,
   front: [CHEST],
   eyes: 'open',
@@ -130,26 +152,8 @@ const flyingB = awake(behindWith(CAPE.trailB))
 
 /** Mostly still, then a gust lifts the cape and he glances along the street: four changes in twelve seconds. */
 const STILL: Step = { pose: flyingA, look: 0 }
-const GLANCE = -0.6
 
 export const VENGEANCE_SUIT: Suit = {
-  maps: {
-    awake: {
-      top: 0,
-      rows: twice([
-        ...COWL_ROWS,
-        '...##########...',
-        '.##############.',
-        '...##########...',
-        '...##########...',
-        '....s.s..s.s....',
-        '....s.s..s.s....',
-      ]),
-      legend: LEGEND,
-    },
-    /** Sitting, wrapped in the cape: no arms, and his feet are drawn under the hem. */
-    seated: { top: 0, rows: twice([...COWL_ROWS, ...Array(4).fill('...##########...')]), legend: LEGEND },
-  },
   eyes: {
     open: [
       [5, 3, 2, 1],
@@ -163,7 +167,7 @@ export const VENGEANCE_SUIT: Suit = {
   poses: {
     sleeping: [
       {
-        map: 'seated',
+        map: SEATED,
         behind: [COWL_EDGE],
         front: [
           {
@@ -172,7 +176,7 @@ export const VENGEANCE_SUIT: Suit = {
               [4.5, 10.2, 2, 0.8],
               [9.5, 10.2, 2, 0.8],
             ],
-            fill: 'var(--clawd-shade)',
+            fill: SHADE,
           },
           { kind: 'path', d: CAPE.wrapped, className: 'clawd__cape' },
           { kind: 'rects', px: [[7.85, 8.4, 0.3, 1.6]], className: 'clawd__seam' },
@@ -183,7 +187,7 @@ export const VENGEANCE_SUIT: Suit = {
               [6.9, 7.6, 1, 0.8],
               [8.1, 7.6, 1, 0.8],
             ],
-            fill: 'var(--clawd)',
+            fill: BODY,
           },
         ],
         eyes: 'shut',
@@ -191,14 +195,14 @@ export const VENGEANCE_SUIT: Suit = {
       },
     ],
     flying: [flyingA, flyingB],
-    alarmed: [awake(open), awake(open, 'var(--clawd-eye-dim)')],
+    alarmed: [awake(open), awake(open, EYE_DIM)],
   },
   watch: [
     ...Array<Step>(6).fill(STILL),
     { pose: flyingB, look: 0 },
     STILL,
-    { pose: flyingA, look: GLANCE },
-    { pose: flyingA, look: GLANCE },
+    { pose: flyingA, look: -GAZE },
+    { pose: flyingA, look: -GAZE },
     STILL,
     STILL,
   ],

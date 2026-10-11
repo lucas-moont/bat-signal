@@ -5,7 +5,7 @@
 // wrapped cape, the shut eyes) are drawn as layers beside the map, not snapped into it.
 
 /** One half-row tall: the map's resolution. */
-export const HALF_ROW = 0.5
+const HALF_ROW = 0.5
 
 export interface OutfitMap {
   /** The grid y of the first row. */

@@ -6,9 +6,19 @@
 // ticker.ts) picks the pose and the wrapper position a few times a second. Between ticks
 // nothing animates at all, so the mascot costs almost nothing while its cape flutters, it
 // blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { mapRects, type OutfitMap, type Rect } from '@shared/outfits'
-import { scriptAt, type Layer, type Pose, type Poses, type Px, type Step, type Suit } from '@shared/suits'
+import type { Emblem } from '@shared/emblems'
+import {
+  GAZE,
+  scriptAt,
+  type Layer,
+  type Pose,
+  type Poses,
+  type Px,
+  type Step,
+  type Suit,
+} from '@shared/suits'
 import { THEMES } from '@shared/themes'
 import type { MascotMood } from '@shared/view'
 import { batAt, useEmblem } from './BatEmblem'
@@ -34,19 +44,18 @@ function rectsOf(map: OutfitMap): Rect[] {
 
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
-function LayerShape({ layer }: { layer: Layer }) {
-  const emblem = useEmblem()
+function layerShape(layer: Layer, key: number, emblem: Emblem) {
   switch (layer.kind) {
     case 'path':
       return (
-        <>
+        <Fragment key={key}>
           <path className={layer.className} d={layer.d} />
           {layer.mirrored && <path className={layer.className} d={layer.d} transform={MIRROR} />}
-        </>
+        </Fragment>
       )
     case 'rects':
       return (
-        <g fill={layer.fill} className={layer.className}>
+        <g key={key} fill={layer.fill} className={layer.className}>
           {rects(layer.px)}
         </g>
       )
@@ -54,6 +63,7 @@ function LayerShape({ layer }: { layer: Layer }) {
       // Smooth, not pixel-snapped: at this size the snapped outline breaks into blocks.
       return (
         <path
+          key={key}
           className="clawd__emblem"
           d={emblem.path}
           transform={batAt(emblem, layer.cx, layer.cy, layer.width)}
@@ -62,9 +72,6 @@ function LayerShape({ layer }: { layer: Layer }) {
       )
   }
 }
-
-const Layers = ({ layers }: { layers: readonly Layer[] }) =>
-  layers.map((layer, i) => <LayerShape key={i} layer={layer} />)
 
 function Frame({
   suit,
@@ -77,15 +84,14 @@ function Frame({
   gaze: { x: number; y: number }
   className: string
 }) {
-  const map = suit.maps[pose.map]
+  const emblem = useEmblem()
   return (
     <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
-      <Layers layers={pose.behind} />
-      {map &&
-        rectsOf(map).map((r) => (
-          <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
-        ))}
-      <Layers layers={pose.front} />
+      {pose.behind.map((layer, i) => layerShape(layer, i, emblem))}
+      {rectsOf(pose.map).map((r) => (
+        <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
+      ))}
+      {pose.front.map((layer, i) => layerShape(layer, i, emblem))}
       <g fill={pose.eyeColor} transform={`translate(${gaze.x} ${gaze.y})`}>
         {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
       </g>
@@ -113,9 +119,6 @@ const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; 
     transform: `translateX(${f % 2 ? 0.6 : -0.6}px)`,
   }),
 }
-
-/** How far the eyes may slide toward the pointer, in grid units. */
-const GAZE = 0.6
 
 export function BatClawd({
   mood,
