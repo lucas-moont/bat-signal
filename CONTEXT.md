@@ -67,7 +67,7 @@ How Bat-Clawd is drawn in a Mood or a moment. A Theme may swap any Pose for an i
 _Avoid_: Sprite, frame, mood
 
 **Signature pose**:
-A Theme's most iconic Pose, shown on the perch, in the intro and when the user clicks Bat-Clawd.
+A Theme's most iconic Pose, shown on the perch, in the intro and when the user clicks Bat-Clawd, and held still on its folder in the Theme picker.
 _Avoid_: Easter egg, special mood
 
 **Wave**:

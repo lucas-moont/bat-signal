@@ -1,5 +1,5 @@
-// Each Theme's faces (<id>.fonts.ts), loaded only when the Theme is worn: a separate chunk per
-// Theme, so a Theme never downloads another's fonts.
+// Each Theme's faces (<id>.fonts.ts), a separate chunk per Theme, loaded when the Theme is worn or
+// previewed (the picker loads every Theme's as it opens): they come from disk, never the network.
 import type { ThemeId } from '@shared/themes'
 
 const FONTS = import.meta.glob('./*.fonts.ts')
