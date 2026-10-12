@@ -6,6 +6,8 @@ vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () 
 afterAll(() => vi.unstubAllGlobals())
 
 import { ThemePicker, themeAfter } from '../../src/renderer/src/components/ThemePicker'
+import { VENGEANCE_SUIT, type Pose } from '../../src/shared/suits'
+import { standInTheme } from '../fixtures/themes'
 
 const draw = () =>
   renderToStaticMarkup(createElement(ThemePicker, { theme: 'the-batman-2022', onChange: () => undefined }))
@@ -68,5 +70,26 @@ describe('the Theme picker', () => {
   // The folder reads as its name and credit; the preview inside is decoration.
   it('hides the preview from assistive technology', () => {
     expect(draw()).toMatch(/aria-hidden="true"[^>]*>.*clawd/s)
+  })
+})
+
+// The jury: a folder previews its Theme's Signature pose, and its flying pose when it has none.
+describe("a folder's Bat-Clawd", () => {
+  const marked = (mark: string): Pose => ({
+    ...VENGEANCE_SUIT.poses.flying[0],
+    behind: [{ kind: 'path', d: `M0 0 L${mark} 0 Z`, className: 'clawd__cape' }],
+  })
+  standInTheme({
+    suit: {
+      ...VENGEANCE_SUIT,
+      signature: [
+        { pose: marked('2.22'), look: 0 },
+        { pose: marked('3.33'), look: 0 },
+      ],
+    },
+  })
+
+  it("strikes its Theme's Signature pose, in its final step", () => {
+    expect(draw()).toContain('M0 0 L3.33 0 Z')
   })
 })
