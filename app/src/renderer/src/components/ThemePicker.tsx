@@ -1,6 +1,6 @@
 // The Theme picker, at the top of the settings sheet's Look section: each Theme a case-file folder
-// in a drawer that slides sideways, wearing its own Theme (its Bat-Clawd, its stamp word in its
-// Alarm ink, its name and the film it follows). A radio group: a click or the arrows pick, and the
+// in a drawer that slides sideways, wearing its own Theme (its Bat-Clawd, its stamp in its Alarm
+// color, its name and the film it follows). A radio group: a click or the arrows pick, and the
 // panel re-dresses at once.
 import { useEffect, useId, useRef, useState } from 'react'
 import { THEME_IDS, type ThemeId } from '@shared/themes'
@@ -10,6 +10,7 @@ import { Previewing } from '../theme'
 import { useWords } from '../words'
 import { BatClawdStill } from './BatClawd'
 import { SettingRow } from './SettingRow'
+import './Cards.css' // the stamp
 import './ThemePicker.css'
 
 /** The Theme an arrow, Home or End moves to from `current` (round at the ends); none for another key. */
@@ -27,7 +28,18 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
   const say = useWords().voice.settings.theme
   const calm = useIsCalm()
   const labelId = useId()
-  const folders = useRef(new Map<ThemeId, HTMLButtonElement>())
+  const group = useRef<HTMLDivElement>(null)
+  // The folder just picked shows as picked at once, before the setting comes back from the main
+  // process, so a second arrow moves on from it and its stamp lands on a lit folder. Adjusted during
+  // render (React's pattern for reacting to a changed input): whenever the setting changes (to the
+  // pick, or by a hand edit of settings.json), the setting is the truth again.
+  const [picked, setPicked] = useState<ThemeId | null>(null)
+  const [seen, setSeen] = useState(theme)
+  if (seen !== theme) {
+    setSeen(theme)
+    setPicked(null)
+  }
+  const chosen = picked ?? theme
   // The folder just picked, whose stamp lands once.
   const [stamped, setStamped] = useState<ThemeId | null>(null)
 
@@ -37,10 +49,10 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
   }, [])
 
   const pick = (id: ThemeId) => {
-    const folder = folders.current.get(id)
-    folder?.focus()
-    folder?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-    if (id === theme) return
+    // Focus scrolls the drawer to the folder.
+    group.current?.querySelector<HTMLElement>(`[data-theme="${id}"]`)?.focus()
+    if (id === chosen) return
+    setPicked(id)
     if (!calm) setStamped(id)
     onChange(id)
   }
@@ -48,11 +60,12 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
   return (
     <SettingRow label={say.label} hint={say.hint} labelId={labelId} className="theme-picker">
       <div
+        ref={group}
         role="radiogroup"
         aria-labelledby={labelId}
         className="theme-picker__drawer"
         onKeyDown={(e) => {
-          const next = themeAfter(THEME_IDS, theme, e.key)
+          const next = themeAfter(THEME_IDS, chosen, e.key)
           if (next === undefined) return
           e.preventDefault()
           pick(next)
@@ -63,15 +76,11 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
           <Previewing key={id} theme={id}>
             <Folder
               id={id}
-              worn={id === theme}
+              worn={id === chosen}
               stamped={stamped === id}
               credit={say.credit}
               onPick={() => pick(id)}
               onStamped={() => setStamped(null)}
-              folderRef={(el) => {
-                if (el) folders.current.set(id, el)
-                else folders.current.delete(id)
-              }}
             />
           </Previewing>
         ))}
@@ -88,7 +97,6 @@ function Folder({
   credit,
   onPick,
   onStamped,
-  folderRef,
 }: {
   id: ThemeId
   worn: boolean
@@ -97,12 +105,10 @@ function Folder({
   credit: (film: string) => string
   onPick: () => void
   onStamped: () => void
-  folderRef: (el: HTMLButtonElement | null) => void
 }) {
   const { terms, voice } = useWords()
   return (
     <button
-      ref={folderRef}
       type="button"
       role="radio"
       aria-checked={worn}
@@ -110,7 +116,10 @@ function Folder({
       data-theme={id}
       className={`folder${worn ? ' folder--worn' : ''}${stamped ? ' folder--stamped' : ''}`}
       onClick={onPick}
-      onAnimationEnd={onStamped}
+      // Only the stamp's own landing ends it; another animation inside the folder may not.
+      onAnimationEnd={(e) => {
+        if (e.animationName === 'folder-stamp') onStamped()
+      }}
     >
       <span className="folder__preview" aria-hidden="true">
         <BatClawdStill size={58} />
