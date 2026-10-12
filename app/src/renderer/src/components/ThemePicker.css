@@ -87,7 +87,10 @@
 .folder:not(.folder--worn) .folder__preview {
   opacity: 0.55;
 }
+/* The maintainer's decision (jury §10): the picker previews each Theme's Alarm color. A stamp's own
+   ink is its tier's, which a Theme may keep off its Alarm color, so this one names it, as the aura does. */
 .folder .stamp {
+  color: var(--signal-hot);
   font-size: 9.5px;
   padding: 2px 5px 1px;
 }
