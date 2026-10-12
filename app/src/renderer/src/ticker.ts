@@ -81,14 +81,11 @@ export function useLiveStyle<T extends HTMLElement>(
     applyRef.current = apply
   })
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    if (!active) {
-      applyRef.current(el, null)
-      return
-    }
-    return onTick((_tick, now) => applyRef.current(el, now))
+    if (!active && ref.current) applyRef.current(ref.current, null)
   }, [active])
+  useEveryTick(active, (now) => {
+    if (ref.current) applyRef.current(ref.current, now)
+  })
   return ref
 }
 
