@@ -1,6 +1,6 @@
 // The Theme's Atmosphere (VENGEANCE's is rain), film grain and a low street-light haze behind
 // everything, in the Theme's colors.
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
 import { THEMES } from '@shared/themes'
@@ -11,8 +11,8 @@ import './Atmosphere.css'
 
 /** The Atmosphere's canvas, painted a step on every tick of the shared clock (which stops while hidden). */
 function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
-  // A new Atmosphere (a Theme change) starts a new scene.
-  const painter = useMemo(() => painterFor(atmosphere), [atmosphere])
+  // The scene lives as long as the canvas; a Theme change mounts a new one (keyed by its Theme).
+  const [painter] = useState(() => painterFor(atmosphere))
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const last = useRef<number | null>(null)
@@ -110,7 +110,8 @@ function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
 
 export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
   const shown = useAtmosphereVisible(on, activity)
-  const atmosphere = THEMES[useTheme()].atmosphere
+  const theme = useTheme()
+  const atmosphere = THEMES[theme].atmosphere
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
@@ -124,7 +125,7 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2 }}
           >
-            <Painted atmosphere={atmosphere} />
+            <Painted key={theme} atmosphere={atmosphere} />
           </motion.div>
         )}
       </AnimatePresence>
