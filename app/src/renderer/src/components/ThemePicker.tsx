@@ -84,10 +84,10 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
               onAnimationEnd={() => setStamped(null)}
             >
               <span className="folder__preview" aria-hidden="true">
-                {/* Its own Theme's suit, still: a preview, not a second mascot to animate. */}
+                {/* Its own Theme's suit, still: its Signature pose's final step, or flying without one. */}
                 <Previewing theme={id}>
                   <CalmContext value={true}>
-                    <BatClawd mood="flying" size={58} />
+                    <BatClawd mood="flying" size={58} reveal />
                   </CalmContext>
                 </Previewing>
                 <span className="stamp">{terms.stamp.permission}</span>
