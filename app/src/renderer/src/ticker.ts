@@ -80,12 +80,16 @@ export function useLiveStyle<T extends HTMLElement>(
   useEffect(() => {
     applyRef.current = apply
   })
+  // Its own subscription rather than useEveryTick's: it joins the clock only once its element is there.
   useEffect(() => {
-    if (!active && ref.current) applyRef.current(ref.current, null)
+    const el = ref.current
+    if (!el) return
+    if (!active) {
+      applyRef.current(el, null)
+      return
+    }
+    return onTick((_tick, now) => applyRef.current(el, now))
   }, [active])
-  useEveryTick(active, (now) => {
-    if (ref.current) applyRef.current(ref.current, now)
-  })
   return ref
 }
 
