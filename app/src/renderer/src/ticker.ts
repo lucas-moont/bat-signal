@@ -6,8 +6,8 @@
 // between ticks, so the compositor sleeps. Values are written straight onto the few elements
 // that pulse: a CSS variable on the root would restyle the whole page on every tick.
 import { useEffect, useRef, useState, type RefObject } from 'react'
+import { FPS } from './clockRate'
 
-const FPS = 8
 const PULSE_PERIOD_MS = 2600 // breathing glow on urgent cards
 const BEAT_PERIOD_MS = 1400 // heartbeat of "working" dots
 

@@ -2,18 +2,22 @@
 // behind the panel, a step at a time on the shared 8 fps clock. Free of the DOM, so node tests
 // drive them on a recording canvas.
 import type { Atmosphere, RainAtmosphere } from '@shared/atmospheres'
+import { FPS } from './clockRate'
 
 export interface Painter {
   /** The canvas's new size in CSS pixels: the scene starts over to fill it. */
   resize(width: number, height: number): void
-  /** One step of the clock, `dt` seconds after the last: move, then paint. */
-  paint(ctx: CanvasRenderingContext2D, dt: number): void
+  /**
+   * One tick of the clock: move the scene a step (not when `step` is false, as right after a
+   * resize), then paint. A still scene may leave the canvas as it is on most ticks.
+   */
+  paint(ctx: CanvasRenderingContext2D, step?: boolean): void
 }
 
-/** The clock's step, for a painter to size its strokes by: 8 ticks a second (ticker.ts). */
-const STEP = 1 / 8
-/** The longest step painted: a late tick (a busy machine) doesn't fling the scene across. */
-const MAX_DT = 2 * STEP
+/** One tick of the clock, in seconds. The clock stops while the window is hidden, so a tick is a tick. */
+const STEP = 1 / FPS
+/** The rain's frame rate on its own timer, before it joined the shared clock. */
+const OLD_FPS = 15
 
 export const painterFor = (atmosphere: Atmosphere, random: () => number = Math.random): Painter =>
   rain(atmosphere, random)
@@ -35,7 +39,7 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   const slant = Math.tan(angle)
   const dx = Math.sin(angle)
   const dy = Math.cos(angle)
-  const streak = STEP * 15 // the old frame rate
+  const streak = STEP * OLD_FPS
   let drops: Drop[] = []
   let width = 0
   let height = 0
@@ -55,8 +59,8 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
       ;[width, height] = [w, h]
       drops = Array.from({ length: Math.round(((width * height) / 1000) * density) }, () => spawn(true))
     },
-    paint(ctx, dt) {
-      const t = Math.min(dt, MAX_DT)
+    paint(ctx, step = true) {
+      const t = step ? STEP : 0
       ctx.clearRect(0, 0, width, height)
       depths.forEach((alpha, depth) => {
         ctx.globalAlpha = alpha

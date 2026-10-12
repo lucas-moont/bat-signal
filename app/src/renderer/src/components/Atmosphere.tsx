@@ -14,18 +14,16 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
   // A new Atmosphere (a Theme change) starts a new scene.
   const painter = useMemo(() => painterFor(atmosphere), [atmosphere])
   const canvas = useRef<HTMLCanvasElement>(null)
-  const last = useRef<number | null>(null)
-  useEveryTick(true, (now) => {
-    const ctx = canvas.current?.getContext('2d')
-    if (!ctx) return
-    painter.paint(ctx, last.current === null ? 0 : (now - last.current) / 1000)
-    last.current = now
+  const context = useRef<CanvasRenderingContext2D | null>(null)
+  useEveryTick(true, () => {
+    if (context.current) painter.paint(context.current)
   })
 
   useEffect(() => {
     const el = canvas.current
     const ctx = el?.getContext('2d')
     if (!el || !ctx) return
+    context.current = ctx
 
     // A canvas can't read CSS variables: it takes the Theme's rain color as a value. One it can't
     // use (none, with no Theme on the page, or something that isn't a color) keeps the last good
@@ -47,16 +45,17 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       recolor()
       painter.resize(width, height)
       // Painted at once, rather than blank until the next tick.
-      painter.paint(ctx, 0)
+      painter.paint(ctx, false)
     }
 
-    resize()
+    // The observer reports the canvas's size as it starts, and on every change after.
     const observer = new ResizeObserver(resize)
     observer.observe(el)
     // A new Theme on the page brings its own color: read it once the page wears it.
     const themes = new MutationObserver(recolor)
     themes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     return () => {
+      context.current = null
       observer.disconnect()
       themes.disconnect()
     }

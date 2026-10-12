@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { painterFor } from '../../src/renderer/src/painters'
 import { VENGEANCE_RAIN } from '../../src/shared/atmospheres'
 
+type Segment = { x0: number; y0: number; x1: number; y1: number }
+
 /** A canvas context that records the strokes it is asked for, one list of segments per stroke(). */
 function recorder() {
-  const strokes: { alpha: number; segments: { x0: number; y0: number; x1: number; y1: number }[] }[] = []
-  let path: { x0: number; y0: number; x1: number; y1: number }[] = []
+  const strokes: { alpha: number; segments: Segment[] }[] = []
+  let path: Segment[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
@@ -23,37 +25,50 @@ function seeded(seed = 7) {
   return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646
 }
 
-/** One tick of the shared clock: 8 a second. */
-const TICK = 1 / 8
+const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
 describe('the rain', () => {
+  /** As many drops as the density asks of the panel's default size. */
+  const DROPS = Math.round(((320 * 440) / 1000) * VENGEANCE_RAIN.density)
+
   const rain = () => {
     const painter = painterFor(VENGEANCE_RAIN, seeded())
     painter.resize(320, 440)
     return painter
   }
 
-  it('fills the canvas with drops, as many as its density asks', () => {
+  /** The rain as it appears (painted without a step), then one tick of the clock later. */
+  const twoTicks = () => {
+    const painter = rain()
+    const [first, next] = [recorder(), recorder()]
+    painter.paint(first.ctx, false)
+    painter.paint(next.ctx)
+    return [first.strokes, next.strokes] as const
+  }
+
+  /** The rain after a while (200 ticks: drops have left the bottom and come back). */
+  const later = () => {
+    const painter = rain()
+    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx)
     const { ctx, strokes } = recorder()
-    rain().paint(ctx, 0)
-    const drawn = strokes.reduce((n, s) => n + s.segments.length, 0)
-    expect(drawn).toBe(Math.round(((320 * 440) / 1000) * VENGEANCE_RAIN.density))
+    painter.paint(ctx)
+    return strokes
+  }
+
+  it('fills the canvas with drops, as many as its density asks', () => {
+    const [first] = twoTicks()
+    expect(first.reduce((n, s) => n + s.segments.length, 0)).toBe(DROPS)
   })
 
   // Each depth is one path, stroked once: a few strokes a tick, whatever the number of drops.
   it('strokes each depth once, in its own strength', () => {
-    const { ctx, strokes } = recorder()
-    rain().paint(ctx, TICK)
-    expect(strokes.map((s) => s.alpha)).toEqual(VENGEANCE_RAIN.depths)
+    const [, next] = twoTicks()
+    expect(next.map((s) => s.alpha)).toEqual(VENGEANCE_RAIN.depths)
   })
 
   it('falls along the wind', () => {
-    const painter = rain()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const next = recorder()
-    painter.paint(next.ctx, TICK)
-    const [a, b] = [first.strokes[0]!.segments[0]!, next.strokes[0]!.segments[0]!]
+    const [first, next] = twoTicks()
+    const [a, b] = [first[0]!.segments[0]!, next[0]!.segments[0]!]
     expect(b.y0).toBeGreaterThan(a.y0)
     expect((b.x0 - a.x0) / (b.y0 - a.y0)).toBeCloseTo(Math.tan(VENGEANCE_RAIN.angle))
   })
@@ -62,18 +77,12 @@ describe('the rain', () => {
   // too short for its step reads as dashes jumping, not rain falling. A quarter of the step, at
   // least, is the share the shortest streaks covered at 15.
   it('draws each streak long enough for the step it falls in a tick', () => {
-    const painter = rain()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const next = recorder()
-    painter.paint(next.ctx, TICK)
-    first.strokes.forEach((stroke, depth) =>
+    const [first, next] = twoTicks()
+    first.forEach((stroke, depth) =>
       stroke.segments.slice(0, 20).forEach((a, i) => {
-        const b = next.strokes[depth]!.segments[i]!
+        const b = next[depth]!.segments[i]!
         if (b.y0 < a.y0) return // came back above the top in between
-        const streak = Math.hypot(a.x0 - a.x1, a.y0 - a.y1)
-        const step = Math.hypot(b.x0 - a.x0, b.y0 - a.y0)
-        expect(streak / step).toBeGreaterThan(0.25)
+        expect(length(a) / Math.hypot(b.x0 - a.x0, b.y0 - a.y0)).toBeGreaterThan(0.25)
       }),
     )
   })
@@ -81,24 +90,15 @@ describe('the rain', () => {
   // Nearer depths are longer and faster: a drop that comes back keeps its depth's length, not
   // another's, or a faint far drop would streak like a near one.
   it("keeps each drop's streak to its depth after it comes back", () => {
-    const painter = rain()
-    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx, TICK)
-    const { ctx, strokes } = recorder()
-    painter.paint(ctx, TICK)
-    strokes.forEach((stroke, depth) => {
+    later().forEach((stroke, depth) => {
       const longest = (8 + depth * 5 + 6) * (15 / 8)
-      for (const d of stroke.segments)
-        expect(Math.hypot(d.x0 - d.x1, d.y0 - d.y1)).toBeLessThanOrEqual(longest + 1e-9)
+      for (const d of stroke.segments) expect(length(d)).toBeLessThanOrEqual(longest + 1e-9)
     })
   })
 
   it('keeps falling: a drop that leaves the bottom comes back above the top', () => {
-    const painter = rain()
-    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx, TICK)
-    const { ctx, strokes } = recorder()
-    painter.paint(ctx, TICK)
-    const ys = strokes.flatMap((s) => s.segments.map((d) => d.y0))
-    expect(ys.length).toBe(Math.round(((320 * 440) / 1000) * VENGEANCE_RAIN.density))
+    const ys = later().flatMap((s) => s.segments.map((d) => d.y0))
+    expect(ys.length).toBe(DROPS)
     expect(Math.min(...ys)).toBeGreaterThan(-100)
     expect(Math.max(...ys)).toBeLessThan(440 + 100)
   })

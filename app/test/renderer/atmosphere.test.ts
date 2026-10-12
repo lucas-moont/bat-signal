@@ -21,7 +21,8 @@ describe('the Atmosphere', () => {
 
   // The haze and the grain are still: they stay whether the Atmosphere moves or not.
   it('keeps the haze and the grain either way', () => {
-    expect(draw(false)).toContain('atmosphere__glow')
-    expect(draw(false)).toContain('atmosphere__grain')
+    const off = draw(false)
+    expect(off).toContain('atmosphere__glow')
+    expect(off).toContain('atmosphere__grain')
   })
 })
