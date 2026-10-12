@@ -1,13 +1,11 @@
+import '../fixtures/hiddenPage'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { afterAll, describe, expect, it, vi } from 'vitest'
-// The shared clock listens to the page's visibility as it loads; a hidden page keeps it stopped.
-vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
-afterAll(() => vi.unstubAllGlobals())
+import { describe, expect, it } from 'vitest'
 
 import { ThemePicker, themeAfter } from '../../src/renderer/src/components/ThemePicker'
-import { VENGEANCE_SUIT, type Pose } from '../../src/shared/suits'
-import { standInTheme } from '../fixtures/themes'
+import { VENGEANCE_SUIT } from '../../src/shared/suits'
+import { markedPose, standInTheme } from '../fixtures/themes'
 
 const draw = () =>
   renderToStaticMarkup(createElement(ThemePicker, { theme: 'the-batman-2022', onChange: () => undefined }))
@@ -75,16 +73,12 @@ describe('the Theme picker', () => {
 
 // The jury: a folder previews its Theme's Signature pose, and its flying pose when it has none.
 describe("a folder's Bat-Clawd", () => {
-  const marked = (mark: string): Pose => ({
-    ...VENGEANCE_SUIT.poses.flying[0],
-    behind: [{ kind: 'path', d: `M0 0 L${mark} 0 Z`, className: 'clawd__cape' }],
-  })
   standInTheme({
     suit: {
       ...VENGEANCE_SUIT,
       signature: [
-        { pose: marked('2.22'), look: 0 },
-        { pose: marked('3.33'), look: 0 },
+        { pose: markedPose('2.22'), look: 0 },
+        { pose: markedPose('3.33'), look: 0 },
       ],
     },
   })

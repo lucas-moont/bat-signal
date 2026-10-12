@@ -1,9 +1,7 @@
+import '../fixtures/hiddenPage'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { afterAll, describe, expect, it, vi } from 'vitest'
-// The shared clock listens to the page's visibility as it loads; a hidden page keeps it stopped.
-vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
-afterAll(() => vi.unstubAllGlobals())
+import { describe, expect, it } from 'vitest'
 
 import { Atmosphere } from '../../src/renderer/src/components/Atmosphere'
 

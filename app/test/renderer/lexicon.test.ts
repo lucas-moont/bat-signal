@@ -1,9 +1,7 @@
+import '../fixtures/hiddenPage'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { afterAll, describe, expect, it, vi } from 'vitest'
-// The settings sheet's picker shows Bat-Clawd, whose clock listens to the page's visibility as it loads.
-vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
-afterAll(() => vi.unstubAllGlobals())
+import { describe, expect, it, vi } from 'vitest'
 
 // The settings sheet reaches the main process through the bridge; a static render calls none of it.
 vi.mock('../../src/renderer/src/bridge', () => ({
