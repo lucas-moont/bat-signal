@@ -12,6 +12,7 @@ import type { Emblem } from '@shared/emblems'
 import {
   GAZE,
   scriptAt,
+  stillStep,
   type Layer,
   type Pose,
   type Poses,
@@ -96,6 +97,22 @@ function Frame({
         {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
       </g>
     </svg>
+  )
+}
+
+/**
+ * The worn Theme's Bat-Clawd, still: its portrait (stillStep), with no clock, pointer or click.
+ * Decoration, for a preview.
+ */
+export function BatClawdStill({ size }: { size: number }) {
+  const suit = useSuit()
+  const { pose, look } = stillStep(suit)
+  return (
+    <span className="clawd" style={{ width: size, height: (size * 13) / 28 }} aria-hidden="true">
+      <span className="clawd__mover">
+        <Frame suit={suit} pose={pose} gaze={{ x: look, y: 0 }} className="clawd__frame" />
+      </span>
+    </span>
   )
 }
 
