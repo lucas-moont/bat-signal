@@ -78,6 +78,20 @@ describe('the rain', () => {
     )
   })
 
+  // Nearer depths are longer and faster: a drop that comes back keeps its depth's length, not
+  // another's, or a faint far drop would streak like a near one.
+  it("keeps each drop's streak to its depth after it comes back", () => {
+    const painter = rain()
+    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx, TICK)
+    const { ctx, strokes } = recorder()
+    painter.paint(ctx, TICK)
+    strokes.forEach((stroke, depth) => {
+      const longest = (8 + depth * 5 + 6) * (15 / 8)
+      for (const d of stroke.segments)
+        expect(Math.hypot(d.x0 - d.x1, d.y0 - d.y1)).toBeLessThanOrEqual(longest + 1e-9)
+    })
+  })
+
   it('keeps falling: a drop that leaves the bottom comes back above the top', () => {
     const painter = rain()
     for (let i = 0; i < 200; i++) painter.paint(recorder().ctx, TICK)
