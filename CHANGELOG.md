@@ -10,6 +10,11 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 - Editing `settings.json` by hand while Bat-Signal runs applies at once. A file that doesn't parse is ignored, and keys left out keep their values.
 - A **Theme words** switch in Settings, under Look (`"lexicon"`, on by default). Off, the panel and the disc use the standard names for cases, Needs you and the stamps whatever the Theme. Windows notifications and the tray always do. The Batman (2022) has no names of its own, so the switch changes nothing yet.
 
+### Changed
+
+- The rain is a Theme's **Atmosphere**: `settings.json` keeps it as `"atmosphere"`, and an old `"rain"` carries over, so rain turned off stays off.
+- The rain falls on the clock every other effect shares, at 8 steps a second instead of its own 15, with longer streaks so it still reads as rain.
+
 ## [1.1.2] - 2026-10-09
 
 ### Changed

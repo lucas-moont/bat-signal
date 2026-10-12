@@ -2,6 +2,7 @@
 // settings.json keeps; it names the film or comic, while each Theme's display name alludes to it.
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
+import { VENGEANCE_RAIN, type Atmosphere } from './atmospheres'
 import { emblem, WINGS, type Emblem } from './emblems'
 import { VENGEANCE_SUIT, type Suit } from './suits'
 import { STANDARD_WORDS, withLexicon, type Words } from './words'
@@ -25,6 +26,8 @@ export interface Theme {
   emblem: Emblem
   /** Bat-Clawd dressed as this version of Batman (shared/suits.ts). */
   suit: Suit
+  /** What its canvas paints behind the panel (shared/atmospheres.ts). */
+  atmosphere: Atmosphere
 }
 
 export const THEMES: Record<ThemeId, Theme> = {
@@ -34,6 +37,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     words: STANDARD_WORDS,
     emblem: emblem(WINGS, 'wear'),
     suit: VENGEANCE_SUIT,
+    atmosphere: VENGEANCE_RAIN,
   },
 }
 

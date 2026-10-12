@@ -19,10 +19,10 @@ export interface AnnouncePrefs {
 }
 
 export interface Settings {
-  /** Motion beyond the essentials (intro, rain, typewriter, flying mascot). */
+  /** Motion beyond the essentials (intro, the Atmosphere, typewriter, flying mascot). */
   animations: boolean
-  /** The rain falling behind everything. */
-  rain: boolean
+  /** The Theme's Atmosphere behind everything (CONTEXT.md): VENGEANCE's rain. Was `rain`. */
+  atmosphere: boolean
   alwaysOnTop: boolean
   /** Window opacity, OPACITY_MIN to OPACITY_MAX. */
   opacity: number
@@ -45,7 +45,7 @@ const toastMap = (pick: (group: NewsGroup) => boolean): AnnouncePrefs['toast'] =
 
 export const DEFAULT_SETTINGS: Settings = {
   animations: true,
-  rain: true,
+  atmosphere: true,
   alwaysOnTop: true,
   opacity: 1,
   theme: DEFAULT_THEME,
@@ -86,7 +86,8 @@ export function parseSettings(raw: unknown, fallback: Settings = DEFAULT_SETTING
   const o = obj(raw)
   return {
     animations: bool(o['animations']) ?? fallback.animations,
-    rain: bool(o['rain']) ?? fallback.rain,
+    // A file from before the Themes says rain: whoever turned it off keeps the Atmosphere off.
+    atmosphere: bool(o['atmosphere']) ?? bool(o['rain']) ?? fallback.atmosphere,
     alwaysOnTop: bool(o['alwaysOnTop']) ?? fallback.alwaysOnTop,
     opacity: clamp(num(o['opacity']) ?? fallback.opacity, OPACITY_MIN, OPACITY_MAX),
     theme: isThemeId(o['theme']) ? o['theme'] : fallback.theme,

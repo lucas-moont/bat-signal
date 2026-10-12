@@ -6,8 +6,8 @@
 // between ticks, so the compositor sleeps. Values are written straight onto the few elements
 // that pulse: a CSS variable on the root would restyle the whole page on every tick.
 import { useEffect, useRef, useState, type RefObject } from 'react'
+import { FPS } from './clockRate'
 
-const FPS = 8
 const PULSE_PERIOD_MS = 2600 // breathing glow on urgent cards
 const BEAT_PERIOD_MS = 1400 // heartbeat of "working" dots
 
@@ -55,6 +55,18 @@ function onTick(listener: Listener): () => void {
   }
 }
 
+/** Calls `step(now)` on every tick while `active`, bypassing React: a canvas painting a step a tick. */
+export function useEveryTick(active: boolean, step: (now: number) => void): void {
+  const stepRef = useRef(step)
+  useEffect(() => {
+    stepRef.current = step
+  })
+  useEffect(() => {
+    if (!active) return
+    return onTick((_tick, now) => stepRef.current(now))
+  }, [active])
+}
+
 /**
  * Restyles one element on every tick while `active`, bypassing React. When inactive the
  * element is reset with `apply(el, null)`.
@@ -68,6 +80,7 @@ export function useLiveStyle<T extends HTMLElement>(
   useEffect(() => {
     applyRef.current = apply
   })
+  // Its own subscription rather than useEveryTick's: it joins the clock only once its element is there.
   useEffect(() => {
     const el = ref.current
     if (!el) return
