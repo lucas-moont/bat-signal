@@ -40,6 +40,8 @@ export interface Terms {
 export interface Voice {
   /** The product's name on the masthead and in the intro. */
   wordmark: string
+  /** The Theme's own name, alluding to its film or comic (jury §10), and that film, as the picker credits it. */
+  theme: { name: string; film: string }
   /** The title bar's and tabs' buttons. */
   chrome: {
     toWatch: string
@@ -118,6 +120,8 @@ export interface Voice {
     atmosphere: TermSetting
     /** The Lexicon switch (CONTEXT.md, Lexicon). */
     lexicon: TermSetting
+    /** The Theme picker: its label and hint, and each Theme's credit line under its name. */
+    theme: Setting & { credit: (film: string) => string }
     layout: Setting
     onTop: Setting
     opacity: string
@@ -297,6 +301,8 @@ export function withLexicon(words: Words, lexicon: boolean): Words {
 
 export const STANDARD_VOICE: Voice = {
   wordmark: PRODUCT.toUpperCase(),
+  // VENGEANCE's own: a Theme that spreads this Voice names itself over it.
+  theme: { name: 'VENGEANCE', film: 'The Batman (2022)' },
   chrome: {
     toWatch: 'Shrink to the watch strip',
     toDisc: 'Fold into the signal disc',
@@ -366,6 +372,7 @@ export const STANDARD_VOICE: Voice = {
     sound: 'Sound',
     animations: { label: 'Animations', hint: 'Intro, flying mascot, typewriter and transitions' },
     atmosphere: { label: 'Rain', hint: (t) => `Gotham weather behind the ${lower(t.case.many)}` },
+    theme: { label: 'Theme', hint: 'Which Batman Bat-Signal dresses as', credit: (film) => `after ${film}` },
     lexicon: {
       label: 'Theme words',
       hint: (t) => `The Theme's own names for ${lower(t.case.many)}, ${t.needsYou.label} and the stamps`,

@@ -22,6 +22,7 @@ import { Icon } from './Icon'
 import { Section } from './Section'
 import { SettingRow } from './SettingRow'
 import { ShortcutField } from './ShortcutField'
+import { ThemePicker } from './ThemePicker'
 import './Sheets.css'
 
 /** A drawer that rises from the bottom over a dimmed backdrop. */
@@ -338,6 +339,7 @@ export function SettingsSheet({
     <Sheet kicker={say.kicker} title={say.title} onClose={onClose}>
       <div className="settings">
         <Section title={say.look}>
+          <ThemePicker theme={settings.theme} onChange={(theme) => onChange({ theme })} />
           <Toggle
             {...say.animations}
             on={settings.animations}

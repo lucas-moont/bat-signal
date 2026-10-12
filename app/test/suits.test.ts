@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { scriptAt, VENGEANCE_SUIT, type Script } from '../src/shared/suits'
+import { scriptAt, stillStep, VENGEANCE_SUIT, type Script } from '../src/shared/suits'
 
 const pose = VENGEANCE_SUIT.poses.flying[0]
 const steps: Script = [
@@ -15,5 +15,15 @@ describe('a script on the clock', () => {
 
   it('gives its final step for Infinity, as under reduced motion', () => {
     expect(scriptAt(steps, Infinity)).toBe(steps[2])
+  })
+})
+
+describe("a Theme's still portrait", () => {
+  it('is the final step of its Signature pose', () => {
+    expect(stillStep({ ...VENGEANCE_SUIT, signature: steps })).toBe(steps[2])
+  })
+
+  it('is its flying pose, looking ahead, without one', () => {
+    expect(stillStep(VENGEANCE_SUIT)).toEqual({ pose: VENGEANCE_SUIT.poses.flying[0], look: 0 })
   })
 })

@@ -15,10 +15,10 @@ export function sourcesUnder(dir: string, ...extensions: string[]): { path: stri
     .map((path) => ({ path, text: readFileSync(join(root, path), 'utf8') }))
 }
 
-/** A Theme's variables, as written in its stylesheet's block scoped to <html data-theme>. */
+/** A Theme's variables, as written in its stylesheet's block scoped to [data-theme]. */
 export function themeVariables(theme: string): Map<string, string> {
   const css = readFileSync(join(RENDERER, `styles/themes/${theme}.css`), 'utf8')
-  const block = new RegExp(`:root\\[data-theme='${theme}'\\]\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? ''
+  const block = new RegExp(`\\[data-theme='${theme}'\\]\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? ''
   return new Map([...block.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map((m) => [m[1]!, m[2]!.trim()] as const))
 }
 

@@ -1,0 +1,122 @@
+/* The Theme picker: case-file folders in a drawer that slides sideways. Each folder wears its own
+   Theme ([data-theme] on it), so every variable below is that Theme's. */
+/* A settings row, its label and hint stacked over the drawer. */
+.setting.theme-picker {
+  display: grid;
+  gap: 2px;
+}
+
+.theme-picker__drawer {
+  display: flex;
+  gap: 8px;
+  /* Room above for the folders' tabs, around for a focus ring, and below for the worn folder's
+     spill of light, which the scroll box would otherwise cut off. */
+  padding: 9px 3px 22px;
+  margin: 0 -3px -16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.folder {
+  position: relative;
+  flex: 0 0 124px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 9px 10px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg in srgb, var(--surface), var(--surface-deep));
+  color: var(--bone);
+  /* Its own Theme's body face: an inherited font would keep the page Theme's. */
+  font: inherit;
+  font-family: var(--font-body);
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition:
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+/* The folder's tab, on its top edge. */
+.folder::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 9px;
+  width: 46px;
+  height: 7px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  background: var(--surface);
+  transition: border-color 0.2s var(--ease-out);
+}
+.folder:hover {
+  border-color: var(--ash-dim);
+}
+.folder:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The worn folder: its border and tab lit in its accent, with a spill of light under it. */
+.folder--worn,
+.folder--worn:hover,
+.folder--worn::before {
+  border-color: var(--accent);
+}
+.folder--worn {
+  cursor: default;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 8px 22px -10px var(--accent-glow);
+}
+
+.folder__preview {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-bottom: auto;
+  pointer-events: none;
+}
+/* The others wait in the dark: their preview dims, their words stay readable. */
+.folder:not(.folder--worn) .folder__preview {
+  opacity: 0.55;
+}
+/* The maintainer's decision (jury §10): the picker previews each Theme's Alarm color. A stamp's own
+   ink is its tier's, which a Theme may keep off its Alarm color, so this one names it, as the aura does. */
+.folder .stamp {
+  color: var(--signal-hot);
+  font-size: 9.5px;
+  padding: 2px 5px 1px;
+}
+/* Picked: the stamp lands once. */
+.folder--stamped .stamp {
+  animation: folder-stamp 0.32s var(--ease-out);
+}
+@keyframes folder-stamp {
+  from {
+    transform: scale(1.35) rotate(var(--stamp-tilt));
+    opacity: 0;
+  }
+}
+
+.folder__name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.05;
+  letter-spacing: 0.6px;
+}
+.folder:not(.folder--worn) .folder__name {
+  color: var(--ash);
+}
+.folder__credit {
+  margin-top: 2px;
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--ash);
+}

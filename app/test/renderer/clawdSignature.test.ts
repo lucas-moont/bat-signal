@@ -1,32 +1,24 @@
+import '../fixtures/hiddenPage'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { afterAll, describe, expect, it, vi } from 'vitest'
-// The shared animation clock listens to the page's visibility as it loads; a hidden page keeps it stopped.
-vi.hoisted(() => vi.stubGlobal('document', { hidden: true, addEventListener: () => {} }))
-afterAll(() => vi.unstubAllGlobals())
+import { describe, expect, it } from 'vitest'
 
 import { CalmContext } from '../../src/renderer/src/calm'
 import { BatClawd } from '../../src/renderer/src/components/BatClawd'
 import { BatSignalIntro } from '../../src/renderer/src/components/BatSignalIntro'
-import { VENGEANCE_SUIT, type Pose } from '../../src/shared/suits'
-import { standInTheme } from '../fixtures/themes'
-
-/** A pose told apart in the markup by a path no real suit draws. */
-const marked = (mark: string): Pose => ({
-  ...VENGEANCE_SUIT.poses.flying[0],
-  behind: [{ kind: 'path', d: `M0 0 L${mark} 0 Z`, className: 'clawd__cape' }],
-})
+import { VENGEANCE_SUIT } from '../../src/shared/suits'
+import { markedPose, standInTheme } from '../fixtures/themes'
 
 // A Theme in the jury's style stands in for VENGEANCE: a homage in place of a pose, a Signature
 // pose in three ticks, and an aura.
 standInTheme({
   suit: {
     ...VENGEANCE_SUIT,
-    poses: { ...VENGEANCE_SUIT.poses, sleeping: [marked('1.11')] },
+    poses: { ...VENGEANCE_SUIT.poses, sleeping: [markedPose('1.11')] },
     signature: [
-      { pose: marked('2.22'), look: 0 },
-      { pose: marked('3.33'), look: 0 },
-      { pose: marked('4.44'), look: 0 },
+      { pose: markedPose('2.22'), look: 0 },
+      { pose: markedPose('3.33'), look: 0 },
+      { pose: markedPose('4.44'), look: 0 },
     ],
     aura: true,
   },

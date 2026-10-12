@@ -8,6 +8,7 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 - `settings.json` keeps the Theme (`"theme"`, The Batman (2022) by default; an unknown one falls back to it). Only one Theme exists so far; the next ones arrive in this release.
 - Editing `settings.json` by hand while Bat-Signal runs applies at once. A file that doesn't parse is ignored, and keys left out keep their values.
+- A **Theme picker** at the top of Settings → Look: each Theme a case-file folder with its Bat-Clawd, its stamp in its Alarm color, its name and the film it follows. A click or the arrow keys switch, live. The Batman (2022), VENGEANCE, is the only Theme so far.
 - A **Theme words** switch in Settings, under Look (`"lexicon"`, on by default). Off, the panel and the disc use the standard names for cases, Needs you and the stamps whatever the Theme. Windows notifications and the tray always do. The Batman (2022) has no names of its own, so the switch changes nothing yet.
 
 ### Changed
