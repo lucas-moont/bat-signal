@@ -179,8 +179,8 @@ A black-on-black noir palette with one family of reds that work as light and ink
 - **Pen Hot** (ink-hot) and **Pen Soft** (ink-soft): Hot Signal and Brick Ink lifted just enough to reach 4.5:1 on black at stamp size. They ink the hand-drawn pen stroke and the margin stamps by tier. They are scoped to the report and do not replace the approved stamp inks in the files layout.
 
 ### Theme variables
-Every color the renderer paints is a variable in the Theme's stylesheet, `app/src/renderer/src/styles/themes/<id>.css` (VENGEANCE's is `the-batman-2022.css`), named by role and scoped to `<html data-theme="<id>">`, so a Theme swaps the lot; `app/test/themeColors.test.ts` fails on a color written anywhere else. VENGEANCE sets most roles as aliases of the palette above, so the roles change nothing on screen:
-- **Accent** (accent, accent-hot, accent-deep, accent-glow): emphasis that is not an alarm: the wordmarks, focus outlines, selection, checked switches, the slider, card hover border and glow, the tab underline, the progress fill, the sheet's spill and the click ripple. VENGEANCE maps them to Signal Red, Hot Signal, Dried Blood and Signal Glow; another Theme can keep its Alarm color off them.
+Every color the renderer paints is a variable in the Theme's stylesheet, `app/src/renderer/src/styles/themes/<id>.css` (VENGEANCE's is `the-batman-2022.css`), named by role and scoped to `[data-theme="<id>"]`: on `<html>` for the page, which `main.tsx` sets before the first render, and on any box that previews a Theme (the Theme picker's folders, through `Previewing` in `theme.ts`), so a Theme swaps the lot and one box can wear another Theme than the page; `app/test/themeColors.test.ts` fails on a color written anywhere else. VENGEANCE sets most roles as aliases of the palette above, so the roles change nothing on screen:
+- **Accent** (accent, accent-hot, accent-deep, accent-glow): emphasis that is not an alarm: the wordmarks, focus outlines, selection, checked switches, the slider, card hover border and glow, the tab underline, the progress fill, the sheet's spill, the worn Theme folder and the click ripple. VENGEANCE maps them to Signal Red, Hot Signal, Dried Blood and Signal Glow; another Theme can keep its Alarm color off them.
 - **Stamp inks by tier** (stamp-hot, stamp-soft, stamp-quiet): what files-layout stamps read, never an alarm shade directly. VENGEANCE: Hot Signal, Brick Ink, Ash. The Night Report keeps its pen inks.
 - **In progress** (in-progress, in-progress-glow): a task being worked on in the files layout: its glyph, its running state, its timeline step. VENGEANCE lights it in Hot Signal; another Theme can keep its Alarm color off running work.
 - **Danger** (danger, Dried Blood) for the Quit hover, and **Report rule** (report-rule, Dried Blood at 75%) for the margin rule.
@@ -295,6 +295,13 @@ Typewriter caps in a 1.5px box, rotated, at 92% opacity, with a noise mask so th
 
 ### Sheets
 Bottom sheets rise over a 62% black backdrop with a 1.5px blur. They have 10px top corners, a warm near-black gradient, a translucent red top edge, the sheet spill glow, a 34x3 grip, and an Anton title.
+
+### Theme picker
+At the top of the settings sheet's Look section, under a "Theme" label and hint: each Theme a case-file folder in a drawer that slides sideways (scroll-snapped, a thin Line scrollbar). Each folder wears its own Theme (`data-theme` on it), so it shows that Theme's still Bat-Clawd (its Signature pose's final step, or flying without one), its permission stamp word in its own ink, its display name in its display face at 15px and its film in 10.5px Ash.
+- **Folder:** 124x120, a Surface to near-black (surface-deep) gradient, 1px Line border, 4px radius, a 46x7 tab on its top edge; hover turns the border ash-dim, focus is a 1px accent outline offset 2px.
+- **Worn:** border and tab lit in its accent, a 40% accent ring and a spill of accent glow under it. The others dim their preview to 55% and set their name in Ash; their words stay readable.
+- **Picked:** a click or a key picks, and the panel re-dresses at once. The picked folder's stamp lands once (0.32s, from 1.35x and transparent, on the ease-out curve), skipped when calm (reduced motion asked by the OS, or animations turned off).
+- **Keyboard:** a radio group with roving focus; the arrows move round the ends, Home and End go to the first and last.
 
 ### Signal Disc and Notice Card (signature)
 - **Disc:** 64px. Unlit, it is dark glass with a warm rim. Lit, a red radial lens runs from #ff3b2f through Hot Signal and Signal Red to near-black, with the bat emblem as a shadow in it and a soft halo. The count is an Anton numeral on black in a Hot Signal box.
