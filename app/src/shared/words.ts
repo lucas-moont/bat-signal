@@ -301,6 +301,7 @@ export function withLexicon(words: Words, lexicon: boolean): Words {
 
 export const STANDARD_VOICE: Voice = {
   wordmark: PRODUCT.toUpperCase(),
+  // VENGEANCE's own: a Theme that spreads this Voice names itself over it.
   theme: { name: 'VENGEANCE', film: 'The Batman (2022)' },
   chrome: {
     toWatch: 'Shrink to the watch strip',

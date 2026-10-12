@@ -19,6 +19,13 @@ describe('the Themes', () => {
     expect(film).not.toBe('')
   })
 
+  // A Theme whose words spread VENGEANCE's Voice without naming itself would show a second
+  // VENGEANCE folder.
+  it('each have a name of their own', () => {
+    const names = THEME_IDS.map((id) => THEMES[id].words.voice.theme.name)
+    expect(new Set(names).size).toBe(names.length)
+  })
+
   it('names VENGEANCE after The Batman (2022)', () => {
     expect(THEMES['the-batman-2022'].words.voice.theme).toEqual({
       name: 'VENGEANCE',
