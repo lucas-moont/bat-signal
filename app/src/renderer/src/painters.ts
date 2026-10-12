@@ -40,15 +40,14 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   let width = 0
   let height = 0
 
-  const spawn = (anywhere: boolean): Drop => {
-    const depth = Math.floor(random() * depths.length)
-    return {
-      x: random() * (width + height * slant) - height * slant,
-      y: anywhere ? random() * height : -20,
-      len: (8 + depth * 5 + random() * 6) * streak,
-      speed: 380 + depth * 110 + random() * 80,
-      depth,
-    }
+  /** A drop in a depth (a random one by default): anywhere on the canvas, or just above it. */
+  const spawn = (anywhere: boolean, depth = Math.floor(random() * depths.length), d = {} as Drop): Drop => {
+    d.x = random() * (width + height * slant) - height * slant
+    d.y = anywhere ? random() * height : -20
+    d.len = (8 + depth * 5 + random() * 6) * streak
+    d.speed = 380 + depth * 110 + random() * 80
+    d.depth = depth
+    return d
   }
 
   return {
@@ -63,12 +62,12 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
         ctx.globalAlpha = alpha
         ctx.beginPath()
         for (let i = 0; i < drops.length; i++) {
-          let d = drops[i]!
+          const d = drops[i]!
           if (d.depth !== depth) continue
           d.y += d.speed * t
           d.x += d.speed * t * slant
-          // Gone below: it starts again above the top (in its depth, so this path still draws it).
-          if (d.y - d.len > height) d = drops[i] = { ...spawn(false), depth }
+          // Gone below: it starts again above the top, in its depth, so this path still draws it.
+          if (d.y - d.len > height) spawn(false, depth, d)
           ctx.moveTo(d.x, d.y)
           ctx.lineTo(d.x - dx * d.len, d.y - dy * d.len)
         }
