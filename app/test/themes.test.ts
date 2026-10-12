@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, themeFromFlags, THEMES } from '../src/shared/themes'
@@ -9,6 +9,17 @@ describe('the Themes', () => {
   // mismatch flashes the wrong color at every opening.
   it.each(THEME_IDS)("%s paints the window in its stylesheet's ground", (id) => {
     expect(themeVariables(id).get('--abyss')?.toLowerCase()).toBe(THEMES[id].ground.toLowerCase())
+  })
+
+  // The picker names each Theme by its display name and credits the film or comic it follows
+  // (jury §10: names allude to the film; the credit says which).
+  it.each(THEME_IDS)('%s has a display name and the film it follows', (id) => {
+    expect(THEMES[id].name).toMatch(/^[A-Z][A-Z ]+$/)
+    expect(THEMES[id].film).not.toBe('')
+  })
+
+  it('names VENGEANCE after The Batman (2022)', () => {
+    expect(THEMES['the-batman-2022']).toMatchObject({ name: 'VENGEANCE', film: 'The Batman (2022)' })
   })
 
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
@@ -27,6 +38,13 @@ describe("the Themes' stylesheets and fonts", () => {
   it.each(THEME_IDS)('%s has both', (id) => {
     expect(files).toContain(`${id}.css`)
     expect(files).toContain(`${id}.fonts.ts`)
+  })
+
+  // The picker previews each Theme inside its folder: its stylesheet must dress any element that
+  // wears its attribute, not only the page.
+  it.each(THEME_IDS)("%s's colors dress any element that wears it, not only the page", (id) => {
+    const css = readFileSync(join(RENDERER, `styles/themes/${id}.css`), 'utf8')
+    expect(css).toMatch(new RegExp(String.raw`(^|[\s,}])\[data-theme='${id}'\]\s*\{`, 'm'))
   })
 
   it('belong to known Themes only', () => {
