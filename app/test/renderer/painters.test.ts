@@ -74,6 +74,20 @@ describe('the rain', () => {
     expect((b.x0 - a.x0) / (b.y0 - a.y0)).toBeCloseTo(Math.tan(VENGEANCE_RAIN.angle))
   })
 
+  // A late tick (a busy page) moves the drops as far as the time that passed, so the rain keeps its
+  // speed; a long gap (the page waking) moves them two ticks at most, not across the window.
+  it('falls as far as the time between ticks, up to two ticks', () => {
+    const fall = (dt: number) => {
+      const painter = rain()
+      const [first, next] = [recorder(), recorder()]
+      painter.paint(first.ctx, 0)
+      painter.paint(next.ctx, dt)
+      return next.strokes[0]!.segments[0]!.y0 - first.strokes[0]!.segments[0]!.y0
+    }
+    expect(fall(2 / FPS)).toBeCloseTo(2 * fall(1 / FPS))
+    expect(fall(5)).toBeCloseTo(fall(2 / FPS))
+  })
+
   // At 8 steps a second a drop falls further between ticks than it did at the old 15: a streak
   // too short for its step reads as dashes jumping, not rain falling. A quarter of the step, at
   // least, is the share the shortest streaks covered at 15.
