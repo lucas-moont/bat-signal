@@ -29,6 +29,13 @@ const ThemeContext = createContext<ThemeId>(DEFAULT_THEME)
 /** The Theme the page wears: the default outside a Wearing (a component rendered on its own). */
 export const useTheme = (): ThemeId => useContext(ThemeContext)
 
+/**
+ * Reads as another Theme from here down (its words, emblem and suit) without wearing it on the
+ * page: a preview, as in the picker's folders. Its colors come from a [data-theme] on the box.
+ */
+export const Previewing = ({ theme, children }: { theme: ThemeId; children: ReactNode }) =>
+  createElement(ThemeContext, { value: theme }, children)
+
 const LexiconContext = createContext(true)
 
 /** Whether the page speaks the Theme's Lexicon (CONTEXT.md): on outside a Wearing, as by default. */
