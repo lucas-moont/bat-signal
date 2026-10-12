@@ -42,17 +42,17 @@ describe('the rain', () => {
   const twoTicks = () => {
     const painter = rain()
     const [first, next] = [recorder(), recorder()]
-    painter.paint(first.ctx, false)
-    painter.paint(next.ctx)
+    painter.paint(first.ctx, 0)
+    painter.paint(next.ctx, 1 / FPS)
     return [first.strokes, next.strokes] as const
   }
 
   /** The rain after a while (200 ticks: drops have left the bottom and come back). */
   const later = () => {
     const painter = rain()
-    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx)
+    for (let i = 0; i < 200; i++) painter.paint(recorder().ctx, 1 / FPS)
     const { ctx, strokes } = recorder()
-    painter.paint(ctx)
+    painter.paint(ctx, 1 / FPS)
     return strokes
   }
 

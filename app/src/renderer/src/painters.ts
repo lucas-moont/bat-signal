@@ -8,14 +8,16 @@ export interface Painter {
   /** The canvas's new size in CSS pixels: the scene starts over to fill it. */
   resize(width: number, height: number): void
   /**
-   * One tick of the clock: move the scene a step (not when `step` is false, as right after a
-   * resize), then paint. A still scene may leave the canvas as it is on most ticks.
+   * One tick of the clock, `dt` seconds after the last (0 right after a resize): move the scene
+   * that far, then paint. A still scene may leave the canvas as it is on most ticks.
    */
-  paint(ctx: CanvasRenderingContext2D, step?: boolean): void
+  paint(ctx: CanvasRenderingContext2D, dt: number): void
 }
 
-/** One tick of the clock, in seconds. The clock stops while the window is hidden, so a tick is a tick. */
+/** One tick of the clock, in seconds. */
 const STEP = 1 / FPS
+/** The longest move painted: the page waking from a pause doesn't fling the scene across. */
+const MAX_DT = 2 * STEP
 /** The rain's frame rate on its own timer, before it joined the shared clock. */
 const OLD_FPS = 15
 
@@ -59,8 +61,8 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
       ;[width, height] = [w, h]
       drops = Array.from({ length: Math.round(((width * height) / 1000) * density) }, () => spawn(true))
     },
-    paint(ctx, step = true) {
-      const t = step ? STEP : 0
+    paint(ctx, dt) {
+      const t = Math.min(dt, MAX_DT)
       ctx.clearRect(0, 0, width, height)
       depths.forEach((alpha, depth) => {
         ctx.globalAlpha = alpha

@@ -15,8 +15,11 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
   const painter = useMemo(() => painterFor(atmosphere), [atmosphere])
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
-  useEveryTick(true, () => {
-    if (context.current) painter.paint(context.current)
+  const last = useRef<number | null>(null)
+  useEveryTick(true, (now) => {
+    if (context.current)
+      painter.paint(context.current, last.current === null ? 0 : (now - last.current) / 1000)
+    last.current = now
   })
 
   useEffect(() => {
@@ -45,7 +48,7 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       recolor()
       painter.resize(width, height)
       // Painted at once, rather than blank until the next tick.
-      painter.paint(ctx, false)
+      painter.paint(ctx, 0)
     }
 
     // The observer reports the canvas's size as it starts, and on every change after.
