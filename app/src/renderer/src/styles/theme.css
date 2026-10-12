@@ -1,6 +1,6 @@
 /*
  * What every Theme shares. Each Theme's colors and faces are in styles/themes/<id>.css, scoped to
- * <html data-theme="<id>">, which main.tsx sets before the first render.
+ * [data-theme="<id>"]: <html>, which main.tsx sets before the first render, and a preview's box.
  */
 :root {
   --radius: 4px;

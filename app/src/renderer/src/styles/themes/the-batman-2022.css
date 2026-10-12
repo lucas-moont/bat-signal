@@ -1,13 +1,14 @@
 /*
  * VENGEANCE, the default Theme, after The Batman (2022): its palette and faces. Every color the
  * renderer paints is named here, by role, so a Theme can swap the lot (test/themeColors.test.ts
- * fails on a color written anywhere else).
+ * fails on a color written anywhere else). Scoped to whatever wears the attribute: the page, and
+ * the Theme's own folder in the picker, which previews it.
  * - Blacks: frame samples (framethrower.ai) — used only as highlights over pure black.
  * - --signal: average of the red pixels in the official title logo (measured: #af0006).
  * - --blood: "Batman 2022" palette on color-hex.com.
  * - --clawd: Claude Code's own `clawd_body` color, rgb(215,119,87).
  */
-:root[data-theme='the-batman-2022'] {
+[data-theme='the-batman-2022'] {
   --abyss: #000000;
   --smoke: #080808;
   --surface: #13100e;
