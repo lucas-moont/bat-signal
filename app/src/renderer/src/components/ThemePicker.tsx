@@ -3,12 +3,13 @@
 // Alarm ink, its name and the film it follows). A radio group: a click or the arrows pick, and the
 // panel re-dresses at once.
 import { useEffect, useId, useRef, useState } from 'react'
-import { THEME_IDS, wordsOf, type ThemeId } from '@shared/themes'
-import { CalmContext, useIsCalm } from '../calm'
+import { THEME_IDS, type ThemeId } from '@shared/themes'
+import { useIsCalm } from '../calm'
 import { loadFonts } from '../styles/themes/fonts'
-import { Previewing, useLexicon } from '../theme'
+import { Previewing } from '../theme'
 import { useWords } from '../words'
-import { BatClawd } from './BatClawd'
+import { BatClawdStill } from './BatClawd'
+import { SettingRow } from './SettingRow'
 import './ThemePicker.css'
 
 /** The Theme an arrow, Home or End moves to from `current` (round at the ends); none for another key. */
@@ -24,7 +25,6 @@ export function themeAfter<T>(ids: readonly T[], current: T, key: string): T | u
 
 export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (theme: ThemeId) => void }) {
   const say = useWords().voice.settings.theme
-  const lexicon = useLexicon()
   const calm = useIsCalm()
   const labelId = useId()
   const folders = useRef(new Map<ThemeId, HTMLButtonElement>())
@@ -46,13 +46,7 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
   }
 
   return (
-    <div className="theme-picker">
-      <span className="setting__text">
-        <span id={labelId} className="setting__label">
-          {say.label}
-        </span>
-        <span className="setting__hint">{say.hint}</span>
-      </span>
+    <SettingRow label={say.label} hint={say.hint} labelId={labelId} className="theme-picker">
       <div
         role="radiogroup"
         aria-labelledby={labelId}
@@ -64,40 +58,66 @@ export function ThemePicker({ theme, onChange }: { theme: ThemeId; onChange: (th
           pick(next)
         }}
       >
-        {THEME_IDS.map((id) => {
-          const worn = id === theme
-          const { terms, voice } = wordsOf(id, lexicon)
-          return (
-            <button
-              key={id}
-              ref={(el) => {
+        {THEME_IDS.map((id) => (
+          // The folder reads as its Theme throughout: its words, its suit and (by data-theme) its colors.
+          <Previewing key={id} theme={id}>
+            <Folder
+              id={id}
+              worn={id === theme}
+              stamped={stamped === id}
+              credit={say.credit}
+              onPick={() => pick(id)}
+              onStamped={() => setStamped(null)}
+              folderRef={(el) => {
                 if (el) folders.current.set(id, el)
                 else folders.current.delete(id)
               }}
-              type="button"
-              role="radio"
-              aria-checked={worn}
-              tabIndex={worn ? 0 : -1}
-              data-theme={id}
-              className={`folder${worn ? ' folder--worn' : ''}${stamped === id ? ' folder--stamped' : ''}`}
-              onClick={() => pick(id)}
-              onAnimationEnd={() => setStamped(null)}
-            >
-              <span className="folder__preview" aria-hidden="true">
-                {/* Its own Theme's suit, still: its Signature pose's final step, or flying without one. */}
-                <Previewing theme={id}>
-                  <CalmContext value={true}>
-                    <BatClawd mood="flying" size={58} reveal />
-                  </CalmContext>
-                </Previewing>
-                <span className="stamp">{terms.stamp.permission}</span>
-              </span>
-              <span className="folder__name">{voice.theme.name}</span>
-              <span className="folder__credit">{say.credit(voice.theme.film)}</span>
-            </button>
-          )
-        })}
+            />
+          </Previewing>
+        ))}
       </div>
-    </div>
+    </SettingRow>
+  )
+}
+
+/** One Theme's folder, read inside its own Theme. */
+function Folder({
+  id,
+  worn,
+  stamped,
+  credit,
+  onPick,
+  onStamped,
+  folderRef,
+}: {
+  id: ThemeId
+  worn: boolean
+  stamped: boolean
+  /** The credit line, in the page's own Voice: every folder is credited the same way. */
+  credit: (film: string) => string
+  onPick: () => void
+  onStamped: () => void
+  folderRef: (el: HTMLButtonElement | null) => void
+}) {
+  const { terms, voice } = useWords()
+  return (
+    <button
+      ref={folderRef}
+      type="button"
+      role="radio"
+      aria-checked={worn}
+      tabIndex={worn ? 0 : -1}
+      data-theme={id}
+      className={`folder${worn ? ' folder--worn' : ''}${stamped ? ' folder--stamped' : ''}`}
+      onClick={onPick}
+      onAnimationEnd={onStamped}
+    >
+      <span className="folder__preview" aria-hidden="true">
+        <BatClawdStill size={58} />
+        <span className="stamp">{terms.stamp.permission}</span>
+      </span>
+      <span className="folder__name">{voice.theme.name}</span>
+      <span className="folder__credit">{credit(voice.theme.film)}</span>
+    </button>
   )
 }

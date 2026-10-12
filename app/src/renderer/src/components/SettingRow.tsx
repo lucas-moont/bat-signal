@@ -7,6 +7,7 @@ export function SettingRow({
   warn = false,
   as: Row = 'div',
   className = '',
+  labelId,
   children,
 }: {
   label: string
@@ -16,12 +17,16 @@ export function SettingRow({
   /** A label when the whole line toggles its control. */
   as?: 'div' | 'label'
   className?: string
+  /** The label's id, for a control it names by aria-labelledby (a radio group). */
+  labelId?: string
   children: ReactNode
 }) {
   return (
     <Row className={`setting ${className}`.trim()}>
       <span className="setting__text">
-        <span className="setting__label">{label}</span>
+        <span id={labelId} className="setting__label">
+          {label}
+        </span>
         <span className={`setting__hint${warn ? ' setting__hint--warn' : ''}`}>{hint}</span>
       </span>
       {children}
