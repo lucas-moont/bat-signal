@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { FPS } from '../../src/renderer/src/clockRate'
 import { painterFor } from '../../src/renderer/src/painters'
 import { VENGEANCE_RAIN } from '../../src/shared/atmospheres'
 
@@ -91,7 +92,7 @@ describe('the rain', () => {
   // another's, or a faint far drop would streak like a near one.
   it("keeps each drop's streak to its depth after it comes back", () => {
     later().forEach((stroke, depth) => {
-      const longest = (8 + depth * 5 + 6) * (15 / 8)
+      const longest = (8 + depth * 5 + 6) * (15 / FPS)
       for (const d of stroke.segments) expect(length(d)).toBeLessThanOrEqual(longest + 1e-9)
     })
   })

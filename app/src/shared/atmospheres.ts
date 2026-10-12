@@ -1,10 +1,12 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
 // 8 fps clock. One kind today, VENGEANCE's rain; snow, ash or a still scene arrive as other kinds
-// with their own painter (renderer/src/painters.ts). Its color is the Theme's --rain.
+// with their own painter (renderer/src/painters.ts).
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere {
   kind: 'rain'
+  /** The Theme variable it is painted in, read from the page (a canvas can't use a variable). */
+  color: string
   /** Drops per 1000 square pixels. */
   density: number
   /** Radians from vertical, the wind from the left. */
@@ -18,6 +20,7 @@ export type Atmosphere = RainAtmosphere
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
   kind: 'rain',
+  color: '--rain',
   density: 0.32,
   angle: 0.26,
   depths: [0.06, 0.1, 0.16],

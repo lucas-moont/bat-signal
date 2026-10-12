@@ -1,4 +1,4 @@
-// The Theme's Atmosphere (its rain, for VENGEANCE), film grain and a low street-light haze behind
+// The Theme's Atmosphere (VENGEANCE's is rain), film grain and a low street-light haze behind
 // everything, in the Theme's colors.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -25,13 +25,13 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
     if (!el || !ctx) return
     context.current = ctx
 
-    // A canvas can't read CSS variables: it takes the Theme's rain color as a value. One it can't
+    // A canvas can't read CSS variables: it takes the Atmosphere's color as a value. One it can't
     // use (none, with no Theme on the page, or something that isn't a color) keeps the last good
     // one, even across a resize, rather than the canvas's default black on a black page.
     let color = ''
     const recolor = () => {
-      const rain = getComputedStyle(el).getPropertyValue('--rain').trim()
-      if (rain && CSS.supports('color', rain)) color = rain
+      const value = getComputedStyle(el).getPropertyValue(atmosphere.color).trim()
+      if (value && CSS.supports('color', value)) color = value
       if (color) ctx.strokeStyle = color
     }
 
@@ -59,7 +59,7 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       observer.disconnect()
       themes.disconnect()
     }
-  }, [painter])
+  }, [painter, atmosphere.color])
 
   return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }
@@ -88,7 +88,7 @@ function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
     }
   }, [])
 
-  // New activity, or the pointer just left: keep raining a little longer. Adjusted during
+  // New activity, or the pointer just left: keep it moving a little longer. Adjusted during
   // render (React's pattern for reacting to a changed input) rather than in an effect.
   const [seen, setSeen] = useState({ activity, hovering })
   if (seen.activity !== activity || seen.hovering !== hovering) {
