@@ -8,9 +8,10 @@
 .theme-picker__drawer {
   display: flex;
   gap: 8px;
-  /* Room above for the folders' tabs, and for a focus ring on every side. */
-  padding: 9px 3px 6px;
-  margin: 0 -3px;
+  /* Room above for the folders' tabs, around for a focus ring, and below for the worn folder's
+     spill of light, which the scroll box would otherwise cut off. */
+  padding: 9px 3px 22px;
+  margin: 0 -3px -16px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
