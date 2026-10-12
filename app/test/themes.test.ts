@@ -12,14 +12,18 @@ describe('the Themes', () => {
   })
 
   // The picker names each Theme by its display name and credits the film or comic it follows
-  // (jury §10: names allude to the film; the credit says which).
+  // (jury §10: names allude to the film; the credit says which). Words, so they are its Voice's.
   it.each(THEME_IDS)('%s has a display name and the film it follows', (id) => {
-    expect(THEMES[id].name).toMatch(/^[A-Z][A-Z ]+$/)
-    expect(THEMES[id].film).not.toBe('')
+    const { name, film } = THEMES[id].words.voice.theme
+    expect(name).toMatch(/^[A-Z][A-Z ]+$/)
+    expect(film).not.toBe('')
   })
 
   it('names VENGEANCE after The Batman (2022)', () => {
-    expect(THEMES['the-batman-2022']).toMatchObject({ name: 'VENGEANCE', film: 'The Batman (2022)' })
+    expect(THEMES['the-batman-2022'].words.voice.theme).toEqual({
+      name: 'VENGEANCE',
+      film: 'The Batman (2022)',
+    })
   })
 
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
