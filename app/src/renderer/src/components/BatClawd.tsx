@@ -45,6 +45,9 @@ function rectsOf(map: OutfitMap): Rect[] {
 
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
+/** His frame's height for its width: the 28x13 view around his 16x11 grid. */
+const FRAME_ASPECT = 13 / 28
+
 function layerShape(layer: Layer, key: number, emblem: Emblem) {
   switch (layer.kind) {
     case 'path':
@@ -101,14 +104,14 @@ function Frame({
 }
 
 /**
- * The worn Theme's Bat-Clawd, still: its portrait (stillStep), with no clock, pointer or click.
- * Decoration, for a preview.
+ * The Theme's Bat-Clawd (the worn one, or the one previewed), still: its portrait (stillStep), with
+ * no clock, pointer or click. Decoration, for a preview.
  */
 export function BatClawdStill({ size }: { size: number }) {
   const suit = useSuit()
   const { pose, look } = stillStep(suit)
   return (
-    <span className="clawd" style={{ width: size, height: (size * 13) / 28 }} aria-hidden="true">
+    <span className="clawd" style={{ width: size, height: size * FRAME_ASPECT }} aria-hidden="true">
       <span className="clawd__mover">
         <Frame suit={suit} pose={pose} gaze={{ x: look, y: 0 }} className="clawd__frame" />
       </span>
@@ -232,7 +235,7 @@ export function BatClawd({
       role="img"
       aria-label={watching ? said.watching : said[mood]}
       className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || (revealed && !settled && !calm)) ? ' clawd--aura' : ''}`}
-      style={{ width: size, height: (size * 13) / 28 }}
+      style={{ width: size, height: size * FRAME_ASPECT }}
       onClick={() => {
         if (calm) return
         // A Theme with a Signature pose shows it on a click, in place of the hop (an alarm keeps the hop).

@@ -71,7 +71,7 @@ export interface Suit {
 export const scriptAt = (steps: Script, index: number): Step =>
   steps[Math.min(index, steps.length - 1)] ?? steps[0]
 
-/** The suit's still portrait (the picker's folders): its Signature pose's final step, or flying. */
+/** The suit's still portrait: its Signature pose's final step, or flying without one. */
 export const stillStep = (suit: Suit): Step =>
   suit.signature ? scriptAt(suit.signature, Infinity) : { pose: suit.poses.flying[0], look: 0 }
 
