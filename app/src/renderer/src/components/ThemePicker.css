@@ -31,7 +31,9 @@
   border-radius: var(--radius);
   background: linear-gradient(180deg in srgb, var(--surface), var(--surface-deep));
   color: var(--bone);
+  /* Its own Theme's body face: an inherited font would keep the page Theme's. */
   font: inherit;
+  font-family: var(--font-body);
   text-align: left;
   cursor: pointer;
   scroll-snap-align: start;
