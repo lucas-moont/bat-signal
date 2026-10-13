@@ -7,7 +7,6 @@ import type { Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
-import './BatEmblem.css'
 
 /** The worn Theme's emblem. */
 export const useEmblem = (): Emblem => THEMES[useTheme()].emblem
@@ -74,26 +73,29 @@ export function BatEmblem({
           </filter>
         </defs>
       )}
-      {plate && lit && (
-        <defs>
-          {/* The light at its middle, the Alarm color's fill, and the old brass at the rim. */}
-          <radialGradient id={glow}>
-            <stop offset="0%" style={{ stopColor: 'var(--signal-hot)' }} />
-            <stop offset="65%" style={{ stopColor: 'var(--signal)' }} />
-            <stop offset="100%" style={{ stopColor: 'var(--blood)' }} />
-          </radialGradient>
-        </defs>
-      )}
       {plate && (
-        <ellipse
-          className={`emblem__plate${lit ? ' emblem__plate--lit' : ''}`}
-          cx={plate.box.x + plate.box.width / 2}
-          cy={plate.box.y + plate.box.height / 2}
-          rx={(plate.box.width - plate.rim) / 2}
-          ry={(plate.box.height - plate.rim) / 2}
-          strokeWidth={plate.rim}
-          fill={lit ? `url(#${glow})` : undefined}
-        />
+        <>
+          {lit && (
+            <defs>
+              {/* Lit: the Alarm color's light at its middle, fading to the plate's own rest color. */}
+              <radialGradient id={glow}>
+                <stop offset="0%" style={{ stopColor: 'var(--signal-hot)' }} />
+                <stop offset="65%" style={{ stopColor: 'var(--signal)' }} />
+                <stop offset="100%" style={{ stopColor: 'var(--emblem-plate)' }} />
+              </radialGradient>
+            </defs>
+          )}
+          <ellipse
+            className="emblem__plate"
+            cx={plate.box.x + plate.box.width / 2}
+            cy={plate.box.y + plate.box.height / 2}
+            rx={(plate.box.width - plate.rim) / 2}
+            ry={(plate.box.height - plate.rim) / 2}
+            fill={lit ? `url(#${glow})` : 'var(--emblem-plate)'}
+            stroke="var(--emblem-plate-rim)"
+            strokeWidth={plate.rim}
+          />
+        </>
       )}
       <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
     </svg>

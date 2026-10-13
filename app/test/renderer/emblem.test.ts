@@ -35,8 +35,10 @@ describe('an emblem on a plate', () => {
     expect(draw()).toContain('viewBox="17 -1 86 50"')
   })
 
-  it('stays unlit at rest', () => {
-    expect(draw()).not.toContain('<radialGradient')
+  it('stays unlit at rest, in the Theme variable for it', () => {
+    const markup = draw()
+    expect(markup).not.toContain('<radialGradient')
+    expect(markup).toContain('fill="var(--emblem-plate)" stroke="var(--emblem-plate-rim)"')
   })
 
   // Lit, it glows from a gradient of the Theme's Alarm color; each drawing with an id of its own,
@@ -51,9 +53,7 @@ describe('an emblem on a plate', () => {
       ),
     )
     const ids = [...markup.matchAll(/<radialGradient id="([^"]+)"/g)].map((m) => m[1])
-    const uses = [
-      ...markup.matchAll(/class="emblem__plate emblem__plate--lit"[^>]*fill="url\(#([^)]+)\)"/g),
-    ].map((m) => m[1])
+    const uses = [...markup.matchAll(/class="emblem__plate"[^>]*fill="url\(#([^)]+)\)"/g)].map((m) => m[1])
     expect(ids).toHaveLength(2)
     expect(new Set(ids).size).toBe(2)
     expect(uses).toEqual(ids)

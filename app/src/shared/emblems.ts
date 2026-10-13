@@ -49,5 +49,5 @@ export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): E
     width: Math.max(...xs) - Math.min(...xs),
     height: Math.max(...ys) - Math.min(...ys),
   }
-  return plate ? { path, bat, finish, plate } : { path, bat, finish }
+  return { path, bat, finish, plate }
 }
