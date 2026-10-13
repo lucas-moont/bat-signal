@@ -10,7 +10,8 @@ import { VENGEANCE_SUIT } from '../../src/shared/suits'
 import { markedPose, standInTheme } from '../fixtures/themes'
 
 // A Theme in the jury's style stands in for VENGEANCE: a homage in place of a pose, a Signature
-// pose in three ticks, and an aura.
+// pose in three ticks, its watch kept on the final one, and an aura.
+const held = markedPose('4.44')
 standInTheme({
   suit: {
     ...VENGEANCE_SUIT,
@@ -18,8 +19,9 @@ standInTheme({
     signature: [
       { pose: markedPose('2.22'), look: 0 },
       { pose: markedPose('3.33'), look: 0 },
-      { pose: markedPose('4.44'), look: 0 },
+      { pose: held, look: 0 },
     ],
+    watch: [{ pose: held, look: 0 }],
     aura: true,
   },
 })
@@ -112,7 +114,7 @@ describe("a Theme's Signature pose", () => {
 // Burton's perch glances down to the street and back up to the Signal: a step may move his eyes
 // up or down as well as along the street.
 describe('a step that looks down', () => {
-  // On the perch, a Signature pose held takes its glances from the watch.
+  // On the perch, once the Signature pose is revealed, his watch plays: here at once, in one step.
   standInTheme({
     suit: {
       ...VENGEANCE_SUIT,
@@ -125,6 +127,11 @@ describe('a step that looks down', () => {
     expect(draw({ mood: 'sleeping', perched: true })).toContain(
       'class="clawd__eyes" transform="translate(0.2 0.3)"',
     )
+  })
+
+  // WATCHFUL PROTECTOR's sonar pings from the perch: a watch step may draw a pose of its own.
+  it("draws the watch's own pose once the Signature pose is revealed", () => {
+    expect(draw({ mood: 'sleeping', perched: true })).toContain('M0 0 L7.77 0 Z')
   })
 })
 

@@ -79,7 +79,7 @@ export interface Suit {
   poses: Readonly<Record<MascotMood, Poses>>
   /**
    * His watch on the perch, one step a second, while nothing needs the user. A suit with a Signature
-   * pose holds that pose there instead, and only the watch's glances play.
+   * pose reveals it there first, then keeps its watch on it: the watch starts on its final step.
    */
   watch: Script
   /**
@@ -217,10 +217,10 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
 })
 
 /**
- * His watch on the perch: mostly still, then a flutter (the cape lifting, the wingsuit banking) and
- * two glances, four changes in twelve seconds. A Signature pose held there takes only the glances.
+ * His watch on the perch: mostly still, then two glances and, if the pose has one, a flutter (the
+ * cape lifting, the wingsuit banking): up to four changes in twelve seconds.
  */
-const watchOf = (still: Pose, flutter: Pose, glances: [Partial<Step>, Partial<Step>]): Script => {
+const watchOf = (still: Pose, glances: [Partial<Step>, Partial<Step>], flutter = still): Script => {
   const STILL: Step = { pose: still, look: 0 }
   return [
     STILL,
@@ -292,6 +292,8 @@ const shadowFrom = (y: number): Layer => ({
 const draped = (shadowTop: number) =>
   pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadowTop)])
 const FOOTSTEP = 'translateY(1px)'
+/** Out of the dark, done: only his feet are left in the shadow. */
+const outOfTheDark = draped(8)
 
 /** Level, then banked one way, level, then the other: a frame each, over the bob. */
 const flying = [
@@ -321,7 +323,8 @@ export const VENGEANCE_SUIT: Suit = {
     // The flame flickers between Hot Signal and a smaller Pen Hot, a frame each.
     alarmed: [flare([12.75, -1, 1.5, 1], 'var(--flame)'), flare([13, -1, 1, 1], 'var(--flame-low)')],
   },
-  watch: watchOf(glide, flying[1], [{ look: -GAZE }, { look: -GAZE }]),
+  // On the perch, out of the dark, he glances along the street.
+  watch: watchOf(outOfTheDark, [{ look: -GAZE }, { look: -GAZE }]),
   // Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six
   // steps, four a second), two footsteps landing on the way, until only his feet stay in it.
   signature: [
@@ -329,8 +332,8 @@ export const VENGEANCE_SUIT: Suit = {
     { pose: draped(4.25), look: 0 },
     { pose: draped(5.5), look: 0, transform: FOOTSTEP },
     { pose: draped(6.75), look: 0 },
-    { pose: draped(8), look: 0, transform: FOOTSTEP },
-    { pose: draped(8), look: 0 },
+    { pose: outOfTheDark, look: 0, transform: FOOTSTEP },
+    { pose: outOfTheDark, look: 0 },
   ],
   aura: true,
 }
@@ -478,8 +481,8 @@ export const PALE_MOONLIGHT_SUIT: Suit = {
     flying: [trailA, trailB],
     alarmed: [giantBat],
   },
-  // On the perch he glances down to the street and back up to the Signal (burton-1989.md, 7).
-  watch: watchOf(trailA, trailB, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
+  // On the perch, under the Signal, he glances down to the street and back up (burton-1989.md, 7).
+  watch: watchOf(underTheSignal, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
   // Revealed as he turns from the street to look up at the Signal; held there on the perch.
   signature: [
     { pose: trailB, look: 0 },
