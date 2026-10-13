@@ -17,6 +17,8 @@ const FUNCTION_OR_HEX = String.raw`#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch
 // In CSS any bare color name is a value; in TS only a quoted one is (`fill="maroon"`), not a word.
 const CSS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(?<![\w-])(?:${NAMES})(?![\w-])`, 'gi')
 const TS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(['"\x60])(?:${NAMES})\1`, 'gi')
+/** A quoted color name that is no color: the snow's Atmosphere kind, as its painter's case. */
+const NOT_A_COLOR = /\bcase 'snow':/
 
 /** Every color written by hand in the files, as `file:line  literal`. */
 function literals(files: Source[]): string[] {
@@ -24,7 +26,9 @@ function literals(files: Source[]): string[] {
     const color = path.endsWith('.css') ? CSS_COLOR : TS_COLOR
     return withoutComments(text)
       .split('\n')
-      .flatMap((line, i) => [...line.matchAll(color)].map((m) => `${path}:${i + 1}  ${m[0]}`))
+      .flatMap((line, i) =>
+        NOT_A_COLOR.test(line) ? [] : [...line.matchAll(color)].map((m) => `${path}:${i + 1}  ${m[0]}`),
+      )
   })
 }
 

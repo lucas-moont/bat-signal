@@ -57,11 +57,12 @@ const [bx, by, bw, bh] = BODY_BOX
 const OFF_BODY = `M${vx - vw} ${vy - vh} h${3 * vw} v${3 * vh} h${-3 * vw} Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
 
 /** A path layer's own attributes, the same on its mirrored side. */
-const pathOf = ({ className, fill, d, smooth }: Extract<Layer, { kind: 'path' }>) => ({
+const pathOf = ({ className, fill, d, smooth, opacity }: Extract<Layer, { kind: 'path' }>) => ({
   className,
   fill,
   d,
   shapeRendering: smooth ? 'geometricPrecision' : undefined,
+  opacity,
 })
 
 function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) {
@@ -86,7 +87,7 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
       )
     case 'rects':
       return (
-        <g key={key} fill={layer.fill} className={layer.className}>
+        <g key={key} fill={layer.fill} className={layer.className} opacity={layer.opacity}>
           {rects(layer.px)}
         </g>
       )
@@ -260,14 +261,13 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
 
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
-  // A Theme's Signature pose takes the perch's place of the watch: revealed, then held, with only the
-  // watch's glances (the clock waits for the reveal to settle).
+  // A Theme's Signature pose is revealed there first; its watch, which starts on the pose, waits for
+  // the reveal to settle.
   const ticking = watching ? !signature || settled : mood !== 'sleeping' && !revealed
   const clock = useFrame(!calm && ticking, watching ? 8 : perched ? 4 : 2)
   const frame = calm ? 0 : clock
   const watched = watching && ticking ? cycle(suit.watch, frame) : undefined
-  const step: Step | undefined =
-    revealed && watched ? { ...revealed, look: watched.look, lookY: watched.lookY } : (revealed ?? watched)
+  const step: Step | undefined = watched ?? revealed
   const { pose, transform, blink } = step
     ? {
         pose: step.pose,

@@ -1,16 +1,8 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { componentCss, cssRule } from './rendererSources'
 
-const css = readFileSync(join(__dirname, '../src/renderer/src/components/Sheets.css'), 'utf8')
-
-/** The declarations of one CSS rule, by its exact selector. */
-function rule(selector: string): string {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const found = new RegExp(`(?:^|\\n)${escaped}\\s*\\{([^}]*)\\}`).exec(css)
-  if (!found) throw new Error(`Sheets.css: no rule for ${selector}`)
-  return found[1]!
-}
+const css = componentCss('Sheets.css')
+const rule = (selector: string) => cssRule(css, selector)
 
 describe("a switch's hidden checkbox", () => {
   // Unanchored, the checkbox is placed against the whole sheet, outside the list that scrolls: a

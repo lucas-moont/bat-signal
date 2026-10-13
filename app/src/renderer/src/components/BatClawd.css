@@ -56,6 +56,12 @@
 .clawd__seam {
   fill: var(--thread);
 }
+/* A sonar ring spreading from his eyes, in their white (each step draws it at its own opacity). */
+.clawd__ping {
+  fill: none;
+  stroke: var(--clawd-eye);
+  stroke-width: 0.25;
+}
 /* A wingsuit's ribs, thin lines from the shoulder to the hem's points. */
 .clawd__rib {
   fill: none;

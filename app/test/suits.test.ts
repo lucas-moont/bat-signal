@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { scriptAt, stillStep, VENGEANCE_SUIT, type Script } from '../src/shared/suits'
+import { THEME_IDS, THEMES } from '../src/shared/themes'
 
 const pose = VENGEANCE_SUIT.poses.flying[0]
 const steps: Script = [
@@ -27,4 +28,16 @@ describe("a Theme's still portrait", () => {
     const plain = { ...VENGEANCE_SUIT, signature: undefined }
     expect(stillStep(plain)).toEqual({ pose: VENGEANCE_SUIT.poses.flying[0], look: 0 })
   })
+})
+
+// On the perch his watch takes over once his Signature pose is revealed: it starts on that pose, so
+// the reveal ends where the watch begins (and under reduced motion, the watch's first step shows).
+describe("a Theme's watch on the perch", () => {
+  it.each(THEME_IDS.filter((id) => THEMES[id].suit.signature))(
+    "%s keeps its watch on its Signature pose's final step",
+    (id) => {
+      const suit = THEMES[id].suit
+      expect(suit.watch[0].pose).toEqual(stillStep(suit).pose)
+    },
+  )
 })

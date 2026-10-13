@@ -19,11 +19,19 @@ export type Layer =
   /**
    * A path in one color, or in a class's; mirrored, it is drawn again flipped across his middle (a
    * cape's two open halves); smooth, it is drawn like the chest emblem, not snapped to pixels (an
-   * oval beside it).
+   * oval beside it); at an opacity, faint (a ring fading as it spreads).
    */
-  | { kind: 'path'; d: string; fill?: string; className?: string; mirrored?: boolean; smooth?: boolean }
-  /** Rects in one color, or in a class's. */
-  | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string }
+  | {
+      kind: 'path'
+      d: string
+      fill?: string
+      className?: string
+      mirrored?: boolean
+      smooth?: boolean
+      opacity?: number
+    }
+  /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
+  | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
   | { kind: 'emblem'; cx: number; cy: number; width: number }
   /**
@@ -71,7 +79,7 @@ export interface Suit {
   poses: Readonly<Record<MascotMood, Poses>>
   /**
    * His watch on the perch, one step a second, while nothing needs the user. A suit with a Signature
-   * pose holds that pose there instead, and only the watch's glances play.
+   * pose reveals it there first, then keeps its watch on it: the watch starts on its final step.
    */
   watch: Script
   /**
@@ -209,16 +217,14 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
 })
 
 /**
- * His watch on the perch: mostly still, then a flutter (the cape lifting, the wingsuit banking) and
- * two glances, four changes in twelve seconds. A Signature pose held there takes only the glances.
+ * His watch on the perch, held on his Signature pose's final step (so the reveal ends where the
+ * watch begins): still for eight seconds, then two glances, in twelve.
  */
-const watchOf = (still: Pose, flutter: Pose, glances: [Partial<Step>, Partial<Step>]): Script => {
-  const STILL: Step = { pose: still, look: 0 }
+const watchOn = (signature: Script, glances: [Partial<Step>, Partial<Step>]): Script => {
+  const STILL: Step = { pose: scriptAt(signature, Infinity).pose, look: 0 }
   return [
     STILL,
-    ...Array<Step>(5).fill(STILL),
-    { pose: flutter, look: 0 },
-    STILL,
+    ...Array<Step>(7).fill(STILL),
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
     STILL,
@@ -285,6 +291,19 @@ const draped = (shadowTop: number) =>
   pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadowTop)])
 const FOOTSTEP = 'translateY(1px)'
 
+/**
+ * Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six
+ * steps, four a second), two footsteps landing on the way, until only his feet stay in it.
+ */
+const OUT_OF_THE_DARK: Script = [
+  { pose: draped(3), look: 0 },
+  { pose: draped(4.25), look: 0 },
+  { pose: draped(5.5), look: 0, transform: FOOTSTEP },
+  { pose: draped(6.75), look: 0 },
+  { pose: draped(8), look: 0, transform: FOOTSTEP },
+  { pose: draped(8), look: 0 },
+]
+
 /** Level, then banked one way, level, then the other: a frame each, over the bob. */
 const flying = [
   glide,
@@ -313,17 +332,9 @@ export const VENGEANCE_SUIT: Suit = {
     // The flame flickers between Hot Signal and a smaller Pen Hot, a frame each.
     alarmed: [flare([12.75, -1, 1.5, 1], 'var(--flame)'), flare([13, -1, 1, 1], 'var(--flame-low)')],
   },
-  watch: watchOf(glide, flying[1], [{ look: -GAZE }, { look: -GAZE }]),
-  // Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six
-  // steps, four a second), two footsteps landing on the way, until only his feet stay in it.
-  signature: [
-    { pose: draped(3), look: 0 },
-    { pose: draped(4.25), look: 0 },
-    { pose: draped(5.5), look: 0, transform: FOOTSTEP },
-    { pose: draped(6.75), look: 0 },
-    { pose: draped(8), look: 0, transform: FOOTSTEP },
-    { pose: draped(8), look: 0 },
-  ],
+  // On the perch, out of the dark, he glances along the street.
+  watch: watchOn(OUT_OF_THE_DARK, [{ look: -GAZE }, { look: -GAZE }]),
+  signature: OUT_OF_THE_DARK,
   aura: true,
 }
 
@@ -463,6 +474,12 @@ const underTheSignal = pose(
   },
 )
 
+/** Revealed as he turns from the street to look up at the Signal; held there on the perch. */
+const UNDER_THE_SIGNAL: Script = [
+  { pose: trailB, look: 0 },
+  { pose: underTheSignal, look: 0 },
+]
+
 export const PALE_MOONLIGHT_SUIT: Suit = {
   eyes: EYES,
   poses: {
@@ -470,13 +487,9 @@ export const PALE_MOONLIGHT_SUIT: Suit = {
     flying: [trailA, trailB],
     alarmed: [giantBat],
   },
-  // On the perch he glances down to the street and back up to the Signal (burton-1989.md, 7).
-  watch: watchOf(trailA, trailB, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
-  // Revealed as he turns from the street to look up at the Signal; held there on the perch.
-  signature: [
-    { pose: trailB, look: 0 },
-    { pose: underTheSignal, look: 0 },
-  ],
+  // On the perch, under the Signal, he glances down to the street and back up (burton-1989.md, 7).
+  watch: watchOn(UNDER_THE_SIGNAL, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
+  signature: UNDER_THE_SIGNAL,
   // Gold, the Alarm color, never at rest: no aura as he looks up at the Signal (#95, outfit I).
   aura: 'alarmed',
 }

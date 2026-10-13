@@ -137,6 +137,8 @@
   --stamp-tilt: -2.5deg;
   --stamp-tilt-slight: -1.5deg;
   --stamp-border: 1.5px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
   --stamp-mask: none;
 
   /* Lit, the glass stays dark: the oval in it lights instead. */
