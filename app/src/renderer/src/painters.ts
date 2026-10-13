@@ -176,6 +176,12 @@ const CELL = { w: 3, h: 4, mullion: 1 }
 /** The glass wall's margin inside a tower's edge, in px. */
 const INSET = 3
 
+/** The same numbers in [0, 1) every time from the same seed in [0, 1) (Park and Miller's). */
+function seededFrom(seed: number): () => number {
+  let state = Math.floor(seed * 2147483646) + 1
+  return () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646
+}
+
 /**
  * Lit windows: a still skyline, painted whole once (and again after a resize or new colors), then
  * a single window switching every so often: on while fewer than the share are lit, off while more,
@@ -198,9 +204,12 @@ function litWindows(
   /** How many windows are lit. */
   let litCount = 0
 
+  /** Its city: the same towers and windows after every resize, so the skyline never jumps. */
+  const seed = random()
+
   /** One of the lights, by their shares. */
-  const pickLight = () => {
-    let r = random()
+  const pickLight = (next = random) => {
+    let r = next()
     const i = lights.findIndex(({ share }) => (r -= share) < 0)
     return i < 0 ? lights.length - 1 : i
   }
@@ -220,20 +229,21 @@ function litWindows(
     resize(w, h) {
       ;[width, canvasHeight] = [w, h]
       ;[blocks, windows, whole, since, litCount] = [[], [], true, 0, 0]
+      const layout = seededFrom(seed)
       const slot = w / towers
       const pitch = { x: CELL.w + CELL.mullion, y: CELL.h + CELL.mullion }
       for (let i = 0; i < towers; i++) {
         // A slab most of its slot wide, a gap either side, its flat roof in the band's top half.
-        const bw = Math.round(slot * (0.72 + random() * 0.22))
-        const bh = Math.round(h * height * (0.55 + random() * 0.45))
-        const bx = Math.round(i * slot + random() * (slot - bw))
+        const bw = Math.round(slot * (0.72 + layout() * 0.22))
+        const bh = Math.round(h * height * (0.55 + layout() * 0.45))
+        const bx = Math.round(i * slot + layout() * (slot - bw))
         const by = h - bh
         blocks.push({ x: bx, y: by, w: bw, h: bh })
         const cols = Math.floor((bw - 2 * INSET + CELL.mullion) / pitch.x)
         const rows = Math.floor((bh - INSET + CELL.mullion) / pitch.y)
         for (let r = 0; r < rows; r++)
           for (let c = 0; c < cols; c++) {
-            const light = random() < lit ? pickLight() : undefined
+            const light = layout() < lit ? pickLight(layout) : undefined
             if (light !== undefined) litCount++
             windows.push({ x: bx + INSET + c * pitch.x, y: by + INSET + r * pitch.y, light })
           }

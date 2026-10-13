@@ -351,6 +351,18 @@ describe('the lit windows', () => {
     expect(Math.abs(lit - WINDOWS.lit * glass)).toBeLessThanOrEqual(1)
   })
 
+  // The panel changes size as cases come and go: the city stays the same city.
+  it('stands the same towers again after a resize', () => {
+    const painter = city()
+    const towersOf = () => {
+      const { ctx, outlines } = recorder()
+      painter.resize(320, 440)
+      painter.paint(ctx, 0)
+      return outlines
+    }
+    expect(towersOf()).toEqual(towersOf())
+  })
+
   it('paints the whole scene again in new colors', () => {
     const painter = city()
     painter.paint(recorder().ctx, 0)
