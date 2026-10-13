@@ -87,6 +87,9 @@
   --chest: var(--cowl);
   /* The shadow he steps out of in his Signature pose, over his body only. */
   --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);
+  /* The flare he raises when alarmed: Hot Signal, and a smaller Pen Hot on the frames between. */
+  --flame: var(--signal-hot);
+  --flame-low: #ec2a2a;
 
   /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
   --glass-shine: #1d1714;

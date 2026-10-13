@@ -269,7 +269,7 @@ export const VENGEANCE_SUIT: Suit = {
     ],
     flying,
     // The flame flickers between Hot Signal and a smaller Pen Hot, a frame each.
-    alarmed: [flare([12.75, -1, 1.5, 1], 'var(--signal-hot)'), flare([13, -1, 1, 1], 'var(--stamp-hot)')],
+    alarmed: [flare([12.75, -1, 1.5, 1], 'var(--flame)'), flare([13, -1, 1, 1], 'var(--flame-low)')],
   },
   watch: [
     STILL,

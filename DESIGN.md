@@ -186,7 +186,7 @@ Every color the renderer paints is a variable in the Theme's stylesheet, `app/sr
 - **Danger** (danger, Dried Blood) for the Quit hover, and **Report rule** (report-rule, Dried Blood at 75%) for the margin rule.
 - **Text a step off** (bone-dim #cfc6be for log lines and idle titles, ash-dim #6f6862 for struck-through done tasks).
 - **Near-blacks** (surface-deep, frame, header-fade, sheet-top) for gradients and edges, and **Shadow** (shadow) for shadows and scrims.
-- **Bat-Clawd** (clawd-eye, clawd-eye-dim, cowl, cowl-edge, cowl-shine, suit, gloves, belt, buckle, cape, cape-rim, thread, chest, clawd-shadow), named after the parts the prototype in #95 draws.
+- **Bat-Clawd** (clawd-eye, clawd-eye-dim, cowl, cowl-edge, cowl-shine, suit, gloves, belt, buckle, cape, cape-rim, thread, chest, clawd-shadow, flame, flame-low), named after the parts the prototype in #95 draws.
 - **The Signal** (glass-shine, glass, disc-rim-inner, disc-rim-outer, lens-core, lens-edge, lens-rim, lens-bat) and the **notice card** (notice-top, notice-foot, notice-hover-top, notice-hover-foot).
 - **The Atmosphere** (haze, haze-edge, grain-opacity, rain, searchlight). The rain is drawn on a canvas, which reads --rain at run time and again when the page changes Theme.
 - **Faces and shapes a Theme sets** (font-display, font-body, font-type, font-mono, font-report for the night report's body, font-stamp; wordmark-size and wordmark-tracking for the masthead; stamp-tilt, stamp-tilt-slight, stamp-border and stamp-mask for the stamp's shape; disc-lens, the lit disc as one gradient, a recipe rather than colors). A Theme's stylesheet may also carry rules scoped to its own `data-theme` for what a variable can't express (an inverted lens, say).
