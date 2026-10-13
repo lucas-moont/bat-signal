@@ -89,3 +89,23 @@ export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
   ],
   drift: 0.5,
 }
+
+/**
+ * WATCHFUL PROTECTOR's lit windows (nolan.md, section 9): five slab towers along the bottom fifth,
+ * about one window in twelve lit, most in fluorescent white and the rest in mercury, never in an
+ * Alarm or a warm color; one switches every second.
+ */
+export const WATCHFUL_PROTECTOR_WINDOWS: LitWindowsAtmosphere = {
+  kind: 'lit-windows',
+  glass: '--tower',
+  edge: '--tower-edge',
+  tallest: 0.2,
+  towers: 5,
+  litShare: 0.08,
+  lights: [
+    { color: '--bone', share: 0.7, alpha: 0.22 },
+    { color: '--mercury', share: 0.3, alpha: 0.28 },
+  ],
+  switchEvery: 1,
+  still: true,
+}
