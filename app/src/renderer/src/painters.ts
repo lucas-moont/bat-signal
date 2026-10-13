@@ -1,7 +1,7 @@
 // The painters of the Atmospheres (shared/atmospheres.ts): each paints its kind on the canvas
 // behind the panel, a step at a time on the shared 8 fps clock. Free of the DOM, so node tests
 // drive them on a recording canvas.
-import type { Atmosphere, RainAtmosphere } from '@shared/atmospheres'
+import type { Atmosphere, RainAtmosphere, SnowAtmosphere } from '@shared/atmospheres'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -22,7 +22,7 @@ const MAX_DT = 2 * STEP
 const OLD_FPS = 15
 
 export const painterFor = (atmosphere: Atmosphere, random: () => number = Math.random): Painter =>
-  rain(atmosphere, random)
+  atmosphere.kind === 'rain' ? rain(atmosphere, random) : snow(atmosphere, random)
 
 interface Drop {
   x: number
@@ -78,6 +78,61 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
           ctx.lineTo(d.x - dx * d.len, d.y - dy * d.len)
         }
         ctx.stroke()
+      })
+    },
+  }
+}
+
+interface Flake {
+  x: number
+  y: number
+  depth: number
+  /** Where in the sway it starts, so the flakes don't sway in step. */
+  phase: number
+}
+
+/** A flake's sway, a step a tick: out one way, back, out the other way, back. */
+const SWAY = [0, 1, 0, -1]
+
+/**
+ * Snow: flakes in depths, each depth filled as one path a tick. They fall a few pixels a tick,
+ * which at 8 steps a second reads as a slow snowfall, and sway on the clock (not at random), so a
+ * flake never jitters.
+ */
+function snow({ density, depths, drift }: SnowAtmosphere, random: () => number): Painter {
+  let flakes: Flake[] = []
+  let width = 0
+  let height = 0
+  /** Ticks of the clock since the snow began, fractional when a tick comes late. */
+  let ticks = 0
+
+  return {
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      ticks = 0
+      flakes = Array.from({ length: Math.round(((width * height) / 1000) * density) }, () => ({
+        x: random() * width,
+        y: random() * height,
+        depth: Math.floor(random() * depths.length),
+        phase: Math.floor(random() * SWAY.length),
+      }))
+    },
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      ticks += step
+      ctx.clearRect(0, 0, width, height)
+      depths.forEach(({ alpha, size, fall }, depth) => {
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        for (const f of flakes) {
+          if (f.depth !== depth) continue
+          f.y += fall * step
+          // Gone below: it falls again from just above the top.
+          if (f.y > height) f.y -= height + size
+          const sway = drift * (SWAY[(Math.floor(ticks) + f.phase) % SWAY.length] ?? 0)
+          ctx.rect(f.x + sway, f.y, size, size)
+        }
+        ctx.fill()
       })
     },
   }
