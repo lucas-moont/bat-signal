@@ -30,7 +30,7 @@
 .clawd__emblem {
   fill: var(--chest);
 }
-/* A black cape: its red edge makes it read on the pure-black window. */
+/* A cape in front of him (wrapped, asleep): cloth and its whole rim. */
 .clawd__cape {
   fill: var(--cape);
   stroke: var(--cape-rim);
@@ -54,15 +54,35 @@
   stroke-width: 0.7;
   stroke-linejoin: miter;
 }
-/* Open, it stays black inside: one red thread runs along the hem, about a screen pixel wide. */
-.clawd__thread {
-  fill: none;
-  stroke: var(--thread);
-  stroke-width: 0.45;
-  stroke-linejoin: round;
-}
+/* The seam where his hands hold the wrapped cape shut. */
 .clawd__seam {
   fill: var(--thread);
+}
+/* A wingsuit's ribs, thin lines from the shoulder to the hem's points. */
+.clawd__rib {
+  fill: none;
+  stroke: var(--rib);
+  stroke-width: 0.3;
+  stroke-linecap: round;
+}
+/* A flare held up (VENGEANCE, alarmed): the Alarm color as a light that is on (DESIGN.md). */
+.clawd__flare-stick {
+  fill: var(--ash);
+}
+.clawd__flame {
+  fill: var(--signal-hot);
+}
+.clawd__flame--low {
+  fill: var(--stamp-hot);
+}
+.clawd__flare-glow {
+  fill: var(--signal-glow);
+}
+/* A Signature pose's shadow, over his body only: on the perch's transparent window it never tints
+   the desktop around him. */
+.clawd__shadow {
+  fill: var(--cape);
+  opacity: 0.55;
 }
 
 /* The aura, in the Theme's Alarm color, for a suit that has one (shared/suits.ts): a still filter,

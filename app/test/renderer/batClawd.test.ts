@@ -28,9 +28,11 @@ const onChest = (bat: ReturnType<typeof chest>) =>
   !!bat && bat.left >= 3 && bat.right <= 13 && bat.top >= 5 && bat.bottom <= 9 && bat.right - bat.left >= 6
 
 describe('Bat-Clawd', () => {
-  // VENGEANCE's red is in his cowl and cape edges until #88 redresses him; it has no aura yet.
-  it('wears no aura in VENGEANCE, even alarmed', () => {
-    expect(renderToStaticMarkup(createElement(BatClawd, { mood: 'alarmed' }))).not.toContain('clawd--aura')
+  // VENGEANCE's red is no longer in his edges (the Costume Rule): it glows around him only while
+  // something needs the user.
+  it('wears the Alarm color as an aura in VENGEANCE, only alarmed', () => {
+    expect(renderToStaticMarkup(createElement(BatClawd, { mood: 'alarmed' }))).toContain('clawd--aura')
+    expect(renderToStaticMarkup(createElement(BatClawd, { mood: 'flying' }))).not.toContain('clawd--aura')
   })
 
   it('wears the bat on his chest whenever it shows', () => {

@@ -24,6 +24,7 @@ describe("a Theme's still portrait", () => {
   })
 
   it('is its flying pose, looking ahead, without one', () => {
-    expect(stillStep(VENGEANCE_SUIT)).toEqual({ pose: VENGEANCE_SUIT.poses.flying[0], look: 0 })
+    const plain = { ...VENGEANCE_SUIT, signature: undefined }
+    expect(stillStep(plain)).toEqual({ pose: VENGEANCE_SUIT.poses.flying[0], look: 0 })
   })
 })
