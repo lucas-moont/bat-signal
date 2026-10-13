@@ -14,21 +14,22 @@ export interface FontMetrics {
 export function fontMetrics(file: string): FontMetrics {
   const woff = readFileSync(file)
   if (woff.toString('latin1', 0, 4) !== 'wOFF') throw new Error(`${file} is not a WOFF font`)
-  const tables = new Map<string, Buffer>()
-  for (let i = 0, n = woff.readUInt16BE(12); i < n; i++) {
-    const entry = 44 + i * 20
+  /** Each table's entry in the directory, by tag: only the four tables read are inflated. */
+  const entries = new Map(
+    Array.from({ length: woff.readUInt16BE(12) }, (_, i) => 44 + i * 20).map(
+      (entry) => [woff.toString('latin1', entry, entry + 4), entry] as const,
+    ),
+  )
+  const table = (tag: string) => {
+    const entry = entries.get(tag)
+    if (entry === undefined) throw new Error(`${file} has no ${tag} table`)
     const [offset, compressed, length] = [4, 8, 12].map((at) => woff.readUInt32BE(entry + at)) as [
       number,
       number,
       number,
     ]
     const data = woff.subarray(offset, offset + compressed)
-    tables.set(woff.toString('latin1', entry, entry + 4), compressed < length ? inflateSync(data) : data)
-  }
-  const table = (tag: string) => {
-    const data = tables.get(tag)
-    if (!data) throw new Error(`${file} has no ${tag} table`)
-    return data
+    return compressed < length ? inflateSync(data) : data
   }
 
   const unitsPerEm = table('head').readUInt16BE(18)
