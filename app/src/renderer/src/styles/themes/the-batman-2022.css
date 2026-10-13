@@ -96,6 +96,9 @@
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
   --chest: var(--cowl);
+  /* His aura, while something needs the user: the Alarm color's light. */
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
   /* The shadow he steps out of in his Signature pose, over his body only. */
   --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);
   /* The flare he raises when alarmed: Hot Signal, and a smaller Pen Hot on the frames between. */
@@ -140,6 +143,9 @@
   /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
      display face built for large sizes may not hold. VENGEANCE: its display face. */
   --font-label: var(--font-display);
+  /* Its name on its folder in the picker. */
+  --folder-name-size: 15px;
+  --folder-name-tracking: 0.6px;
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;

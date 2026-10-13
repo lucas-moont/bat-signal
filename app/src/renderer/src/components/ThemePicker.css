@@ -107,12 +107,12 @@
   }
 }
 
-/* A Theme with a longer name may set it smaller on its folder. */
+/* Each Theme sets its name's size on its folder (a longer name, smaller). */
 .folder__name {
   font-family: var(--font-label);
-  font-size: var(--folder-name-size, 15px);
+  font-size: var(--folder-name-size);
   line-height: 1.05;
-  letter-spacing: var(--folder-name-tracking, 0.6px);
+  letter-spacing: var(--folder-name-tracking);
 }
 .folder:not(.folder--worn) .folder__name {
   color: var(--ash);

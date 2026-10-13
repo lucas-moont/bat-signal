@@ -81,6 +81,9 @@
   --cape-rim: color-mix(in srgb, var(--ink-live) 40%, transparent);
   --thread: var(--cape-rim);
   --chest: var(--cowl);
+  /* His aura, while something needs the user: the Alarm color's light. */
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
   /* The emblem: a black bat on the oval, old brass at rest with a darker rim; lit, the oval fills
      from the Alarm color (BatEmblem.tsx). */

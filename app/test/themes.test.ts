@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, themeFromFlags, THEMES } from '../src/shared/themes'
-import { RENDERER, themeVariables } from './rendererSources'
+import { RENDERER, rendererSources, themeVariables } from './rendererSources'
 
 describe('the Themes', () => {
   // The window's background shows before the page paints, then the page's --abyss covers it: a
@@ -68,6 +68,28 @@ describe("the Themes' stylesheets and fonts", () => {
   it('belong to known Themes only', () => {
     const ids = files.flatMap((file) => /^(.+?)(?:\.fonts\.ts|\.css)$/.exec(file)?.[1] ?? [])
     for (const id of ids) expect(THEME_IDS).toContain(id)
+  })
+})
+
+// A variable one Theme sets is inherited by everything under the page, a picker folder wearing
+// another Theme included: if that Theme doesn't set it too, its folder takes the worn Theme's value
+// (a fallback in var() never applies once an ancestor sets one). So every variable the shared
+// stylesheets read, and don't set themselves, is every Theme's to set.
+describe("the shared stylesheets' variables", () => {
+  const shared = rendererSources('.css').filter(({ path }) => !path.startsWith('styles/themes/'))
+  const read = new Set(shared.flatMap(({ text }) => [...text.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]!)))
+  const setInShared = new Set([
+    ...shared.flatMap(({ text }) => [...text.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]!)),
+    // Set on an element by code (the click ripple), not by a Theme.
+    ...rendererSources('.ts', '.tsx').flatMap(({ text }) =>
+      [...text.matchAll(/setProperty\('(--[\w-]+)'/g)].map((m) => m[1]!),
+    ),
+  ])
+  const themesSet = [...read].filter((name) => !setInShared.has(name)).sort()
+
+  it.each(THEME_IDS)('are all set by %s', (id) => {
+    const vars = themeVariables(id)
+    expect(themesSet.filter((name) => !vars.has(name))).toEqual([])
   })
 })
 
