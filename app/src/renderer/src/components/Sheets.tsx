@@ -31,11 +31,14 @@ function Sheet({
   kicker,
   onClose,
   children,
+  wordsTitle = false,
 }: {
   title: string
   kicker: string
   onClose: () => void
   children: ReactNode
+  /** The title is someone's words (a task, a subagent's brief, a command), not a heading. */
+  wordsTitle?: boolean
 }) {
   const { voice } = useWords()
   return (
@@ -59,7 +62,7 @@ function Sheet({
         <div className="sheet__head">
           <div className="sheet__titles">
             <span className="case-number">{kicker}</span>
-            <h2 className="sheet__title">{title}</h2>
+            <h2 className={`sheet__title${wordsTitle ? ' sheet__title--words' : ''}`}>{title}</h2>
           </div>
           <button className="icon-button" onClick={onClose} aria-label={voice.drawer.close}>
             <Icon name="close" />
@@ -218,7 +221,7 @@ export function DetailSheet({
   const content = resolve(session, target, now, useWords())
   if (!content) return null
   return (
-    <Sheet kicker={content.kicker} title={content.title} onClose={onClose}>
+    <Sheet kicker={content.kicker} title={content.title} onClose={onClose} wordsTitle>
       {content.body}
     </Sheet>
   )

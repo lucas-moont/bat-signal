@@ -239,11 +239,13 @@ const asClause = (label: string) => (label.charAt(0).toLowerCase() + label.slice
 // Built once, on first use: a formatter is costly to make, the dateline renders with every snapshot,
 // and the main process, which loads this file for the tray, never types one.
 let datelineFormats: { day: Intl.DateTimeFormat; time: Intl.DateTimeFormat } | undefined
-const dateline = (now: Date) => {
-  const { day, time } = (datelineFormats ??= {
+const formats = () =>
+  (datelineFormats ??= {
     day: new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: '2-digit', month: 'short' }),
     time: new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }),
   })
+const dateline = (now: Date) => {
+  const { day, time } = formats()
   return `${day.format(now).replace(',', '').toUpperCase()} · ${time.format(now)}`
 }
 
@@ -540,6 +542,63 @@ export const PALE_MOONLIGHT_WORDS: Words = {
     settings: {
       ...STANDARD_VOICE.settings,
       atmosphere: { label: 'Snow', hint: (t) => `Gotham's snow behind the ${lower(t.case.many)}` },
+    },
+  },
+}
+
+/**
+ * WATCHFUL PROTECTOR's words, after Christopher Nolan's Dark Knight trilogy (nolan.md, sections 5
+ * and 6): an Applied Sciences operations board, read aloud as a dry briefing.
+ */
+export const WATCHFUL_PROTECTOR_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    case: { one: 'Op', many: 'Ops' },
+    needsYou: { label: 'On you', count: (n) => `${n} on you` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Clearance',
+      error: 'Fault',
+      waiting: 'Your move',
+      reply: 'Checked in',
+      stalled: 'No contact',
+      'session-opened': 'Op opened',
+      'session-closed': 'Op closed',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    theme: { name: 'WATCHFUL PROTECTOR', film: "Christopher Nolan's Dark Knight trilogy" },
+    empty: {
+      ...STANDARD_VOICE.empty,
+      // Dark is all clear here, its only meaning in the Wave.
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'The roof is dark.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} running. Get some rest.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Sitrep',
+      dateline: (now) => `GOTHAM · ${formats().time.format(now)}`,
+      signature: 'Waiting on you',
+      caseNotes: () => 'In the field',
+      // The Theme's one film line, a fragment of Harvey Dent's, only when nothing waits.
+      end: (waiting) =>
+        waiting ? "End of report. You're needed." : 'End of report. Darkest just before the dawn.',
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? "The light's on. " : '') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Applied Sciences',
+      atmosphere: {
+        label: 'Lit windows',
+        hint: (t) => `Gotham's lit windows behind the ${lower(t.case.many)}`,
+      },
     },
   },
 }

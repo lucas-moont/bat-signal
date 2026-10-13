@@ -5,7 +5,7 @@ import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
-import { STANDARD_TERMS, STANDARD_WORDS, withLexicon } from '../src/shared/words'
+import { STANDARD_TERMS, STANDARD_WORDS, WATCHFUL_PROTECTOR_WORDS, withLexicon } from '../src/shared/words'
 import { standInTheme } from './fixtures/themes'
 import { opsWords, permission } from './fixtures/words'
 
@@ -81,5 +81,25 @@ describe('the Lexicon', () => {
     const off = withLexicon(opsWords, false)
     expect(on.voice.empty.noCases.title(on.terms)).toBe('No ops on the board.')
     expect(off.voice.empty.noCases.title(off.terms)).toBe('No cases on the board.')
+  })
+})
+
+describe("WATCHFUL PROTECTOR's Voice", () => {
+  const { voice, terms } = WATCHFUL_PROTECTOR_WORDS
+
+  // Harvey Dent's fragment, the Theme's one film line, only when nothing waits (nolan.md, section 5).
+  it('ends the report on the dawn only when nothing waits', () => {
+    expect(voice.report.end(0)).toBe('End of report. Darkest just before the dawn.')
+    expect(voice.report.end(2)).toBe("End of report. You're needed.")
+  })
+
+  it('dates its Sitrep from Gotham, in the 24-hour clock', () => {
+    expect(voice.report.name).toBe('Sitrep')
+    expect(voice.report.dateline(new Date(2026, 9, 13, 2, 14))).toBe('GOTHAM · 02:14')
+  })
+
+  // A term inside a sentence is lowered: Ops reads "ops", and nothing it names needs a capital.
+  it('names its ops in a sentence', () => {
+    expect(voice.empty.noCases.title(terms)).toBe('No ops running. Get some rest.')
   })
 })

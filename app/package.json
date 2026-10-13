@@ -29,10 +29,12 @@
     "@eslint/js": "^10.0.0",
     "@fontsource/anton": "^5.3.0",
     "@fontsource/barlow-semi-condensed": "^5.3.0",
+    "@fontsource/big-shoulders-stencil": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/josefin-sans": "^5.3.0",
     "@fontsource/limelight": "^5.3.0",
     "@fontsource/special-elite": "^5.3.0",
+    "@fontsource/syncopate": "^5.3.0",
     "@resvg/resvg-wasm": "^2.6.2",
     "@types/node": "^24.19.1",
     "@types/react": "^19.3.0",
@@ -83,6 +85,10 @@
         "to": "licenses/Barlow Semi Condensed.txt"
       },
       {
+        "from": "node_modules/@fontsource/big-shoulders-stencil/LICENSE",
+        "to": "licenses/Big Shoulders Stencil.txt"
+      },
+      {
         "from": "node_modules/@fontsource/jetbrains-mono/LICENSE",
         "to": "licenses/JetBrains Mono.txt"
       },
@@ -97,6 +103,10 @@
       {
         "from": "node_modules/@fontsource/special-elite/LICENSE",
         "to": "licenses/Special Elite.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/syncopate/LICENSE",
+        "to": "licenses/Syncopate.txt"
       }
     ],
     "win": {

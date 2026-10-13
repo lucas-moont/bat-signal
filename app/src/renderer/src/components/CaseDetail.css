@@ -20,8 +20,8 @@
 }
 .detail__title {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-case-title);
+  font-weight: var(--case-title-weight);
   font-size: 19px;
   letter-spacing: 0.6px;
   line-height: 1.15;
@@ -49,14 +49,19 @@
   gap: 10px;
   padding: 9px 10px;
   border: 1px solid var(--line);
-  border-left: 3px solid var(--blood);
+  border-left: 3px solid var(--waiting-rule);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--blood) 8%, transparent);
+  background: color-mix(in srgb, var(--waiting-rule) 8%, transparent);
 }
 .alert--permission,
 .alert--error {
   border-left-color: var(--signal-hot);
   background: color-mix(in srgb, var(--signal) 12%, transparent);
+}
+/* Gone quiet is not waiting on you: ash, as its card's rule. */
+.alert--stalled {
+  border-left-color: var(--ash);
+  background: color-mix(in srgb, var(--ash) 8%, transparent);
 }
 .alert__line {
   flex: 1;

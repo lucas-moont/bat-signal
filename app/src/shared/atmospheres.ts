@@ -48,8 +48,8 @@ export interface LitWindowsAtmosphere extends Scene {
   kind: 'lit-windows'
   /** The variable the towers and their dark windows are filled in. */
   glass: string
-  /** The variable their 1px edges are stroked in. */
-  edge: string
+  /** The variable their 1px edges are stroked in, if they have one. */
+  edge?: string
   /** The tallest tower's height, a share of the canvas's. */
   tallest: number
   /** How many towers stand along it. */
@@ -88,4 +88,24 @@ export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
     { alpha: 0.4, size: 2, fall: 3 },
   ],
   drift: 0.5,
+}
+
+/**
+ * WATCHFUL PROTECTOR's lit windows (nolan.md, section 9): five slab towers along the bottom fifth,
+ * about one window in twelve lit, most in fluorescent white and the rest in mercury, never in an
+ * Alarm or a warm color; one switches every second.
+ */
+export const WATCHFUL_PROTECTOR_WINDOWS: LitWindowsAtmosphere = {
+  kind: 'lit-windows',
+  // Masses without an edge: with one, the towers read as boxes (picked on screen, #82).
+  glass: '--tower',
+  tallest: 0.2,
+  towers: 5,
+  litShare: 0.08,
+  lights: [
+    { color: '--bone', share: 0.7, alpha: 0.22 },
+    { color: '--mercury', share: 0.3, alpha: 0.28 },
+  ],
+  switchEvery: 1,
+  still: true,
 }

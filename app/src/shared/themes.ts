@@ -2,12 +2,23 @@
 // settings.json keeps; it names the film or comic, while each Theme's display name alludes to it.
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
-import { PALE_MOONLIGHT_SNOW, VENGEANCE_RAIN, type Atmosphere } from './atmospheres'
-import { BAT_1989, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
-import { PALE_MOONLIGHT_SUIT, VENGEANCE_SUIT, type Suit } from './suits'
-import { PALE_MOONLIGHT_WORDS, STANDARD_WORDS, withLexicon, type Words } from './words'
+import {
+  PALE_MOONLIGHT_SNOW,
+  VENGEANCE_RAIN,
+  WATCHFUL_PROTECTOR_WINDOWS,
+  type Atmosphere,
+} from './atmospheres'
+import { BAT_1989, BAT_2008, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
+import { PALE_MOONLIGHT_SUIT, VENGEANCE_SUIT, WATCHFUL_PROTECTOR_SUIT, type Suit } from './suits'
+import {
+  PALE_MOONLIGHT_WORDS,
+  STANDARD_WORDS,
+  WATCHFUL_PROTECTOR_WORDS,
+  withLexicon,
+  type Words,
+} from './words'
 
-export const THEME_IDS = ['the-batman-2022', 'batman-1989'] as const
+export const THEME_IDS = ['the-batman-2022', 'batman-1989', 'the-dark-knight-2008'] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
 /** The Batman (2022), VENGEANCE: the default Theme. */
@@ -47,6 +58,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_1989, 'none', OVAL_1989),
     suit: PALE_MOONLIGHT_SUIT,
     atmosphere: PALE_MOONLIGHT_SNOW,
+  },
+  /** Christopher Nolan's The Dark Knight (2008), WATCHFUL PROTECTOR: steel blue, lit windows. */
+  'the-dark-knight-2008': {
+    flag: 'protector',
+    ground: '#04070b',
+    words: WATCHFUL_PROTECTOR_WORDS,
+    emblem: emblem(BAT_2008, 'none'),
+    suit: WATCHFUL_PROTECTOR_SUIT,
+    atmosphere: WATCHFUL_PROTECTOR_WINDOWS,
   },
 }
 

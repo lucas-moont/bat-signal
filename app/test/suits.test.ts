@@ -30,6 +30,18 @@ describe("a Theme's still portrait", () => {
   })
 })
 
+// WATCHFUL PROTECTOR's perch pings once a cycle (nolan.md, section 7). The reveal has just pinged
+// as the watch begins, so its own ping comes last, not a few seconds after that one.
+describe("WATCHFUL PROTECTOR's watch", () => {
+  const { watch, signature } = THEMES['the-dark-knight-2008'].suit
+  const held = scriptAt(signature!, Infinity).pose
+  const pings = watch.flatMap((step, i) => (step.pose === held ? [] : [i]))
+
+  it('pings once, at the end of its cycle', () => {
+    expect(pings).toEqual([8, 9, 10, 11])
+  })
+})
+
 // On the perch his watch takes over once his Signature pose is revealed: it starts on that pose, so
 // the reveal ends where the watch begins (and under reduced motion, the watch's first step shows).
 describe("a Theme's watch on the perch", () => {

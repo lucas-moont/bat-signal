@@ -159,7 +159,7 @@ A black-on-black noir palette with one family of reds that work as light and ink
 - **Signal Glow** (signal-glow): the translucent red used for every halo: card hover glow, header count, tab underline, sheet edge, toggle thumb.
 
 ### Secondary
-- **Dried Blood** (blood): the deep red of things that wait without urgency: waiting-card side rules, alert side rules, the danger hover on Quit, the Night Report margin rule (at 75% opacity), and the thread above the open cape's hem.
+- **Dried Blood** (blood): the deep red of things that wait without urgency: waiting-card and alert side rules (through waiting-rule, which another Theme may set apart from its blood, as WATCHFUL PROTECTOR's dimmed sodium), the danger hover on Quit, the Night Report margin rule (at 75% opacity), and the thread above the open cape's hem.
 - **Brick Ink** (brick): the softer stamp ink for waiting and new-reply items and failed runs.
 
 ### Tertiary
@@ -187,16 +187,17 @@ Every color the renderer paints is a variable in the Theme's stylesheet, `app/sr
 - **Danger** (danger, Dried Blood) for the Quit hover, and **Report rule** (report-rule, Dried Blood at 75%) for the margin rule.
 - **Text a step off** (bone-dim #cfc6be for log lines and idle titles, ash-dim #6f6862 for struck-through done tasks), and the case detail's row **chevron** (chevron; VENGEANCE: Line), a decorative icon with a variable of its own so a Theme's rules needn't pass as text.
 - **Near-blacks** (surface-deep, frame, header-fade, sheet-top) for gradients and edges, and **Shadow** (shadow) for shadows and scrims.
-- **Bat-Clawd** (clawd-eye, clawd-eye-dim, cowl, cowl-edge, cowl-shine, suit, gloves, belt, buckle, cape, cape-rim, thread, chest, clawd-shadow, flame, flame-low, aura-core and aura-glow for his aura), named after the parts the prototype in #95 draws.
+- **Bat-Clawd** (clawd-eye, clawd-eye-dim, cowl, cowl-edge, cowl-shine, suit, gloves, belt, buckle, cape, cape-rim, thread, chest, and a suit's own, such as WATCHFUL PROTECTOR's plate and mesh; clawd-shadow, flame, flame-low, aura-core and aura-glow for his aura), named after the parts the prototype in #95 draws.
 - **The emblem** (emblem, the bat's color in the masthead, the intro and the watch strip; emblem-plate and emblem-plate-rim for a Theme whose bat sits on a plate, such as PALE MOONLIGHT's oval, which lights from a gradient of the Alarm color on the disc while something needs you).
 - **The Signal** (glass-shine, glass, disc-rim-inner, disc-rim-outer, disc-bat for the bat in the unlit glass, lens-core, lens-edge, lens-rim, lens-bat) and the **notice card** (notice-top, notice-foot, notice-hover-top, notice-hover-foot).
 - **The Atmosphere** (haze, haze-edge, grain-opacity, searchlight, and its kind's colors: rain, snow, or a skyline's towers, edges and lights). Its kind (VENGEANCE's rain, PALE MOONLIGHT's snow) is drawn on a canvas, whose painter takes the values of the variables its kind names (--rain, say) at run time and again when the page changes Theme. It moves only while the pointer is over the window and for a few seconds after news, never under reduced motion. Rain and snow leave when they stop; a still scene (a skyline whose windows switch on and off, one a second) stays on the page, frozen, and is painted whole only when it appears or changes size or colors.
 - **Faces and shapes a Theme sets** (font-display, font-body, font-type, font-mono, font-report for the night report's body, font-stamp, font-label for short display words under 19px (the counts, the watch strip's name, a picker folder's name); wordmark-size, wordmark-tracking and wordmark-glow for the masthead (under 360px it steps 2px down from the Theme's size); folder-name-size and folder-name-tracking for its name on its picker folder; pen-hot and pen-soft, the Night Report's pen strokes drawn in their inks (an SVG can't read a variable); on-signal, the ink on an Alarm color fill (the header's count), held to 4.5:1 on it; stamp-tilt, stamp-tilt-slight, stamp-border and stamp-mask for the stamp's shape, stamp-size and stamp-weight for its word (every stamp word must fit the Night Report's margin and the watch strip in the Theme's stamp face, measured from the font's own widths by `app/test/stampWidth.test.ts`); disc-lens, the lit disc as one gradient, a recipe rather than colors). A Theme's stylesheet may also carry rules scoped to its own `data-theme` for what a variable can't express (an inverted lens, say).
+- **Headings and titles a Theme sets** (heading-case for the settings sheet's and empty states' headings, in caps under a unicase display face such as WATCHFUL PROTECTOR's Syncopate; font-case-title and case-title-weight for someone's words used as a title, a case's in its detail and a drawer's, which a very wide display face would cut short).
 
 Every variable the shared stylesheets read and don't set themselves is set by every Theme, with no fallback in `var()`: a value one Theme sets would otherwise reach a picker folder wearing another (`app/test/themes.test.ts`). Translucent variants are `color-mix()` on their token. Every gradient says `in srgb`, because a `color-mix()` inside one would otherwise switch it to Oklab and shift its pixels, and which tokens are mixes is up to each Theme. `app/test/themeContrast.test.ts` holds every Theme's text colors to 4.5:1 on every dark ground they sit on (the page, the panels, the sheet and the notice card), one Theme at a time. VENGEANCE's approved colors that read under it (Signal Red as the wordmark, Hot Signal and Brick Ink as files-layout stamps, the pen inks off black, ash-dim and the decorative chevron) are listed there with their reasons, pending #97; new Themes get no exceptions.
 
 ### Named Rules
-**The Alarm Color Rule.** Every Theme keeps one Alarm color for "something needs you" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm. In VENGEANCE the Alarm color is red, which gives the next rule. Bat-Clawd's aura is the one place the Alarm color may wrap the mascot, and only while something needs you or in an iconic moment.
+**The Alarm Color Rule.** Every Theme keeps one Alarm color for "something needs you" and uses it nowhere else: the hottest color in its palette, or a red that suits the palette when nothing in it reads as an alarm, or, where a red would sit beside Bat-Clawd's orange jaw, a color far from every other in the Theme, picked on screen (WATCHFUL PROTECTOR's Blue Flame). In VENGEANCE the Alarm color is red, which gives the next rule. Bat-Clawd's aura is the one place the Alarm color may wrap the mascot, and only while something needs you or in an iconic moment.
 
 **The Bat-Clawd Costume Rule.** Bat-Clawd wears his version's suit over his body, arms and legs, with the cowl down to his eyes; Clawd's orange shows as his jaw, his eyes stay white, and his cape (or coat) hangs behind his legs. At rest a faint neutral rim (a grey, or a muted hue well away from the Alarm color, like PALE MOONLIGHT's steel) lets the cowl and cape read on the Theme's ground, and no suit is so black that it vanishes there. His aura, in the Theme's Alarm color, shows only while something needs the user or in an iconic moment. The model was approved on the prototype in #95.
 
@@ -274,7 +275,7 @@ The recurring silhouette is the ink stamp: a boxed typewriter word rotated -2.5 
 ### Cards (files layout)
 - **Corner Style:** 4px.
 - **Background:** a Surface to near-black gradient at 92%; on hover it warms toward Raised and lifts 2px with the lift glow, and the border turns translucent Signal Red. Transitions take 0.18s on the ease-out curve.
-- **Border:** 1px Line, plus the 3px left rule: Dried Blood (attention), Ash (stalled), Hot Signal (urgent).
+- **Border:** 1px Line, plus the 3px left rule: the waiting rule (attention; Dried Blood in VENGEANCE), Ash (stalled), Hot Signal (urgent).
 - **Internal Padding:** 10px 12px 11px 14px, 4px between lines.
 - **Content:** a top row (stamp or case number, then time or status), the title, a mono detail line, a progress bar (2px track, Blood-to-Hot gradient fill), and the quoted last words with a 1px left rule.
 - Urgent cards carry the breathing outline.
@@ -288,7 +289,7 @@ Typewriter caps in a 1.5px box, rotated, at 92% opacity, with a noise mask so th
 ### Lists (case-detail rows)
 - 7px 8px padding, 4px radius, Surface on hover, 1px Signal Red focus outline. Completed text is struck through in a dimmed Ash. A task that has just completed flashes once with Hot Signal at 35% (0.9s).
 - Section titles are 10.5px uppercase labels followed by a Line rule that fades out to the right.
-- Alerts are boxes with a 3px left rule: Dried Blood on an 8% blood tint, or Hot Signal on a 12% signal tint for permission and error.
+- Alerts are boxes with a 3px left rule: the waiting rule on an 8% tint of it, Ash for a stalled one, or Hot Signal on a 12% signal tint for permission and error.
 
 ### Inputs / Fields
 - **Toggles:** a 34x18 pill track on Surface with a Line border. When on, the track turns translucent Dried Blood with a Signal Red border, and the thumb slides 16px and lights up Bone with a red glow. Focus is a Signal Red outline offset 2px.

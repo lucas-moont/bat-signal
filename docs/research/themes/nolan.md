@@ -4,6 +4,16 @@ Research note, 2026-10-09. Scope: one Bat-Signal Theme after *Batman Begins* (20
 
 Revised 2026-10-09 after the wave 1 jury (`jury-wave-1.md` §10).
 
+**Built in #82 (2026-10-13)** as `the-dark-knight-2008`, demo flag `protector`. Where this note and the build differ, the build follows the decisions below:
+- **Alarm: Blue Flame**, as in [`bat-clawd-nolan-suit.md`](bat-clawd-nolan-suit.md) §5: `--signal` `#2f7fe0` (fills, the count box, with `--abyss` ink on it), `--signal-hot` `#3d8bff` (the aura), `--ink-hot` `#5aa9ff` (CLEARANCE and FAULT, the hot pen). `--blood` is its off shade, a deep steel blue `#1c3a63`: no red anywhere. The lit disc is §8's searchlight in blue: a white core, `#c9e0ff`, Blue Flame, `--signal`, `--blood` at the rim.
+- **Working ink stays mercury** (`#7cc6c4`), picked on screen against Bone; sodium marks what waits.
+- **Stamps** in Big Shoulders Stencil 700 at 12px, straight, a 1px box, no wear (picked on screen against 11px). Every stamp word fits the report margin, the narrowest panel's, the watch strip and the notice card (`app/test/stampWidth.test.ts`).
+- **Type:** Syncopate 400 (the weight seen on screen; 700 is not loaded) sets the masthead at 15px with 2px tracking (the size picked against 16px; the tracking keeps Bat-Clawd's open cape clear of the menu button), and the sheet and empty-state headings in caps (it is unicase); a case's own title in the detail keeps Barlow, too long for Syncopate's width. The counts and a folder's name are Barlow, as §8's count asks. The Night Report is JetBrains Mono, named "Sitrep" and dated "GOTHAM · 02:14".
+- **Emblem:** §8's draft with its dip and hooks smoothed into curves; the ear width is unchecked against a frontal still (none found).
+- **Waiting work** takes a dimmed sodium rule beside its card (`--waiting-rule`), not the alarm's off shade.
+- **Atmosphere:** the lit windows without the towers' 1px edge (picked on screen: with it, they read as boxes). The windows switch only while you look, as every Atmosphere moves; at rest the skyline stays, frozen.
+- **Bat-Clawd:** outfit N; the Sonar as §7 draws it, its ring at the lenses' white; no aura as it plays (Blue Flame never shows at rest).
+
 ## 1. TL;DR
 
 - **The Theme in one sentence:** a cold, modernist Gotham of steel-blue glass and lit office windows, where nothing is warm until something needs you and the bat catches fire.

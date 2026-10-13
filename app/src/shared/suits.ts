@@ -138,10 +138,14 @@ const BELOW_WAIST = [
   '....g.g..g.g....',
   ...twice(['....g.g..g.g....']),
 ]
-const map = (chest: readonly string[], rows = BELOW_WAIST): OutfitMap => ({
+const map = (
+  chest: readonly string[],
+  rows = BELOW_WAIST,
+  legend: OutfitMap['legend'] = LEGEND,
+): OutfitMap => ({
   top: 0,
   rows: [...HEAD, ...twice(chest), ...rows],
-  legend: LEGEND,
+  legend,
 })
 
 /** No arms on the grid: held straight out past it (the wingsuit) or hidden under a draped cape. */
@@ -216,19 +220,29 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
   eyes: 'shut',
 })
 
+/** How many steps a beat of his own may take, at the end of his watch. */
+const BEAT_ROOM = 4
+
 /**
- * His watch on the perch, held on his Signature pose's final step (so the reveal ends where the
- * watch begins): still for eight seconds, then two glances, in twelve.
+ * His watch on the perch, twelve steps of a second each, held on his Signature pose's final step (so
+ * the reveal ends where the watch begins): six seconds still, two glances, then the last four
+ * still, or a beat of his own (a sonar's ping) in their place. Last, so a reveal that just played
+ * its own beat isn't followed by another a moment later.
  */
-const watchOn = (signature: Script, glances: [Partial<Step>, Partial<Step>]): Script => {
+const watchOn = (
+  signature: Script,
+  glances: [Partial<Step>, Partial<Step>],
+  beat: readonly Step[] = [],
+): Script => {
   const STILL: Step = { pose: scriptAt(signature, Infinity).pose, look: 0 }
+  const still = (n: number) => Array<Step>(n).fill(STILL)
   return [
     STILL,
-    ...Array<Step>(7).fill(STILL),
+    ...still(5),
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
-    STILL,
-    STILL,
+    ...still(BEAT_ROOM - Math.min(beat.length, BEAT_ROOM)),
+    ...beat.slice(0, BEAT_ROOM),
   ]
 }
 
@@ -491,5 +505,104 @@ export const PALE_MOONLIGHT_SUIT: Suit = {
   watch: watchOn(UNDER_THE_SIGNAL, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
   signature: UNDER_THE_SIGNAL,
   // Gold, the Alarm color, never at rest: no aura as he looks up at the Signal (#95, outfit I).
+  aura: 'alarmed',
+}
+
+// --- WATCHFUL PROTECTOR: outfit N (#95), after Christopher Nolan's The Dark Knight (2008). The black
+// screen suit, its plates catching the light at the shoulders, the chest bat and the knees, open
+// mesh at the waist, the smoked-bronze belt and its pale buckle, and a matte black cape that
+// stiffens into a three-point glide wing (bat-clawd-nolan-suit.md). ---
+
+/** Outfit N's legend: V's, with the plates' sheen and the waist's open mesh. */
+const NOLAN_LEGEND = { ...LEGEND, p: 'var(--plate)', m: 'var(--mesh)' }
+/** Lit plates on his shoulders, then the suit, then the mesh at his waist. */
+const PLATED = '...pSSSSSSSSp...'
+const MESH = '...mSSSSSSSSm...'
+/** V's belt, buckle and booted legs, with lit plates on his knees. */
+const NOLAN_BELOW = BELOW_WAIST.map((row) => (row === '....S.S..S.S....' ? '....p.p..p.p....' : row))
+const nolanMap = (chest: readonly string[], rows = NOLAN_BELOW) => map(chest, rows, NOLAN_LEGEND)
+const NOLAN_ARMS_OUT = nolanMap([PLATED, '.gSSSSSSSSSSSSg.', MESH])
+const NOLAN_ARMS_HIDDEN = nolanMap([PLATED, SUIT, MESH])
+const NOLAN_SEATED = nolanMap([PLATED, SUIT, SUIT, SUIT], [])
+
+/** The sculpted chest bat, in the plates' sheen: a lit relief on the black chest. */
+const RELIEF: Layer = { kind: 'emblem', cx: 8, cy: 6.3, width: 6 }
+
+/** The matte cape, its hem straight: no zigzag, no scallop. */
+const MATTE = {
+  /** Closed around him, asleep. */
+  wrapped: 'M2.6 6.4 L13.4 6.4 L13.8 10.5 L2.2 10.5 Z',
+  /**
+   * The memory-cloth glide (flying): a rigid batwing with a straight leading edge from the shoulder
+   * to a high tip and three points on its trailing edge (left half; mirrored for the right).
+   */
+  glide: 'M3 5 L-5.2 4.3 L-4.5 6.9 L-3 6.2 L-1.9 8.1 L0.2 7.3 L1.5 9.2 L3 8.8 Z',
+  /** Flung open (alarmed), ankle-length, its hem flat at his feet (left half; mirrored). */
+  open: 'M3.4 5 L0.2 5.2 L-2.8 11 L3.4 11 Z',
+  /** Hanging straight behind him, a cell of it either side (the Signature pose). */
+  hanging: 'M2 5 L14 5 L14 10.5 L2 10.5 Z',
+}
+
+const nolanPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, behind, front, { chest: [RELIEF] })
+
+/** The glide, level, then the whole frame a pixel lower: a bank on the bob. */
+const memoryCloth = nolanPose(NOLAN_ARMS_HIDDEN, [{ kind: 'cape', d: MATTE.glide, mirrored: true }])
+
+/** The cape flung open, his gauntlets out (alarmed). */
+const flungOpen = nolanPose(NOLAN_ARMS_OUT, [BACK, { kind: 'cape', d: MATTE.open, mirrored: true }])
+
+/** The lenses' light behind his eyes, still white (the Sonar). */
+const LENS_LIGHT: Layer = { kind: 'rects', px: [[4.6, 2.7, 6.8, 1.6]], fill: 'var(--bone)', opacity: 0.25 }
+
+/** Standing front-on, arms at his sides, the cape hanging behind him, his lenses lit. */
+const sonarWith = (ring: Layer[] = []) =>
+  nolanPose(
+    NOLAN_ARMS_HIDDEN,
+    [{ kind: 'cape', d: MATTE.hanging }],
+    [
+      {
+        kind: 'rects',
+        px: [
+          [2, 6, 1, 2],
+          [13, 6, 1, 2],
+        ],
+        fill: 'var(--suit)',
+      },
+      LENS_LIGHT,
+      ...ring,
+    ],
+  )
+const sonar = sonarWith()
+
+/**
+ * The ping: one ring from his eyes, spreading and fading over four steps, in their white. It grows
+ * past the edges of his frame, which shows what it draws outside them.
+ */
+const ping = (r: number, opacity: number): Step => ({
+  pose: sonarWith([{ kind: 'path', d: oval(8, 3, r, r), className: 'clawd__ping', opacity }]),
+  look: 0,
+})
+const PINGS: Script = [ping(4, 0.4), ping(8, 0.28), ping(12, 0.16), ping(16, 0.06)]
+
+/**
+ * Sonar (the Signature pose), from The Dark Knight's climax, Fox's city-wide sonar seen through the
+ * cowl's lenses (nolan.md, section 7): a ring goes out from his eyes, then he stands watch, the
+ * lenses lit. Under reduced motion, the lenses without the ring.
+ */
+const SONAR: Script = [...PINGS, { pose: sonar, look: 0 }]
+
+export const WATCHFUL_PROTECTOR_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(NOLAN_SEATED, MATTE.wrapped)],
+    flying: [memoryCloth, { ...memoryCloth, transform: 'translateY(1px)' }],
+    alarmed: [flungOpen],
+  },
+  // On the perch, standing watch, the sonar pings once a cycle (where another cape would lift in the
+  // wind: this one is heavy), then he glances along the street both ways.
+  watch: watchOn(SONAR, [{ look: -GAZE }, { look: GAZE }], PINGS),
+  signature: SONAR,
+  // Blue Flame is the Alarm color and never shows at rest: no aura as the sonar pings.
   aura: 'alarmed',
 }
