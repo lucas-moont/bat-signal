@@ -338,6 +338,15 @@ describe('the ash', () => {
     expect(blown(5)).toBeCloseTo(blown(2 / FPS))
   })
 
+  // The page may paint it as it hands it its colors, before the canvas has a size (#112).
+  it('paints nothing before it has a size, and does not throw', () => {
+    const painter = painterFor(ASH, seeded())
+    painter.recolor(colorOf)
+    const { ctx, fills } = recorder()
+    expect(() => painter.paint(ctx, 0)).not.toThrow()
+    expect(flakes(fills)).toEqual([])
+  })
+
   it('keeps blowing: a flake that leaves the right or the bottom comes back', () => {
     const last = flakes(ticks(600).at(-1)!)
     expect(last).toHaveLength(FLAKES)
