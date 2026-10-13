@@ -152,5 +152,10 @@
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* Lit: sky to horizon haze to city haze, all sampled (knightmare-palette.md, section 5). */
-  --disc-lens: radial-gradient(circle at 50% 45% in srgb, var(--lens-core), #f3daa9 60%, #e1ae66);
+  /* Broken: pieces of the glass gone, the dark of the lamp showing through, as everything is after the
+     fall (the maintainer's idea, picked on screen over cracks). */
+  --lens-cracks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M37 0 L64 0 L64 26 L59 24 L56 18 L58 13 L52 15 L49 10 L44 12 L42 7 L39 6 Z' fill='%23100804'/%3E%3Cpath d='M6 44 L13 41 L17 45 L22 44 L23 50 L19 54 L21 59 L12 64 L0 64 L0 50 Z' fill='%23100804'/%3E%3Cpath d='M47 47 L52 45 L54 49 L51 53 L47 51 Z' fill='%23100804'/%3E%3Cg fill='none' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M39 6 L42 7 L44 12 L49 10 L52 15 L58 13 L56 18 L59 24' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M13 41 L17 45 L22 44 L23 50 L19 54 L21 59' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M47 47 L52 45 L54 49 L51 53 L47 51 Z' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M44 12 L41 17 L37 18' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M56 18 L53 22 L54 27' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M22 44 L26 40 L29 41' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M23 50 L28 51' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M52 45 L55 41' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3C/g%3E%3C/svg%3E");
+  --disc-lens:
+    var(--lens-cracks) center / 100% 100% no-repeat,
+    radial-gradient(circle at 50% 45% in srgb, var(--lens-core), #f3daa9 60%, #e1ae66);
 }
