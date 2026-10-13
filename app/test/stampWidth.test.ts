@@ -2,37 +2,76 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, THEMES, type ThemeId } from '../src/shared/themes'
-import { fontMetrics } from './fixtures/fontMetrics'
-import { resolved, themeVariables } from './rendererSources'
+import { fontMetrics, type FontMetrics } from './fixtures/fontMetrics'
+import { componentCss, cssRule, declared, resolved, themeVariables } from './rendererSources'
 
 // A Theme's stamp words, in its stamp face, must fit where they are stamped (#76): a word that
-// overflows the Night Report's margin runs into the rule and the sentence after it.
+// overflows the Night Report's margin runs into the rule and the sentence after it. The room each
+// place gives is read from its stylesheet, so a change there is measured too.
 
-/** Letter spacing on every stamp (Cards.css .stamp), in em: after each letter, the last one too. */
-const TRACKING = 0.12
-/** A stamp's padding, left and right together (Cards.css .stamp). */
-const PADDING = 12
-/** The Night Report's margin (NightReport.css --margin), less its padding either side. */
-const MARGIN = 114 - 4 - 9
-/** The watch strip's stamp box (WatchStrip.css): 82px with 4px padding and a 1px border either side. */
-const STRIP = { width: 82 - 2 * 4 - 2 * 1, size: 9.5 }
+const px = (value: string) => parseFloat(value)
+/** A padding shorthand's left and right, together. */
+const sides = (padding: string) => {
+  const [top, right = top, , left = right] = padding.split(/\s+/).map(px)
+  return right! + left!
+}
+
+const cards = componentCss('Cards.css')
+const report = componentCss('NightReport.css')
+const strip = cssRule(componentCss('WatchStrip.css'), '.watch-row__stamp')
+const stamp = cssRule(cards, '.stamp')
+/** The narrowest panel's rules for the report (an @container). */
+const narrow = /@container app \(max-width: 330px\) \{([\s\S]*?)\n\}/.exec(report)?.[1] ?? ''
+
+/** A place a stamp sits: the room it gives, the letter spacing (em) there, and the size it sets. */
+interface Room {
+  width: number
+  tracking: number
+  /** The stamp's size there, from the Theme's --stamp-size. */
+  size: (stampSize: number) => number
+  /** Whether the stamp's padding and border count against the room (they do but in the strip). */
+  boxed: boolean
+}
+
+const MARGIN_PADDING = sides(declared(cssRule(report, '.entry__margin'), 'padding'))
+const ROOMS: Record<string, Room> = {
+  'the Night Report margin': {
+    width: px(declared(cssRule(report, '.report'), '--margin')) - MARGIN_PADDING,
+    tracking: px(declared(stamp, 'letter-spacing')),
+    size: (s) => s,
+    boxed: true,
+  },
+  "the narrowest panel's Night Report margin": {
+    width: px(declared(cssRule(narrow, '.report'), '--margin')) - MARGIN_PADDING,
+    tracking: px(declared(cssRule(narrow, '.report .stamp'), 'letter-spacing')),
+    size: (s) => s,
+    boxed: true,
+  },
+  // A fixed box: the word must fit inside its padding and border.
+  'the watch strip': {
+    width:
+      px(declared(strip, 'width')) -
+      sides(declared(strip, 'padding')) -
+      2 * px(declared(strip, 'border-width')),
+    tracking: px(declared(stamp, 'letter-spacing')),
+    size: (s) =>
+      s - px(/var\(--stamp-size\)\s*-\s*([\d.]+px)/.exec(declared(strip, 'font-size'))?.[1] ?? '0'),
+    boxed: false,
+  },
+}
 
 /** A Theme's stamp face, size, weight and border, as its stylesheet sets them. */
 function stampFace(id: ThemeId) {
   const vars = themeVariables(id)
   const value = (name: string) => resolved(vars, vars.get(name) ?? '')
   const family = /^'([^']+)'/.exec(value('--font-stamp'))?.[1] ?? ''
-  const weight = value('--stamp-weight')
   const slug = family.toLowerCase().replaceAll(' ', '-')
-  const file = join(
-    __dirname,
-    `../node_modules/@fontsource/${slug}/files/${slug}-latin-${weight}-normal.woff`,
-  )
+  const weight = value('--stamp-weight')
   return {
     family,
-    file,
-    size: parseFloat(value('--stamp-size')),
-    border: parseFloat(value('--stamp-border')),
+    file: join(__dirname, `../node_modules/@fontsource/${slug}/files/${slug}-latin-${weight}-normal.woff`),
+    size: px(value('--stamp-size')),
+    border: px(value('--stamp-border')),
   }
 }
 
@@ -45,20 +84,21 @@ function stampWords(id: ThemeId): string[] {
 
 describe.each(THEME_IDS)("%s's stamps", (id) => {
   const face = stampFace(id)
+  // Read once a Theme, when a test first measures (a missing file fails its own test, below).
+  let metrics: FontMetrics | undefined
+  const width = (word: string, size: number, tracking: number) =>
+    (metrics ??= fontMetrics(face.file)).width(word, size) + word.length * tracking * size
 
   it('come in a face the app ships', () => {
     expect(face.family).not.toBe('')
     expect(existsSync(face.file)).toBe(true)
   })
 
-  const metrics = () => fontMetrics(face.file)
-  const width = (word: string, size: number) => metrics().width(word, size) + word.length * TRACKING * size
-
-  it.each(stampWords(id))('fit the Night Report margin: %s', (word) => {
-    expect(width(word, face.size) + PADDING + 2 * face.border).toBeLessThanOrEqual(MARGIN)
-  })
-
-  it.each(stampWords(id))('fit the watch strip: %s', (word) => {
-    expect(width(word, STRIP.size)).toBeLessThanOrEqual(STRIP.width)
+  describe.each(Object.entries(ROOMS))('fit %s', (_, room) => {
+    const size = room.size(face.size)
+    const box = room.boxed ? sides(declared(stamp, 'padding')) + 2 * face.border : 0
+    it.each(stampWords(id))('%s', (word) => {
+      expect(width(word, size, room.tracking) + box).toBeLessThanOrEqual(room.width)
+    })
   })
 })
