@@ -63,7 +63,26 @@ export interface LitWindowsAtmosphere extends Scene {
   still: true
 }
 
-export type Atmosphere = RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere
+/**
+ * Ash blown on a desert wind: flakes cross the panel at a shallow slant, left to right, in depths
+ * that differ in strength, size and speed, a share of them dust.
+ */
+export interface AshAtmosphere extends Scene {
+  kind: 'ash'
+  /** The variable the ash is filled in. */
+  color: string
+  /** The dust among it: its variable, and its share of the flakes. */
+  dust: { color: string; share: number }
+  /** Flakes per 1000 square pixels. */
+  density: number
+  /**
+   * Each depth from the farthest to the nearest: its alpha, its flakes' size, and how far the wind
+   * carries them and they fall in a tick, in px.
+   */
+  depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
+}
+
+export type Atmosphere = RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {

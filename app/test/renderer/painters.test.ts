@@ -5,6 +5,7 @@ import {
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
+  type AshAtmosphere,
   type SnowAtmosphere,
 } from '../../src/shared/atmospheres'
 
@@ -262,6 +263,90 @@ describe('the snow', () => {
     expect(ys.length).toBe(FLAKES)
     expect(Math.min(...ys)).toBeGreaterThan(-10)
     expect(Math.max(...ys)).toBeLessThan(440 + 10)
+  })
+})
+
+describe('the ash', () => {
+  const ASH: AshAtmosphere = {
+    kind: 'ash',
+    color: '--ash',
+    dust: { color: '--dust', share: 0.25 },
+    density: 0.08,
+    depths: [
+      { alpha: 0.1, size: 1, wind: 3, fall: 1 },
+      { alpha: 0.22, size: 2, wind: 5, fall: 2 },
+    ],
+  }
+  const FLAKES = Math.round(((320 * 440) / 1000) * ASH.density)
+  const colorOf = (variable: string) => ({ '--ash': '#928e88', '--dust': '#7a6a52' })[variable] ?? ''
+
+  const ash = () => {
+    const painter = painterFor(ASH, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+  /** The ash as it appears, then after each of `n` ticks of the clock. */
+  const ticks = (n: number, dt = 1 / FPS) => {
+    const painter = ash()
+    const first = recorder()
+    painter.paint(first.ctx, 0)
+    const after = Array.from({ length: n }, () => {
+      const r = recorder()
+      painter.paint(r.ctx, dt)
+      return r.fills
+    })
+    return [first.fills, ...after]
+  }
+  const flakes = (fills: { rects: Square[] }[]) => fills.flatMap((f) => f.rects)
+
+  it('fills the canvas with flakes, as many as its density asks', () => {
+    expect(flakes(ticks(0)[0]!)).toHaveLength(FLAKES)
+  })
+
+  // The desert wind blows it across the panel at a shallow slant, left to right: Burton's snow falls.
+  it('blows its flakes sideways more than it lets them fall', () => {
+    const [first, next] = ticks(1)
+    first!.forEach((f, i) =>
+      f.rects.forEach((a, j) => {
+        const b = next![i]!.rects[j]!
+        if (b.x < a.x || b.y < a.y) return // came back at the left or the top in between
+        expect(b.x - a.x).toBeGreaterThan(b.y - a.y)
+        expect(b.y - a.y).toBeGreaterThan(0)
+      }),
+    )
+  })
+
+  // Dust is the only warm thing in the Atmosphere, a share of the flakes in each depth.
+  it('fills a share of its flakes in dust, each depth in its strength', () => {
+    const [first] = ticks(0)
+    const dust = first!.filter((f) => f.color === '#7a6a52')
+    const grey = first!.filter((f) => f.color === '#928e88')
+    expect(dust.map((f) => f.alpha)).toEqual(ASH.depths.map((d) => d.alpha))
+    expect(grey.map((f) => f.alpha)).toEqual(ASH.depths.map((d) => d.alpha))
+    const share = flakes(dust).length / FLAKES
+    expect(share).toBeGreaterThan(0.1)
+    expect(share).toBeLessThan(0.45)
+  })
+
+  it('blows as far as the time between ticks, up to two ticks', () => {
+    const blown = (dt: number) => {
+      const [first, next] = ticks(1, dt)
+      return next![0]!.rects[0]!.x - first![0]!.rects[0]!.x
+    }
+    expect(blown(2 / FPS)).toBeCloseTo(2 * blown(1 / FPS))
+    expect(blown(5)).toBeCloseTo(blown(2 / FPS))
+  })
+
+  it('keeps blowing: a flake that leaves the right or the bottom comes back', () => {
+    const last = flakes(ticks(600).at(-1)!)
+    expect(last).toHaveLength(FLAKES)
+    for (const r of last) {
+      expect(r.x).toBeGreaterThan(-10)
+      expect(r.x).toBeLessThan(320 + 10)
+      expect(r.y).toBeGreaterThan(-10)
+      expect(r.y).toBeLessThan(440 + 10)
+    }
   })
 })
 
