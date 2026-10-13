@@ -40,7 +40,7 @@ export interface Terms {
 export interface Voice {
   /** The product's name on the masthead and in the intro. */
   wordmark: string
-  /** A line under the wordmark in the intro, if the Theme has one. */
+  /** A line over the wordmark in the intro, if the Theme has one. */
   tagline?: string
   /** The Theme's own name, alluding to its film or comic (jury §10), and that film, as the picker credits it. */
   theme: { name: string; film: string }

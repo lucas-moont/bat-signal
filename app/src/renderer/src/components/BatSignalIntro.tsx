@@ -44,8 +44,8 @@ export function BatSignalIntro() {
       <div className="intro__signal">
         <BatEmblem size={120} />
       </div>
-      <div className="intro__title">{wordmark}</div>
       {tagline && <div className="intro__tagline">{tagline}</div>}
+      <div className="intro__title">{wordmark}</div>
       {signature && (
         <div className="intro__clawd">
           <BatClawd mood="flying" size={78} reveal />

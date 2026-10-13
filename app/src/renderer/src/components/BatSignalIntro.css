@@ -1,4 +1,6 @@
 .intro {
+  /* Where the wordmark sits; a Theme's tagline sits just above it, clear of Bat-Clawd below. */
+  --intro-title-bottom: 22%;
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -51,7 +53,7 @@
 
 .intro__title {
   position: absolute;
-  bottom: 22%;
+  bottom: var(--intro-title-bottom);
   font-family: var(--font-display);
   font-size: 30px;
   letter-spacing: 8px;
@@ -61,10 +63,10 @@
   animation: intro-flicker 0.9s steps(1) 0.45s forwards;
 }
 
-/* A Theme's line under the wordmark, lit with it a beat later. */
+/* A Theme's line over the wordmark, lit a beat after it. */
 .intro__tagline {
   position: absolute;
-  bottom: calc(22% - 24px);
+  bottom: calc(var(--intro-title-bottom) + 40px);
   font-family: var(--font-body);
   font-size: 12px;
   letter-spacing: 0.14em;

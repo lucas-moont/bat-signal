@@ -14,15 +14,15 @@ describe('the intro', () => {
     expect(intro()).not.toContain('intro__tagline')
   })
 
-  // PALE MOONLIGHT's Voice adds a line under its wordmark: "The city after midnight."
+  // PALE MOONLIGHT's Voice adds a line over its wordmark: "The city after midnight."
   describe("with a tagline in the Theme's Voice", () => {
     standInTheme({
       words: { ...STANDARD_WORDS, voice: { ...STANDARD_WORDS.voice, tagline: 'A line of its own.' } },
     })
 
-    it('shows it under the wordmark', () => {
+    it('shows it over the wordmark', () => {
       expect(intro()).toMatch(
-        /class="intro__title">BAT-SIGNAL<\/div><div class="intro__tagline">A line of its own\.<\/div>/,
+        /class="intro__tagline">A line of its own\.<\/div><div class="intro__title">BAT-SIGNAL<\/div>/,
       )
     })
   })
