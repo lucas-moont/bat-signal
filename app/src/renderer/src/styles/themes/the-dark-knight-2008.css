@@ -36,7 +36,7 @@
   --ink-live: var(--mercury);
   --ink: #bfc8d0;
 
-  /* Emphasis that is not an alarm is Bone, fluorescent white: no blue at rest. */
+  /* Emphasis that is not an alarm is Bone, fluorescent white: no Blue Flame at rest. */
   --accent: var(--bone);
   --accent-hot: var(--bone);
   --accent-deep: var(--line);
@@ -101,7 +101,7 @@
   --glass-shine: var(--surface);
   --glass: var(--abyss);
   --disc-rim-inner: #05080c;
-  --disc-rim-outer: var(--raised);
+  --disc-rim-outer: var(--line);
   --lens-core: #f3f8ff;
   --lens-rim: #10305a;
   --lens-bat: var(--abyss);
@@ -126,14 +126,16 @@
   /* The Night Report is a printed log, not a typed page. */
   --font-report: var(--font-mono);
   --font-stamp: var(--font-type);
-  --font-label: var(--font-display);
+  /* Short words under 19px (the counts, a folder's name) in Barlow: Syncopate is for large caps, and
+     the disc's count is a Barlow numeral (nolan.md, section 8). */
+  --font-label: var(--font-body);
   /* Syncopate is unicase, its lowercase caps of another height: headings read set in caps. A case's
      own title is the user's words, too long for its width: it keeps the body face. */
   --heading-case: uppercase;
   --font-case-title: var(--font-body);
   --case-title-weight: 600;
-  --folder-name-size: 10px;
-  --folder-name-tracking: 0.5px;
+  --folder-name-size: 11.5px;
+  --folder-name-tracking: 0.3px;
   /* Syncopate runs very wide: the masthead sets it small, its caps letterspaced just enough to
      leave Bat-Clawd's open cape clear of the menu button. */
   --wordmark-size: 15px;
