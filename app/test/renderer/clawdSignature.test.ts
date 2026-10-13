@@ -31,6 +31,34 @@ describe("a Theme's poses", () => {
   it('may swap any pose for a homage', () => {
     expect(draw({ mood: 'sleeping' })).toContain('M0 0 L1.11 0 Z')
   })
+
+  // Burton's Signature looks up at the Signal: a pose may set where his eyes are, still white.
+  describe('with eyes of their own', () => {
+    standInTheme({
+      suit: {
+        ...VENGEANCE_SUIT,
+        poses: {
+          ...VENGEANCE_SUIT.poses,
+          flying: [
+            {
+              ...markedPose('5.55'),
+              eyes: [
+                [6, 2.5, 2, 1],
+                [10, 2.5, 2, 1],
+              ],
+            },
+          ],
+        },
+      },
+    })
+
+    it('draws his eyes where the pose puts them', () => {
+      const eyes = draw({ mood: 'flying' }).match(/<g class="clawd__eyes"[^>]*>(.*?)<\/g>/)?.[1] ?? ''
+      expect(eyes).toBe(
+        '<rect x="6" y="2.5" width="2" height="1"></rect><rect x="10" y="2.5" width="2" height="1"></rect>',
+      )
+    })
+  })
 })
 
 describe("a Theme's Signature pose", () => {

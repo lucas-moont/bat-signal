@@ -39,7 +39,8 @@ export interface Pose {
   map: OutfitMap
   behind: readonly Layer[]
   front: readonly Layer[]
-  eyes: 'open' | 'shut'
+  /** His suit's open or shut eyes, or eyes of the pose's own (looking up, say): white whatever. */
+  eyes: 'open' | 'shut' | readonly Px[]
   /** A nudge on top of the Mood's motion while this pose shows (a wingsuit banking). */
   transform?: string
 }
