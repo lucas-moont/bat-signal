@@ -57,11 +57,12 @@ const [bx, by, bw, bh] = BODY_BOX
 const OFF_BODY = `M${vx - vw} ${vy - vh} h${3 * vw} v${3 * vh} h${-3 * vw} Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
 
 /** A path layer's own attributes, the same on its mirrored side. */
-const pathOf = ({ className, fill, d, smooth }: Extract<Layer, { kind: 'path' }>) => ({
+const pathOf = ({ className, fill, d, smooth, opacity }: Extract<Layer, { kind: 'path' }>) => ({
   className,
   fill,
   d,
   shapeRendering: smooth ? 'geometricPrecision' : undefined,
+  opacity,
 })
 
 function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) {
@@ -86,7 +87,7 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
       )
     case 'rects':
       return (
-        <g key={key} fill={layer.fill} className={layer.className}>
+        <g key={key} fill={layer.fill} className={layer.className} opacity={layer.opacity}>
           {rects(layer.px)}
         </g>
       )

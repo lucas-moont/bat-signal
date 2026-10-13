@@ -19,11 +19,19 @@ export type Layer =
   /**
    * A path in one color, or in a class's; mirrored, it is drawn again flipped across his middle (a
    * cape's two open halves); smooth, it is drawn like the chest emblem, not snapped to pixels (an
-   * oval beside it).
+   * oval beside it); at an opacity, faint (a ring fading as it spreads).
    */
-  | { kind: 'path'; d: string; fill?: string; className?: string; mirrored?: boolean; smooth?: boolean }
-  /** Rects in one color, or in a class's. */
-  | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string }
+  | {
+      kind: 'path'
+      d: string
+      fill?: string
+      className?: string
+      mirrored?: boolean
+      smooth?: boolean
+      opacity?: number
+    }
+  /** Rects in one color, or in a class's, at an opacity if faint (a glow behind his eyes). */
+  | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
   | { kind: 'emblem'; cx: number; cy: number; width: number }
   /**

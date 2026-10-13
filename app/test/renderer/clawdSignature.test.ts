@@ -61,6 +61,33 @@ describe("a Theme's poses", () => {
   })
 })
 
+// WATCHFUL PROTECTOR's sonar ring fades as it spreads: a layer may be drawn at a strength.
+describe('a faint layer', () => {
+  standInTheme({
+    suit: {
+      ...VENGEANCE_SUIT,
+      poses: {
+        ...VENGEANCE_SUIT.poses,
+        flying: [
+          {
+            ...markedPose('5.56'),
+            front: [
+              { kind: 'path', d: 'M1 1 L2 2 Z', className: 'clawd__ping', opacity: 0.28 },
+              { kind: 'rects', px: [[4.6, 2.7, 6.8, 1.6]], fill: 'var(--bone)', opacity: 0.25 },
+            ],
+          },
+        ],
+      },
+    },
+  })
+
+  it('draws a path or rects at its strength', () => {
+    const drawn = draw({ mood: 'flying' })
+    expect(drawn).toContain('<path class="clawd__ping" d="M1 1 L2 2 Z" opacity="0.28">')
+    expect(drawn).toContain('<g fill="var(--bone)" opacity="0.25">')
+  })
+})
+
 describe("a Theme's Signature pose", () => {
   it('shows on the perch, in place of the watch', () => {
     expect(draw({ mood: 'sleeping', perched: true })).toContain('M0 0 L2.22 0 Z')
