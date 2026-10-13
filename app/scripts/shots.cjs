@@ -53,6 +53,10 @@ const SHOTS = [
   // The signal window: the lit disc at rest, and the disc sending a notice card up its beam.
   { name: 'signal', view: 'signal', size: [96, 96], steps: [] },
   { name: 'signal-notice', view: 'signal', hash: 'demo-news', size: [320, 230], steps: [] },
+  // PALE MOONLIGHT, for the README's Themes table.
+  { name: 'moonlight-needs-you', hash: 'demo-moonlight', steps: [] },
+  { name: 'moonlight-night-report', hash: 'demo-report-moonlight', steps: [] },
+  { name: 'moonlight-clawd-alarmed', hash: 'demo-moonlight', clip: '.clawd', scale: 5, steps: [] },
   // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom.
   { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 5, steps: [] },
   { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 5, steps: [] },
