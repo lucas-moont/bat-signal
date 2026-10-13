@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
-import { painterFor } from '../../src/renderer/src/painters'
+import { painterFor, type Painter } from '../../src/renderer/src/painters'
 import {
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
@@ -55,11 +55,35 @@ function seeded(seed = 7) {
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
+/** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
+function fillsOver(painter: Painter, n: number, dt = 1 / FPS) {
+  const first = recorder()
+  painter.paint(first.ctx, 0)
+  const after = Array.from({ length: n }, () => {
+    const r = recorder()
+    painter.paint(r.ctx, dt)
+    return r.fills
+  })
+  return [first.fills, ...after]
+}
+
+/** Ash blown in two depths, a quarter of it dust. */
+const ASH: AshAtmosphere = {
+  kind: 'ash',
+  color: '--ash',
+  dust: { color: '--dust', share: 0.25 },
+  density: 0.08,
+  depths: [
+    { alpha: 0.1, size: 1, wind: 3, fall: 1 },
+    { alpha: 0.22, size: 2, wind: 5, fall: 2 },
+  ],
+}
+
 // The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -192,17 +216,7 @@ describe('the snow', () => {
   }
 
   /** The snow as it appears, then after each of `ticks` ticks of the clock. */
-  const ticks = (n: number, dt = 1 / FPS) => {
-    const painter = snow()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const after = Array.from({ length: n }, () => {
-      const r = recorder()
-      painter.paint(r.ctx, dt)
-      return r.fills
-    })
-    return [first.fills, ...after]
-  }
+  const ticks = (n: number, dt = 1 / FPS) => fillsOver(snow(), n, dt)
 
   it('fills the canvas with flakes, as many as its density asks', () => {
     const [first] = ticks(0)
@@ -267,16 +281,6 @@ describe('the snow', () => {
 })
 
 describe('the ash', () => {
-  const ASH: AshAtmosphere = {
-    kind: 'ash',
-    color: '--ash',
-    dust: { color: '--dust', share: 0.25 },
-    density: 0.08,
-    depths: [
-      { alpha: 0.1, size: 1, wind: 3, fall: 1 },
-      { alpha: 0.22, size: 2, wind: 5, fall: 2 },
-    ],
-  }
   const FLAKES = Math.round(((320 * 440) / 1000) * ASH.density)
   const colorOf = (variable: string) => ({ '--ash': '#928e88', '--dust': '#7a6a52' })[variable] ?? ''
 
@@ -287,17 +291,7 @@ describe('the ash', () => {
     return painter
   }
   /** The ash as it appears, then after each of `n` ticks of the clock. */
-  const ticks = (n: number, dt = 1 / FPS) => {
-    const painter = ash()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const after = Array.from({ length: n }, () => {
-      const r = recorder()
-      painter.paint(r.ctx, dt)
-      return r.fills
-    })
-    return [first.fills, ...after]
-  }
+  const ticks = (n: number, dt = 1 / FPS) => fillsOver(ash(), n, dt)
   const flakes = (fills: { rects: Square[] }[]) => fills.flatMap((f) => f.rects)
 
   it('fills the canvas with flakes, as many as its density asks', () => {
@@ -341,15 +335,6 @@ describe('the ash', () => {
     }
     expect(blown(2 / FPS)).toBeCloseTo(2 * blown(1 / FPS))
     expect(blown(5)).toBeCloseTo(blown(2 / FPS))
-  })
-
-  // The page may paint it as it hands it its colors, before the canvas has a size (#112).
-  it('paints nothing before it has a size, and does not throw', () => {
-    const painter = painterFor(ASH, seeded())
-    painter.recolor(colorOf)
-    const { ctx, fills } = recorder()
-    expect(() => painter.paint(ctx, 0)).not.toThrow()
-    expect(flakes(fills)).toEqual([])
   })
 
   it('keeps blowing: a flake that leaves the right or the bottom comes back', () => {
