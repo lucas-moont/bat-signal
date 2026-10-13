@@ -194,7 +194,7 @@ function litWindows(
   let blocks: { x: number; y: number; w: number; h: number }[] = []
   let windows: Window[] = []
   /** The glass's, the edges' and each light's color, as last read. */
-  let colors = { glass: '', edge: '', lights: [] as string[] }
+  let colors: { glass: string; edge?: string; lights: string[] } = { glass: '', lights: [] }
   let width = 0
   let height = 0
   /** Whether the whole scene waits to be painted. */
@@ -226,7 +226,7 @@ function litWindows(
     recolor(colorOf) {
       colors = {
         glass: colorOf(glass),
-        edge: edge ? colorOf(edge) : '',
+        edge: edge && colorOf(edge),
         lights: lights.map((l) => colorOf(l.color)),
       }
       repaintWhole = true
@@ -263,11 +263,12 @@ function litWindows(
         ctx.clearRect(0, 0, width, height)
         ctx.globalAlpha = 1
         ctx.fillStyle = colors.glass
-        ctx.strokeStyle = colors.edge
+        const { edge } = colors
+        if (edge) ctx.strokeStyle = edge
         for (const b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h)
           // On the half pixel, so the 1px edge lands on whole pixels.
-          if (colors.edge) ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
+          if (edge) ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
         }
         for (const w of windows) lightUp(ctx, w)
         return
