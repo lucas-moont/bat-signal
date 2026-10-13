@@ -14,9 +14,10 @@ const withoutComments = (code: string) =>
 
 const NAMES = CSS_COLOR_NAMES.join('|')
 const FUNCTION_OR_HEX = String.raw`#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`
-// In CSS any bare color name is a value; in TS only a quoted one is (`fill="maroon"`), not a word.
+// In CSS any bare color name is a value; in TS only a quoted one is (`fill="maroon"`), not a word,
+// nor a switch's case (an Atmosphere's kind may be snow).
 const CSS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(?<![\w-])(?:${NAMES})(?![\w-])`, 'gi')
-const TS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(['"\x60])(?:${NAMES})\1`, 'gi')
+const TS_COLOR = new RegExp(String.raw`${FUNCTION_OR_HEX}|(?<!case )(['"\x60])(?:${NAMES})\1`, 'gi')
 
 /** Every color written by hand in the files, as `file:line  literal`. */
 function literals(files: Source[]): string[] {

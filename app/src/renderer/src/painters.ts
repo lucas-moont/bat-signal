@@ -31,10 +31,10 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
   switch (atmosphere.kind) {
     case 'rain':
       return rain(atmosphere, random)
+    case 'snow':
+      return snow(atmosphere, random)
     case 'lit-windows':
       return litWindows(atmosphere, random)
-    default:
-      return snow(atmosphere, random)
   }
 }
 
