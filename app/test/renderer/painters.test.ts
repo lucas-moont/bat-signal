@@ -333,6 +333,16 @@ describe('the lit windows', () => {
     }
   })
 
+  it('lights no window without lights', () => {
+    const painter = painterFor({ ...WINDOWS, lights: [] }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const { ctx, boxes } = recorder()
+    painter.paint(ctx, 0)
+    for (let i = 0; i < 16; i++) painter.paint(ctx, 1 / FPS)
+    expect(boxes.filter(isWindow)).toEqual([])
+  })
+
   // Switching at random would drift toward half the windows lit over a long night.
   it('keeps its share of windows lit', () => {
     const painter = city()

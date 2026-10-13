@@ -207,8 +207,9 @@ function litWindows(
   /** Its city: the same towers and windows after every resize, so the skyline never jumps. */
   const seed = random()
 
-  /** One of the lights, by their shares. */
+  /** One of the lights, by their shares; none if it has none. */
   const pickLight = (next = random) => {
+    if (!lights.length) return undefined
     let r = next()
     const i = lights.findIndex(({ share }) => (r -= share) < 0)
     return i < 0 ? lights.length - 1 : i
@@ -265,7 +266,7 @@ function litWindows(
         return
       }
       since += Math.min(dt, MAX_DT)
-      if (since < switchEvery || !windows.length) return
+      if (since < switchEvery || !windows.length || !lights.length) return
       since -= switchEvery
       const on = litCount < litShare * windows.length
       const start = Math.floor(random() * windows.length)
