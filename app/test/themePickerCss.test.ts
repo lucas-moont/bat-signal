@@ -1,16 +1,8 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { componentCss, cssRule } from './rendererSources'
 
-const css = readFileSync(join(__dirname, '../src/renderer/src/components/ThemePicker.css'), 'utf8')
-
-/** The declarations of one CSS rule, by its exact selector. */
-function rule(selector: string): string {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const found = new RegExp(`(?:^|\\n)${escaped}\\s*\\{([^}]*)\\}`).exec(css)
-  if (!found) throw new Error(`ThemePicker.css: no rule for ${selector}`)
-  return found[1]!
-}
+const css = componentCss('ThemePicker.css')
+const rule = (selector: string) => cssRule(css, selector)
 
 // The maintainer's decision (jury §10): the picker previews each Theme's Alarm color. A stamp's
 // own ink is its tier's (--stamp-hot), which a Theme may keep off its Alarm color, so the folder's

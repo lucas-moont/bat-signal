@@ -15,6 +15,24 @@ export function sourcesUnder(dir: string, ...extensions: string[]): { path: stri
     .map((path) => ({ path, text: readFileSync(join(root, path), 'utf8') }))
 }
 
+/** A component's stylesheet (renderer/src/components/<name>), as text. */
+export const componentCss = (name: string): string => readFileSync(join(RENDERER, 'components', name), 'utf8')
+
+/** The declarations of the first CSS rule with this exact selector, at any indent (an @container's too). */
+export function cssRule(css: string, selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const found = new RegExp(`(?:^|\\n)[ \\t]*${escaped}\\s*\\{([^}]*)\\}`).exec(css)
+  if (!found) throw new Error(`no rule for ${selector}`)
+  return found[1]!
+}
+
+/** A property's value in a rule's declarations. */
+export function declared(rule: string, property: string): string {
+  const found = new RegExp(`(?:^|[;{\\s])${property}:\\s*([^;]+);`).exec(rule)
+  if (!found) throw new Error(`no ${property} in ${rule.trim()}`)
+  return found[1]!.trim()
+}
+
 /** A Theme's variables, as written in its stylesheet's block scoped to [data-theme]. */
 export function themeVariables(theme: string): Map<string, string> {
   const css = readFileSync(join(RENDERER, `styles/themes/${theme}.css`), 'utf8')
