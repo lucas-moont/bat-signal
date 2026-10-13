@@ -284,12 +284,16 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
     el.style.translate = now === null ? '' : `0 ${BREATH[Math.floor(now / BREATH_STEP_MS) % BREATH.length]}px`
   })
 
+  // The aura: while something needs the user, and while a Signature pose is revealed unless the
+  // suit keeps it for the alarm.
+  const aura = !!suit.aura && (mood === 'alarmed' || (suit.aura === true && !!revealed && !settled && !calm))
+
   return (
     <span
       ref={ref}
       role="img"
       aria-label={watching ? said.watching : said[mood]}
-      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || (revealed && !settled && !calm)) ? ' clawd--aura' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}${aura ? ' clawd--aura' : ''}`}
       style={{ width: size, height: size * FRAME_ASPECT }}
       onClick={() => {
         if (calm) return

@@ -80,10 +80,11 @@ export interface Suit {
    */
   signature?: Script
   /**
-   * The Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs
-   * the user or while he reveals his Signature pose. What it costs is in DESIGN.md (Bat-Clawd).
+   * The Theme's Alarm color around him (CONTEXT.md, Aura), only while something needs the user or
+   * while he reveals his Signature pose; 'alarmed', only while something needs the user (a Theme
+   * whose Alarm color never shows at rest). What it costs is in DESIGN.md (Bat-Clawd).
    */
-  aura?: boolean
+  aura?: boolean | 'alarmed'
 }
 
 /** A script's step at an index: its steps in order, then the last held (Infinity: the final step). */
@@ -457,5 +458,6 @@ export const PALE_MOONLIGHT_SUIT: Suit = {
     { pose: trailB, look: 0 },
     { pose: underTheSignal, look: 0 },
   ],
-  aura: true,
+  // Gold, the Alarm color, never at rest: no aura as he looks up at the Signal (#95, outfit I).
+  aura: 'alarmed',
 }
