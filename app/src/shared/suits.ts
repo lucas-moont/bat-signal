@@ -138,10 +138,14 @@ const BELOW_WAIST = [
   '....g.g..g.g....',
   ...twice(['....g.g..g.g....']),
 ]
-const map = (chest: readonly string[], rows = BELOW_WAIST): OutfitMap => ({
+const map = (
+  chest: readonly string[],
+  rows = BELOW_WAIST,
+  legend: OutfitMap['legend'] = LEGEND,
+): OutfitMap => ({
   top: 0,
   rows: [...HEAD, ...twice(chest), ...rows],
-  legend: LEGEND,
+  legend,
 })
 
 /** No arms on the grid: held straight out past it (the wingsuit) or hidden under a draped cape. */
@@ -515,19 +519,9 @@ const NOLAN_LEGEND = { ...LEGEND, p: 'var(--plate)', m: 'var(--mesh)' }
 /** Lit plates on his shoulders, then the suit, then the mesh at his waist. */
 const PLATED = '...pSSSSSSSSp...'
 const MESH = '...mSSSSSSSSm...'
-/** The bronze belt and its buckle, the suit's last half-row, lit knees over his booted legs. */
-const NOLAN_BELOW = [
-  '...bbbbkkbbbb...',
-  SUIT,
-  '....p.p..p.p....',
-  '....g.g..g.g....',
-  ...twice(['....g.g..g.g....']),
-]
-const nolanMap = (chest: readonly string[], rows = NOLAN_BELOW): OutfitMap => ({
-  top: 0,
-  rows: [...HEAD, ...twice(chest), ...rows],
-  legend: NOLAN_LEGEND,
-})
+/** V's belt, buckle and booted legs, with lit plates on his knees. */
+const NOLAN_BELOW = BELOW_WAIST.map((row, i) => (i === 2 ? '....p.p..p.p....' : row))
+const nolanMap = (chest: readonly string[], rows = NOLAN_BELOW) => map(chest, rows, NOLAN_LEGEND)
 const NOLAN_ARMS_OUT = nolanMap([PLATED, '.gSSSSSSSSSSSSg.', MESH])
 const NOLAN_ARMS_HIDDEN = nolanMap([PLATED, SUIT, MESH])
 const NOLAN_SEATED = nolanMap([PLATED, SUIT, SUIT, SUIT], [])
