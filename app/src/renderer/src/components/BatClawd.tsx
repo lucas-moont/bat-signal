@@ -218,6 +218,13 @@ export function BatClawd({
   const holds = reveal || perched
   const [revealing, setRevealing] = useState(holds && !!signature)
   const [settled, setSettled] = useState(false)
+  // A Theme put on while he shows reveals its own Signature pose afresh, as if he had just appeared.
+  const [shownSuit, setShownSuit] = useState(suit)
+  if (shownSuit !== suit) {
+    setShownSuit(suit)
+    setRevealing(holds && !!signature)
+    setSettled(false)
+  }
   // Something needs the user: the alarm's pose wins, and the perch's reveal waits for his watch.
   const revealShown = !!signature && revealing && mood !== 'alarmed'
   const revealClock = useFrame(!calm && revealShown && !settled, 2)
