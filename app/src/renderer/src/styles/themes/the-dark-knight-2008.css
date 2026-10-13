@@ -114,6 +114,7 @@
   --haze: color-mix(in srgb, var(--mercury) 6%, transparent);
   --haze-edge: color-mix(in srgb, var(--mercury) 2%, transparent);
   --grain-opacity: 0.03;
+  --haze-inset: auto -20% -35% -20%;
   --searchlight: var(--bone);
   /* The skyline's slab towers; the lit windows are --bone and --mercury. */
   --tower: var(--smoke);

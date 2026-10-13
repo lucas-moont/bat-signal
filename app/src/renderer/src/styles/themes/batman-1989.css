@@ -109,6 +109,7 @@
   --haze: color-mix(in srgb, var(--blood) 12%, transparent);
   --haze-edge: color-mix(in srgb, var(--blood) 4%, transparent);
   --grain-opacity: 0.045;
+  --haze-inset: auto -20% -35% -20%;
   /* Snow from Batman Returns over the 1989 smog: bone flakes, a brown haze from below. */
   --snow: var(--bone);
   --searchlight: var(--bone);

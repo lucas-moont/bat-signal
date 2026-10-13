@@ -132,6 +132,8 @@
   --haze: color-mix(in srgb, var(--signal) 16%, transparent);
   --haze-edge: color-mix(in srgb, var(--blood) 6%, transparent);
   --grain-opacity: 0.045;
+  /* Where the haze's light comes from: the street below. */
+  --haze-inset: auto -20% -35% -20%;
   --rain: var(--bone);
   --searchlight: var(--bone);
 
