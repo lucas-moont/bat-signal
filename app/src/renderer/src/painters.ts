@@ -216,7 +216,7 @@ function litWindows(
   }
   /** A window's light over its glass, if it has one: the light's strength in its color. */
   const lightUp = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
-    if (light === undefined) return
+    if (light === undefined || !colors.lights[light]) return
     ctx.globalAlpha = lights[light]!.alpha
     ctx.fillStyle = colors.lights[light]!
     ctx.fillRect(x, y, CELL.w, CELL.h)
@@ -251,6 +251,9 @@ function litWindows(
       }
     },
     paint(ctx, dt) {
+      // Without its glass's color yet (an empty one would leave the canvas's last fill in place,
+      // a light's), it waits: the colors' arrival asks for the whole scene.
+      if (!colors.glass) return
       if (repaintWhole) {
         repaintWhole = false
         ctx.clearRect(0, 0, width, height)

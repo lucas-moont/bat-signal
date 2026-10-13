@@ -343,6 +343,21 @@ describe('the lit windows', () => {
     expect(boxes.filter(isWindow)).toEqual([])
   })
 
+  // No Theme on the page yet, or a variable it can't use: an empty color would leave the canvas's
+  // last fill in place, and the towers would take a light's color.
+  it('paints nothing until it has its colors, then the whole scene', () => {
+    const painter = painterFor(WINDOWS, seeded())
+    painter.recolor(() => '')
+    painter.resize(320, 440)
+    const before = recorder()
+    painter.paint(before.ctx, 0)
+    expect(before.boxes).toEqual([])
+    painter.recolor(colorOf)
+    const after = recorder()
+    painter.paint(after.ctx, 1 / FPS)
+    expect(after.boxes.some((b) => b.color === COLORS[0])).toBe(true)
+  })
+
   // Switching at random would drift toward half the windows lit over a long night.
   it('keeps its share of windows lit', () => {
     const painter = city()
