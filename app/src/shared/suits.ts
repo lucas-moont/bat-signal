@@ -220,7 +220,7 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
   eyes: 'shut',
 })
 
-/** The last seconds of a watch, where a beat of his own may play: at most four. */
+/** How many steps a beat of his own may take, at the end of his watch. */
 const BEAT_ROOM = 4
 
 /**
@@ -519,7 +519,7 @@ const NOLAN_LEGEND = { ...LEGEND, p: 'var(--plate)', m: 'var(--mesh)' }
 const PLATED = '...pSSSSSSSSp...'
 const MESH = '...mSSSSSSSSm...'
 /** V's belt, buckle and booted legs, with lit plates on his knees. */
-const NOLAN_BELOW = BELOW_WAIST.map((row, i) => (i === 2 ? '....p.p..p.p....' : row))
+const NOLAN_BELOW = BELOW_WAIST.map((row) => (row === '....S.S..S.S....' ? '....p.p..p.p....' : row))
 const nolanMap = (chest: readonly string[], rows = NOLAN_BELOW) => map(chest, rows, NOLAN_LEGEND)
 const NOLAN_ARMS_OUT = nolanMap([PLATED, '.gSSSSSSSSSSSSg.', MESH])
 const NOLAN_ARMS_HIDDEN = nolanMap([PLATED, SUIT, MESH])
@@ -576,25 +576,21 @@ const sonarWith = (ring: Layer[] = []) =>
 const sonar = sonarWith()
 
 /**
- * The ping: one ring from his eyes, spreading and fading over four steps, in their white. Past his
- * frame's view it still shows: the frame draws past it.
+ * The ping: one ring from his eyes, spreading and fading over four steps, in their white. It grows
+ * past the edges of his frame, which shows what it draws outside them.
  */
-const PINGS: Step[] = [
-  { r: 4, opacity: 0.4 },
-  { r: 8, opacity: 0.28 },
-  { r: 12, opacity: 0.16 },
-  { r: 16, opacity: 0.06 },
-].map(({ r, opacity }) => ({
+const ping = (r: number, opacity: number): Step => ({
   pose: sonarWith([{ kind: 'path', d: oval(8, 3, r, r), className: 'clawd__ping', opacity }]),
   look: 0,
-}))
+})
+const PINGS: Script = [ping(4, 0.4), ping(8, 0.28), ping(12, 0.16), ping(16, 0.06)]
 
 /**
  * Sonar (the Signature pose), from The Dark Knight's climax, Fox's city-wide sonar seen through the
  * cowl's lenses (nolan.md, section 7): a ring goes out from his eyes, then he stands watch, the
  * lenses lit. Under reduced motion, the lenses without the ring.
  */
-const SONAR: Script = [...(PINGS as [Step, ...Step[]]), { pose: sonar, look: 0 }]
+const SONAR: Script = [...PINGS, { pose: sonar, look: 0 }]
 
 export const WATCHFUL_PROTECTOR_SUIT: Suit = {
   eyes: EYES,
