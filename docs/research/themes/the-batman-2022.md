@@ -118,7 +118,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 **Wingsuit glide (flying).**
 - Arms straight out: `[-1, 5.5, 4, 1]` and `[13, 5.5, 4, 1]`, legs together.
 - The cape spans wrist to ankle. Left half: `M3 5 L-3 5.5 L-2.4 7.2 L-1.2 7 L-0.8 8.6 L0.6 8.2 L1.2 9.8 L3 9.6 Z`, mirrored with the existing `MIRROR`.
-- Two ribs per side in the `clawd__thread` style (Dried Blood, 0.3 wide), running from the shoulder to each scallop point. That keeps the rule: small red details, never a red cape.
+- Two ribs per side in the `clawd__thread` style (Dried Blood, 0.3 wide), running from the shoulder to each scallop point. That keeps the rule: small red details, never a red cape. *Built in #88 with the neutral rim instead (the maintainer's pick on screen): under the Costume Rule nothing on him is red at rest.*
 - Two frames on the existing flying cadence: level, then banked (±4° on the mover from the clock). The existing bob stays.
 
 **Raised flare (alarmed).**
@@ -136,7 +136,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
   - Two panels: left `M3 5 L1.6 5.4 L1.2 10.8 L3.2 10.6 Z`, mirrored. Arms hidden behind them; `LEGS` as today; `EYES_OPEN`.
   - The 2022 chest emblem is already on Bat-Clawd (v1.1.1, #86): the real `WINGS` path placed with `batAt(8, 7, 7)` in cowl black, not grid rects, so the 1-unit-wings draft that stood here is superseded. It shows in every unwrapped Pose; any change to its width or height is judged at 60 px.
   - Still half in the dark: a black rect over y 8–11 at 55%.
-  - No red beyond the approved cowl and cape edges.
+  - No red: #88 replaced the red cowl and cape edges with the Costume Rule's neutral rim.
 - **On the perch** it stands still: no gusts (a draped cape has nothing to lift), only the existing `WATCH` glances. That gives fewer redraws than today on the transparent window.
 - **In the intro and on click** it plays a one-off reveal, about 1 s on the 8 fps clock:
   - The shadow rect steps down from y 3 to y 8 over 4 ticks.

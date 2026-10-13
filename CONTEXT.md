@@ -54,6 +54,14 @@ _Avoid_: Weather, particles, rain (as the general name)
 Claude Code's pixel Clawd dressed as the Theme's Batman: a suit over his body, the cowl down to his eyes, the version's bat symbol on his chest and its cape or coat; Bat-Signal's mascot. Every Theme keeps Clawd's shape, his white eyes, his orange jaw and his moods.
 _Avoid_: Mascot (alone), Clawd (alone), Batman
 
+**Suit**:
+Bat-Clawd's costume in one Theme, as data: the outfit map that draws his body and cowl, the layers around it (the cape or coat, the cowl's edge, the chest emblem), his Poses for each Mood and his Signature pose.
+_Avoid_: Skin, costume (in code)
+
+**Outfit map**:
+Rows of letters on Bat-Clawd's 16-column grid, at half-row resolution, with a legend naming the Theme variable each letter paints: how a Suit draws his body and cowl.
+_Avoid_: Sprite, pixel map
+
 **Aura**:
 The glow in the Theme's Alarm color around Bat-Clawd, shown only while something needs the user or in an iconic moment.
 _Avoid_: Glow, halo, outline
@@ -65,6 +73,10 @@ _Avoid_: State, animation, pose
 **Pose**:
 How Bat-Clawd is drawn in a Mood or a moment. A Theme may swap any Pose for an iconic one from its version of Batman, as a homage.
 _Avoid_: Sprite, frame, mood
+
+**Homage pose**:
+A Pose a Theme swaps in for one of its Moods, from an iconic moment of its version of Batman (VENGEANCE flies in the wingsuit glide and raises a flare when alarmed).
+_Avoid_: Special pose, Easter egg
 
 **Signature pose**:
 A Theme's most iconic Pose, shown on the perch, in the intro and when the user clicks Bat-Clawd, and held still on its folder in the Theme picker.
