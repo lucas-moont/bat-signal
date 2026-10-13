@@ -126,6 +126,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
 - Flare stick in Ash at `[13, 0, 1, 2]`; flame at `[12.75, -1, 1.5, 1]` in Hot Signal.
 - The flicker alternates the flame between Hot Signal (1.5 wide) and Pen Hot (1 wide) on `f % 2`, using the alarmed clock that already runs.
 - A static `signal-glow` circle (r 2.5) sits behind the flame.
+- *Built in #88 with a stick half a unit wide, so it reads as held in the glove rather than as a longer arm, and a glow of r 1.6, so it stays close to the flame above his ears. The smaller flame reads its own suit variable (`--flame-low`, Pen Hot's red).*
 - The flare is the Alarm color, which is why it belongs here: red light held up means "something needs you". The shiver and blink stay.
 
 ### Signature pose: "Out of the dark"
@@ -138,7 +139,7 @@ Today: sleeping (cape wrapped, seated, eyes shut, breath), flying (cape trailing
   - Still half in the dark: a black rect over y 8–11 at 55%.
   - No red: #88 replaced the red cowl and cape edges with the Costume Rule's neutral rim.
 - **On the perch** it stands still: no gusts (a draped cape has nothing to lift), only the existing `WATCH` glances. That gives fewer redraws than today on the transparent window.
-- **In the intro and on click** it plays a one-off reveal, about 1 s on the 8 fps clock:
+- **In the intro and on click** it plays a one-off reveal, about 1 s on the 8 fps clock (*built in #88 as six steps at four a second, about 1.5 s: the shadow reaches y 8 on the fifth, then holds*):
   - The shadow rect steps down from y 3 to y 8 over 4 ticks.
   - Two 1 px `translateY` "footsteps" land on ticks 2 and 4.
   - It holds, then the click case returns to the Mood's Pose.

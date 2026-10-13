@@ -10,8 +10,9 @@ import type { MascotMood } from './view'
 export type Px = readonly [x: number, y: number, w?: number, h?: number]
 
 /**
- * Something drawn around the map. The class names (BatClawd.css) give paths and rects their suit
- * variables (--cape, --cape-rim, --thread, --cowl-edge, --chest), so a Theme's stylesheet colors them.
+ * Something drawn around the map, in a Theme variable a Theme's stylesheet sets: named as a fill, or
+ * through a class whose suit variable BatClawd.css reads (--cape, --cape-rim, --thread, --cowl-edge,
+ * --chest).
  */
 export type Layer =
   /**
@@ -221,8 +222,9 @@ const shadowFrom = (y: number): Layer => ({
   d: y < 9 ? `M3 ${y} H13 V9 H12.6 V11 H3.4 V9 H3 Z` : `M3.4 ${y} H12.6 V11 H3.4 Z`,
   fill: 'var(--clawd-shadow)',
 })
-const draped = (shadow: number) =>
-  pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadow)])
+/** Standing with the cape draped, his shadow from `shadowTop` down. */
+const draped = (shadowTop: number) =>
+  pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadowTop)])
 const FOOTSTEP = 'translateY(1px)'
 
 /** Level, then banked one way, level, then the other: a frame each, over the bob. */
@@ -293,7 +295,7 @@ export const VENGEANCE_SUIT: Suit = {
     STILL,
     STILL,
   ],
-  // Out of the dark (the subway fight): the shadow slides down off him over a second, two footsteps
+  // Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six steps, four a second), two footsteps
   // landing on the way, until only his feet stay in it.
   signature: [
     { pose: draped(3), look: 0 },
