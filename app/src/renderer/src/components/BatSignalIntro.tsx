@@ -14,7 +14,7 @@ let played = false
 
 /** Plays the first time it mounts in this launch, then removes itself. */
 export function BatSignalIntro() {
-  const { wordmark } = useWords().voice
+  const { wordmark, tagline } = useWords().voice
   // A Theme with a Signature pose opens on Bat-Clawd revealing it; one without keeps the plain intro.
   const signature = useSuit().signature
   const [leaving, setLeaving] = useState(false)
@@ -44,6 +44,7 @@ export function BatSignalIntro() {
       <div className="intro__signal">
         <BatEmblem size={120} />
       </div>
+      {tagline && <div className="intro__tagline">{tagline}</div>}
       <div className="intro__title">{wordmark}</div>
       {signature && (
         <div className="intro__clawd">

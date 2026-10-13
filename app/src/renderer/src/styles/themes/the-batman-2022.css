@@ -45,6 +45,13 @@
   --accent-hot: var(--signal-hot);
   --accent-deep: var(--blood);
   --accent-glow: var(--signal-glow);
+  /* Where a Theme whose accent is pale needs another color: selected text (bone on bone would
+     vanish), the progress bar (progress is not emphasis there) and a checked switch's thumb.
+     VENGEANCE: what they read before, the accent and Bone. */
+  --selection: var(--accent);
+  --progress-deep: var(--accent-deep);
+  --progress-hot: var(--accent-hot);
+  --thumb: var(--bone);
 
   /* Stamp inks by tier, so no stamp reads an alarm shade directly. */
   --brick: #c9463d;
@@ -68,6 +75,8 @@
   /* Text a step off bone and ash: log lines and idle titles; struck-through done tasks. */
   --bone-dim: #cfc6be;
   --ash-dim: #6f6862;
+  /* A row's chevron in the case detail: a decorative icon, as quiet as a rule in VENGEANCE. */
+  --chevron: var(--line);
 
   /* Bat-Clawd's suit (outfit V, see shared/suits.ts): charcoal over his body, dark gloves, belt and
      boots, a faint bone rim on cowl and cape. Its blacks match the disc's and --shadow today but are
@@ -91,7 +100,12 @@
   --flame: var(--signal-hot);
   --flame-low: #ec2a2a;
 
-  /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
+  /* The emblem's bat, in the masthead and the intro: Signal Red. VENGEANCE's bat has no plate;
+     --emblem-plate and --emblem-plate-rim are for a Theme whose bat sits on one. */
+  --emblem: var(--signal);
+  /* The Signal disc: unlit glass with the bat a shade in it, its rim, and the lit lens with the bat
+     in its middle. */
+  --disc-bat: var(--raised);
   --glass-shine: #1d1714;
   --glass: #0a0807;
   --disc-rim-inner: #0b0908;
@@ -121,6 +135,9 @@
   /* The night report's body, and the stamps' face: both the typewriter in VENGEANCE. */
   --font-report: var(--font-type);
   --font-stamp: var(--font-type);
+  /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
+     display face built for large sizes may not hold. VENGEANCE: its display face. */
+  --font-label: var(--font-display);
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;

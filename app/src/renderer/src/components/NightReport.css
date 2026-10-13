@@ -21,7 +21,7 @@
   pointer-events: none;
 }
 .report ::selection {
-  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--selection) 55%, transparent);
   color: var(--bone);
 }
 

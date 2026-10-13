@@ -35,7 +35,8 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
     const recolor = () => {
       const value = getComputedStyle(el).getPropertyValue(atmosphere.color).trim()
       if (value && CSS.supports('color', value)) color = value
-      if (color) ctx.strokeStyle = color
+      // Rain strokes its streaks; snow fills its flakes.
+      if (color) ctx.strokeStyle = ctx.fillStyle = color
     }
 
     const resize = () => {
@@ -44,7 +45,7 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       el.height = Math.round(height * devicePixelRatio)
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
       ctx.lineWidth = 1
-      // Resizing the canvas resets its stroke, like the line width.
+      // Resizing the canvas resets its stroke and fill, like the line width.
       recolor()
       painter.resize(width, height)
       // Painted at once, rather than blank until the next tick.

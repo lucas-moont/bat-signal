@@ -31,6 +31,34 @@ describe("a Theme's poses", () => {
   it('may swap any pose for a homage', () => {
     expect(draw({ mood: 'sleeping' })).toContain('M0 0 L1.11 0 Z')
   })
+
+  // Burton's Signature looks up at the Signal: a pose may set where his eyes are, still white.
+  describe('with eyes of their own', () => {
+    standInTheme({
+      suit: {
+        ...VENGEANCE_SUIT,
+        poses: {
+          ...VENGEANCE_SUIT.poses,
+          flying: [
+            {
+              ...markedPose('5.55'),
+              eyes: [
+                [6, 2.5, 2, 1],
+                [10, 2.5, 2, 1],
+              ],
+            },
+          ],
+        },
+      },
+    })
+
+    it('draws his eyes where the pose puts them', () => {
+      const eyes = draw({ mood: 'flying' }).match(/<g class="clawd__eyes"[^>]*>(.*?)<\/g>/)?.[1] ?? ''
+      expect(eyes).toBe(
+        '<rect x="6" y="2.5" width="2" height="1"></rect><rect x="10" y="2.5" width="2" height="1"></rect>',
+      )
+    })
+  })
 })
 
 describe("a Theme's Signature pose", () => {
@@ -51,6 +79,25 @@ describe("a Theme's Signature pose", () => {
 
   it('opens the intro', () => {
     expect(renderToStaticMarkup(createElement(BatSignalIntro))).toContain('M0 0 L2.22 0 Z')
+  })
+})
+
+// Burton's perch glances down to the street and back up to the Signal: a step may move his eyes
+// up or down as well as along the street.
+describe('a step that looks down', () => {
+  // On the perch, a Signature pose held takes its glances from the watch.
+  standInTheme({
+    suit: {
+      ...VENGEANCE_SUIT,
+      signature: [{ pose: markedPose('6.66'), look: 0 }],
+      watch: [{ pose: markedPose('7.77'), look: 0.2, lookY: 0.3 }],
+    },
+  })
+
+  it('moves his eyes down as well as along', () => {
+    expect(draw({ mood: 'sleeping', perched: true })).toContain(
+      'class="clawd__eyes" transform="translate(0.2 0.3)"',
+    )
   })
 })
 

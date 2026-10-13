@@ -1,21 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, type ThemeId } from '../src/shared/themes'
-import { rendererSources, themeVariables } from './rendererSources'
+import { channels, rendererSources, resolved, themeVariables } from './rendererSources'
 
 type Rgb = [number, number, number]
 
 /** A variable's color as [r, g, b], following var() aliases down to a hex value. */
 function rgb(variables: Map<string, string>, name: string): Rgb {
-  const value = variables.get(name)
-  if (!value) throw new Error(`no ${name}`)
-  const alias = /^var\((--[\w-]+)\)$/.exec(value)
-  if (alias) return rgb(variables, alias[1]!)
-  const hex = /^#([0-9a-f]{6})$/i.exec(value)
-  if (!hex)
+  const value = resolved(variables, `var(${name})`)
+  if (!/^#[0-9a-f]{6}$/i.test(value))
     throw new Error(
       `${name} is ${value}, not an opaque hex: the contrast test can't measure a color-mix() or translucent text color`,
     )
-  return [0, 2, 4].map((i) => parseInt(hex[1]!.slice(i, i + 2), 16)) as Rgb
+  return channels(value)
 }
 
 /** WCAG 2 relative luminance. */
@@ -71,7 +67,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
     '--brick': 'the approved soft stamp ink, also on the failed state',
     '--stamp-soft': 'the approved files-layout soft stamp ink (the Night Report lifts it to --ink-soft)',
     '--ash-dim': 'struck-through done tasks, meant to recede',
-    '--line': 'the case-detail row chevron, a decorative icon',
+    '--chevron': 'the case-detail row chevron, a decorative icon, as quiet as a rule',
     '--ink-hot': 'the pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',
     '--ink-soft':
       'the soft pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',

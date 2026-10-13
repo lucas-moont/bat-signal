@@ -1,5 +1,5 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
-// 8 fps clock. One kind today, VENGEANCE's rain; snow, ash or a still scene arrive as other kinds
+// 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow; ash or a still scene arrive as other kinds
 // with their own painter (renderer/src/painters.ts).
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
@@ -15,7 +15,20 @@ export interface RainAtmosphere {
   depths: readonly number[]
 }
 
-export type Atmosphere = RainAtmosphere
+/** Snow falling almost straight down, in depths that differ in strength, size and pace. */
+export interface SnowAtmosphere {
+  kind: 'snow'
+  /** The Theme variable it is painted in, read from the page. */
+  color: string
+  /** Flakes per 1000 square pixels. */
+  density: number
+  /** Each depth from the farthest to the nearest: its alpha, its flakes' size and fall a tick, in px. */
+  depths: readonly { alpha: number; size: number; fall: number }[]
+  /** How far a flake sways either way as it falls, in px. */
+  drift: number
+}
+
+export type Atmosphere = RainAtmosphere | SnowAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {

@@ -128,7 +128,7 @@ function Frame({
         className={`clawd__eyes${blink ? ' clawd__eyes--blink' : ''}`}
         transform={`translate(${gaze.x} ${gaze.y})`}
       >
-        {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
+        {rects(typeof pose.eyes === 'string' ? suit.eyes[pose.eyes] : pose.eyes)}
       </g>
     </svg>
   )
@@ -140,11 +140,11 @@ function Frame({
  */
 export function BatClawdStill({ size }: { size: number }) {
   const suit = useSuit()
-  const { pose, look } = stillStep(suit)
+  const { pose, look, lookY } = stillStep(suit)
   return (
     <span className="clawd" style={{ width: size, height: size * FRAME_ASPECT }} aria-hidden="true">
       <span className="clawd__mover">
-        <Frame suit={suit} pose={pose} gaze={{ x: look, y: 0 }} className="clawd__frame" />
+        <Frame suit={suit} pose={pose} gaze={{ x: look, y: lookY ?? 0 }} className="clawd__frame" />
       </span>
     </span>
   )
@@ -261,7 +261,7 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
   const frame = calm ? 0 : clock
   const watched = watching && ticking ? cycle(suit.watch, frame) : undefined
   const step: Step | undefined =
-    revealed && watched ? { ...revealed, look: watched.look } : (revealed ?? watched)
+    revealed && watched ? { ...revealed, look: watched.look, lookY: watched.lookY } : (revealed ?? watched)
   const { pose, transform, blink } = step
     ? {
         pose: step.pose,
@@ -271,7 +271,7 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
     : moodFrame(mood, frame, suit.poses[mood])
   // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
   const stillEyes = calm || (!watching && mood === 'sleeping')
-  const eyes = stillEyes ? { x: 0, y: 0 } : step ? { x: step.look, y: 0 } : gaze
+  const eyes = stillEyes ? { x: 0, y: 0 } : step ? { x: step.look, y: step.lookY ?? 0 } : gaze
   // Asleep only the breath changes, so it skips React: the CSS `translate` property composes
   // with the `transform` React sets.
   const mover = useLiveStyle<HTMLSpanElement>(!calm && !perched && mood === 'sleeping', (el, now) => {

@@ -97,7 +97,7 @@
   outline: 1px solid var(--accent);
 }
 .row > svg {
-  color: var(--line);
+  color: var(--chevron);
   flex: none;
 }
 .row__glyph {

@@ -39,7 +39,8 @@ export interface Pose {
   map: OutfitMap
   behind: readonly Layer[]
   front: readonly Layer[]
-  eyes: 'open' | 'shut'
+  /** His suit's open or shut eyes, or eyes of the pose's own (looking up, say): white whatever. */
+  eyes: 'open' | 'shut' | readonly Px[]
   /** A nudge on top of the Mood's motion while this pose shows (a wingsuit banking). */
   transform?: string
 }
@@ -47,10 +48,12 @@ export interface Pose {
 /** A Mood's poses, shown one a frame in turn (BatClawd.tsx, moodFrame); the first is the resting one. */
 export type Poses = readonly [Pose, ...Pose[]]
 
-/** One step of a script on the shared clock: a pose, and where his eyes look along the street. */
+/** One step of a script on the shared clock: a pose, and where his eyes look (along the street, and down or up). */
 export interface Step {
   pose: Pose
   look: number
+  /** How far his eyes look down (up, when negative), in grid units: to the street, to the sky. */
+  lookY?: number
   /** A nudge on top of the pose for this step (a footstep down, say). */
   transform?: string
 }

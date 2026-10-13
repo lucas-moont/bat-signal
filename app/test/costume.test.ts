@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Pose, Suit } from '../src/shared/suits'
 import { THEME_IDS, THEMES } from '../src/shared/themes'
 import { CSS_COLOR_NAMES } from './cssColorNames'
-import { themeVariables } from './rendererSources'
+import { channels, resolved, themeVariables } from './rendererSources'
 
 /** The poses he wears awake: flying, alarmed, and his Signature pose's steps. */
 const awakePoses = (suit: Suit): Pose[] => [
@@ -20,21 +20,36 @@ const bodyLetter = (pose: Pose) =>
 const rowsBetween = (pose: Pose, y: number, to: number) =>
   pose.map.rows.slice((y - pose.map.top) * 2, (to - pose.map.top) * 2)
 
-/** A value with every var() it names written out, as far as the Theme defines them. */
-function resolved(vars: Map<string, string>, value: string, depth = 0): string {
-  if (depth > 10) return value
-  return value.replace(/var\((--[\w-]+)\)/g, (call, name: string) => {
-    const named = vars.get(name)
-    return named === undefined ? call : resolved(vars, named, depth + 1)
-  })
+/** A color's hue, in degrees. */
+function hue(hex: string): number {
+  const [r, g, b] = channels(hex)
+  const max = Math.max(r, g, b)
+  const span = max - Math.min(r, g, b) || 1
+  const h = max === r ? (g - b) / span : max === g ? 2 + (b - r) / span : 4 + (r - g) / span
+  return (h * 60 + 360) % 360
 }
 
-/** Whether a hex color is a grey (its channels within 32 of each other): no hue to read as red. */
-function isGrey(hex: string): boolean {
-  const digits = hex.slice(1)
-  const full = digits.length < 6 ? [...digits.slice(0, 3)].map((d) => d + d).join('') : digits
-  const channels = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16))
-  return Math.max(...channels) - Math.min(...channels) <= 32
+/** A color's saturation, 0 to 1, as HSL measures it. */
+function saturation(hex: string): number {
+  const [max, min] = [Math.max(...channels(hex)) / 255, Math.min(...channels(hex)) / 255]
+  const light = (max + min) / 2
+  return max === min ? 0 : (max - min) / (1 - Math.abs(2 * light - 1))
+}
+
+/**
+ * Whether a color is neutral beside a Theme's Alarm colors: a grey (its channels within 32 of each
+ * other), or a muted hue (half saturated at most) at least 30 degrees off every alarm shade, so it
+ * can't read as the alarm at his size (Burton's steel against gold; Knightmare's dust against Heat
+ * Vision). A loud color passes neither way.
+ */
+function isNeutralBeside(alarms: readonly string[], hex: string): boolean {
+  const [r, g, b] = channels(hex)
+  if (Math.max(r, g, b) - Math.min(r, g, b) <= 32) return true
+  if (saturation(hex) > 0.5) return false
+  return alarms.every((alarm) => {
+    const apart = Math.abs(hue(hex) - hue(alarm))
+    return Math.min(apart, 360 - apart) >= 30
+  })
 }
 
 /** The colors a value is made of, once its var() calls are written out: hex, and named ones. */
@@ -62,6 +77,21 @@ describe('the Bat-Clawd Costume Rule', () => {
     }
   })
 
+  // A pose may move his eyes (looking up, say): they stay a unit at least, inside the cowl above
+  // his jaw, so they still read as his.
+  it.each(THEME_IDS)('%s keeps the eyes a pose moves in the cowl, a unit at least', (id) => {
+    for (const pose of allPoses(THEMES[id].suit)) {
+      if (typeof pose.eyes === 'string') continue
+      for (const [x, y, w = 1, h = 1] of pose.eyes) {
+        expect(Math.min(w, h)).toBeGreaterThanOrEqual(1)
+        expect(x).toBeGreaterThanOrEqual(3)
+        expect(x + w).toBeLessThanOrEqual(13)
+        expect(y).toBeGreaterThanOrEqual(2)
+        expect(y + h).toBeLessThanOrEqual(4)
+      }
+    }
+  })
+
   it.each(THEME_IDS)('%s wears its suit over his body, arms and legs', (id) => {
     for (const pose of allPoses(THEMES[id].suit)) {
       const body = bodyLetter(pose)
@@ -70,17 +100,18 @@ describe('the Bat-Clawd Costume Rule', () => {
     }
   })
 
-  // Followed through its var() calls to the colors it is made of: every one a grey, so neither a red
-  // written out nor one behind an alias passes.
-  it.each(THEME_IDS)('%s rims his cowl and cape in a neutral, never in a red', (id) => {
+  // Followed through its var() calls to the colors it is made of: each one neutral beside the Theme's
+  // Alarm color, so neither the alarm written out nor one behind an alias passes.
+  it.each(THEME_IDS)('%s rims his cowl and cape in a neutral, never in its Alarm color', (id) => {
     const vars = themeVariables(id)
+    const alarms = [resolved(vars, 'var(--signal)'), resolved(vars, 'var(--signal-hot)')]
     for (const name of ['--cowl-edge', '--cape-rim', '--thread']) {
       const value = resolved(vars, vars.get(name) ?? '')
       const { hexes, names } = colorsIn(value)
       expect(value, name).not.toContain('var(')
       expect(hexes.length, name).toBeGreaterThan(0)
       expect(
-        hexes.filter((hex) => !isGrey(hex)),
+        hexes.filter((hex) => !isNeutralBeside(alarms, hex)),
         name,
       ).toEqual([])
       expect(
@@ -90,14 +121,28 @@ describe('the Bat-Clawd Costume Rule', () => {
     }
   })
 
-  it('reads a red rim as a red, written out or behind an alias', () => {
+  it('reads a rim in the Alarm color as the alarm, written out or behind an alias', () => {
+    const red = '#e3121b'
     const vars = new Map([
       ['--pen', '#ec2a2a'],
       ['--rim', 'color-mix(in srgb, var(--pen) 40%, transparent)'],
     ])
-    expect(colorsIn(resolved(vars, 'var(--rim)')).hexes.every(isGrey)).toBe(false)
-    expect(isGrey('#c00')).toBe(false)
-    expect(isGrey('#e8e1d9')).toBe(true)
+    const [pen = ''] = colorsIn(resolved(vars, 'var(--rim)')).hexes
+    expect(isNeutralBeside([red], pen)).toBe(false)
+    expect(isNeutralBeside([red], '#c00')).toBe(false)
+    expect(isNeutralBeside([red], '#e8e1d9')).toBe(true)
     expect(colorsIn('crimson').names).toEqual(['crimson'])
+  })
+
+  it("lets a Theme rim him in a hue of its own, away from its alarm's", () => {
+    expect(isNeutralBeside(['#f0c24b'], '#8fb0d3')).toBe(true)
+    expect(isNeutralBeside(['#e60f00'], '#c4aa82')).toBe(true)
+    expect(isNeutralBeside(['#f0c24b'], '#d29336')).toBe(false)
+  })
+
+  // Far enough in hue is not enough: a loud color reads as a light at his size, whatever its hue.
+  it('reads a loud rim as no neutral, whatever its hue', () => {
+    expect(isNeutralBeside(['#af0006', '#e3121b'], '#e31290')).toBe(false)
+    expect(isNeutralBeside(['#af0006', '#e3121b'], '#e38012')).toBe(false)
   })
 })
