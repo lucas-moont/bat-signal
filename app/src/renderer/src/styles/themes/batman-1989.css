@@ -115,9 +115,10 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   --font-report: var(--font-type);
   --font-stamp: 'Josefin Sans', 'Segoe UI', sans-serif;
-  /* Limelight holds only from 19px: shorter display words take Josefin's caps. */
+  /* Limelight is meant for large sizes: the short words under 19px (counts, names) take Josefin's caps. */
   --font-label: var(--font-stamp);
-  /* Limelight runs wide: the masthead sets it smaller than Anton so the header keeps its room. */
+  /* Limelight runs wide: the masthead sets it smaller than Anton so the header keeps its room (14 to
+     16px, checked at 1x: its thin strokes hold in the one word it sets). */
   --wordmark-size: 16px;
   --wordmark-tracking: 1.5px;
 
