@@ -39,6 +39,8 @@ async function zoomTo(win, { scale, width }) {
 async function loadZoomed(win, { hash, query, scale, width }) {
   await win.loadFile(HTML, { hash, query })
   win.webContents.setZoomFactor(scale)
+  // A beat for the page to lay itself out at the zoom before it is checked.
+  await wait(100)
   await zoomTo(win, { scale, width })
 }
 
