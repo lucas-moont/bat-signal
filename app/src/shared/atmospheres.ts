@@ -1,6 +1,6 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
-// 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, a skyline's lit windows; ash arrives as
-// another kind with its own painter (renderer/src/painters.ts).
+// 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, WATCHFUL PROTECTOR's lit windows, ash on a
+// desert wind; each kind has its painter (renderer/src/painters.ts).
 
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
@@ -9,9 +9,10 @@
 interface Scene {
   /**
    * A still scene stays on the page, frozen, while it doesn't move (under reduced motion, and once
-   * the pointer has left); a moving one leaves with its motion.
+   * the pointer has left); 'calm', it stays frozen under reduced motion only, and otherwise leaves
+   * with its motion; by default it leaves either way.
    */
-  still?: boolean
+  still?: boolean | 'calm'
 }
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */

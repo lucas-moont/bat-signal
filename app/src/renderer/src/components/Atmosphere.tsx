@@ -1,5 +1,5 @@
-// The Theme's Atmosphere (VENGEANCE's is rain), film grain and a low street-light haze behind
-// everything, in the Theme's colors.
+// The Theme's Atmosphere (VENGEANCE's is rain), film grain and a haze of the Theme's light (from a
+// street below, unless the Theme's falls from above) behind everything, in the Theme's colors.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
@@ -75,6 +75,15 @@ function Painted({ atmosphere, moving }: { atmosphere: AtmosphereData; moving: b
   return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }
 
+/**
+ * Whether the Atmosphere's canvas is on the page: while it moves; and, on in the settings and not
+ * moving, if it is still, or still under reduced motion and calm.
+ */
+export const isShown = (
+  still: AtmosphereData['still'],
+  { on, moving, calm }: { on: boolean; moving: boolean; calm: boolean },
+): boolean => moving || (on && (still === true || (still === 'calm' && calm)))
+
 /** How long the Atmosphere keeps moving after the pointer leaves or something changes. */
 const LINGER_MS = 8000
 
@@ -118,14 +127,15 @@ function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
 
 /**
  * The Atmosphere, while it is on in the settings. It moves while you are looking, never under
- * reduced motion; then rain or snow leaves, and a still scene stays, frozen.
+ * reduced motion; then rain or snow leaves, a still scene stays, frozen, and ash stays frozen under
+ * reduced motion only.
  */
 export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
   const calm = useIsCalm()
   const moving = useAtmosphereVisible(on && !calm, activity)
   const theme = useTheme()
   const atmosphere = THEMES[theme].atmosphere
-  const shown = moving || (on && !!atmosphere.still)
+  const shown = isShown(atmosphere.still, { on, moving, calm })
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
