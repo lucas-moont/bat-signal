@@ -581,12 +581,12 @@ const sonar = sonarWith()
  * frame's view it still shows: the frame draws past it.
  */
 const PINGS: Step[] = [
-  [4, 0.4],
-  [8, 0.28],
-  [12, 0.16],
-  [16, 0.06],
-].map(([r, opacity]) => ({
-  pose: sonarWith([{ kind: 'path', d: oval(8, 3, r!, r!), className: 'clawd__ping', opacity }]),
+  { r: 4, opacity: 0.4 },
+  { r: 8, opacity: 0.28 },
+  { r: 12, opacity: 0.16 },
+  { r: 16, opacity: 0.06 },
+].map(({ r, opacity }) => ({
+  pose: sonarWith([{ kind: 'path', d: oval(8, 3, r, r), className: 'clawd__ping', opacity }]),
   look: 0,
 }))
 
