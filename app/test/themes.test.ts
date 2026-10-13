@@ -40,6 +40,13 @@ describe('the Themes', () => {
     })
   })
 
+  it("names WATCHFUL PROTECTOR after Christopher Nolan's Dark Knight trilogy", () => {
+    expect(THEMES['the-dark-knight-2008'].words.voice.theme).toEqual({
+      name: 'WATCHFUL PROTECTOR',
+      film: "Christopher Nolan's Dark Knight trilogy",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -97,6 +104,7 @@ describe('a demo page', () => {
   it('wears the Theme its hash names', () => {
     expect(themeFromFlags(new Set(['demo', 'report', 'vengeance']))).toBe('the-batman-2022')
     expect(themeFromFlags(new Set(['demo', 'moonlight']))).toBe('batman-1989')
+    expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
   })
 
   it('names no Theme without a Theme flag', () => {

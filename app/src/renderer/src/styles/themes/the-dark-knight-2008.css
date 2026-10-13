@@ -1,0 +1,169 @@
+/*
+ * WATCHFUL PROTECTOR, after Christopher Nolan's Dark Knight trilogy: its palette and faces
+ * (docs/research/themes/nolan.md, section 3, and bat-clawd-nolan-suit.md). A cold blue-black of steel
+ * glass under fluorescent white; nothing warm at rest but Bat-Clawd's jaw and the sodium of what
+ * waits. The Alarm color is Blue Flame, the cold side of the film's fire, and never shows at rest.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: the poster's darkest facade, darkened and desaturated (#081024 sampled).
+ * - --signal-hot: Blue Flame, rgb(61 139 255) (bat-clawd-nolan-suit.md, section 5).
+ * - --mercury and --ink-soft: Pfister's two streetlights, mercury and sodium (AC, 2005).
+ */
+:root[data-theme='the-dark-knight-2008'],
+[data-theme='the-dark-knight-2008'] {
+  --abyss: #04070b;
+  --smoke: #080d13;
+  --surface: #0f161e;
+  --raised: #18232e;
+  --line: #2b3743;
+  --surface-deep: #0a1017;
+  --frame: #141d27;
+  --header-fade: #070b10;
+  --sheet-top: #121a23;
+  --shadow: #000000;
+
+  /* The Alarm color, Blue Flame, and its off shade, a deep steel blue. */
+  --blood: #1c3a63;
+  --signal: #2f7fe0;
+  --signal-glow: color-mix(in srgb, var(--signal) 45%, transparent);
+  --signal-hot: #3d8bff;
+  /* Text on the blue fill (the header's count): bone would read at under 4:1. */
+  --on-signal: var(--abyss);
+  --ink-hot: #5aa9ff;
+  /* Sodium: what waits on you. */
+  --ink-soft: #e9a04b;
+  /* Mercury: the blue-green street light, for running work and a few lit windows. */
+  --mercury: #7cc6c4;
+  --ink-live: var(--mercury);
+  --ink: #bfc8d0;
+
+  /* Emphasis that is not an alarm is Bone, fluorescent white: no blue at rest. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 16%, transparent);
+  --selection: var(--raised);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: Blue Flame for permission and error, sodium for waiting and new replies. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  /* Running work in mercury, never in the Alarm color. */
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 60%, transparent);
+
+  --danger: var(--blood);
+  /* The Night Report's margin rule: a plain rule, no color at rest. */
+  --report-rule: var(--line);
+
+  --clawd: #d77757;
+
+  --bone: #e6ebee;
+  --ash: #8a99a8;
+  --bone-dim: #cdd4da;
+  --ash-dim: #8394a3;
+  --chevron: var(--ash);
+
+  /* Bat-Clawd's suit (outfit N, #95): the black screen suit, its plates lit at shoulders, chest and
+     knees, open mesh at the waist, the smoked-bronze belt, and a matte black cape with a faint cool
+     rim, Pfister's soft backlight. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #0b0d10;
+  --cowl-edge: color-mix(in srgb, #b2bac2 30%, transparent);
+  --cowl-shine: #3a4047;
+  --suit: #22262a;
+  --plate: #485058;
+  --mesh: #0e1013;
+  --gloves: #0b0d10;
+  --belt: #8a7866;
+  --buckle: #c4ab8a;
+  --cape: #000000;
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  /* The chest bat is sculpted in the suit's black and catches the light: drawn in the plates' sheen. */
+  --chest: var(--plate);
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: flat and matte, in fluorescent white; no plate. */
+  --emblem: var(--bone);
+  --emblem-plate: var(--raised);
+  --emblem-plate-rim: var(--line);
+
+  /* The Signal disc: dark steel glass with the bat a shade in it; lit, a searchlight's white core
+     burning blue at its edge, the bat black across it (nolan.md, section 8). */
+  --disc-bat: var(--raised);
+  --glass-shine: #0f161e;
+  --glass: #04070b;
+  --disc-rim-inner: #05080c;
+  --disc-rim-outer: #18232e;
+  --lens-core: #f3f8ff;
+  --lens-rim: #10305a;
+  --lens-bat: #04070b;
+  --notice-top: #111a23;
+  --notice-foot: #080d13;
+  --notice-hover-top: #172331;
+  --notice-hover-foot: #0b121a;
+
+  /* Mercury light from the street below, a lighter grain (the IMAX image), and the lit windows. */
+  --haze: color-mix(in srgb, var(--mercury) 6%, transparent);
+  --haze-edge: color-mix(in srgb, var(--mercury) 2%, transparent);
+  --grain-opacity: 0.03;
+  --searchlight: var(--bone);
+  /* The skyline's slab towers, masses without an edge (picked on screen, #82); the lit windows are
+     --bone and --mercury. */
+  --tower: var(--smoke);
+  --tower-edge: var(--tower);
+
+  --font-display: 'Syncopate', 'Segoe UI', sans-serif;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  /* The stencil of issued gear: the stamps and the case numbers. */
+  --font-type: 'Big Shoulders Stencil', 'Bahnschrift', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  /* The Night Report is a printed log, not a typed page. */
+  --font-report: var(--font-mono);
+  --font-stamp: var(--font-type);
+  --font-label: var(--font-display);
+  --folder-name-size: 10px;
+  --folder-name-tracking: 0.5px;
+  /* Syncopate runs very wide: the masthead sets it small, its caps letterspaced. */
+  --wordmark-size: 15px;
+  --wordmark-tracking: 3px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 25%, transparent);
+
+  /* The Night Report's pen, in Blue Flame pressed hard for blocked work and sodium for waiting work. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%235aa9ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23e9a04b' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* A stencilled spec label, not a rubber stamp: straight, a thin box, no wear (nolan.md, section 4). */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1px;
+  --stamp-size: 12px;
+  --stamp-weight: 700;
+  --stamp-mask: none;
+
+  --disc-lens: radial-gradient(
+    circle at 50% 50% in srgb,
+    var(--lens-core) 0%,
+    #c9e0ff 25%,
+    var(--signal-hot) 55%,
+    var(--signal) 78%,
+    var(--blood) 100%
+  );
+}
+
+/* Syncopate is unicase: its lowercase are caps of another height, so its headings read set in caps. */
+[data-theme='the-dark-knight-2008'] :is(.sheet__title, .empty__title) {
+  text-transform: uppercase;
+}
+/* A case's own title is the user's words, too long for Syncopate's width: it keeps the body face. */
+[data-theme='the-dark-knight-2008'] .detail__title {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
