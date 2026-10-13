@@ -21,6 +21,10 @@ const MAX_DT = 2 * STEP
 /** The rain's frame rate on its own timer, before it joined the shared clock. */
 const OLD_FPS = 15
 
+/** How many drops or flakes a canvas this size holds at a density (per 1000 square pixels). */
+const howMany = (width: number, height: number, density: number) =>
+  Math.round(((width * height) / 1000) * density)
+
 export const painterFor = (atmosphere: Atmosphere, random: () => number = Math.random): Painter =>
   atmosphere.kind === 'rain' ? rain(atmosphere, random) : snow(atmosphere, random)
 
@@ -59,7 +63,7 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   return {
     resize(w, h) {
       ;[width, height] = [w, h]
-      drops = Array.from({ length: Math.round(((width * height) / 1000) * density) }, () => spawn(true))
+      drops = Array.from({ length: howMany(width, height, density) }, () => spawn(true))
     },
     paint(ctx, dt) {
       const t = Math.min(dt, MAX_DT)
@@ -86,7 +90,6 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
 interface Flake {
   x: number
   y: number
-  depth: number
   /** Where in the sway it starts, so the flakes don't sway in step. */
   phase: number
 }
@@ -100,7 +103,8 @@ const SWAY = [0, 1, 0, -1]
  * flake never jitters.
  */
 function snow({ density, depths, drift }: SnowAtmosphere, random: () => number): Painter {
-  let flakes: Flake[] = []
+  /** The flakes of each depth, from the farthest to the nearest. */
+  let layers: Flake[][] = []
   let width = 0
   let height = 0
   /** Ticks of the clock since the snow began, fractional when a tick comes late. */
@@ -110,27 +114,27 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
     resize(w, h) {
       ;[width, height] = [w, h]
       ticks = 0
-      flakes = Array.from({ length: Math.round(((width * height) / 1000) * density) }, () => ({
-        x: random() * width,
-        y: random() * height,
-        depth: Math.floor(random() * depths.length),
-        phase: Math.floor(random() * SWAY.length),
-      }))
+      layers = depths.map((): Flake[] => [])
+      for (let i = howMany(width, height, density); i > 0; i--) {
+        const flake = { x: random() * width, y: random() * height, phase: 0 }
+        layers[Math.floor(random() * depths.length)]!.push(flake)
+        flake.phase = Math.floor(random() * SWAY.length)
+      }
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
       ticks += step
       ctx.clearRect(0, 0, width, height)
+      // Each phase's sway this tick, worked out once for every flake.
+      const sways = SWAY.map((_, phase) => drift * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!)
       depths.forEach(({ alpha, size, fall }, depth) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
-        for (const f of flakes) {
-          if (f.depth !== depth) continue
+        for (const f of layers[depth]!) {
           f.y += fall * step
           // Gone below: it falls again from just above the top.
           if (f.y > height) f.y -= height + size
-          const sway = drift * (SWAY[(Math.floor(ticks) + f.phase) % SWAY.length] ?? 0)
-          ctx.rect(f.x + sway, f.y, size, size)
+          ctx.rect(f.x + sways[f.phase]!, f.y, size, size)
         }
         ctx.fill()
       })
