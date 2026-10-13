@@ -131,9 +131,10 @@
   --font-label: var(--font-display);
   --folder-name-size: 10px;
   --folder-name-tracking: 0.5px;
-  /* Syncopate runs very wide: the masthead sets it small, its caps letterspaced. */
+  /* Syncopate runs very wide: the masthead sets it small, its caps letterspaced just enough to
+     leave Bat-Clawd's open cape clear of the menu button. */
   --wordmark-size: 15px;
-  --wordmark-tracking: 3px;
+  --wordmark-tracking: 2px;
   --wordmark-glow: color-mix(in srgb, var(--bone) 25%, transparent);
 
   /* The Night Report's pen, in Blue Flame pressed hard for blocked work and sodium for waiting work. */
