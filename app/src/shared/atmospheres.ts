@@ -48,8 +48,8 @@ export interface LitWindowsAtmosphere extends Scene {
   kind: 'lit-windows'
   /** The variable the towers and their dark windows are filled in. */
   glass: string
-  /** The variable their 1px edges are stroked in. */
-  edge: string
+  /** The variable their 1px edges are stroked in, if they have one. */
+  edge?: string
   /** The tallest tower's height, a share of the canvas's. */
   tallest: number
   /** How many towers stand along it. */
@@ -97,8 +97,8 @@ export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
  */
 export const WATCHFUL_PROTECTOR_WINDOWS: LitWindowsAtmosphere = {
   kind: 'lit-windows',
+  // Masses without an edge: with one, the towers read as boxes (picked on screen, #82).
   glass: '--tower',
-  edge: '--tower-edge',
   tallest: 0.2,
   towers: 5,
   litShare: 0.08,

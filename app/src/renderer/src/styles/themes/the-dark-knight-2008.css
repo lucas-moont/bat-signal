@@ -117,10 +117,8 @@
   --haze-edge: color-mix(in srgb, var(--mercury) 2%, transparent);
   --grain-opacity: 0.03;
   --searchlight: var(--bone);
-  /* The skyline's slab towers, masses without an edge (picked on screen, #82); the lit windows are
-     --bone and --mercury. */
+  /* The skyline's slab towers; the lit windows are --bone and --mercury. */
   --tower: var(--smoke);
-  --tower-edge: var(--tower);
 
   --font-display: 'Syncopate', 'Segoe UI', sans-serif;
   --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;

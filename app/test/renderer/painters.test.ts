@@ -411,6 +411,15 @@ describe('the lit windows', () => {
     expect(towersOf()).toEqual(towersOf())
   })
 
+  it('strokes no edge when its towers have none', () => {
+    const painter = painterFor({ ...WINDOWS, edge: undefined }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const { ctx, outlines } = recorder()
+    painter.paint(ctx, 0)
+    expect(outlines).toEqual([])
+  })
+
   it('paints the whole scene again in new colors', () => {
     const painter = city()
     painter.paint(recorder().ctx, 0)

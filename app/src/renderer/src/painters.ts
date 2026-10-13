@@ -224,7 +224,11 @@ function litWindows(
 
   return {
     recolor(colorOf) {
-      colors = { glass: colorOf(glass), edge: colorOf(edge), lights: lights.map((l) => colorOf(l.color)) }
+      colors = {
+        glass: colorOf(glass),
+        edge: edge ? colorOf(edge) : '',
+        lights: lights.map((l) => colorOf(l.color)),
+      }
       repaintWhole = true
     },
     resize(w, h) {
@@ -263,7 +267,7 @@ function litWindows(
         for (const b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h)
           // On the half pixel, so the 1px edge lands on whole pixels.
-          ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
+          if (colors.edge) ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
         }
         for (const w of windows) lightUp(ctx, w)
         return
