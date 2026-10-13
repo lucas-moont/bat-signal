@@ -46,12 +46,15 @@ function rectsOf(map: OutfitMap): Rect[] {
 
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
-/** A cape's rim shows everywhere but over his body: the view, with BODY_BOX cut out of it. */
-const [bx, by, bw, bh] = BODY_BOX
-const OFF_BODY = `M-10 -5 H30 V15 H-10 Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
+/** The 28x13 view around his 16x11 grid: x, y, width and height. Layers may reach past it. */
+const VIEW = [-6, -1, 28, 13] as const
+/** His frame's height for its width. */
+const FRAME_ASPECT = VIEW[3] / VIEW[2]
 
-/** His frame's height for its width: the 28x13 view around his 16x11 grid. */
-const FRAME_ASPECT = 13 / 28
+/** A cape's rim shows everywhere but over his body: the view and well past it, BODY_BOX cut out. */
+const [vx, vy, vw, vh] = VIEW
+const [bx, by, bw, bh] = BODY_BOX
+const OFF_BODY = `M${vx - vw} ${vy - vh} h${3 * vw} v${3 * vh} h${-3 * vw} Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
 
 function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) {
   switch (layer.kind) {
@@ -111,14 +114,11 @@ function Frame({
 }) {
   const emblem = useEmblem()
   const offBody = useId()
-  const layers = [...pose.behind, ...pose.front]
   return (
-    <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
-      {layers.some((layer) => layer.kind === 'cape') && (
-        <clipPath id={offBody}>
-          <path d={OFF_BODY} clipRule="evenodd" />
-        </clipPath>
-      )}
+    <svg className={className} viewBox={VIEW.join(' ')} shapeRendering="crispEdges" aria-hidden>
+      <clipPath id={offBody}>
+        <path d={OFF_BODY} clipRule="evenodd" />
+      </clipPath>
       {pose.behind.map((layer, i) => layerShape(layer, i, emblem, offBody))}
       {rectsOf(pose.map).map((r) => (
         <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
@@ -157,11 +157,8 @@ const BOB = [0, -1, -2, -1]
 /** How long a click's Signature pose holds its final step before he returns to his Mood: a second. */
 const CLICK_HOLD_STEPS = 4
 
-/** A Mood's poses, one a frame, round and round. */
-const nth = (poses: Poses, f: number): Pose => poses[f % poses.length] ?? poses[0]
-/** The mood's motion, then the pose's own nudge (a wingsuit banking) on top of it. */
-const nudged = (motion: string, pose: Pose) =>
-  pose.transform ? `${motion} ${pose.transform}`.trim() : motion
+/** One of a list a frame, round and round: a Mood's poses, the perch's watch. */
+const cycle = <T,>(list: readonly [T, ...T[]], f: number): T => list[f % list.length] ?? list[0]
 
 /** Each mood's flip-book on a given frame: which pose, where to put it, and whether his eyes blink. */
 export function moodFrame(
@@ -169,21 +166,18 @@ export function moodFrame(
   f: number,
   poses: Poses,
 ): { pose: Pose; transform: string; blink: boolean } {
-  switch (mood) {
-    // Sitting still, wrapped in the cape; the breath is written straight to the element.
-    case 'sleeping':
-      return { pose: poses[0], transform: nudged('', poses[0]), blink: false }
-    // A flutter (a cape trailing, a wingsuit banking) while the body bobs.
-    case 'flying': {
-      const pose = nth(poses, f)
-      return { pose, transform: nudged(`translateY(${BOB[(f >> 1) % BOB.length]}px)`, pose), blink: false }
-    }
-    // The cape flung open (or a flare flickering), a shiver, and eyes that blink every so often.
-    case 'alarmed': {
-      const pose = nth(poses, f)
-      return { pose, transform: nudged(`translateX(${f % 2 ? 0.6 : -0.6}px)`, pose), blink: f % 10 === 9 }
-    }
-  }
+  // Asleep he sits still in his first pose (the breath is written straight to the element); flying,
+  // the body bobs under a flutter (a cape trailing, a wingsuit banking); alarmed, he shivers while a
+  // cape is flung open or a flare flickers, and his eyes blink every so often.
+  const pose = mood === 'sleeping' ? poses[0] : cycle(poses, f)
+  const motion = {
+    sleeping: '',
+    flying: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
+    alarmed: `translateX(${f % 2 ? 0.6 : -0.6}px)`,
+  }[mood]
+  // The pose's own nudge goes on top of the Mood's motion.
+  const transform = [motion, pose.transform].filter(Boolean).join(' ')
+  return { pose, transform, blink: mood === 'alarmed' && f % 10 === 9 }
 }
 
 export function BatClawd({
@@ -266,8 +260,7 @@ export function BatClawd({
   const ticking = watching ? !signature : mood !== 'sleeping' && !revealed
   const clock = useFrame(!calm && ticking, watching ? 8 : perched ? 4 : 2)
   const frame = calm ? 0 : clock
-  const step: Step | undefined =
-    revealed ?? (watching && !signature ? suit.watch[frame % suit.watch.length] : undefined)
+  const step: Step | undefined = revealed ?? (watching && !signature ? cycle(suit.watch, frame) : undefined)
   const { pose, transform, blink } = step
     ? { pose: step.pose, transform: step.transform ?? '', blink: false }
     : moodFrame(mood, frame, suit.poses[mood])
