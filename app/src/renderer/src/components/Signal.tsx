@@ -230,7 +230,7 @@ function Disc({
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
       aria-label={voice.signal.open(terms, count)}
-      title={voice.signal.openTip}
+      title={voice.signal.openTip(lit)}
       {...interactive}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId)

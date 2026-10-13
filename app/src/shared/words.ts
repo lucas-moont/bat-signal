@@ -40,6 +40,8 @@ export interface Terms {
 export interface Voice {
   /** The product's name on the masthead and in the intro. */
   wordmark: string
+  /** A line under the wordmark in the intro, if the Theme has one. */
+  tagline?: string
   /** The Theme's own name, alluding to its film or comic (jury §10), and that film, as the picker credits it. */
   theme: { name: string; film: string }
   /** The title bar's and tabs' buttons. */
@@ -154,7 +156,8 @@ export interface Voice {
   signal: {
     openCase: (t: Terms) => string
     open: (t: Terms, needsYou: number) => string
-    openTip: string
+    /** The disc's tooltip, lit (something needs the user) or not. */
+    openTip: (lit: boolean) => string
   }
   watch: {
     openPanel: string
@@ -430,7 +433,7 @@ export const STANDARD_VOICE: Voice = {
   signal: {
     openCase: (t) => `Open this ${lower(t.case.one)}`,
     open: (t, needsYou) => (needsYou ? `Open ${PRODUCT}: ${t.needsYou.count(needsYou)}` : `Open ${PRODUCT}`),
-    openTip: `Open ${PRODUCT} · drag to move`,
+    openTip: () => `Open ${PRODUCT} · drag to move`,
   },
   watch: {
     openPanel: 'Open the full panel',

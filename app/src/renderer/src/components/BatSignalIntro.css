@@ -61,6 +61,19 @@
   animation: intro-flicker 0.9s steps(1) 0.45s forwards;
 }
 
+/* A Theme's line under the wordmark, lit with it a beat later. */
+.intro__tagline {
+  position: absolute;
+  bottom: calc(22% - 24px);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+  opacity: 0;
+  animation: intro-flicker 0.9s steps(1) 0.6s forwards;
+}
+
 @keyframes intro-beam {
   from {
     opacity: 0;
