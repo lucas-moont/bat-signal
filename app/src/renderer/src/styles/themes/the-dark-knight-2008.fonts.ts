@@ -3,7 +3,6 @@
 // numbers, VENGEANCE's Barlow Semi Condensed to work in, and JetBrains Mono for the Night Report's
 // printed log. Loaded when worn or previewed.
 import '@fontsource/syncopate/400.css'
-import '@fontsource/syncopate/700.css'
 import '@fontsource/big-shoulders-stencil/700.css'
 import '@fontsource/barlow-semi-condensed/400.css'
 import '@fontsource/barlow-semi-condensed/500.css'
