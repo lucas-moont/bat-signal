@@ -334,7 +334,8 @@ describe('the lit windows', () => {
     const painter = city()
     painter.paint(recorder().ctx, 0)
     // An hour of switches, then the canvas painted afresh from what is lit.
-    for (let i = 0; i < 3600 * FPS; i++) painter.paint(recorder().ctx, 1 / FPS)
+    const { ctx: idle } = recorder()
+    for (let i = 0; i < 3600 * FPS; i++) painter.paint(idle, 1 / FPS)
     painter.recolor(COLORS)
     const { ctx, boxes } = recorder()
     painter.paint(ctx, 0)

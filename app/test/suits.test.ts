@@ -36,8 +36,8 @@ describe("a Theme's watch on the perch", () => {
   it.each(THEME_IDS.filter((id) => THEMES[id].suit.signature))(
     "%s keeps its watch on its Signature pose's final step",
     (id) => {
-      const { watch, signature } = THEMES[id].suit
-      expect(watch[0].pose).toEqual(scriptAt(signature!, Infinity).pose)
+      const suit = THEMES[id].suit
+      expect(suit.watch[0].pose).toEqual(stillStep(suit).pose)
     },
   )
 })
