@@ -4,19 +4,23 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
 import { THEMES } from '@shared/themes'
+import { useIsCalm } from '../calm'
 import { painterFor } from '../painters'
 import { useTheme } from '../theme'
 import { useEveryTick } from '../ticker'
 import './Atmosphere.css'
 
-/** The Atmosphere's canvas, painted a step on every tick of the shared clock (which stops while hidden). */
-function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
+/**
+ * The Atmosphere's canvas, painted a step on every tick of the shared clock (which stops while
+ * hidden) while it moves; still, it keeps its last frame.
+ */
+function Painted({ atmosphere, moving }: { atmosphere: AtmosphereData; moving: boolean }) {
   // The scene lives as long as the canvas; a Theme change mounts a new one (keyed by its Theme).
   const [painter] = useState(() => painterFor(atmosphere))
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const last = useRef<number | null>(null)
-  useEveryTick(true, (now) => {
+  useEveryTick(moving, (now) => {
     if (context.current)
       painter.paint(context.current, last.current === null ? 0 : (now - last.current) / 1000)
     last.current = now
@@ -39,6 +43,8 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
         if (value && CSS.supports('color', value)) colors[i] = value
       })
       painter.recolor(colors)
+      // Painted at once: a still scene would otherwise keep its old colors until it moves.
+      painter.paint(ctx, 0)
     }
 
     const resize = () => {
@@ -110,10 +116,16 @@ function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
   return enabled && (hovering || lingering)
 }
 
+/**
+ * The Atmosphere, while it is on in the settings. It moves while you are looking, never under
+ * reduced motion; then rain or snow leaves, and a still scene stays, frozen.
+ */
 export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
-  const shown = useAtmosphereVisible(on, activity)
+  const calm = useIsCalm()
+  const moving = useAtmosphereVisible(on && !calm, activity)
   const theme = useTheme()
   const atmosphere = THEMES[theme].atmosphere
+  const shown = moving || (on && !!atmosphere.still)
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
@@ -127,7 +139,7 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2 }}
           >
-            <Painted key={theme} atmosphere={atmosphere} />
+            <Painted key={theme} atmosphere={atmosphere} moving={moving} />
           </motion.div>
         )}
       </AnimatePresence>

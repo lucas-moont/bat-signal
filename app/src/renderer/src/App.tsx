@@ -101,7 +101,7 @@ export function App() {
   return dressed(
     <MotionConfig reducedMotion={calm ? 'always' : 'never'}>
       <main className="app">
-        <Atmosphere on={settings.atmosphere && !calm} activity={activity} />
+        <Atmosphere on={settings.atmosphere} activity={activity} />
         <Header
           needsYou={attention.length}
           mood={mood}
