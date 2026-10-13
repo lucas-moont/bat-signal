@@ -20,6 +20,15 @@ export type Layer =
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
   | { kind: 'emblem'; cx: number; cy: number; width: number }
+  /**
+   * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
+   * so the gaps between his legs show cloth and no line. Mirrored like a path; `back` hangs cloth
+   * across his back too, filling those gaps when the cape is flung open.
+   */
+  | { kind: 'cape'; d: string; mirrored?: boolean; back?: boolean }
+
+/** His body below the cowl, where a cape behind him shows no rim: x, y, width and height. */
+export const BODY_BOX = [3, 5, 10, 7] as const
 
 /** How he is drawn in a Mood or a moment. */
 export interface Pose {
@@ -147,7 +156,7 @@ const awake = (behind: Layer[], eyeColor = EYE): Pose => ({
   eyeColor,
 })
 const open: Layer[] = [
-  { kind: 'path', d: CAPE.openLeft, className: 'clawd__cape', mirrored: true },
+  { kind: 'cape', d: CAPE.openLeft, mirrored: true, back: true },
   { kind: 'path', d: CAPE.threadLeft, className: 'clawd__thread', mirrored: true },
   COWL_EDGE,
 ]

@@ -29,6 +29,16 @@
   stroke-width: 0.35;
   stroke-linejoin: round;
 }
+/* A cape behind him (shared/suits.ts, Layer 'cape'): its cloth, and its rim cut away over his body. */
+.clawd__cape-cloth {
+  fill: var(--cape);
+}
+.clawd__cape-rim {
+  fill: none;
+  stroke: var(--cape-rim);
+  stroke-width: 0.35;
+  stroke-linejoin: round;
+}
 /* Drawn behind the face, so only the outer half of the stroke shows. */
 .clawd__cowl-edge {
   fill: none;

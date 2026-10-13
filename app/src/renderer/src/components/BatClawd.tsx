@@ -6,10 +6,11 @@
 // ticker.ts) picks the pose and the wrapper position a few times a second. Between ticks
 // nothing animates at all, so the mascot costs almost nothing while its cape flutters, it
 // blinks or it breathes; CSS loops would keep the compositor busy at 60fps.
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useId, useRef, useState } from 'react'
 import { mapRects, type OutfitMap, type Rect } from '@shared/outfits'
 import type { Emblem } from '@shared/emblems'
 import {
+  BODY_BOX,
   GAZE,
   scriptAt,
   stillStep,
@@ -45,11 +46,33 @@ function rectsOf(map: OutfitMap): Rect[] {
 
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
+/** A cape's rim shows everywhere but over his body: the view, with BODY_BOX cut out of it. */
+const [bx, by, bw, bh] = BODY_BOX
+const OFF_BODY = `M-10 -5 H30 V15 H-10 Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
+/** An open cape's back, hanging behind him between his shoulders and his feet. */
+const CAPE_BACK = 'M3.4 5 L12.6 5 L12.6 11.4 L3.4 11.4 Z'
+
 /** His frame's height for its width: the 28x13 view around his 16x11 grid. */
 const FRAME_ASPECT = 13 / 28
 
-function layerShape(layer: Layer, key: number, emblem: Emblem) {
+function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) {
   switch (layer.kind) {
+    case 'cape': {
+      const halves = layer.mirrored ? [undefined, MIRROR] : [undefined]
+      return (
+        <Fragment key={key}>
+          {layer.back && <path className="clawd__cape-cloth" d={CAPE_BACK} />}
+          {halves.map((t) => (
+            <path key={t ?? 'left'} className="clawd__cape-cloth" d={layer.d} transform={t} />
+          ))}
+          <g clipPath={`url(#${offBody})`}>
+            {halves.map((t) => (
+              <path key={t ?? 'left'} className="clawd__cape-rim" d={layer.d} transform={t} />
+            ))}
+          </g>
+        </Fragment>
+      )
+    }
     case 'path':
       return (
         <Fragment key={key}>
@@ -89,13 +112,20 @@ function Frame({
   className: string
 }) {
   const emblem = useEmblem()
+  const offBody = useId()
+  const layers = [...pose.behind, ...pose.front]
   return (
     <svg className={className} viewBox="-6 -1 28 13" shapeRendering="crispEdges" aria-hidden>
-      {pose.behind.map((layer, i) => layerShape(layer, i, emblem))}
+      {layers.some((layer) => layer.kind === 'cape') && (
+        <clipPath id={offBody}>
+          <path d={OFF_BODY} clipRule="evenodd" />
+        </clipPath>
+      )}
+      {pose.behind.map((layer, i) => layerShape(layer, i, emblem, offBody))}
       {rectsOf(pose.map).map((r) => (
         <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
       ))}
-      {pose.front.map((layer, i) => layerShape(layer, i, emblem))}
+      {pose.front.map((layer, i) => layerShape(layer, i, emblem, offBody))}
       <g fill={pose.eyeColor} transform={`translate(${gaze.x} ${gaze.y})`}>
         {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
       </g>
