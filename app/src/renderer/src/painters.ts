@@ -111,8 +111,8 @@ function rain({ color: variable, density, angle, depths }: RainAtmosphere, rando
 }
 
 /**
- * `count` particles scattered over a canvas, each made at a random spot by `make` and put in one of
- * `lists` lists, the one `pick` says (a depth, say).
+ * `count` flakes scattered over a canvas: each at a random spot, put in one of `lists` lists, the
+ * one `pick` says (a depth, say), and made there by `make`.
  */
 function scatter<T>(
   { count, lists, width, height }: { count: number; lists: number; width: number; height: number },
@@ -121,7 +121,10 @@ function scatter<T>(
   make: (x: number, y: number) => T,
 ): T[][] {
   const scattered = Array.from({ length: lists }, (): T[] => [])
-  for (let i = count; i > 0; i--) scattered[pick()]!.push(make(random() * width, random() * height))
+  for (let i = count; i > 0; i--) {
+    const [x, y] = [random() * width, random() * height]
+    scattered[pick()]!.push(make(x, y))
+  }
   return scattered
 }
 
@@ -326,53 +329,70 @@ interface Mote {
   gust: number
 }
 
+/** How far a flake's pace may stray from its depth's, either way. */
+const GUST = 0.2
+
+/** A depth's ash or its dust: the motes of one color, filled as one path a tick. */
+interface Drift {
+  depth: AshAtmosphere['depths'][number]
+  dust: boolean
+  motes: Mote[]
+}
+
 /**
- * Ash: flakes in depths, blown sideways more than they fall, each depth's ash and its dust kept
- * apart and filled as one path each a tick. A flake that leaves at the right comes back at the left,
- * one that leaves at the bottom comes back at the top, each somewhere new along that edge.
+ * Ash: motes in depths, blown sideways more than they fall, each depth's ash and its dust filled as
+ * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
+ * along it, whichever way the wind blows.
  */
 function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: () => number): Painter {
-  /** Each depth's ash, then its dust (depth * 2, then + 1), none until it has a size. */
-  let layers: Mote[][] = depths.flatMap((): Mote[][] => [[], []])
+  const drifts = (lists: Mote[][] = []): Drift[] =>
+    depths.flatMap((depth, d) =>
+      [false, true].map((isDust, c) => ({ depth, dust: isDust, motes: lists[2 * d + c] ?? [] })),
+    )
+  /** None until it has a size. */
+  let layers = drifts()
   let width = 0
   let height = 0
-  let colors = ['', '']
+  let colors = { ash: '', dust: '' }
 
   return {
     recolor(colorOf) {
-      colors = [colorOf(variable), colorOf(dust.color)]
+      colors = { ash: colorOf(variable), dust: colorOf(dust.color) }
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      layers = scatter(
-        { count: howMany(width, height, density), lists: 2 * depths.length, width, height },
-        random,
-        () => 2 * Math.floor(random() * depths.length) + (random() < dust.share ? 1 : 0),
-        (x, y) => ({ x, y, gust: 0.75 + random() * 0.5 }),
+      layers = drifts(
+        scatter(
+          { count: howMany(width, height, density), lists: 2 * depths.length, width, height },
+          random,
+          () => 2 * Math.floor(random() * depths.length) + (random() < dust.share ? 1 : 0),
+          (x, y) => ({ x, y, gust: 1 - GUST + random() * 2 * GUST }),
+        ),
       )
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
       ctx.clearRect(0, 0, width, height)
-      layers.forEach((motes, list) => {
-        const { alpha, size, wind, fall } = depths[list >> 1]!
+      for (const { depth, dust: isDust, motes } of layers) {
+        const { alpha, size, wind, fall } = depth
         ctx.globalAlpha = alpha
-        ctx.fillStyle = colors[list & 1]!
+        ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()
         for (const m of motes) {
           m.x += wind * m.gust * step
           m.y += fall * m.gust * step
-          if (m.x > width) {
-            m.x -= width + size
+          // Gone past an edge: back in at the opposite one, somewhere new along it.
+          if (m.x > width || m.x < -size) {
+            m.x += m.x > width ? -(width + size) : width + size
             m.y = random() * height
-          } else if (m.y > height) {
-            m.y -= height + size
+          } else if (m.y > height || m.y < -size) {
+            m.y += m.y > height ? -(height + size) : height + size
             m.x = random() * width
           }
           ctx.rect(m.x, m.y, size, size)
         }
         ctx.fill()
-      })
+      }
     },
   }
 }

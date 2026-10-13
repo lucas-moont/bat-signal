@@ -337,6 +337,18 @@ describe('the ash', () => {
     expect(blown(5)).toBeCloseTo(blown(2 / FPS))
   })
 
+  // A wind from the right, or a drift that doesn't fall: whichever edge a flake leaves by, it
+  // comes back at the opposite one.
+  it('keeps its flakes on the canvas whichever way the wind blows', () => {
+    const painter = painterFor({ ...ASH, depths: [{ alpha: 0.2, size: 1, wind: -4, fall: 0 }] }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const all = fillsOver(painter, 400)
+    const last = flakes(all.at(-1)!)
+    expect(last).toHaveLength(FLAKES)
+    for (const r of last) expect(r.x).toBeGreaterThan(-10)
+  })
+
   it('keeps blowing: a flake that leaves the right or the bottom comes back', () => {
     const last = flakes(ticks(600).at(-1)!)
     expect(last).toHaveLength(FLAKES)
