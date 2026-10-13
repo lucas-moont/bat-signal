@@ -129,4 +129,4 @@ Running it from source, the checks, building the installer and releasing are in 
 
 Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022) and from Tim Burton's *Batman* (1989) are trademarks of DC Comics, used here as fan art; see [NOTICE](NOTICE) for them and for the fonts' licences.
 
-License: [MIT](LICENSE), except the bat emblem: see [NOTICE](NOTICE).
+License: [MIT](LICENSE), except the bat emblems and the bundled fonts, which keep their own terms: see [NOTICE](NOTICE).

@@ -65,6 +65,40 @@
     "asarUnpack": [
       "resources/**"
     ],
+    "extraResources": [
+      {
+        "from": "../NOTICE",
+        "to": "NOTICE.txt"
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/anton/LICENSE",
+        "to": "licenses/Anton.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/barlow-semi-condensed/LICENSE",
+        "to": "licenses/Barlow Semi Condensed.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/jetbrains-mono/LICENSE",
+        "to": "licenses/JetBrains Mono.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/josefin-sans/LICENSE",
+        "to": "licenses/Josefin Sans.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/limelight/LICENSE",
+        "to": "licenses/Limelight.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/special-elite/LICENSE",
+        "to": "licenses/Special Elite.txt"
+      }
+    ],
     "win": {
       "icon": "resources/icons/tray.ico"
     },

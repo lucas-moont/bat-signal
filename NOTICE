@@ -12,6 +12,7 @@ icons drawn from them in app/resources/icons/, and the pictures in docs/screensh
 The fonts are bundled from Fontsource under their own licences, not the MIT License:
 - Anton, Barlow Semi Condensed, JetBrains Mono, Josefin Sans and Limelight: SIL Open Font License 1.1;
 - Special Elite: Apache License 2.0.
-Each licence ships with its package (app/node_modules/@fontsource/<family>/LICENSE).
+Each licence ships with the app (resources/licenses/<family>.txt), beside this notice and the
+MIT License, and with its package (app/node_modules/@fontsource/<family>/LICENSE).
 
 Bat-Signal is a fan project, not affiliated with Warner Bros., DC Comics or Anthropic.
