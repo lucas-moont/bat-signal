@@ -216,17 +216,12 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
   eyes: 'shut',
 })
 
-/**
- * His watch on the perch: mostly still, then two glances and, if the pose has one, a flutter (the
- * cape lifting, the wingsuit banking): up to four changes in twelve seconds.
- */
-const watchOf = (still: Pose, glances: [Partial<Step>, Partial<Step>], flutter = still): Script => {
+/** His watch on the perch, held on a pose: still for eight seconds, then two glances, in twelve. */
+const watchOf = (still: Pose, glances: [Partial<Step>, Partial<Step>]): Script => {
   const STILL: Step = { pose: still, look: 0 }
   return [
     STILL,
-    ...Array<Step>(5).fill(STILL),
-    { pose: flutter, look: 0 },
-    STILL,
+    ...Array<Step>(7).fill(STILL),
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
     STILL,
