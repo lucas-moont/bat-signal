@@ -196,7 +196,7 @@ function litWindows(
   let since = 0
   /** How many windows are lit. */
   let litCount = 0
-  const color = (i: number) => colors[i] ?? ''
+  const ink = (i: number) => colors[i] ?? ''
 
   /** One of the lights, by their shares. */
   const pickLight = () => {
@@ -208,7 +208,7 @@ function litWindows(
   const lightUp = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
     if (light === undefined) return
     ctx.globalAlpha = lights[light]!.alpha
-    ctx.fillStyle = color(2 + light)
+    ctx.fillStyle = ink(2 + light)
     ctx.fillRect(x, y, CELL.w, CELL.h)
   }
 
@@ -244,8 +244,8 @@ function litWindows(
         whole = false
         ctx.clearRect(0, 0, width, canvasHeight)
         ctx.globalAlpha = 1
-        ctx.fillStyle = color(0)
-        ctx.strokeStyle = color(1)
+        ctx.fillStyle = ink(0)
+        ctx.strokeStyle = ink(1)
         for (const b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h)
           // On the half pixel, so the 1px edge lands on whole pixels.
@@ -266,7 +266,7 @@ function litWindows(
         litCount += on ? 1 : -1
         // The glass afresh, then its new light over it.
         ctx.globalAlpha = 1
-        ctx.fillStyle = color(0)
+        ctx.fillStyle = ink(0)
         ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
         lightUp(ctx, w)
         return
