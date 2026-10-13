@@ -47,6 +47,13 @@ describe('the Themes', () => {
     })
   })
 
+  it("names KNIGHTMARE after Zack Snyder's Batman v Superman and Justice League", () => {
+    expect(THEMES['batman-v-superman-2016'].words.voice.theme).toEqual({
+      name: 'KNIGHTMARE',
+      film: "Zack Snyder's Batman v Superman and Justice League",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -112,6 +119,7 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'report', 'vengeance']))).toBe('the-batman-2022')
     expect(themeFromFlags(new Set(['demo', 'moonlight']))).toBe('batman-1989')
     expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
+    expect(themeFromFlags(new Set(['demo', 'knightmare']))).toBe('batman-v-superman-2016')
   })
 
   it('names no Theme without a Theme flag', () => {

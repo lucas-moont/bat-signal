@@ -1,0 +1,156 @@
+/*
+ * KNIGHTMARE, after Zack Snyder's Batman v Superman and Justice League: its palette and faces
+ * (docs/research/themes/knightmare-palette.md, which replaces snyder.md's greys). The Knightmare's
+ * amber: the panel lives in its brown-black shadows and is lit by its cream sky, the sand haze marks
+ * what waits, and one color is not the desert: Superman's crimson, only when something needs you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: the epilogue's deepest shadow; --bone: its sky; --ink-soft: the haze over the dead city.
+ * - --signal-hot: S-shield crimson, Superman's shield and cape at full chroma, clear of VENGEANCE.
+ */
+:root[data-theme='batman-v-superman-2016'],
+[data-theme='batman-v-superman-2016'] {
+  --abyss: #100804;
+  --smoke: #190d06;
+  --surface: #24130a;
+  --raised: #341b0d;
+  --line: #5a3419;
+  --surface-deep: #140a05;
+  --frame: #2c170b;
+  --header-fade: #140a05;
+  --sheet-top: #2a160b;
+  --shadow: #000000;
+
+  /* The Alarm color, Heat Vision, and its darker body; the dust's shadow marks what waits. */
+  --blood: #7a4a1c;
+  --signal: #a8102f;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #ff405f;
+  --on-signal: var(--bone);
+  --ink-hot: #ff5c72;
+  --ink-soft: #e1ae66;
+  /* Bone works: no cool color left in a black-and-white world. */
+  --ink-live: var(--bone);
+  --ink: #e0cfb0;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is red. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--bone);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: AUTHORIZE and DAMAGED in the lifted red, ORDERS? and NEW INTEL in dust. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--bone);
+  --in-progress-glow: color-mix(in srgb, var(--bone) 40%, transparent);
+
+  /* Quit's hover stays grey: red is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: var(--blood);
+  --report-rule: var(--line);
+
+  --clawd: #d77757;
+
+  --bone: #f7e8c8;
+  --ash: #a39886;
+  --bone-dim: #e0cfb0;
+  --ash-dim: #a39886;
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in the Knightmare's desert gear (outfit M, #95): a brown leather duster with darker
+     sleeves so both arms read on it, its dark lining, a rust scarf, goggles up on the cowl, olive
+     pants, a brass buckle, and the BvS bat on the charcoal suit between the lapels. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #1f150d;
+  --cowl-edge: color-mix(in srgb, #e8e1d9 22%, transparent);
+  --cowl-shine: var(--raised);
+  --suit: #3a2e24;
+  --gloves: #140c06;
+  --belt: #2a2520;
+  --buckle: #a08850;
+  --goggles: #8a6d45;
+  --goggle-lens: #3e4038;
+  --scarf: #5c4435;
+  --coat: #6e5338;
+  --sleeve: #4a3828;
+  --coat-lining: #3b2a1b;
+  --pants: #4b4530;
+  --cape: var(--coat);
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  /* The chest bat: the suit's black, a shade under the cowl, on the lighter charcoal. */
+  --chest: #120a05;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: flat, in Bone. */
+  --emblem: var(--bone);
+
+  /* The Signal disc. Unlit: grey glass under a hard light from above, the bat a shade in it. Lit,
+     the other way round from VENGEANCE's: a pale, colorless sky with the bat burning red on it,
+     outlined in black to hold its shape (snyder.md, section 8). */
+  --disc-bat: var(--raised);
+  --glass-shine: #3a2210;
+  --glass: var(--abyss);
+  --disc-rim-inner: #0c0603;
+  --disc-rim-outer: var(--line);
+  --lens-core: #fdebc4;
+  --lens-rim: var(--signal);
+  --lens-bat: var(--signal-hot);
+  --lens-bat-edge: var(--abyss);
+  --notice-top: #24130a;
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #2e180c;
+  --notice-hover-foot: #1c0e07;
+
+  /* Hard light from above, the film's grain, and ash on the desert wind (a quarter of it dust). */
+  --haze: color-mix(in srgb, #f3daa9 6%, transparent);
+  --haze-edge: color-mix(in srgb, #f3daa9 2%, transparent);
+  --haze-inset: -35% -20% auto -20%;
+  --grain-opacity: 0.05;
+  --searchlight: var(--bone);
+  --ash-fall: var(--ash);
+  --dust: #c49b67;
+
+  /* Archivo: one heavy grotesque at normal width, for the display and the stamps. */
+  --font-display: 'Archivo', 'Arial Black', sans-serif;
+  --display-weight: 800;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-display);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  /* The report is plain working text: neither a log nor a typewriter. */
+  --font-report: var(--font-body);
+  --font-stamp: var(--font-display);
+  --font-label: var(--font-display);
+  --heading-case: none;
+  --font-case-title: var(--font-display);
+  --case-title-weight: 800;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.3px;
+  --wordmark-size: 18px;
+  --wordmark-tracking: 1.5px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ff4d57' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23b8a383' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* Archivo caps a degree off true, in a box, under a coarse grit like dust blown across paint. */
+  --stamp-tilt: -1deg;
+  --stamp-tilt-slight: -0.5deg;
+  --stamp-border: 1.5px;
+  /* A half size under the others: Archivo's AUTHORIZE fits the narrowest panel's margin. */
+  --stamp-size: 10.5px;
+  --stamp-weight: 800;
+  --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* Lit: a pale, colorless sky, the bat burning on it. */
+  --disc-lens: radial-gradient(circle at 50% 45% in srgb, var(--lens-core), #f3daa9 60%, #e1ae66);
+}

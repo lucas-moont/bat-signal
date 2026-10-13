@@ -129,3 +129,21 @@ export const WATCHFUL_PROTECTOR_WINDOWS: LitWindowsAtmosphere = {
   switchEvery: 1,
   still: true,
 }
+
+/**
+ * KNIGHTMARE's ash and sand on the desert wind (knightmare-palette.md, section 5): about a dozen flakes in the default
+ * panel, in three depths, half of them grey ash and half sand, blown 3 to 5 pixels sideways a tick and
+ * falling 1 to 2.
+ */
+export const KNIGHTMARE_ASH: AshAtmosphere = {
+  kind: 'ash',
+  color: '--ash-fall',
+  dust: { color: '--dust', share: 0.5 },
+  density: 0.08,
+  depths: [
+    { alpha: 0.1, size: 1, wind: 3, fall: 1 },
+    { alpha: 0.16, size: 1.5, wind: 4, fall: 1.5 },
+    { alpha: 0.22, size: 2, wind: 5, fall: 2 },
+  ],
+  still: 'calm',
+}
