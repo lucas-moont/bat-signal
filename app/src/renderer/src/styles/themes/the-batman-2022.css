@@ -160,6 +160,8 @@
   --stamp-tilt: -2.5deg;
   --stamp-tilt-slight: -1.5deg;
   --stamp-border: 1.5px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* The lit disc's lens: a recipe, not a color, since another Theme's lens may differ in shape
