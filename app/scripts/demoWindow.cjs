@@ -26,13 +26,14 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms))
  * one past 5x always), which would leave the page, and its pictures, at 1x.
  */
 async function zoomTo(win, { scale, width }) {
-  for (let tries = 0; tries < 10; tries++) {
-    if ((await win.webContents.executeJavaScript('innerWidth')) <= width + 1) return
+  const zoomed = async () => (await win.webContents.executeJavaScript('innerWidth')) <= width + 1
+  for (let tries = 0; tries < 10 && !(await zoomed()); tries++) {
     win.webContents.setZoomFactor(1)
     win.webContents.setZoomFactor(scale)
     await wait(150)
   }
-  throw new Error(`${win.webContents.getURL()}: the page would not zoom to ${scale}x`)
+  // Checked after the last try too, not only before each.
+  if (!(await zoomed())) throw new Error(`${win.webContents.getURL()}: the page would not zoom to ${scale}x`)
 }
 
 /** Loads a demo page in the window at a zoom (zoomTo). */
