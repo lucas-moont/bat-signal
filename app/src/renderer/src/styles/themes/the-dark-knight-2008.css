@@ -105,6 +105,7 @@
   --lens-core: #f3f8ff;
   --lens-rim: #10305a;
   --lens-bat: var(--abyss);
+  --lens-bat-edge: transparent;
   --notice-top: #111a23;
   --notice-foot: var(--smoke);
   --notice-hover-top: #172331;
