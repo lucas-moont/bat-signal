@@ -165,12 +165,64 @@ const COWL_EDGE: Layer = {
 }
 const CHEST: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 7 }
 const BACK: Layer = { kind: 'path', d: CAPE.back, className: 'clawd__cape-cloth' }
-const pose = (map: OutfitMap, behind: Layer[], front: Layer[] = []): Pose => ({
+/** A pose: the cape and cowl's edge behind him, his chest emblem (or a Theme's own) and the rest in front. */
+const pose = (
+  map: OutfitMap,
+  behind: Layer[],
+  front: Layer[] = [],
+  { chest = [CHEST], eyes = 'open' }: { chest?: Layer[]; eyes?: Pose['eyes'] } = {},
+): Pose => ({
   map,
   behind: [...behind, COWL_EDGE],
-  front: [CHEST, ...front],
-  eyes: 'open',
+  front: [...chest, ...front],
+  eyes,
 })
+
+/** Sitting, wrapped in a cape closed in front of him: only his gloved hands and boots show. */
+const seated = (map: OutfitMap, wrapped: string): Pose => ({
+  map,
+  behind: [COWL_EDGE],
+  front: [
+    {
+      kind: 'rects',
+      px: [
+        [4.5, 10.2, 2, 0.8],
+        [9.5, 10.2, 2, 0.8],
+      ],
+      fill: 'var(--gloves)',
+    },
+    { kind: 'path', d: wrapped, className: 'clawd__cape' },
+    { kind: 'rects', px: [[7.85, 8.4, 0.3, 1.6]], className: 'clawd__seam' },
+    // Only the gloved hands holding the cape shut show, in front of it.
+    {
+      kind: 'rects',
+      px: [
+        [6.9, 7.6, 1, 0.8],
+        [8.1, 7.6, 1, 0.8],
+      ],
+      fill: 'var(--gloves)',
+    },
+  ],
+  eyes: 'shut',
+})
+
+/**
+ * His watch on the perch: mostly still, then a flutter (the cape lifting, the wingsuit banking) and
+ * two glances, four changes in twelve seconds. A Signature pose held there takes only the glances.
+ */
+const watchOf = (still: Pose, flutter: Pose, glances: [Partial<Step>, Partial<Step>]): Script => {
+  const STILL: Step = { pose: still, look: 0 }
+  return [
+    STILL,
+    ...Array<Step>(5).fill(STILL),
+    { pose: flutter, look: 0 },
+    STILL,
+    { ...STILL, ...glances[0] },
+    { ...STILL, ...glances[1] },
+    STILL,
+    STILL,
+  ]
+}
 
 /** The wingsuit glide (flying): arms straight out to the gloves, the cape spread under them. */
 const glide = pose(
@@ -239,12 +291,6 @@ const flying = [
   { ...glide, transform: 'rotate(-4deg)' },
 ] as const
 
-/**
- * Mostly still, then the wingsuit banks and he glances along the street: four changes in twelve
- * seconds. On the perch he stands in Out of the dark, so only its glances play there.
- */
-const STILL: Step = { pose: glide, look: 0 }
-
 export const VENGEANCE_SUIT: Suit = {
   eyes: {
     open: [
@@ -257,50 +303,14 @@ export const VENGEANCE_SUIT: Suit = {
     ],
   },
   poses: {
-    sleeping: [
-      {
-        map: SEATED,
-        behind: [COWL_EDGE],
-        front: [
-          {
-            kind: 'rects',
-            px: [
-              [4.5, 10.2, 2, 0.8],
-              [9.5, 10.2, 2, 0.8],
-            ],
-            fill: 'var(--gloves)',
-          },
-          { kind: 'path', d: CAPE.wrapped, className: 'clawd__cape' },
-          { kind: 'rects', px: [[7.85, 8.4, 0.3, 1.6]], className: 'clawd__seam' },
-          // Only the gloved hands holding the cape shut show, in front of it.
-          {
-            kind: 'rects',
-            px: [
-              [6.9, 7.6, 1, 0.8],
-              [8.1, 7.6, 1, 0.8],
-            ],
-            fill: 'var(--gloves)',
-          },
-        ],
-        eyes: 'shut',
-      },
-    ],
+    sleeping: [seated(SEATED, CAPE.wrapped)],
     flying,
     // The flame flickers between Hot Signal and a smaller Pen Hot, a frame each.
     alarmed: [flare([12.75, -1, 1.5, 1], 'var(--flame)'), flare([13, -1, 1, 1], 'var(--flame-low)')],
   },
-  watch: [
-    STILL,
-    ...Array<Step>(5).fill(STILL),
-    { pose: flying[1], look: 0 },
-    STILL,
-    { pose: glide, look: -GAZE },
-    { pose: glide, look: -GAZE },
-    STILL,
-    STILL,
-  ],
-  // Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six steps, four a second), two footsteps
-  // landing on the way, until only his feet stay in it.
+  watch: watchOf(glide, flying[1], [{ look: -GAZE }, { look: -GAZE }]),
+  // Out of the dark (the subway fight): the shadow slides down off him in a second and a half (six
+  // steps, four a second), two footsteps landing on the way, until only his feet stay in it.
   signature: [
     { pose: draped(3), look: 0 },
     { pose: draped(4.25), look: 0 },
@@ -317,33 +327,20 @@ export const VENGEANCE_SUIT: Suit = {
 // belt, the bat in its oval on his chest (old brass at rest, lit gold when something needs the
 // user), and a black cape with rounded scallops rimmed in the snow's steel (burton-1989.md, 7). ---
 
-const MOON_LEGEND = { ...LEGEND, h: 'var(--cowl-shine)' }
-const MOON_SUIT = '...SSSSSSSSSS...'
-/** The cowl to his eyes and his orange jaw; then shoulders in the cowl's sheen. */
-const MOON_HEAD = twice([
-  '....c......c....',
-  '....chhccccc....',
-  '...cccccccccc...',
-  '...cccccccccc...',
-  '...cc######cc...',
-])
 /** The suit's last half-row, the brass belt and its buckle, and his four booted legs. */
 const MOON_BELOW = [
-  MOON_SUIT,
+  SUIT,
   '...bbbbkbbbbb...',
   '....S.S..S.S....',
   '....g.g..g.g....',
   ...twice(['....g.g..g.g....']),
 ]
-const moonMap = (chest: readonly string[], rows = MOON_BELOW): OutfitMap => ({
-  top: 0,
-  rows: [...MOON_HEAD, ...twice(chest), ...rows],
-  legend: MOON_LEGEND,
-})
-const MOON_ARMS_OUT = moonMap(['...hSSSSSSSSh...', '.gSSSSSSSSSSSSg.', MOON_SUIT])
+/** His shoulders take the cowl's steel sheen. */
+const SHOULDERS = '...hSSSSSSSSh...'
+const MOON_ARMS_OUT = map([SHOULDERS, '.gSSSSSSSSSSSSg.', SUIT], MOON_BELOW)
 /** Arms raised to hold the cape up (drawn beside the map). */
-const MOON_ARMS_UP = moonMap(['...hSSSSSSSSh...', MOON_SUIT, MOON_SUIT])
-const MOON_SEATED = moonMap(['...hSSSSSSSSh...', MOON_SUIT, MOON_SUIT, MOON_SUIT], [])
+const MOON_ARMS_UP = map([SHOULDERS, SUIT, SUIT], MOON_BELOW)
+const MOON_SEATED = map([SHOULDERS, SUIT, SUIT, SUIT], [])
 
 /** An oval as a path: centred on (cx, cy), rx by ry. */
 const oval = (cx: number, cy: number, rx: number, ry: number) =>
@@ -354,26 +351,23 @@ const oval = (cx: number, cy: number, rx: number, ry: number) =>
  * with its light in the middle), and the film's own bat across it, reaching the rim.
  */
 const CHEST_OVAL = { cx: 8, cy: 6.9 }
-const chestOval = (lit: boolean): Layer[] => [
-  { kind: 'path', d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 2.6, 1.62), fill: 'var(--cowl)', smooth: true },
-  {
-    kind: 'path',
-    d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 2.25, 1.27),
-    fill: lit ? 'var(--signal)' : 'var(--emblem-plate)',
-    smooth: true,
-  },
-  ...(lit
-    ? [
-        {
-          kind: 'path',
-          d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 1.5, 0.75),
-          fill: 'var(--signal-hot)',
-          smooth: true,
-        } as const,
-      ]
-    : []),
-  { kind: 'emblem', cx: CHEST_OVAL.cx, cy: CHEST_OVAL.cy, width: 4.33 },
-]
+const chestOval = (lit: boolean): Layer[] => {
+  const { cx, cy } = CHEST_OVAL
+  const light: Layer = { kind: 'path', d: oval(cx, cy, 1.5, 0.75), fill: 'var(--signal-hot)', smooth: true }
+  return [
+    { kind: 'path', d: oval(cx, cy, 2.6, 1.62), fill: 'var(--cowl)', smooth: true },
+    {
+      kind: 'path',
+      d: oval(cx, cy, 2.25, 1.27),
+      fill: lit ? 'var(--signal)' : 'var(--emblem-plate)',
+      smooth: true,
+    },
+    ...(lit ? [light] : []),
+    { kind: 'emblem', cx, cy, width: 4.33 },
+  ]
+}
+const OVAL_AT_REST = chestOval(false)
+const OVAL_LIT = chestOval(true)
 
 /**
  * Keaton's cape, cut from eight panels (burton-1989-cape.md): sharp tips hang at the seams, about two
@@ -397,17 +391,13 @@ const SCALLOPED = {
   farBehind: 'M12.6 5 L14.6 5.4 L15.2 10.4 Q14.5 9.7 13.8 10.4 Q13.2 9.8 12.6 10.6 Z',
 }
 
-const moonPose = (map: OutfitMap, behind: Layer[], front: Layer[], eyes: Pose['eyes'] = 'open'): Pose => ({
-  map,
-  behind: [...behind, COWL_EDGE],
-  front,
-  eyes,
-})
+/** Flying with the cape trailing, in two frames of the same flutter. */
+const [trailA, trailB] = [SCALLOPED.trailA, SCALLOPED.trailB].map((d) =>
+  pose(MOON_ARMS_OUT, [{ kind: 'cape', d }], [], { chest: OVAL_AT_REST }),
+) as [Pose, Pose]
 
-const moonFly = (d: string) => moonPose(MOON_ARMS_OUT, [{ kind: 'cape', d }], chestOval(false))
-
-/** The giant bat (alarmed): arms raised, the cape held up in two tall scalloped wings, the oval lit. */
-const giantBat = moonPose(
+/** The giant bat (alarmed): arms raised, the cape held up in two wings, the oval lit. */
+const giantBat = pose(
   MOON_ARMS_UP,
   [BACK, { kind: 'cape', d: SCALLOPED.wingLeft, mirrored: true }],
   [
@@ -427,8 +417,8 @@ const giantBat = moonPose(
       ],
       fill: 'var(--gloves)',
     },
-    ...chestOval(true),
   ],
+  { chest: OVAL_LIT },
 )
 
 /**
@@ -436,69 +426,35 @@ const giantBat = moonPose(
  * shines, turned three-quarter. The near half of the cape swings in front of him, his eyes look up
  * to the Signal in the clouds, and the Signal stays old brass: it is not an alarm.
  */
-const underTheSignal = moonPose(
+const underTheSignal = pose(
   MOON_ARMS_OUT,
   [{ kind: 'cape', d: SCALLOPED.farBehind }],
   [
-    ...chestOval(false),
     { kind: 'path', d: SCALLOPED.nearFront, className: 'clawd__cape' },
     { kind: 'path', d: oval(19, -1.5, 3, 1.5), fill: 'var(--emblem-plate)', smooth: true },
     { kind: 'emblem', cx: 19, cy: -1.5, width: 5.2 },
   ],
-  [
-    [6, 2.5, 2, 1],
-    [10, 2.5, 2, 1],
-  ],
+  {
+    chest: OVAL_AT_REST,
+    eyes: [
+      [6, 2.5, 2, 1],
+      [10, 2.5, 2, 1],
+    ],
+  },
 )
-
-const MOON_STILL: Step = { pose: moonFly(SCALLOPED.trailA), look: 0 }
 
 export const PALE_MOONLIGHT_SUIT: Suit = {
   eyes: VENGEANCE_SUIT.eyes,
   poses: {
-    sleeping: [
-      {
-        map: MOON_SEATED,
-        behind: [COWL_EDGE],
-        front: [
-          {
-            kind: 'rects',
-            px: [
-              [4.5, 10.2, 2, 0.8],
-              [9.5, 10.2, 2, 0.8],
-            ],
-            fill: 'var(--gloves)',
-          },
-          { kind: 'path', d: SCALLOPED.wrapped, className: 'clawd__cape' },
-          { kind: 'rects', px: [[7.85, 8.4, 0.3, 1.6]], className: 'clawd__seam' },
-          {
-            kind: 'rects',
-            px: [
-              [6.9, 7.6, 1, 0.8],
-              [8.1, 7.6, 1, 0.8],
-            ],
-            fill: 'var(--gloves)',
-          },
-        ],
-        eyes: 'shut',
-      },
-    ],
-    flying: [moonFly(SCALLOPED.trailA), moonFly(SCALLOPED.trailB)],
+    sleeping: [seated(MOON_SEATED, SCALLOPED.wrapped)],
+    flying: [trailA, trailB],
     alarmed: [giantBat],
   },
-  watch: [
-    MOON_STILL,
-    ...Array<Step>(5).fill(MOON_STILL),
-    { pose: moonFly(SCALLOPED.trailB), look: 0 },
-    MOON_STILL,
-    { pose: MOON_STILL.pose, look: -GAZE },
-    { pose: MOON_STILL.pose, look: -GAZE },
-    MOON_STILL,
-    MOON_STILL,
-  ],
+  // On the perch he glances down to the street and back up to the Signal (burton-1989.md, 7).
+  watch: watchOf(trailA, trailB, [{ lookY: 0.4 }, { look: GAZE, lookY: -0.4 }]),
   // Revealed as he turns from the street to look up at the Signal; held there on the perch.
   signature: [
-    { pose: moonFly(SCALLOPED.trailB), look: 0 },
+    { pose: trailB, look: 0 },
     { pose: underTheSignal, look: 0 },
   ],
   aura: true,
