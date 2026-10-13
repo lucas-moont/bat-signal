@@ -606,3 +606,146 @@ export const WATCHFUL_PROTECTOR_SUIT: Suit = {
   // Blue Flame is the Alarm color and never shows at rest: no aura as the sonar pings.
   aura: 'alarmed',
 }
+
+// --- KNIGHTMARE: outfit M (#95), after the Knightmare in Batman v Superman and Zack Snyder's Justice
+// League. Desert gear over the suit and no cape: a brown leather duster worn open, its sleeves a
+// shade darker so both arms read on it, a rust scarf, flying goggles pushed up on the cowl, a belt
+// with a brass buckle, olive cargo pants, black gauntlets and boots, and the BvS bat on his chest
+// between the lapels (bat-clawd-knightmare-suit.md). ---
+
+/** Outfit M's legend: the coat, its sleeves, the scarf, the goggles and the pants join V's. */
+const KNIGHTMARE_LEGEND = {
+  ...LEGEND,
+  f: 'var(--goggles)',
+  l: 'var(--goggle-lens)',
+  r: 'var(--scarf)',
+  C: 'var(--coat)',
+  v: 'var(--sleeve)',
+  p: 'var(--pants)',
+}
+/** The cowl with its ears, the goggles pushed up across the brow, and Clawd's orange as his jaw. */
+const KNIGHTMARE_HEAD = twice([
+  '....c......c....',
+  '...ffllffllff...',
+  '...cccccccccc...',
+  '...cccccccccc...',
+  '...cc######cc...',
+])
+/** The scarf at his neck, the coat's collar either side, then his torso between the lapels. */
+const SCARF = ['...CrrrrrrrrC...', '...CCrrrrrrCC...']
+const LAPELS = '...CSSSSSSSSC...'
+/** His arms out, in the coat's darker sleeves, gloved. */
+const SLEEVES = '.gvCSSSSSSSSCvg.'
+const knightmareMap = (rows: readonly string[]): OutfitMap => ({
+  top: 0,
+  rows: [...KNIGHTMARE_HEAD, ...SCARF, ...twice([SLEEVES, LAPELS]), ...rows],
+  legend: KNIGHTMARE_LEGEND,
+})
+/** The coat closed down to his shins, his legs under it. */
+const COAT_SHUT = knightmareMap([
+  '...CbbbkkbbbC...',
+  '...CppppppppC...',
+  '...Cp.p..p.pC...',
+  ...twice(['...Cg.g..g.gC...']),
+  '....g.g..g.g....',
+])
+/** The coat swung open: its front edges leave his legs. */
+const COAT_OPEN = knightmareMap([
+  '...CbbbkkbbbC...',
+  '...CppppppppC...',
+  '....p.p..p.p....',
+  ...twice(['....g.g..g.g....']),
+  '....g.g..g.g....',
+])
+const KNIGHTMARE_SEATED: OutfitMap = {
+  top: 0,
+  rows: [...KNIGHTMARE_HEAD, ...SCARF, ...twice([LAPELS, LAPELS, LAPELS])],
+  legend: KNIGHTMARE_LEGEND,
+}
+
+/** The BvS bat on his chest, between the lapels, under the scarf. */
+const CHEST_BAT: Layer = { kind: 'emblem', cx: 8, cy: 6.9, width: 5.6 }
+
+/** A path's x mirrored across his middle: a coat blown the other way. */
+const flipX = (d: string) =>
+  d.replace(/(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => `${16 - Number(x)} ${y}`)
+
+/** The duster, its hem straight with a few heavy points (bat-clawd-knightmare-suit.md, section 4). */
+const DUSTER = {
+  /** Flying: it streams back in a heavy tail, hemmed at the knees (two frames of a flutter). */
+  trailA:
+    'M3 5 L13 5 L13.4 10.7 L3.2 10.7 L1 10.9 L-1.2 10.3 L-3.4 10.7 L-2.6 9.2 L-4.4 8.1 L-3 7.1 L-4.6 6.1 L-0.6 5.3 Z',
+  trailB:
+    'M3 5 L13 5 L13.4 10.7 L3.2 10.7 L1 10.6 L-1.2 10.8 L-3.4 10.2 L-2.8 8.9 L-4.6 7.7 L-3.2 6.8 L-4.8 5.9 L-0.6 5.3 Z',
+  /** Its dark lining, behind his legs in the gaps between them. */
+  lining: 'M4 9 L12 9 L12 10.6 L4 10.6 Z',
+  /** Its back, behind him when it swings open. */
+  back: 'M3.4 5 L12.6 5 L12.6 10.9 L3.4 10.9 Z',
+  /** A front panel swung open (left; mirrored for the right). */
+  open: 'M3.4 5 L1.6 5.3 L-1.4 10.9 L-0.2 10.4 L1 10.9 L2.2 10.5 L3.4 10.9 Z',
+  /** Wrapped round him, asleep. */
+  wrapped: 'M2.6 6.4 L13.4 6.4 L13.8 10.6 L2.2 10.6 Z',
+  /** The Knightmare: the right panel streams downwind, the left hangs close. */
+  blownRight: 'M13 5 L19.5 6.5 L21.5 10.4 L17.5 9.8 L13 10.8 Z',
+  /** The right panel caught a unit higher by a gust. */
+  gustRight: 'M13 5 L19.5 5.5 L21.5 9.4 L17.5 8.8 L13 10.8 Z',
+  hangingLeft: 'M3 5 L1.6 5.6 L1.4 10.6 L3 10.8 Z',
+}
+const LINING: Layer = { kind: 'path', d: DUSTER.lining, fill: 'var(--coat-lining)' }
+
+const knightmarePose = (map: OutfitMap, behind: Layer[], eyes: Pose['eyes'] = 'open') =>
+  pose(map, behind, [], { chest: [CHEST_BAT], eyes })
+
+/** Flying, the duster streaming behind him (to the right, if `blown` says so). */
+const flyingIn = (trail: string, blown: 'left' | 'right') =>
+  knightmarePose(COAT_SHUT, [{ kind: 'cape', d: blown === 'left' ? trail : flipX(trail) }, LINING])
+
+/** Alarmed: the coat swung open, its lining behind his legs. */
+const swungOpen = knightmarePose(COAT_OPEN, [
+  { kind: 'path', d: DUSTER.back, fill: 'var(--coat-lining)' },
+  { kind: 'cape', d: DUSTER.open, mirrored: true },
+])
+
+/** Eyes on the horizon the coat streams at. */
+const TO_THE_HORIZON: Px[] = [
+  [6, 3, 2, 1],
+  [10, 3, 2, 1],
+]
+/** The Knightmare: standing in the desert wind, the coat blown out to the right like a flag. */
+const knightmareWith = (rightPanel: string) =>
+  knightmarePose(
+    COAT_SHUT,
+    [{ kind: 'cape', d: rightPanel }, { kind: 'cape', d: DUSTER.hangingLeft }, LINING],
+    TO_THE_HORIZON,
+  )
+const knightmare = knightmareWith(DUSTER.blownRight)
+const gusted = knightmareWith(DUSTER.gustRight)
+
+/**
+ * The Knightmare (the Signature pose), the desert vision of Batman v Superman and the resistance of
+ * Zack Snyder's Justice League (snyder.md, section 7): the coat snaps in the wind for a second,
+ * then he stands watching the horizon.
+ */
+const KNIGHTMARE: Script = [
+  { pose: gusted, look: 0 },
+  { pose: knightmare, look: 0 },
+  { pose: gusted, look: 0 },
+  { pose: knightmare, look: 0 },
+]
+
+/** Which way his coat streams in flight, until it is picked on screen. */
+const COAT_BLOWN: 'left' | 'right' = 'left'
+
+export const KNIGHTMARE_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(KNIGHTMARE_SEATED, DUSTER.wrapped)],
+    flying: [flyingIn(DUSTER.trailA, COAT_BLOWN), flyingIn(DUSTER.trailB, COAT_BLOWN)],
+    alarmed: [swungOpen],
+  },
+  // On the perch he watches the horizon; once a cycle a gust lifts the coat.
+  watch: watchOn(KNIGHTMARE, [{ look: 0.3 }, { look: -0.3 }], [{ pose: gusted, look: 0 }]),
+  signature: KNIGHTMARE,
+  // Heat Vision is the Alarm color and never shows at rest: no aura as the coat snaps.
+  aura: 'alarmed',
+}
