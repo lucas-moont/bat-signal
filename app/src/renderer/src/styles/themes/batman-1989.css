@@ -101,6 +101,7 @@
   --lens-core: #f0c24b;
   --lens-rim: #5a3e18;
   --lens-bat: #050302;
+  --lens-bat-edge: transparent;
   --notice-top: #1b1510;
   --notice-foot: #0e0b07;
   --notice-hover-top: #251d15;
@@ -109,6 +110,7 @@
   --haze: color-mix(in srgb, var(--blood) 12%, transparent);
   --haze-edge: color-mix(in srgb, var(--blood) 4%, transparent);
   --grain-opacity: 0.045;
+  --haze-inset: auto -20% -35% -20%;
   /* Snow from Batman Returns over the 1989 smog: bone flakes, a brown haze from below. */
   --snow: var(--bone);
   --searchlight: var(--bone);

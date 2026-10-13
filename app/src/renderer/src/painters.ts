@@ -1,7 +1,13 @@
 // The painters of the Atmospheres (shared/atmospheres.ts): each paints its kind on the canvas
 // behind the panel, a step at a time on the shared 8 fps clock. Free of the DOM, so node tests
 // drive them on a recording canvas.
-import type { Atmosphere, LitWindowsAtmosphere, RainAtmosphere, SnowAtmosphere } from '@shared/atmospheres'
+import type {
+  AshAtmosphere,
+  Atmosphere,
+  LitWindowsAtmosphere,
+  RainAtmosphere,
+  SnowAtmosphere,
+} from '@shared/atmospheres'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -35,6 +41,8 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return snow(atmosphere, random)
     case 'lit-windows':
       return litWindows(atmosphere, random)
+    case 'ash':
+      return ash(atmosphere, random)
   }
 }
 
@@ -102,6 +110,24 @@ function rain({ color: variable, density, angle, depths }: RainAtmosphere, rando
   }
 }
 
+/**
+ * `count` flakes scattered over a canvas: each at a random spot, put in one of `lists` lists, the
+ * one `pick` says (a depth, say), and made there by `make`.
+ */
+function scatter<T>(
+  { count, lists, width, height }: { count: number; lists: number; width: number; height: number },
+  random: () => number,
+  pick: () => number,
+  make: (x: number, y: number) => T,
+): T[][] {
+  const scattered = Array.from({ length: lists }, (): T[] => [])
+  for (let i = count; i > 0; i--) {
+    const [x, y] = [random() * width, random() * height]
+    scattered[pick()]!.push(make(x, y))
+  }
+  return scattered
+}
+
 interface Flake {
   x: number
   y: number
@@ -133,11 +159,12 @@ function snow({ color: variable, density, depths, drift }: SnowAtmosphere, rando
     resize(w, h) {
       ;[width, height] = [w, h]
       ticks = 0
-      layers = depths.map((): Flake[] => [])
-      for (let i = howMany(width, height, density); i > 0; i--) {
-        const [x, y, depth] = [random() * width, random() * height, Math.floor(random() * depths.length)]
-        layers[depth]!.push({ x, y, phase: Math.floor(random() * SWAY.length) })
-      }
+      layers = scatter(
+        { count: howMany(width, height, density), lists: depths.length, width, height },
+        random,
+        () => Math.floor(random() * depths.length),
+        (x, y) => ({ x, y, phase: Math.floor(random() * SWAY.length) }),
+      )
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
@@ -290,6 +317,81 @@ function litWindows(
         ctx.fillRect(w.x - 0.5, w.y - 0.5, CELL.w + 1, CELL.h + 1)
         lightUp(ctx, w)
         return
+      }
+    },
+  }
+}
+
+interface Mote {
+  x: number
+  y: number
+  /** Its own pace, so the field looks gusty without a new random number every tick. */
+  gust: number
+}
+
+/** How far a flake's pace may stray from its depth's, either way. */
+const GUST = 0.2
+
+/** A depth's ash or its dust: the motes of one color, filled as one path a tick. */
+interface Drift {
+  depth: AshAtmosphere['depths'][number]
+  dust: boolean
+  motes: Mote[]
+}
+
+/**
+ * Ash: motes in depths, blown sideways more than they fall, each depth's ash and its dust filled as
+ * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
+ * along it, whichever way the wind blows.
+ */
+function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: () => number): Painter {
+  const drifts = (lists: Mote[][] = []): Drift[] =>
+    depths.flatMap((depth, d) =>
+      [false, true].map((isDust, c) => ({ depth, dust: isDust, motes: lists[2 * d + c] ?? [] })),
+    )
+  /** None until it has a size. */
+  let layers = drifts()
+  let width = 0
+  let height = 0
+  let colors = { ash: '', dust: '' }
+
+  return {
+    recolor(colorOf) {
+      colors = { ash: colorOf(variable), dust: colorOf(dust.color) }
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      layers = drifts(
+        scatter(
+          { count: howMany(width, height, density), lists: 2 * depths.length, width, height },
+          random,
+          () => 2 * Math.floor(random() * depths.length) + (random() < dust.share ? 1 : 0),
+          (x, y) => ({ x, y, gust: 1 - GUST + random() * 2 * GUST }),
+        ),
+      )
+    },
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      ctx.clearRect(0, 0, width, height)
+      for (const { depth, dust: isDust, motes } of layers) {
+        const { alpha, size, wind, fall } = depth
+        ctx.globalAlpha = alpha
+        ctx.fillStyle = isDust ? colors.dust : colors.ash
+        ctx.beginPath()
+        for (const m of motes) {
+          m.x += wind * m.gust * step
+          m.y += fall * m.gust * step
+          // Gone past an edge: back in at the opposite one, somewhere new along it.
+          if (m.x > width || m.x < -size) {
+            m.x += m.x > width ? -(width + size) : width + size
+            m.y = random() * height
+          } else if (m.y > height || m.y < -size) {
+            m.y += m.y > height ? -(height + size) : height + size
+            m.x = random() * width
+          }
+          ctx.rect(m.x, m.y, size, size)
+        }
+        ctx.fill()
       }
     },
   }

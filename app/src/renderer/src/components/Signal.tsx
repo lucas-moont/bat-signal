@@ -257,7 +257,13 @@ function Disc({
       {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
         {/* The lens lights for news as well; a plate, in the Alarm color, only when something needs you. */}
-        <BatEmblem size={44} title="" fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'} lit={count > 0} />
+        <BatEmblem
+          size={44}
+          title=""
+          fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'}
+          outline={lit ? 'var(--lens-bat-edge)' : undefined}
+          lit={count > 0}
+        />
       </span>
       <AnimatePresence>
         {count > 0 && (

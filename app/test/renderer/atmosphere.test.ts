@@ -4,8 +4,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { CalmContext } from '../../src/renderer/src/calm'
-import { Atmosphere } from '../../src/renderer/src/components/Atmosphere'
-import type { LitWindowsAtmosphere } from '../../src/shared/atmospheres'
+import { Atmosphere, isShown } from '../../src/renderer/src/components/Atmosphere'
+import type { AshAtmosphere, LitWindowsAtmosphere } from '../../src/shared/atmospheres'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (on: boolean, calm = false) =>
@@ -58,5 +58,48 @@ describe('a still Atmosphere', () => {
 
   it('still leaves when it is off', () => {
     expect(draw(false, true)).not.toContain('<canvas')
+  })
+})
+
+// The Knightmare's ash leaves with its motion as rain does, but under reduced motion it stands as
+// one frozen frame (snyder.md, section 9).
+describe('an Atmosphere frozen under reduced motion', () => {
+  standInTheme({
+    atmosphere: {
+      kind: 'ash',
+      color: '--ash',
+      dust: { color: '--bone', share: 0.25 },
+      density: 0.08,
+      depths: [{ alpha: 0.2, size: 1, wind: 3, fall: 1 }],
+      still: 'calm',
+    } satisfies AshAtmosphere,
+  })
+
+  it('stays under reduced motion, frozen', () => {
+    expect(draw(true, true)).toContain('atmosphere__canvas')
+  })
+})
+
+// Once it stops moving (the pointer gone, or reduced motion), what each kind does.
+describe('an Atmosphere at rest', () => {
+  const rest = { on: true, moving: false }
+
+  it('leaves, rain or snow', () => {
+    expect(isShown(undefined, { ...rest, calm: false })).toBe(false)
+    expect(isShown(undefined, { ...rest, calm: true })).toBe(false)
+  })
+
+  it('stays, a still scene', () => {
+    expect(isShown(true, { ...rest, calm: false })).toBe(true)
+    expect(isShown(true, { ...rest, calm: true })).toBe(true)
+  })
+
+  it('stays under reduced motion only, the ash', () => {
+    expect(isShown('calm', { ...rest, calm: true })).toBe(true)
+    expect(isShown('calm', { ...rest, calm: false })).toBe(false)
+  })
+
+  it('is never on the page while it is off', () => {
+    expect(isShown(true, { on: false, moving: false, calm: true })).toBe(false)
   })
 })

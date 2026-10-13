@@ -5,10 +5,10 @@
   z-index: -1;
 }
 
-/* Sodium street light leaking in from below. */
+/* A Theme's light leaking in, from below (a street light) unless its Theme says otherwise. */
 .atmosphere__glow {
   position: absolute;
-  inset: auto -20% -35% -20%;
+  inset: var(--haze-inset);
   height: 60%;
   background: radial-gradient(closest-side in srgb, var(--haze), var(--haze-edge) 55%, transparent);
 }

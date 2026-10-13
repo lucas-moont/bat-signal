@@ -17,11 +17,18 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number): s
   return `translate(${cx - (bat.x + bat.width / 2) * k} ${cy - (bat.y + bat.height / 2) * k}) scale(${k})`
 }
 
+/**
+ * An outline's stroke, a share of the bat's width: half of it shows outside the bat, about 1.5px
+ * round a 44px bat, whatever the emblem's grid.
+ */
+export const OUTLINE_SHARE = 0.07
+
 export function BatEmblem({
   size = 40,
   title,
   fill = 'var(--emblem)',
   lit = false,
+  outline,
 }: {
   size?: number
   /** What a screen reader says; the product's name unless given ("" for a decorative one). */
@@ -30,6 +37,8 @@ export function BatEmblem({
   fill?: string
   /** Something needs the user: a plate lights in the Alarm color. */
   lit?: boolean
+  /** An outline under the bat's fill, in this color (a lit lens too pale to hold its shape alone). */
+  outline?: string
 }) {
   const { path, bat, finish, plate } = useEmblem()
   // The box around the bat, or its plate, with a unit of air on every side: the size a place
@@ -96,6 +105,16 @@ export function BatEmblem({
             strokeWidth={plate.rim}
           />
         </>
+      )}
+      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. */}
+      {outline && (
+        <path
+          d={path}
+          fill="none"
+          stroke={outline}
+          strokeWidth={bat.width * OUTLINE_SHARE}
+          strokeLinejoin="round"
+        />
       )}
       <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
     </svg>

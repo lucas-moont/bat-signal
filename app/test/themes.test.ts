@@ -84,7 +84,11 @@ describe("the Themes' stylesheets and fonts", () => {
 // stylesheets read, and don't set themselves, is every Theme's to set.
 describe("the shared stylesheets' variables", () => {
   const shared = rendererSources('.css').filter(({ path }) => !path.startsWith('styles/themes/'))
-  const read = new Set(shared.flatMap(({ text }) => [...text.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]!)))
+  // The renderer's code reads some too, handing them to an SVG (fill="var(--lens-bat)").
+  const code = rendererSources('.ts', '.tsx')
+  const read = new Set(
+    [...shared, ...code].flatMap(({ text }) => [...text.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]!)),
+  )
   const setInShared = new Set([
     ...shared.flatMap(({ text }) => [...text.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]!)),
     // Set on an element by code (the click ripple), not by a Theme.
@@ -92,7 +96,10 @@ describe("the shared stylesheets' variables", () => {
       [...text.matchAll(/setProperty\('(--[\w-]+)'/g)].map((m) => m[1]!),
     ),
   ])
-  const themesSet = [...read].filter((name) => !setInShared.has(name)).sort()
+  // Read only for an emblem on a plate, which only its own Theme draws (BatEmblem.tsx): a Theme
+  // without one never paints them, in its folder or anywhere.
+  const PLATE_ONLY = new Set(['--emblem-plate', '--emblem-plate-rim'])
+  const themesSet = [...read].filter((name) => !setInShared.has(name) && !PLATE_ONLY.has(name)).sort()
 
   it.each(THEME_IDS)('are all set by %s', (id) => {
     const vars = themeVariables(id)

@@ -121,6 +121,8 @@
   --lens-edge: #3a0002;
   --lens-rim: #4a0204;
   --lens-bat: #050000;
+  /* An outline round the lit disc's bat, for a lens too pale to hold its shape alone: none here. */
+  --lens-bat-edge: transparent;
   /* The notice card riding the beam, at rest and under the pointer. */
   --notice-top: #17110f;
   --notice-foot: #0b0807;
@@ -132,6 +134,8 @@
   --haze: color-mix(in srgb, var(--signal) 16%, transparent);
   --haze-edge: color-mix(in srgb, var(--blood) 6%, transparent);
   --grain-opacity: 0.045;
+  /* Where the haze's light comes from: the street below. */
+  --haze-inset: auto -20% -35% -20%;
   --rain: var(--bone);
   --searchlight: var(--bone);
 

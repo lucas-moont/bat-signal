@@ -3,7 +3,7 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { BatEmblem } from '../../src/renderer/src/components/BatEmblem'
+import { BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
 import { emblem, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
@@ -15,6 +15,24 @@ describe('an emblem without a plate (VENGEANCE)', () => {
     const markup = draw()
     expect(markup).not.toContain('<ellipse')
     expect(markup).toContain('fill="var(--emblem)"')
+  })
+})
+
+// KNIGHTMARE's lit disc burns its bat red on a pale lens, which alone holds 2.6–3.2:1: an outline
+// under the fill keeps its shape (snyder.md, section 8).
+describe("an emblem's outline", () => {
+  // Behind the bat, outside a worn bat's filter, which would clip it at the tips and streak it.
+  it('outlines the bat behind its fill, in the color given, a share of its width', () => {
+    const markup = draw({ outline: 'var(--lens-bat-edge)' })
+    const width = emblem(WINGS, 'none').bat.width * OUTLINE_SHARE
+    const outline = `fill="none" stroke="var(--lens-bat-edge)" stroke-width="${width}"`
+    expect(markup).toContain(outline)
+    // Drawn first, so the fill lies over it.
+    expect(markup.indexOf(outline)).toBeLessThan(markup.lastIndexOf('<path'))
+  })
+
+  it('draws none unless given one', () => {
+    expect(draw()).not.toContain('stroke=')
   })
 })
 
