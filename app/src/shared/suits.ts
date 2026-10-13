@@ -3,6 +3,7 @@
 // details under a grid cell), the Poses of each Mood, his watch on the perch and, if the Theme has
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
+import { BAT_1989, emblem, OVAL_1989 } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -292,17 +293,20 @@ const flying = [
   { ...glide, transform: 'rotate(-4deg)' },
 ] as const
 
+/** Clawd's white eyes, open under the cowl, or shut to a line: every suit's so far. */
+const EYES: Suit['eyes'] = {
+  open: [
+    [5, 3, 2, 1],
+    [9, 3, 2, 1],
+  ],
+  shut: [
+    [5, 3.6, 2, 0.3],
+    [9, 3.6, 2, 0.3],
+  ],
+}
+
 export const VENGEANCE_SUIT: Suit = {
-  eyes: {
-    open: [
-      [5, 3, 2, 1],
-      [9, 3, 2, 1],
-    ],
-    shut: [
-      [5, 3.6, 2, 0.3],
-      [9, 3.6, 2, 0.3],
-    ],
-  },
+  eyes: EYES,
   poses: {
     sleeping: [seated(SEATED, CAPE.wrapped)],
     flying,
@@ -331,7 +335,7 @@ export const VENGEANCE_SUIT: Suit = {
 /** The suit's last half-row, the brass belt and its buckle, and his four booted legs. */
 const MOON_BELOW = [
   SUIT,
-  '...bbbbkbbbbb...',
+  '...bbbbkkbbbb...',
   '....S.S..S.S....',
   '....g.g..g.g....',
   ...twice(['....g.g..g.g....']),
@@ -347,6 +351,20 @@ const MOON_SEATED = map([SHOULDERS, SUIT, SUIT, SUIT], [])
 const oval = (cx: number, cy: number, rx: number, ry: number) =>
   `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0 Z`
 
+/** The 1989 emblem's proportions, read from its data so a re-trace carries over to his chest. */
+const OVAL_ASPECT = OVAL_1989.box.height / OVAL_1989.box.width
+/** How wide the bat is across the oval, inside its rim. */
+const BAT_SPAN = emblem(BAT_1989, 'none').bat.width / (OVAL_1989.box.width - 2 * OVAL_1989.rim)
+/** A 1989 oval rx wide either side of (cx, cy), in the emblem's proportions. */
+const oval1989 = (cx: number, cy: number, rx: number) => oval(cx, cy, rx, rx * OVAL_ASPECT)
+/** The 1989 bat across an oval rx wide either side of (cx, cy). */
+const bat1989 = (cx: number, cy: number, rx: number): Layer => ({
+  kind: 'emblem',
+  cx,
+  cy,
+  width: 2 * rx * BAT_SPAN,
+})
+
 /**
  * The 1989 emblem on his chest: a cowl-black rim, the oval in old brass (or lit, the Alarm color
  * with its light in the middle), and the film's own bat across it, reaching the rim.
@@ -354,17 +372,18 @@ const oval = (cx: number, cy: number, rx: number, ry: number) =>
 const CHEST_OVAL = { cx: 8, cy: 6.9 }
 const chestOval = (lit: boolean): Layer[] => {
   const { cx, cy } = CHEST_OVAL
-  const light: Layer = { kind: 'path', d: oval(cx, cy, 1.5, 0.75), fill: 'var(--signal-hot)', smooth: true }
+  const light: Layer = { kind: 'path', d: oval1989(cx, cy, 1.5), fill: 'var(--signal-hot)', smooth: true }
   return [
-    { kind: 'path', d: oval(cx, cy, 2.6, 1.62), fill: 'var(--cowl)', smooth: true },
+    // The rim clears his jaw (y 5) and the belt (y 8.5): the two never merge into one brass apron.
+    { kind: 'path', d: oval1989(cx, cy, 2.6), fill: 'var(--cowl)', smooth: true },
     {
       kind: 'path',
-      d: oval(cx, cy, 2.25, 1.27),
+      d: oval1989(cx, cy, 2.25),
       fill: lit ? 'var(--signal)' : 'var(--emblem-plate)',
       smooth: true,
     },
     ...(lit ? [light] : []),
-    { kind: 'emblem', cx, cy, width: 4.33 },
+    bat1989(cx, cy, 2.25),
   ]
 }
 const OVAL_AT_REST = chestOval(false)
@@ -432,8 +451,8 @@ const underTheSignal = pose(
   [{ kind: 'cape', d: SCALLOPED.farBehind }],
   [
     { kind: 'path', d: SCALLOPED.nearFront, className: 'clawd__cape' },
-    { kind: 'path', d: oval(19, -1.5, 3, 1.5), fill: 'var(--emblem-plate)', smooth: true },
-    { kind: 'emblem', cx: 19, cy: -1.5, width: 5.2 },
+    { kind: 'path', d: oval1989(19, -1.5, 3), fill: 'var(--emblem-plate)', smooth: true },
+    bat1989(19, -1.5, 3),
   ],
   {
     chest: OVAL_AT_REST,
@@ -445,7 +464,7 @@ const underTheSignal = pose(
 )
 
 export const PALE_MOONLIGHT_SUIT: Suit = {
-  eyes: VENGEANCE_SUIT.eyes,
+  eyes: EYES,
   poses: {
     sleeping: [seated(MOON_SEATED, SCALLOPED.wrapped)],
     flying: [trailA, trailB],
