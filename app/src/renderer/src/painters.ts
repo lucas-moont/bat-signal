@@ -118,8 +118,8 @@ const SWAY = [0, 1, 0, -1]
  * flake never jitters.
  */
 function snow({ color: variable, density, depths, drift }: SnowAtmosphere, random: () => number): Painter {
-  /** The flakes of each depth, from the farthest to the nearest. */
-  let layers: Flake[][] = []
+  /** The flakes of each depth, none until it has a size. */
+  let layers: Flake[][] = depths.map((): Flake[] => [])
   let width = 0
   let height = 0
   /** Ticks of the clock since the snow began, fractional when a tick comes late. */
