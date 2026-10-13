@@ -93,7 +93,7 @@
    ink is its tier's, which a Theme may keep off its Alarm color, so this one names it, as the aura does. */
 .folder .stamp {
   color: var(--signal-hot);
-  font-size: 9.5px;
+  font-size: calc(var(--stamp-size) - 1.5px);
   padding: 2px 5px 1px;
 }
 /* Picked: the stamp lands once. */
