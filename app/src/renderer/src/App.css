@@ -29,7 +29,7 @@
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;
   color: var(--accent);
-  text-shadow: 0 0 14px var(--wordmark-glow);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 .header__brand {
   position: relative;

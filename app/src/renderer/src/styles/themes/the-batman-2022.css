@@ -45,19 +45,13 @@
   --accent-hot: var(--signal-hot);
   --accent-deep: var(--blood);
   --accent-glow: var(--signal-glow);
-  /* Where the accent spreads past a mark, each its own so a Theme can keep any of them neutral:
-     selected text, a card under the pointer, the progress bar, a sheet's top edge, a switch's
-     thumb, and the glows around the wordmark and the intro's title. VENGEANCE: the accent. */
+  /* Where a Theme whose accent is pale needs another color: selected text (bone on bone would
+     vanish), the progress bar (progress is not emphasis there) and a checked switch's thumb.
+     VENGEANCE: what they read before, the accent and Bone. */
   --selection: var(--accent);
-  --hover-glow: var(--accent-glow);
   --progress-deep: var(--accent-deep);
   --progress-hot: var(--accent-hot);
-  --progress-glow: var(--accent-glow);
-  --spill: var(--accent);
-  --spill-glow: var(--accent-glow);
   --thumb: var(--bone);
-  --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
-  --intro-glow: var(--accent-glow);
 
   /* Stamp inks by tier, so no stamp reads an alarm shade directly. */
   --brick: #c9463d;

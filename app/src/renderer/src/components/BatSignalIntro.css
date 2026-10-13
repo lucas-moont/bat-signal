@@ -56,7 +56,7 @@
   font-size: 30px;
   letter-spacing: 8px;
   color: var(--accent);
-  text-shadow: 0 0 18px var(--intro-glow);
+  text-shadow: 0 0 18px var(--accent-glow);
   opacity: 0;
   animation: intro-flicker 0.9s steps(1) 0.45s forwards;
 }
