@@ -81,6 +81,8 @@ We drew this next to the current path with a rough copy of the moon outfit map (
   `M3 5 L13 5 L13.4 9.2 Q11.8 8.9 11 10.4 Q9 9.3 7 10 Q5.1 9.5 3 10.8 Q0.9 9.5 -1 10 Q-2.9 9.5 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z`
 - `trailB`, `nearFront` and `farBehind`: apply the same flip (every hem `Q` control point above its chord). `trailA` keeps its 4-cell pitch; adding a tip between each pair would bring it to the dossier's "about 2 cells per scallop".
 
+**Decided on screen (2026-10-13):** the maintainer picked the spread wing with its apex lifted above his head (y = 0, variant R2), over the same wing at the ears' height (R1) and the earlier two-peak wing (B); the closed and trailing hems take the tips-down rule above.
+
 ## 8. Unverified
 
 - **The panel count** rests on builders (TheRPF, 2014–2023), on a recollection of *Cinefex* #41 that was not read, and on our partial seam count in two back views. No costume maker's own count was found. Bob Ringwood's and Vin Burnham's accounts (*Batman: The Official Book of the Movie*, *Cinefex* #41) and anything by Jose Fernandez or Steve Wang for *Returns* were not reachable.

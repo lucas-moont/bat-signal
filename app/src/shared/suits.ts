@@ -375,21 +375,26 @@ const chestOval = (lit: boolean): Layer[] => [
   { kind: 'emblem', cx: CHEST_OVAL.cx, cy: CHEST_OVAL.cy, width: 4.33 },
 ]
 
-/** The cape's rounded scallops, curving up between their points: Keaton's, not 2022's zigzag. */
+/**
+ * Keaton's cape, cut from eight panels (burton-1989-cape.md): sharp tips hang at the seams, about two
+ * cells apart, with shallow arcs curving up between them; not 2022's zigzag.
+ */
 const SCALLOPED = {
   wrapped:
-    'M2.6 6.4 L13.4 6.4 L14.2 10.4 Q13.2 9.6 12.2 9.9 Q11.1 10.8 10 10.5 Q9 9.7 8 10 Q7 9.7 6 10.5 Q4.9 10.8 3.8 9.9 Q2.8 9.6 1.8 10.4 Z',
+    'M2.6 6.4 L13.4 6.4 L14.2 10.6 Q13.3 9.7 12.2 10.3 Q11.2 9.6 10.1 10.6 Q9 9.8 8 10.4 Q7 9.8 5.9 10.6 Q4.8 9.6 3.8 10.3 Q2.7 9.7 1.8 10.6 Z',
   trailA:
-    'M3 5 L13 5 L13.4 9.2 Q12.2 10.9 11 10.4 Q9 11.2 7 10 Q5 11.2 3 10.8 Q1 11.4 -1 10 Q-2.8 11.6 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
+    'M3 5 L13 5 L13.4 9.2 Q11.8 8.9 11 10.4 Q9 9.3 7 10 Q5.1 9.5 3 10.8 Q0.9 9.5 -1 10 Q-2.9 9.5 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
   trailB:
-    'M3 5 L13 5 L13.6 8.6 Q12.4 10.4 11.2 10 Q9.2 11 7.2 10.6 Q5.2 11.1 3.2 10.2 Q1.3 11.5 -0.6 10.9 Q-2.4 10.9 -4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
-  /** Held up in a wing to his ears' height (left half; mirrored for the right): the giant bat. */
-  wingLeft:
-    'M3.4 5.2 L2 4.2 L0.6 1.4 L-1.4 3.6 L-3.6 2.4 L-4.6 6 L-5 9.8 Q-4 8.8 -3 9.8 Q-2 8.8 -1 9.8 Q0 8.8 1 9.8 Q2 8.8 3.4 9.8 Z',
+    'M3 5 L13 5 L13.6 8.6 Q12.2 8.6 11.2 10 Q9.2 9.6 7.2 10.6 Q5.2 9.7 3.2 10.2 Q1.3 9.7 -0.6 10.9 Q-2.6 9.4 -4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
+  /**
+   * Held up on its rod to one point above his head, its four panels' tips running down to his feet
+   * (left half; mirrored for the right): the giant bat.
+   */
+  wingLeft: 'M3.4 5.2 L1.2 3 L-2.4 0 Q-3 4.2 -5.4 5.8 Q-2.9 7 -2.2 9.6 Q-0.4 8.8 0.8 10.4 Q2.2 9.5 3.4 11 Z',
   /** The near half swung in front of him, three-quarter (the Signature pose). */
-  nearFront: 'M2.6 5 L5.6 5 Q5.9 8 5.6 10.6 Q4.8 10 4 10.6 Q3.2 11.2 2.4 10.6 Q1.6 10 0.8 10.6 L1.6 7 Z',
+  nearFront: 'M2.6 5 L5.6 5 Q5.9 8 5.6 10.6 Q4.8 9.8 4 10.6 Q3.2 9.8 2.4 10.6 Q1.6 9.8 0.8 10.6 L1.6 7 Z',
   /** The far half, behind him, a cell of it beside his far arm. */
-  farBehind: 'M12.6 5 L14.6 5.4 L15.2 10.4 Q14.5 9.8 13.8 10.4 Q13.2 10.9 12.6 10.6 Z',
+  farBehind: 'M12.6 5 L14.6 5.4 L15.2 10.4 Q14.5 9.7 13.8 10.4 Q13.2 9.8 12.6 10.6 Z',
 }
 
 const moonPose = (map: OutfitMap, behind: Layer[], front: Layer[], eyes: Pose['eyes'] = 'open'): Pose => ({
