@@ -22,11 +22,11 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 ## Themes
 
-| VENGEANCE, after *The Batman* (2022) | PALE MOONLIGHT, after Tim Burton's *Batman* (1989) |
-|---|---|
-| <img src="docs/screenshots/needs-you.png" width="240" alt="VENGEANCE: the needs-you list on pure black, each request stamped in red"> | <img src="docs/screenshots/moonlight-needs-you.png" width="240" alt="PALE MOONLIGHT: the same requests on a smoggy brown-black, stamped in gold as APPROVAL, TROUBLE, QUESTION and JUST IN on Your desk"> |
-| <img src="docs/screenshots/night-report.png" width="240" alt="VENGEANCE's night report, typed, with a red pen under each request"> | <img src="docs/screenshots/moonlight-night-report.png" width="240" alt="PALE MOONLIGHT's Late edition: Above the fold, gold stamps in the margin and a gold pen under each request"> |
-| <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="VENGEANCE's Bat-Clawd raising a red flare, his cape open"> | <img src="docs/screenshots/moonlight-clawd-alarmed.png" width="190" alt="PALE MOONLIGHT's Bat-Clawd as the giant bat, his cape held up in two wings, the oval on his chest lit gold"> |
+| VENGEANCE, after *The Batman* (2022) | PALE MOONLIGHT, after Tim Burton's *Batman* (1989) | WATCHFUL PROTECTOR, after Christopher Nolan's *Dark Knight* trilogy |
+|---|---|---|
+| <img src="docs/screenshots/needs-you.png" width="240" alt="VENGEANCE: the needs-you list on pure black, each request stamped in red"> | <img src="docs/screenshots/moonlight-needs-you.png" width="240" alt="PALE MOONLIGHT: the same requests on a smoggy brown-black, stamped in gold as APPROVAL, TROUBLE, QUESTION and JUST IN on Your desk"> | <img src="docs/screenshots/protector-needs-you.png" width="240" alt="WATCHFUL PROTECTOR: the same requests on a blue-black, stencilled CLEARANCE and FAULT in blue and YOUR MOVE and CHECKED IN in sodium amber, On you"> |
+| <img src="docs/screenshots/night-report.png" width="240" alt="VENGEANCE's night report, typed, with a red pen under each request"> | <img src="docs/screenshots/moonlight-night-report.png" width="240" alt="PALE MOONLIGHT's Late edition: Above the fold, gold stamps in the margin and a gold pen under each request"> | <img src="docs/screenshots/protector-night-report.png" width="240" alt="WATCHFUL PROTECTOR's Sitrep from Gotham, printed in mono: Waiting on you, stencilled stamps in the margin, a blue or amber pen under each request, and lit windows behind"> |
+| <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="VENGEANCE's Bat-Clawd raising a red flare, his cape open"> | <img src="docs/screenshots/moonlight-clawd-alarmed.png" width="190" alt="PALE MOONLIGHT's Bat-Clawd as the giant bat, his cape held up in two wings, the oval on his chest lit gold"> | <img src="docs/screenshots/protector-clawd-alarmed.png" width="190" alt="WATCHFUL PROTECTOR's Bat-Clawd in a black plated suit with a bronze belt and a lit chest bat, his matte cape flung open in a blue glow"> |
 
 ## A closer look
 
@@ -44,7 +44,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Settings | Comfort, notifications and sound | The Bat-Signal at rest |
 |---|---|---|
-| <img src="docs/screenshots/settings.png" width="240" alt="Settings: the Theme picker with the folders of VENGEANCE and PALE MOONLIGHT, then animations, rain, Theme words, night report, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+| <img src="docs/screenshots/settings.png" width="240" alt="Settings: the Theme picker with the folders of VENGEANCE, PALE MOONLIGHT and WATCHFUL PROTECTOR, then animations, rain, Theme words, night report, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
 
 | The tray icon, at rest and lit |
 |---|
@@ -127,6 +127,6 @@ Running it from source, the checks, building the installer and releasing are in 
 
 ---
 
-Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022) and from Tim Burton's *Batman* (1989) are trademarks of DC Comics, used here as fan art; see [NOTICE](NOTICE) for them and for the fonts' licences.
+Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022), Tim Burton's *Batman* (1989) and Christopher Nolan's *Dark Knight* trilogy are trademarks of DC Comics, used here as fan art; see [NOTICE](NOTICE) for them and for the fonts' licences.
 
 License: [MIT](LICENSE), except the bat emblems and the bundled fonts, which keep their own terms: see [NOTICE](NOTICE).
