@@ -21,19 +21,25 @@ function demoWindow() {
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 /**
- * Loads a demo page in the window at a zoom. Chromium sometimes drops a zoom set as a page loads (and
- * one past 5x always), which would leave the page, and its pictures, at 1x: the zoom is set again
- * until the page is laid out `width` pixels wide, or this throws.
+ * Holds the page at a zoom: if it isn't laid out `width` pixels wide, the zoom is set again until it
+ * is, or this throws. Chromium sometimes drops a zoom set as a page loads, even after it took (and
+ * one past 5x always), which would leave the page, and its pictures, at 1x.
  */
-async function loadZoomed(win, { hash, query, scale, width }) {
-  await win.loadFile(HTML, { hash, query })
+async function zoomTo(win, { scale, width }) {
   for (let tries = 0; tries < 10; tries++) {
+    if ((await win.webContents.executeJavaScript('innerWidth')) <= width + 1) return
     win.webContents.setZoomFactor(1)
     win.webContents.setZoomFactor(scale)
-    await wait(100)
-    if ((await win.webContents.executeJavaScript('innerWidth')) <= width + 1) return
+    await wait(150)
   }
-  throw new Error(`#${hash}: the page would not zoom to ${scale}x`)
+  throw new Error(`${win.webContents.getURL()}: the page would not zoom to ${scale}x`)
+}
+
+/** Loads a demo page in the window at a zoom (zoomTo). */
+async function loadZoomed(win, { hash, query, scale, width }) {
+  await win.loadFile(HTML, { hash, query })
+  win.webContents.setZoomFactor(scale)
+  await zoomTo(win, { scale, width })
 }
 
 /** Page script: clicks the `index`th element matching the selector. */
@@ -43,4 +49,4 @@ const click = (selector, index = 0) =>
 const clickText = (selector, text) =>
   `[...document.querySelectorAll(${JSON.stringify(selector)})].find((el) => el.textContent.includes(${JSON.stringify(text)})).click()`
 
-module.exports = { HTML, demoWindow, loadZoomed, wait, click, clickText }
+module.exports = { HTML, demoWindow, loadZoomed, zoomTo, wait, click, clickText }

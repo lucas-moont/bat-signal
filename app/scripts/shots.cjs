@@ -6,7 +6,7 @@
 const { app } = require('electron')
 const { mkdirSync, writeFileSync } = require('node:fs')
 const { join } = require('node:path')
-const { demoWindow, loadZoomed, wait, click, clickText } = require('./demoWindow.cjs')
+const { demoWindow, loadZoomed, zoomTo, wait, click, clickText } = require('./demoWindow.cjs')
 
 const OUT = join(__dirname, '../../docs/screenshots')
 const SCALE = 2 // retina-sharp images for the README
@@ -90,6 +90,8 @@ async function shoot(
   }
   // Bat-Clawd blinks on the 10th frame at 4 fps, which is exactly where SETTLE_MS lands: wait past it.
   if (clip) await wait(500)
+  // The zoom can still drop while the page settles: checked again just before the picture.
+  await zoomTo(win, { scale, width })
   const full = await win.webContents.capturePage()
   // A clip is the element's box (padded for the cape that reaches past it), cut from the full
   // image at the image's own scale, whatever the window ended up at.
