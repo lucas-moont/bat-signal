@@ -72,7 +72,12 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
     case 'path':
       return (
         <Fragment key={key}>
-          <path className={layer.className} fill={layer.fill} d={layer.d} />
+          <path
+            className={layer.className}
+            fill={layer.fill}
+            d={layer.d}
+            shapeRendering={layer.smooth ? 'geometricPrecision' : undefined}
+          />
           {layer.mirrored && (
             <path className={layer.className} fill={layer.fill} d={layer.d} transform={MIRROR} />
           )}

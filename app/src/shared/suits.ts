@@ -17,9 +17,10 @@ export type Px = readonly [x: number, y: number, w?: number, h?: number]
 export type Layer =
   /**
    * A path in one color, or in a class's; mirrored, it is drawn again flipped across his middle (a
-   * cape's two open halves).
+   * cape's two open halves); smooth, it is drawn like the chest emblem, not snapped to pixels (an
+   * oval beside it).
    */
-  | { kind: 'path'; d: string; fill?: string; className?: string; mirrored?: boolean }
+  | { kind: 'path'; d: string; fill?: string; className?: string; mirrored?: boolean; smooth?: boolean }
   /** Rects in one color, or in a class's. */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
@@ -307,6 +308,193 @@ export const VENGEANCE_SUIT: Suit = {
     { pose: draped(6.75), look: 0 },
     { pose: draped(8), look: 0, transform: FOOTSTEP },
     { pose: draped(8), look: 0 },
+  ],
+  aura: true,
+}
+
+// --- PALE MOONLIGHT: outfit I (#95), after Tim Burton's Batman (1989). Burton's black rubber suit
+// lifted to a plum-grey so it reads on the smog, a steel sheen on the cowl and shoulders, the brass
+// belt, the bat in its oval on his chest (old brass at rest, lit gold when something needs the
+// user), and a black cape with rounded scallops rimmed in the snow's steel (burton-1989.md, 7). ---
+
+const MOON_LEGEND = { ...LEGEND, h: 'var(--cowl-shine)' }
+const MOON_SUIT = '...SSSSSSSSSS...'
+/** The cowl to his eyes and his orange jaw; then shoulders in the cowl's sheen. */
+const MOON_HEAD = twice([
+  '....c......c....',
+  '....chhccccc....',
+  '...cccccccccc...',
+  '...cccccccccc...',
+  '...cc######cc...',
+])
+/** The suit's last half-row, the brass belt and its buckle, and his four booted legs. */
+const MOON_BELOW = [
+  MOON_SUIT,
+  '...bbbbkbbbbb...',
+  '....S.S..S.S....',
+  '....g.g..g.g....',
+  ...twice(['....g.g..g.g....']),
+]
+const moonMap = (chest: readonly string[], rows = MOON_BELOW): OutfitMap => ({
+  top: 0,
+  rows: [...MOON_HEAD, ...twice(chest), ...rows],
+  legend: MOON_LEGEND,
+})
+const MOON_ARMS_OUT = moonMap(['...hSSSSSSSSh...', '.gSSSSSSSSSSSSg.', MOON_SUIT])
+/** Arms raised to hold the cape up (drawn beside the map). */
+const MOON_ARMS_UP = moonMap(['...hSSSSSSSSh...', MOON_SUIT, MOON_SUIT])
+const MOON_SEATED = moonMap(['...hSSSSSSSSh...', MOON_SUIT, MOON_SUIT, MOON_SUIT], [])
+
+/** An oval as a path: centred on (cx, cy), rx by ry. */
+const oval = (cx: number, cy: number, rx: number, ry: number) =>
+  `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0 Z`
+
+/**
+ * The 1989 emblem on his chest: a cowl-black rim, the oval in old brass (or lit, the Alarm color
+ * with its light in the middle), and the film's own bat across it, reaching the rim.
+ */
+const CHEST_OVAL = { cx: 8, cy: 6.9 }
+const chestOval = (lit: boolean): Layer[] => [
+  { kind: 'path', d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 2.6, 1.62), fill: 'var(--cowl)', smooth: true },
+  {
+    kind: 'path',
+    d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 2.25, 1.27),
+    fill: lit ? 'var(--signal)' : 'var(--emblem-plate)',
+    smooth: true,
+  },
+  ...(lit
+    ? [
+        {
+          kind: 'path',
+          d: oval(CHEST_OVAL.cx, CHEST_OVAL.cy, 1.5, 0.75),
+          fill: 'var(--signal-hot)',
+          smooth: true,
+        } as const,
+      ]
+    : []),
+  { kind: 'emblem', cx: CHEST_OVAL.cx, cy: CHEST_OVAL.cy, width: 4.33 },
+]
+
+/** The cape's rounded scallops, curving up between their points: Keaton's, not 2022's zigzag. */
+const SCALLOPED = {
+  wrapped:
+    'M2.6 6.4 L13.4 6.4 L14.2 10.4 Q13.2 9.6 12.2 9.9 Q11.1 10.8 10 10.5 Q9 9.7 8 10 Q7 9.7 6 10.5 Q4.9 10.8 3.8 9.9 Q2.8 9.6 1.8 10.4 Z',
+  trailA:
+    'M3 5 L13 5 L13.4 9.2 Q12.2 10.9 11 10.4 Q9 11.2 7 10 Q5 11.2 3 10.8 Q1 11.4 -1 10 Q-2.8 11.6 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
+  trailB:
+    'M3 5 L13 5 L13.6 8.6 Q12.4 10.4 11.2 10 Q9.2 11 7.2 10.6 Q5.2 11.1 3.2 10.2 Q1.3 11.5 -0.6 10.9 Q-2.4 10.9 -4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
+  /** Held up in a tall wing above his ears (left half; mirrored for the right): the giant bat. */
+  wingLeft:
+    'M3.4 5.2 L2 3.6 L0.4 -1 L-1.6 2.2 L-3.8 0.6 L-4.6 5 L-5 9.8 Q-4 8.8 -3 9.8 Q-2 8.8 -1 9.8 Q0 8.8 1 9.8 Q2 8.8 3.4 9.8 Z',
+  /** The near half swung in front of him, three-quarter (the Signature pose). */
+  nearFront: 'M2.6 5 L5.6 5 Q5.9 8 5.6 10.6 Q4.8 10 4 10.6 Q3.2 11.2 2.4 10.6 Q1.6 10 0.8 10.6 L1.6 7 Z',
+  /** The far half, behind him, a cell of it beside his far arm. */
+  farBehind: 'M12.6 5 L14.6 5.4 L15.2 10.4 Q14.5 9.8 13.8 10.4 Q13.2 10.9 12.6 10.6 Z',
+}
+
+const moonPose = (map: OutfitMap, behind: Layer[], front: Layer[], eyes: Pose['eyes'] = 'open'): Pose => ({
+  map,
+  behind: [...behind, COWL_EDGE],
+  front,
+  eyes,
+})
+
+const moonFly = (d: string) => moonPose(MOON_ARMS_OUT, [{ kind: 'cape', d }], chestOval(false))
+
+/** The giant bat (alarmed): arms raised, the cape held up in two tall scalloped wings, the oval lit. */
+const giantBat = moonPose(
+  MOON_ARMS_UP,
+  [BACK, { kind: 'cape', d: SCALLOPED.wingLeft, mirrored: true }],
+  [
+    {
+      kind: 'rects',
+      px: [
+        [1.5, 3.5, 1.5, 1.5],
+        [13, 3.5, 1.5, 1.5],
+      ],
+      fill: 'var(--suit)',
+    },
+    {
+      kind: 'rects',
+      px: [
+        [1, 2.5, 1, 1],
+        [14, 2.5, 1, 1],
+      ],
+      fill: 'var(--gloves)',
+    },
+    ...chestOval(true),
+  ],
+)
+
+/**
+ * Under the Signal (the Signature pose): the film's last image, standing watch while the Signal
+ * shines, turned three-quarter. The near half of the cape swings in front of him, his eyes look up
+ * to the Signal in the clouds, and the Signal stays old brass: it is not an alarm.
+ */
+const underTheSignal = moonPose(
+  MOON_ARMS_OUT,
+  [{ kind: 'cape', d: SCALLOPED.farBehind }],
+  [
+    ...chestOval(false),
+    { kind: 'path', d: SCALLOPED.nearFront, className: 'clawd__cape' },
+    { kind: 'path', d: oval(19, -1.5, 3, 1.5), fill: 'var(--emblem-plate)', smooth: true },
+    { kind: 'emblem', cx: 19, cy: -1.5, width: 5.2 },
+  ],
+  [
+    [6, 2.5, 2, 1],
+    [10, 2.5, 2, 1],
+  ],
+)
+
+const MOON_STILL: Step = { pose: moonFly(SCALLOPED.trailA), look: 0 }
+
+export const PALE_MOONLIGHT_SUIT: Suit = {
+  eyes: VENGEANCE_SUIT.eyes,
+  poses: {
+    sleeping: [
+      {
+        map: MOON_SEATED,
+        behind: [COWL_EDGE],
+        front: [
+          {
+            kind: 'rects',
+            px: [
+              [4.5, 10.2, 2, 0.8],
+              [9.5, 10.2, 2, 0.8],
+            ],
+            fill: 'var(--gloves)',
+          },
+          { kind: 'path', d: SCALLOPED.wrapped, className: 'clawd__cape' },
+          { kind: 'rects', px: [[7.85, 8.4, 0.3, 1.6]], className: 'clawd__seam' },
+          {
+            kind: 'rects',
+            px: [
+              [6.9, 7.6, 1, 0.8],
+              [8.1, 7.6, 1, 0.8],
+            ],
+            fill: 'var(--gloves)',
+          },
+        ],
+        eyes: 'shut',
+      },
+    ],
+    flying: [moonFly(SCALLOPED.trailA), moonFly(SCALLOPED.trailB)],
+    alarmed: [giantBat],
+  },
+  watch: [
+    MOON_STILL,
+    ...Array<Step>(5).fill(MOON_STILL),
+    { pose: moonFly(SCALLOPED.trailB), look: 0 },
+    MOON_STILL,
+    { pose: MOON_STILL.pose, look: -GAZE },
+    { pose: MOON_STILL.pose, look: -GAZE },
+    MOON_STILL,
+    MOON_STILL,
+  ],
+  // Revealed as he turns from the street to look up at the Signal; held there on the perch.
+  signature: [
+    { pose: moonFly(SCALLOPED.trailB), look: 0 },
+    { pose: underTheSignal, look: 0 },
   ],
   aura: true,
 }
