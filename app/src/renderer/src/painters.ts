@@ -194,6 +194,9 @@ function litWindows(
   let whole = true
   /** Seconds since the last switch. */
   let since = 0
+  /** How many windows are lit. */
+  let litCount = 0
+  const color = (i: number) => colors[i] ?? ''
 
   /** One of the lights, by their shares. */
   const pickLight = () => {
@@ -201,14 +204,11 @@ function litWindows(
     const i = lights.findIndex(({ share }) => (r -= share) < 0)
     return i < 0 ? lights.length - 1 : i
   }
-  /** One window afresh: the tower's glass, and its light over it if it has one. */
-  const drawWindow = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
-    ctx.globalAlpha = 1
-    ctx.fillStyle = colors[0] ?? ''
-    ctx.fillRect(x, y, CELL.w, CELL.h)
+  /** A window's light over its glass, if it has one: the light's strength in its color. */
+  const lightUp = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
     if (light === undefined) return
     ctx.globalAlpha = lights[light]!.alpha
-    ctx.fillStyle = colors[2 + light] ?? ''
+    ctx.fillStyle = color(2 + light)
     ctx.fillRect(x, y, CELL.w, CELL.h)
   }
 
@@ -219,7 +219,7 @@ function litWindows(
     },
     resize(w, h) {
       ;[width, canvasHeight] = [w, h]
-      ;[blocks, windows, whole, since] = [[], [], true, 0]
+      ;[blocks, windows, whole, since, litCount] = [[], [], true, 0, 0]
       const slot = w / towers
       const pitch = { x: CELL.w + CELL.mullion, y: CELL.h + CELL.mullion }
       for (let i = 0; i < towers; i++) {
@@ -232,12 +232,11 @@ function litWindows(
         const cols = Math.floor((bw - 2 * INSET + CELL.mullion) / pitch.x)
         const rows = Math.floor((bh - INSET + CELL.mullion) / pitch.y)
         for (let r = 0; r < rows; r++)
-          for (let c = 0; c < cols; c++)
-            windows.push({
-              x: bx + INSET + c * pitch.x,
-              y: by + INSET + r * pitch.y,
-              light: random() < lit ? pickLight() : undefined,
-            })
+          for (let c = 0; c < cols; c++) {
+            const light = random() < lit ? pickLight() : undefined
+            if (light !== undefined) litCount++
+            windows.push({ x: bx + INSET + c * pitch.x, y: by + INSET + r * pitch.y, light })
+          }
       }
     },
     paint(ctx, dt) {
@@ -245,30 +244,31 @@ function litWindows(
         whole = false
         ctx.clearRect(0, 0, width, canvasHeight)
         ctx.globalAlpha = 1
-        ctx.fillStyle = colors[0] ?? ''
-        ctx.strokeStyle = colors[1] ?? ''
+        ctx.fillStyle = color(0)
+        ctx.strokeStyle = color(1)
         for (const b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h)
           // On the half pixel, so the 1px edge lands on whole pixels.
           ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
         }
-        lights.forEach(({ alpha }, light) => {
-          ctx.globalAlpha = alpha
-          ctx.fillStyle = colors[2 + light] ?? ''
-          for (const w of windows) if (w.light === light) ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
-        })
+        for (const w of windows) lightUp(ctx, w)
         return
       }
       since += Math.min(dt, MAX_DT)
       if (since < every || !windows.length) return
       since -= every
-      const on = windows.filter((w) => w.light !== undefined).length < lit * windows.length
+      const on = litCount < lit * windows.length
       const start = Math.floor(random() * windows.length)
       for (let i = 0; i < windows.length; i++) {
         const w = windows[(start + i) % windows.length]!
         if ((w.light === undefined) !== on) continue
         w.light = on ? pickLight() : undefined
-        drawWindow(ctx, w)
+        litCount += on ? 1 : -1
+        // The glass afresh, then its new light over it.
+        ctx.globalAlpha = 1
+        ctx.fillStyle = color(0)
+        ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
+        lightUp(ctx, w)
         return
       }
     },
