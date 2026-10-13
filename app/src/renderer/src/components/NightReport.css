@@ -147,7 +147,8 @@
 }
 
 /* Red pen: a hand-drawn stroke under what waits for you, pressed harder for blocked work. A
-   drawn stroke, not a text underline, so it reads neither as a link nor as a spelling mark. */
+   drawn stroke, not a text underline, so it reads neither as a link nor as a spelling mark; each
+   Theme draws it in its own inks (--pen-hot, --pen-soft). */
 .pen {
   color: var(--bone);
   padding-bottom: 3px;
@@ -158,10 +159,10 @@
   box-decoration-break: clone;
 }
 .pen--hot {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ec2a2a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: var(--pen-hot);
 }
 .pen--soft {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23d4574c' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: var(--pen-soft);
 }
 .pen--quiet {
   padding-bottom: 0;

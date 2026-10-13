@@ -93,7 +93,6 @@
   --disc-rim-inner: #0b0806;
   --disc-rim-outer: #241c14;
   --lens-core: #f0c24b;
-  --lens-edge: #3a2a12;
   --lens-rim: #5a3e18;
   --lens-bat: #050302;
   --notice-top: #1b1510;
@@ -120,6 +119,13 @@
   --wordmark-size: 16px;
   --wordmark-tracking: 1.5px;
 
+  /* The Night Report's pen, in gold pressed hard for blocked work and bronze for waiting work. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23f0c24b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23c98a3e' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  /* Its two-word name in Josefin's wide caps, a size smaller on its folder so the credit fits too. */
+  --folder-name-size: 12.5px;
+  --folder-name-tracking: 0.3px;
+
   --stamp-tilt: -2.5deg;
   --stamp-tilt-slight: -1.5deg;
   --stamp-border: 1.5px;
@@ -127,18 +133,4 @@
 
   /* Lit, the glass stays dark: the oval in it lights instead. */
   --disc-lens: radial-gradient(circle at 40% 35% in srgb, var(--glass-shine), var(--glass) 62%, var(--abyss));
-}
-
-/* What a variable can't carry: the Night Report's pen strokes are drawn in their ink, gold pressed
-   hard for blocked work and bronze for waiting work; and the display name on its own folder in the
-   picker, two words in Josefin's wide caps, set a size smaller so it and the credit fit. */
-[data-theme='batman-1989'] .pen--hot {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23f0c24b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-[data-theme='batman-1989'] .pen--soft {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23c98a3e' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-.folder[data-theme='batman-1989'] .folder__name {
-  font-size: 12.5px;
-  letter-spacing: 0.3px;
 }

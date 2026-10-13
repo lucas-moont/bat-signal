@@ -105,11 +105,12 @@
   }
 }
 
+/* A Theme with a longer name may set it smaller on its folder. */
 .folder__name {
   font-family: var(--font-label);
-  font-size: 15px;
+  font-size: var(--folder-name-size, 15px);
   line-height: 1.05;
-  letter-spacing: 0.6px;
+  letter-spacing: var(--folder-name-tracking, 0.6px);
 }
 .folder:not(.folder--worn) .folder__name {
   color: var(--ash);
