@@ -1,7 +1,7 @@
 // The painters of the Atmospheres (shared/atmospheres.ts): each paints its kind on the canvas
 // behind the panel, a step at a time on the shared 8 fps clock. Free of the DOM, so node tests
 // drive them on a recording canvas.
-import type { Atmosphere, RainAtmosphere, SnowAtmosphere } from '@shared/atmospheres'
+import type { Atmosphere, LitWindowsAtmosphere, RainAtmosphere, SnowAtmosphere } from '@shared/atmospheres'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -27,8 +27,16 @@ const OLD_FPS = 15
 const howMany = (width: number, height: number, density: number) =>
   Math.round(((width * height) / 1000) * density)
 
-export const painterFor = (atmosphere: Atmosphere, random: () => number = Math.random): Painter =>
-  atmosphere.kind === 'rain' ? rain(atmosphere, random) : snow(atmosphere, random)
+export function painterFor(atmosphere: Atmosphere, random: () => number = Math.random): Painter {
+  switch (atmosphere.kind) {
+    case 'rain':
+      return rain(atmosphere, random)
+    case 'snow':
+      return snow(atmosphere, random)
+    case 'lit-windows':
+      return litWindows(atmosphere, random)
+  }
+}
 
 interface Drop {
   x: number
@@ -152,6 +160,117 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
         }
         ctx.fill()
       })
+    },
+  }
+}
+
+/** A window: its top-left corner, and the light it shows (an index into the lights), if any. */
+interface Window {
+  x: number
+  y: number
+  light?: number
+}
+
+/** A window cell's size, and the mullion between two, in px. */
+const CELL = { w: 3, h: 4, mullion: 1 }
+/** The glass wall's margin inside a tower's edge, in px. */
+const INSET = 3
+
+/**
+ * Lit windows: a still skyline, painted whole once (and again after a resize or new colors), then
+ * a single window switching every so often: on while fewer than the share are lit, off while more,
+ * so the night keeps its share however long it runs.
+ */
+function litWindows(
+  { height, towers, lit, lights, every }: LitWindowsAtmosphere,
+  random: () => number,
+): Painter {
+  let blocks: { x: number; y: number; w: number; h: number }[] = []
+  let windows: Window[] = []
+  let colors: readonly string[] = []
+  let width = 0
+  let canvasHeight = 0
+  /** Whether the whole scene waits to be painted. */
+  let whole = true
+  /** Seconds since the last switch. */
+  let since = 0
+
+  /** One of the lights, by their shares. */
+  const pickLight = () => {
+    let r = random()
+    const i = lights.findIndex(({ share }) => (r -= share) < 0)
+    return i < 0 ? lights.length - 1 : i
+  }
+  /** One window afresh: the tower's glass, and its light over it if it has one. */
+  const drawWindow = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
+    ctx.globalAlpha = 1
+    ctx.fillStyle = colors[0] ?? ''
+    ctx.fillRect(x, y, CELL.w, CELL.h)
+    if (light === undefined) return
+    ctx.globalAlpha = lights[light]!.alpha
+    ctx.fillStyle = colors[2 + light] ?? ''
+    ctx.fillRect(x, y, CELL.w, CELL.h)
+  }
+
+  return {
+    recolor(values) {
+      colors = [...values]
+      whole = true
+    },
+    resize(w, h) {
+      ;[width, canvasHeight] = [w, h]
+      ;[blocks, windows, whole, since] = [[], [], true, 0]
+      const slot = w / towers
+      const pitch = { x: CELL.w + CELL.mullion, y: CELL.h + CELL.mullion }
+      for (let i = 0; i < towers; i++) {
+        // A slab most of its slot wide, a gap either side, its flat roof in the band's top half.
+        const bw = Math.round(slot * (0.72 + random() * 0.22))
+        const bh = Math.round(h * height * (0.55 + random() * 0.45))
+        const bx = Math.round(i * slot + random() * (slot - bw))
+        const by = h - bh
+        blocks.push({ x: bx, y: by, w: bw, h: bh })
+        const cols = Math.floor((bw - 2 * INSET + CELL.mullion) / pitch.x)
+        const rows = Math.floor((bh - INSET + CELL.mullion) / pitch.y)
+        for (let r = 0; r < rows; r++)
+          for (let c = 0; c < cols; c++)
+            windows.push({
+              x: bx + INSET + c * pitch.x,
+              y: by + INSET + r * pitch.y,
+              light: random() < lit ? pickLight() : undefined,
+            })
+      }
+    },
+    paint(ctx, dt) {
+      if (whole) {
+        whole = false
+        ctx.clearRect(0, 0, width, canvasHeight)
+        ctx.globalAlpha = 1
+        ctx.fillStyle = colors[0] ?? ''
+        ctx.strokeStyle = colors[1] ?? ''
+        for (const b of blocks) {
+          ctx.fillRect(b.x, b.y, b.w, b.h)
+          // On the half pixel, so the 1px edge lands on whole pixels.
+          ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h)
+        }
+        lights.forEach(({ alpha }, light) => {
+          ctx.globalAlpha = alpha
+          ctx.fillStyle = colors[2 + light] ?? ''
+          for (const w of windows) if (w.light === light) ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
+        })
+        return
+      }
+      since += Math.min(dt, MAX_DT)
+      if (since < every || !windows.length) return
+      since -= every
+      const on = windows.filter((w) => w.light !== undefined).length < lit * windows.length
+      const start = Math.floor(random() * windows.length)
+      for (let i = 0; i < windows.length; i++) {
+        const w = windows[(start + i) % windows.length]!
+        if ((w.light === undefined) !== on) continue
+        w.light = on ? pickLight() : undefined
+        drawWindow(ctx, w)
+        return
+      }
     },
   }
 }

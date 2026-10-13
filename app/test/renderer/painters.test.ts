@@ -1,19 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
 import { painterFor } from '../../src/renderer/src/painters'
-import { VENGEANCE_RAIN, type SnowAtmosphere } from '../../src/shared/atmospheres'
+import { VENGEANCE_RAIN, type LitWindowsAtmosphere, type SnowAtmosphere } from '../../src/shared/atmospheres'
 
 type Segment = { x0: number; y0: number; x1: number; y1: number }
 
 type Square = { x: number; y: number; size: number }
 
+type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
+
 /**
  * A canvas context that records what it is asked to draw, in which color and strength: one list of
- * segments per stroke() (the rain), and one list of squares per fill() (the snow).
+ * segments per stroke() (the rain), one list of squares per fill() (the snow), and each box filled
+ * or outlined on its own (the lit windows), and how often it is cleared.
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
   const fills: { alpha: number; color: string; rects: Square[] }[] = []
+  const boxes: Box[] = []
+  const outlines: Box[] = []
+  const cleared = { times: 0 }
   let segments: Segment[] = []
   let rects: Square[] = []
   let from = { x: 0, y: 0 }
@@ -21,7 +27,11 @@ function recorder() {
     globalAlpha: 1,
     strokeStyle: '#000000',
     fillStyle: '#000000',
-    clearRect: () => undefined,
+    clearRect: () => cleared.times++,
+    fillRect: (x: number, y: number, w: number, h: number) =>
+      boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
+    strokeRect: (x: number, y: number, w: number, h: number) =>
+      outlines.push({ x, y, w, h, color: ctx.strokeStyle, alpha: ctx.globalAlpha }),
     beginPath: () => ([segments, rects] = [[], []]),
     moveTo: (x: number, y: number) => (from = { x, y }),
     lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
@@ -29,7 +39,7 @@ function recorder() {
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
     fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects }),
   }
-  return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills }
+  return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
 
 /** The same "random" numbers every run. */
@@ -231,5 +241,118 @@ describe('the snow', () => {
     expect(ys.length).toBe(FLAKES)
     expect(Math.min(...ys)).toBeGreaterThan(-10)
     expect(Math.max(...ys)).toBeLessThan(440 + 10)
+  })
+})
+
+describe('the lit windows', () => {
+  const WINDOWS: LitWindowsAtmosphere = {
+    kind: 'lit-windows',
+    colors: ['--smoke', '--line', '--bone', '--ink-live'],
+    height: 0.2,
+    towers: 5,
+    lit: 0.08,
+    lights: [
+      { share: 0.7, alpha: 0.22 },
+      { share: 0.3, alpha: 0.28 },
+    ],
+    every: 1,
+    still: true,
+  }
+  const COLORS = ['#080d13', '#2b3743', '#e6ebee', '#7cc6c4']
+  /** A window cell: 3 by 4 pixels. */
+  const isWindow = (b: Box) => b.w === 3 && b.h === 4
+
+  const city = () => {
+    const painter = painterFor(WINDOWS, seeded())
+    painter.recolor(COLORS)
+    painter.resize(320, 440)
+    return painter
+  }
+
+  /** The skyline as it appears, then what each of `n` ticks of the clock draws. */
+  const ticks = (n: number) => {
+    const painter = city()
+    const first = recorder()
+    painter.paint(first.ctx, 0)
+    const after = Array.from({ length: n }, () => {
+      const r = recorder()
+      painter.paint(r.ctx, 1 / FPS)
+      return r
+    })
+    return [first, ...after] as const
+  }
+
+  // Flat-roofed slabs along the bottom, about a fifth of the panel tall, edged in their own color.
+  it('stands its towers along the bottom, as tall as its height at most', () => {
+    const [{ boxes, outlines }] = ticks(0)
+    const towers = boxes.filter((b) => b.color === COLORS[0] && !isWindow(b))
+    expect(towers).toHaveLength(WINDOWS.towers)
+    for (const t of towers) {
+      expect(t.y + t.h).toBe(440)
+      expect(t.h).toBeLessThanOrEqual(440 * WINDOWS.height)
+    }
+    expect(outlines).toHaveLength(WINDOWS.towers)
+    for (const o of outlines) expect(o.color).toBe(COLORS[1])
+  })
+
+  it('lights about its share of windows, in its lights, mostly the first', () => {
+    const painter = city()
+    const { ctx, boxes } = recorder()
+    painter.paint(ctx, 0)
+    const lit = boxes.filter((b) => isWindow(b) && b.color !== COLORS[0])
+    const first = lit.filter((b) => b.color === COLORS[2])
+    for (const b of first) expect(b.alpha).toBe(0.22)
+    for (const b of lit.filter((b) => b.color === COLORS[3])) expect(b.alpha).toBe(0.28)
+    expect(lit.length).toBeGreaterThan(0)
+    expect(first.length).toBeGreaterThan(lit.length / 2)
+  })
+
+  // A still scene: painted once, then a single window a second, never the whole canvas again.
+  it('leaves the canvas alone between switches', () => {
+    const [first, ...after] = ticks(7)
+    expect(first.cleared.times).toBe(1)
+    for (const r of after) {
+      expect(r.cleared.times).toBe(0)
+      expect(r.boxes).toEqual([])
+    }
+  })
+
+  it('switches one window about once a second', () => {
+    const after = ticks(16).slice(1)
+    const drawn = after.map((r) => r.boxes)
+    const switches = drawn.filter((boxes) => boxes.length > 0)
+    expect(switches).toHaveLength(2)
+    for (const boxes of switches) {
+      // The cell goes dark (the tower's color) and, switching on, takes a light over it.
+      expect(boxes[0]).toMatchObject({ w: 3, h: 4, color: COLORS[0], alpha: 1 })
+      for (const b of boxes) expect([b.x, b.y]).toEqual([boxes[0]!.x, boxes[0]!.y])
+    }
+  })
+
+  // Switching at random would drift toward half the windows lit over a long night.
+  it('keeps its share of windows lit', () => {
+    const painter = city()
+    painter.paint(recorder().ctx, 0)
+    // An hour of switches, then the canvas painted afresh from what is lit.
+    for (let i = 0; i < 3600 * FPS; i++) painter.paint(recorder().ctx, 1 / FPS)
+    painter.recolor(COLORS)
+    const { ctx, boxes } = recorder()
+    painter.paint(ctx, 0)
+    // Painted whole, only the lit windows are drawn as cells.
+    const lit = boxes.filter(isWindow).length
+    const glass = boxes
+      .filter((b) => b.color === COLORS[0] && !isWindow(b))
+      .reduce((n, t) => n + Math.floor((t.w - 5) / 4) * Math.floor((t.h - 2) / 5), 0)
+    expect(Math.abs(lit - WINDOWS.lit * glass)).toBeLessThanOrEqual(1)
+  })
+
+  it('paints the whole scene again in new colors', () => {
+    const painter = city()
+    painter.paint(recorder().ctx, 0)
+    painter.recolor(['#111111', '#222222', '#333333', '#444444'])
+    const { ctx, boxes, cleared } = recorder()
+    painter.paint(ctx, 1 / FPS)
+    expect(cleared.times).toBe(1)
+    expect(boxes.some((b) => b.color === '#111111')).toBe(true)
   })
 })
