@@ -63,7 +63,10 @@ export type Script = readonly [Step, ...Step[]]
 export interface Suit {
   eyes: { open: readonly Px[]; shut: readonly Px[] }
   poses: Readonly<Record<MascotMood, Poses>>
-  /** His watch on the perch, one step a second, while nothing needs the user. */
+  /**
+   * His watch on the perch, one step a second, while nothing needs the user. A suit with a Signature
+   * pose holds that pose there instead, and only the watch's glances play.
+   */
   watch: Script
   /**
    * The Theme's most iconic Pose (CONTEXT.md, Signature pose), revealed in steps on the shared
@@ -222,9 +225,18 @@ const draped = (shadow: number) =>
   pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadow)])
 const FOOTSTEP = 'translateY(1px)'
 
-const flying = [glide, { ...glide, transform: 'rotate(4deg)' }] as const
+/** Level, then banked one way, level, then the other: a frame each, over the bob. */
+const flying = [
+  glide,
+  { ...glide, transform: 'rotate(4deg)' },
+  glide,
+  { ...glide, transform: 'rotate(-4deg)' },
+] as const
 
-/** Mostly still, then the wingsuit banks and he glances along the street: four changes in twelve seconds. */
+/**
+ * Mostly still, then the wingsuit banks and he glances along the street: four changes in twelve
+ * seconds. On the perch he stands in Out of the dark, so only its glances play there.
+ */
 const STILL: Step = { pose: glide, look: 0 }
 
 export const VENGEANCE_SUIT: Suit = {

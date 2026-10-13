@@ -254,13 +254,20 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
 
   // Pixel-art pace: awake moods move at 4 frames a second. On the perch, a transparent window that
   // costs more to redraw, the watch steps once a second (and mostly stands still) and an alarm twice.
-  // A Theme's Signature pose takes the perch's place of the watch, so that clock stays off there.
-  const ticking = watching ? !signature : mood !== 'sleeping' && !revealed
+  // A Theme's Signature pose takes the perch's place of the watch: revealed, then held, with only the
+  // watch's glances (the clock waits for the reveal to settle).
+  const ticking = watching ? !signature || settled : mood !== 'sleeping' && !revealed
   const clock = useFrame(!calm && ticking, watching ? 8 : perched ? 4 : 2)
   const frame = calm ? 0 : clock
-  const step: Step | undefined = revealed ?? (watching && !signature ? cycle(suit.watch, frame) : undefined)
+  const watched = watching && ticking ? cycle(suit.watch, frame) : undefined
+  const step: Step | undefined =
+    revealed && watched ? { ...revealed, look: watched.look } : (revealed ?? watched)
   const { pose, transform, blink } = step
-    ? { pose: step.pose, transform: step.transform ?? '', blink: false }
+    ? {
+        pose: step.pose,
+        transform: [step.transform, step.pose.transform].filter(Boolean).join(' '),
+        blink: false,
+      }
     : moodFrame(mood, frame, suit.poses[mood])
   // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
   const stillEyes = calm || (!watching && mood === 'sleeping')
