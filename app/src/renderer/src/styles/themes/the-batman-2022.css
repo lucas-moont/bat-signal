@@ -106,7 +106,12 @@
   --flame: var(--signal-hot);
   --flame-low: #ec2a2a;
 
-  /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
+  /* The emblem's bat, in the masthead and the intro: Signal Red. VENGEANCE's bat has no plate;
+     --emblem-plate and --emblem-plate-rim are for a Theme whose bat sits on one. */
+  --emblem: var(--signal);
+  /* The Signal disc: unlit glass with the bat a shade in it, its rim, and the lit lens with the bat
+     in its middle. */
+  --disc-bat: var(--raised);
   --glass-shine: #1d1714;
   --glass: #0a0807;
   --disc-rim-inner: #0b0908;

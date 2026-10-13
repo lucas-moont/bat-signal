@@ -20,18 +20,26 @@ export interface Box {
   height: number
 }
 
+/** An oval the bat sits on (PALE MOONLIGHT's), inscribed in its box, with a rim this wide. */
+export interface Plate {
+  box: Box
+  rim: number
+}
+
 /**
  * A Theme's emblem: its outline, on whatever grid it was traced on; where the outline lies on that
- * grid; and its finish ("wear" is VENGEANCE's scratched metal, "none" a plain fill).
+ * grid; its finish ("wear" is VENGEANCE's scratched metal, "none" a plain fill); and the plate it
+ * sits on, if it has one.
  */
 export interface Emblem {
   path: string
   bat: Box
   finish: 'wear' | 'none'
+  plate?: Plate
 }
 
 /** An emblem from its outline, its box read from the outline's points so a re-trace can't leave it behind. */
-export function emblem(path: string, finish: Emblem['finish']): Emblem {
+export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): Emblem {
   const points = [...path.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)]
   const xs = points.map((m) => Number(m[1]))
   const ys = points.map((m) => Number(m[2]))
@@ -41,5 +49,5 @@ export function emblem(path: string, finish: Emblem['finish']): Emblem {
     width: Math.max(...xs) - Math.min(...xs),
     height: Math.max(...ys) - Math.min(...ys),
   }
-  return { path, bat, finish }
+  return plate ? { path, bat, finish, plate } : { path, bat, finish }
 }

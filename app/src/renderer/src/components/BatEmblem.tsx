@@ -1,11 +1,13 @@
 // The worn Theme's emblem (shared/emblems.ts): in the masthead, on the disc and in the intro,
-// with its finish (VENGEANCE's scratched metal); Bat-Clawd wears the same outline on his chest.
+// with its finish (VENGEANCE's scratched metal) and on its plate if it has one (PALE MOONLIGHT's
+// oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
 
 import { useId } from 'react'
 import type { Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
+import './BatEmblem.css'
 
 /** The worn Theme's emblem. */
 export const useEmblem = (): Emblem => THEMES[useTheme()].emblem
@@ -19,18 +21,25 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number): s
 export function BatEmblem({
   size = 40,
   title,
-  fill = 'var(--signal)',
+  fill = 'var(--emblem)',
+  lit = false,
 }: {
   size?: number
   /** What a screen reader says; the product's name unless given ("" for a decorative one). */
   title?: string
+  /** The bat's color: the Theme's emblem color unless a place gives its own (the disc's). */
   fill?: string
+  /** Something needs the user: a plate lights in the Alarm color. */
+  lit?: boolean
 }) {
-  const { path, bat, finish } = useEmblem()
-  // The box around the bat, with a unit of air on every side: the size a place gives is the bat's.
-  const box = { x: bat.x - 1, y: bat.y - 1, width: bat.width + 2, height: bat.height + 2 }
-  // Its own filter id: one shared by every emblem resolves to whichever comes first on the page.
+  const { path, bat, finish, plate } = useEmblem()
+  // The box around the bat, or its plate, with a unit of air on every side: the size a place
+  // gives is the emblem's.
+  const edge = plate?.box ?? bat
+  const box = { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
+  // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
+  const glow = useId()
   return (
     <svg
       width={size}
@@ -64,6 +73,27 @@ export function BatEmblem({
             <feComposite in="SourceGraphic" in2="wear" operator="in" />
           </filter>
         </defs>
+      )}
+      {plate && lit && (
+        <defs>
+          {/* The light at its middle, the Alarm color's fill, and the old brass at the rim. */}
+          <radialGradient id={glow}>
+            <stop offset="0%" style={{ stopColor: 'var(--signal-hot)' }} />
+            <stop offset="65%" style={{ stopColor: 'var(--signal)' }} />
+            <stop offset="100%" style={{ stopColor: 'var(--blood)' }} />
+          </radialGradient>
+        </defs>
+      )}
+      {plate && (
+        <ellipse
+          className={`emblem__plate${lit ? ' emblem__plate--lit' : ''}`}
+          cx={plate.box.x + plate.box.width / 2}
+          cy={plate.box.y + plate.box.height / 2}
+          rx={(plate.box.width - plate.rim) / 2}
+          ry={(plate.box.height - plate.rim) / 2}
+          strokeWidth={plate.rim}
+          fill={lit ? `url(#${glow})` : undefined}
+        />
       )}
       <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
     </svg>

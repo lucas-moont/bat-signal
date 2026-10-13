@@ -42,7 +42,7 @@ export function BatSignalIntro() {
     <div className={`intro${leaving ? ' intro--leaving' : ''}`} onClick={finish} role="presentation">
       <div className="intro__beam" />
       <div className="intro__signal">
-        <BatEmblem size={120} />
+        <BatEmblem size={120} lit />
       </div>
       <div className="intro__title">{wordmark}</div>
       {tagline && <div className="intro__tagline">{tagline}</div>}

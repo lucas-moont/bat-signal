@@ -1,0 +1,8 @@
+/* An emblem's plate (PALE MOONLIGHT's oval): its rim, and its fill at rest. Lit, the fill is the
+   gradient BatEmblem.tsx draws in the Alarm color. */
+.emblem__plate {
+  stroke: var(--emblem-plate-rim);
+}
+.emblem__plate:not(.emblem__plate--lit) {
+  fill: var(--emblem-plate);
+}
