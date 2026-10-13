@@ -383,9 +383,9 @@ const SCALLOPED = {
     'M3 5 L13 5 L13.4 9.2 Q12.2 10.9 11 10.4 Q9 11.2 7 10 Q5 11.2 3 10.8 Q1 11.4 -1 10 Q-2.8 11.6 -4.6 10.8 L-3.6 8.8 L-5.6 7.4 L-1.4 6.6 Z',
   trailB:
     'M3 5 L13 5 L13.6 8.6 Q12.4 10.4 11.2 10 Q9.2 11 7.2 10.6 Q5.2 11.1 3.2 10.2 Q1.3 11.5 -0.6 10.9 Q-2.4 10.9 -4.2 9.6 L-3 8.2 L-5 5.8 L-1.2 5.9 Z',
-  /** Held up in a tall wing above his ears (left half; mirrored for the right): the giant bat. */
+  /** Held up in a wing to his ears' height (left half; mirrored for the right): the giant bat. */
   wingLeft:
-    'M3.4 5.2 L2 3.6 L0.4 -1 L-1.6 2.2 L-3.8 0.6 L-4.6 5 L-5 9.8 Q-4 8.8 -3 9.8 Q-2 8.8 -1 9.8 Q0 8.8 1 9.8 Q2 8.8 3.4 9.8 Z',
+    'M3.4 5.2 L2 4.2 L0.6 1.4 L-1.4 3.6 L-3.6 2.4 L-4.6 6 L-5 9.8 Q-4 8.8 -3 9.8 Q-2 8.8 -1 9.8 Q0 8.8 1 9.8 Q2 8.8 3.4 9.8 Z',
   /** The near half swung in front of him, three-quarter (the Signature pose). */
   nearFront: 'M2.6 5 L5.6 5 Q5.9 8 5.6 10.6 Q4.8 10 4 10.6 Q3.2 11.2 2.4 10.6 Q1.6 10 0.8 10.6 L1.6 7 Z',
   /** The far half, behind him, a cell of it beside his far arm. */
@@ -409,16 +409,16 @@ const giantBat = moonPose(
     {
       kind: 'rects',
       px: [
-        [1.5, 3.5, 1.5, 1.5],
-        [13, 3.5, 1.5, 1.5],
+        [1.5, 4, 1.5, 1.5],
+        [13, 4, 1.5, 1.5],
       ],
       fill: 'var(--suit)',
     },
     {
       kind: 'rects',
       px: [
-        [1, 2.5, 1, 1],
-        [14, 2.5, 1, 1],
+        [1, 3, 1, 1],
+        [14, 3, 1, 1],
       ],
       fill: 'var(--gloves)',
     },
