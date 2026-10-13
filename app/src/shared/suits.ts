@@ -30,7 +30,7 @@ export type Layer =
       smooth?: boolean
       opacity?: number
     }
-  /** Rects in one color, or in a class's, at an opacity if faint (a glow behind his eyes). */
+  /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
   | { kind: 'emblem'; cx: number; cy: number; width: number }
