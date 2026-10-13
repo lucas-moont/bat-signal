@@ -2,6 +2,8 @@
 
 Research note, 2026-10-09. Scope: the costume Bat-Clawd wears in the WATCHFUL PROTECTOR Theme, after Christopher Nolan's *Dark Knight* trilogy, anchored on *The Dark Knight* (2008). It replaces outfit J of the throwaway prototype (`prototype/clawd-outfits`, `app/src/renderer/src/prototype/ClawdOutfits.prototype.tsx`). The maintainer found J too far from the films in colours and costume. It keeps the approved model of outfits V and I: a suit over body, arms and legs; the cowl down to under the eyes; Clawd's orange only as the jaw row; white eyes; a neutral rim on cowl and cape at rest; the cape behind the legs; an aura in the Alarm color only when alarmed. Grid, viewBox and helpers are the prototype's. The Theme's palette and voice are in [`nolan.md`](nolan.md).
 
+*Built in #82 as drawn here, the chest bat as the Theme's own emblem in the plates' sheen (`--plate`), centred at (8, 6.3), 6 units wide, and the waist mesh as `--mesh`.*
+
 ## TL;DR
 
 - **Nolan's suit is black, not blue.** Both cinematographer sources describe a black, non-reflective suit. *The Dark Knight*: "Batman's costume is made of a non-reflective, black material", and "There is some sheen on the cowl and the rest of the costume, but the cape was absolutely matte black" ([ICG, July 2008](https://www.icgmagazine.com/web/july-cover-story-the-dark-knight/)). *Begins*: the AC article speaks of "Batman's matte-black costume", and Pfister says "the suit was going to be very non-reflective" ([AC, June 2005](https://theasc.com/article/batman-begins-the-bat-takes-wing/)). J's blue-steel body, steel collar and cheek guards come from neither the films nor the costume.
