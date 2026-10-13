@@ -84,7 +84,6 @@
   --cape: #000000;
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
-  --rib: var(--cowl-edge);
   --chest: var(--cowl);
   /* The shadow he steps out of in his Signature pose, over his body only. */
   --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);

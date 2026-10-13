@@ -30,22 +30,20 @@
 .clawd__emblem {
   fill: var(--chest);
 }
-/* A cape in front of him (wrapped, asleep): cloth and its whole rim. */
-.clawd__cape {
-  fill: var(--cape);
-  stroke: var(--cape-rim);
-  stroke-width: 0.35;
-  stroke-linejoin: round;
-}
-/* A cape behind him (shared/suits.ts, Layer 'cape'): its cloth, and its rim cut away over his body. */
+/* A cape's cloth and rim: one path in front of him (wrapped, asleep); behind him (shared/suits.ts,
+   Layer 'cape') two, the rim cut away over his body. */
+.clawd__cape,
 .clawd__cape-cloth {
   fill: var(--cape);
 }
+.clawd__cape,
 .clawd__cape-rim {
-  fill: none;
   stroke: var(--cape-rim);
   stroke-width: 0.35;
   stroke-linejoin: round;
+}
+.clawd__cape-rim {
+  fill: none;
 }
 /* Drawn behind the face, so only the outer half of the stroke shows. */
 .clawd__cowl-edge {
@@ -61,7 +59,7 @@
 /* A wingsuit's ribs, thin lines from the shoulder to the hem's points. */
 .clawd__rib {
   fill: none;
-  stroke: var(--rib);
+  stroke: var(--cape-rim);
   stroke-width: 0.3;
   stroke-linecap: round;
 }
