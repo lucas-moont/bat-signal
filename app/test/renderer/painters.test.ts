@@ -249,14 +249,14 @@ describe('the lit windows', () => {
     kind: 'lit-windows',
     glass: '--smoke',
     edge: '--line',
-    height: 0.2,
+    tallest: 0.2,
     towers: 5,
-    lit: 0.08,
+    litShare: 0.08,
     lights: [
       { color: '--bone', share: 0.7, alpha: 0.22 },
       { color: '--ink-live', share: 0.3, alpha: 0.28 },
     ],
-    every: 1,
+    switchEvery: 1,
     still: true,
   }
   const COLORS = ['#080d13', '#2b3743', '#e6ebee', '#7cc6c4']
@@ -293,7 +293,7 @@ describe('the lit windows', () => {
     expect(towers).toHaveLength(WINDOWS.towers)
     for (const t of towers) {
       expect(t.y + t.h).toBe(440)
-      expect(t.h).toBeLessThanOrEqual(440 * WINDOWS.height)
+      expect(t.h).toBeLessThanOrEqual(440 * WINDOWS.tallest)
     }
     expect(outlines).toHaveLength(WINDOWS.towers)
     for (const o of outlines) expect(o.color).toBe(COLORS[1])
@@ -348,7 +348,7 @@ describe('the lit windows', () => {
     const glass = boxes
       .filter((b) => b.color === COLORS[0] && !isWindow(b))
       .reduce((n, t) => n + Math.floor((t.w - 5) / 4) * Math.floor((t.h - 2) / 5), 0)
-    expect(Math.abs(lit - WINDOWS.lit * glass)).toBeLessThanOrEqual(1)
+    expect(Math.abs(lit - WINDOWS.litShare * glass)).toBeLessThanOrEqual(1)
   })
 
   // The panel changes size as cases come and go: the city stays the same city.

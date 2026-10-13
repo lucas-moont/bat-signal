@@ -51,15 +51,15 @@ export interface LitWindowsAtmosphere extends Scene {
   /** The variable their 1px edges are stroked in. */
   edge: string
   /** The tallest tower's height, a share of the canvas's. */
-  height: number
+  tallest: number
   /** How many towers stand along it. */
   towers: number
   /** The share of the windows lit. */
-  lit: number
+  litShare: number
   /** Each light: its variable, its share of the lit windows and its strength (alpha). */
   lights: readonly { color: string; share: number; alpha: number }[]
   /** Seconds between one window switching and the next. */
-  every: number
+  switchEvery: number
   still: true
 }
 

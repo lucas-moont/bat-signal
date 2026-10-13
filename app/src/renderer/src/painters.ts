@@ -188,7 +188,7 @@ function seededFrom(seed: number): () => number {
  * so the night keeps its share however long it runs.
  */
 function litWindows(
-  { glass, edge, height, towers, lit, lights, every }: LitWindowsAtmosphere,
+  { glass, edge, tallest, towers, litShare, lights, switchEvery }: LitWindowsAtmosphere,
   random: () => number,
 ): Painter {
   let blocks: { x: number; y: number; w: number; h: number }[] = []
@@ -196,9 +196,9 @@ function litWindows(
   /** The glass's, the edges' and each light's color, as last read. */
   let colors = { glass: '', edge: '', lights: [] as string[] }
   let width = 0
-  let canvasHeight = 0
+  let height = 0
   /** Whether the whole scene waits to be painted. */
-  let whole = true
+  let repaintWhole = true
   /** Seconds since the last switch. */
   let since = 0
   /** How many windows are lit. */
@@ -224,18 +224,18 @@ function litWindows(
   return {
     recolor(colorOf) {
       colors = { glass: colorOf(glass), edge: colorOf(edge), lights: lights.map((l) => colorOf(l.color)) }
-      whole = true
+      repaintWhole = true
     },
     resize(w, h) {
-      ;[width, canvasHeight] = [w, h]
-      ;[blocks, windows, whole, since, litCount] = [[], [], true, 0, 0]
+      ;[width, height] = [w, h]
+      ;[blocks, windows, repaintWhole, since, litCount] = [[], [], true, 0, 0]
       const layout = seededFrom(seed)
       const slot = w / towers
       const pitch = { x: CELL.w + CELL.mullion, y: CELL.h + CELL.mullion }
       for (let i = 0; i < towers; i++) {
         // A slab most of its slot wide, a gap either side, its flat roof in the band's top half.
         const bw = Math.round(slot * (0.72 + layout() * 0.22))
-        const bh = Math.round(h * height * (0.55 + layout() * 0.45))
+        const bh = Math.round(h * tallest * (0.55 + layout() * 0.45))
         const bx = Math.round(i * slot + layout() * (slot - bw))
         const by = h - bh
         blocks.push({ x: bx, y: by, w: bw, h: bh })
@@ -243,16 +243,16 @@ function litWindows(
         const rows = Math.floor((bh - INSET + CELL.mullion) / pitch.y)
         for (let r = 0; r < rows; r++)
           for (let c = 0; c < cols; c++) {
-            const light = layout() < lit ? pickLight(layout) : undefined
+            const light = layout() < litShare ? pickLight(layout) : undefined
             if (light !== undefined) litCount++
             windows.push({ x: bx + INSET + c * pitch.x, y: by + INSET + r * pitch.y, light })
           }
       }
     },
     paint(ctx, dt) {
-      if (whole) {
-        whole = false
-        ctx.clearRect(0, 0, width, canvasHeight)
+      if (repaintWhole) {
+        repaintWhole = false
+        ctx.clearRect(0, 0, width, height)
         ctx.globalAlpha = 1
         ctx.fillStyle = colors.glass
         ctx.strokeStyle = colors.edge
@@ -265,9 +265,9 @@ function litWindows(
         return
       }
       since += Math.min(dt, MAX_DT)
-      if (since < every || !windows.length) return
-      since -= every
-      const on = litCount < lit * windows.length
+      if (since < switchEvery || !windows.length) return
+      since -= switchEvery
+      const on = litCount < litShare * windows.length
       const start = Math.floor(random() * windows.length)
       for (let i = 0; i < windows.length; i++) {
         const w = windows[(start + i) % windows.length]!
