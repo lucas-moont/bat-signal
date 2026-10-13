@@ -38,7 +38,7 @@ export function BatEmblem({
   const box = { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
-  const glow = useId()
+  const light = useId()
   return (
     <svg
       width={size}
@@ -78,7 +78,7 @@ export function BatEmblem({
           {lit && (
             <defs>
               {/* Lit: the Alarm color's light at its middle, fading to the plate's own rest color. */}
-              <radialGradient id={glow}>
+              <radialGradient id={light}>
                 <stop offset="0%" style={{ stopColor: 'var(--signal-hot)' }} />
                 <stop offset="65%" style={{ stopColor: 'var(--signal)' }} />
                 <stop offset="100%" style={{ stopColor: 'var(--emblem-plate)' }} />
@@ -91,7 +91,7 @@ export function BatEmblem({
             cy={plate.box.y + plate.box.height / 2}
             rx={(plate.box.width - plate.rim) / 2}
             ry={(plate.box.height - plate.rim) / 2}
-            fill={lit ? `url(#${glow})` : 'var(--emblem-plate)'}
+            fill={lit ? `url(#${light})` : 'var(--emblem-plate)'}
             stroke="var(--emblem-plate-rim)"
             strokeWidth={plate.rim}
           />
