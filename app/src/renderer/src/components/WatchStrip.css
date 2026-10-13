@@ -97,7 +97,8 @@ li + li > .watch-row {
   box-sizing: border-box;
   width: 82px;
   text-align: center;
-  font-size: 9.5px;
+  /* A size under the Theme's stamps elsewhere: VENGEANCE's 11px reads 9.5px here. */
+  font-size: calc(var(--stamp-size) - 1.5px);
   padding: 3px 4px 1px;
   line-height: 1.1;
   border-width: 1px;
