@@ -19,6 +19,7 @@ const sides = (padding: string) => {
 const cards = componentCss('Cards.css')
 const report = componentCss('NightReport.css')
 const strip = cssRule(componentCss('WatchStrip.css'), '.watch-row__stamp')
+const signal = componentCss('Signal.css')
 const stamp = cssRule(cards, '.stamp')
 /** The narrowest panel's rules for the report (an @container). */
 const narrow = /@container app \(max-width: 330px\) \{([\s\S]*?)\n\}/.exec(report)?.[1] ?? ''
@@ -31,6 +32,15 @@ interface Room {
   size: (stampSize: number) => number
   /** Whether the stamp's padding and border count against the room (they do but in the strip). */
   boxed: boolean
+  /** The words a stamp there may say. */
+  words: (id: ThemeId) => string[]
+}
+
+/** Every word a stamp in the margin or the strip may say: what needs the user, and a case's state. */
+function marginWords(id: ThemeId): string[] {
+  const { stamp, live, needsYou } = THEMES[id].words.terms
+  const alerts = [stamp.permission, stamp.error, stamp.waiting, stamp.reply, stamp.stalled]
+  return [...alerts, ...Object.values(live), needsYou.label].map((word) => word.toUpperCase())
 }
 
 const MARGIN_PADDING = sides(declared(cssRule(report, '.entry__margin'), 'padding'))
@@ -40,12 +50,24 @@ const ROOMS: Record<string, Room> = {
     tracking: px(declared(stamp, 'letter-spacing')),
     size: (s) => s,
     boxed: true,
+    words: marginWords,
   },
   "the narrowest panel's Night Report margin": {
     width: px(declared(cssRule(narrow, '.report'), '--margin')) - MARGIN_PADDING,
     tracking: px(declared(cssRule(narrow, '.report .stamp'), 'letter-spacing')),
     size: (s) => s,
     boxed: true,
+    words: marginWords,
+  },
+  // The notice card riding the disc's beam: any stamp, news of a case opening or closing too.
+  'the notice card': {
+    width:
+      px(declared(cssRule(signal, '.notice-wrap'), 'width')) -
+      sides(declared(cssRule(signal, '.notice'), 'padding')),
+    tracking: px(declared(stamp, 'letter-spacing')),
+    size: (s) => s,
+    boxed: true,
+    words: (id) => Object.values(THEMES[id].words.terms.stamp).map((word) => word.toUpperCase()),
   },
   // A fixed box: the word must fit inside its padding and border.
   'the watch strip': {
@@ -57,6 +79,7 @@ const ROOMS: Record<string, Room> = {
     size: (s) =>
       s - px(/var\(--stamp-size\)\s*-\s*([\d.]+px)/.exec(declared(strip, 'font-size'))?.[1] ?? '0'),
     boxed: false,
+    words: marginWords,
   },
 }
 
@@ -75,13 +98,6 @@ function stampFace(id: ThemeId) {
   }
 }
 
-/** Every word a stamp in the margin or the strip may say: what needs the user, and a case's state. */
-function stampWords(id: ThemeId): string[] {
-  const { stamp, live, needsYou } = THEMES[id].words.terms
-  const alerts = [stamp.permission, stamp.error, stamp.waiting, stamp.reply, stamp.stalled]
-  return [...alerts, ...Object.values(live), needsYou.label].map((word) => word.toUpperCase())
-}
-
 describe.each(THEME_IDS)("%s's stamps", (id) => {
   const face = stampFace(id)
   // Read once a Theme, when a test first measures (a missing file fails its own test, below).
@@ -97,7 +113,7 @@ describe.each(THEME_IDS)("%s's stamps", (id) => {
   describe.each(Object.entries(ROOMS))('fit %s', (_, room) => {
     const size = room.size(face.size)
     const box = room.boxed ? sides(declared(stamp, 'padding')) + 2 * face.border : 0
-    it.each(stampWords(id))('%s', (word) => {
+    it.each(room.words(id))('%s', (word) => {
       expect(width(word, size, room.tracking) + box).toBeLessThanOrEqual(room.width)
     })
   })
