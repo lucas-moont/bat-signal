@@ -25,14 +25,15 @@ export const BAT_1989 =
  * WATCHFUL PROTECTOR's bat, after Christopher Nolan's Dark Knight trilogy, on the same 120x48 grid,
  * measured on a photograph of the Signal projected during The Dark Knight Rises' shoot (nolan.md,
  * section 8): about 3.7:1, a level top line with the wings above the head, short blunt ears, one
- * hook a side at the outer corners, a straight lower edge and a sharp V tail. Mirrored at x = 60.
+ * hook a side at the outer corners, a straight lower edge and a sharp V tail; the dip to the head
+ * and the hooks smoothed into curves. Symmetric about x = 60.
  */
 export const BAT_2008 =
-  'M0 8 L38.5 8 L42.3 10.8 L46.2 14 L50 15.2 L53.2 15.4 L55 9.4 L56.6 9 L57.4 12.4 L58.2 12.7 ' +
-  'L60 12.7 L61.8 12.7 L62.6 12.4 L63.4 9 L65 9.4 L66.8 15.4 L70 15.2 L73.8 14 L77.7 10.8 ' +
-  'L81.5 8 L120 8 L112.3 11.2 L108.5 13.4 L104.6 15.7 L101 19.5 L101 27.2 L89 27.4 L81.5 28.2 ' +
+  'M0 8 L38.5 8 C43 8 48 15.4 53.2 15.4 L55 9.4 L56.6 9 L57.4 12.4 L58.2 12.7 ' +
+  'L60 12.7 L61.8 12.7 L62.6 12.4 L63.4 9 L65 9.4 L66.8 15.4 C72 15.4 77 8 81.5 8 ' +
+  'L120 8 Q106 11.5 101 19.5 L101 27.2 L89 27.4 L81.5 28.2 ' +
   'L77.7 28.6 L73.8 30.5 L70 31.5 L66.2 34.5 L62.3 39 L60 40.5 L57.7 39 L53.8 34.5 L50 31.5 ' +
-  'L46.2 30.5 L42.3 28.6 L38.5 28.2 L31 27.4 L19 27.2 L19 19.5 L15.4 15.7 L11.5 13.4 L7.7 11.2 Z'
+  'L46.2 30.5 L42.3 28.6 L38.5 28.2 L31 27.4 L19 27.2 L19 19.5 Q14 11.5 0 8 Z'
 
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
