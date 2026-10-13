@@ -220,13 +220,14 @@ const seated = (map: OutfitMap, wrapped: string): Pose => ({
   eyes: 'shut',
 })
 
-/** Seconds of a watch's twelve that a beat may take, three seconds in. */
-const BEAT_ROOM = 5
+/** The last seconds of a watch, where a beat of his own may play: at most four. */
+const BEAT_ROOM = 4
 
 /**
- * His watch on the perch, held on his Signature pose's final step (so the reveal ends where the
- * watch begins): still for eight seconds, with a beat of steps of his own three in if he has one
- * (a sonar's ping; at most BEAT_ROOM), then two glances, in twelve.
+ * His watch on the perch, twelve steps of a second each, held on his Signature pose's final step (so
+ * the reveal ends where the watch begins): six seconds still, two glances, then the last four
+ * still, or a beat of his own (a sonar's ping) in their place. Last, so a reveal that just played
+ * its own beat isn't followed by another a moment later.
  */
 const watchOn = (
   signature: Script,
@@ -237,13 +238,11 @@ const watchOn = (
   const still = (n: number) => Array<Step>(n).fill(STILL)
   return [
     STILL,
-    ...still(2),
-    ...beat.slice(0, BEAT_ROOM),
-    ...still(BEAT_ROOM - Math.min(beat.length, BEAT_ROOM)),
+    ...still(5),
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
-    STILL,
-    STILL,
+    ...still(BEAT_ROOM - Math.min(beat.length, BEAT_ROOM)),
+    ...beat.slice(0, BEAT_ROOM),
   ]
 }
 
