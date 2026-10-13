@@ -11,7 +11,7 @@ Provenance key used below: **Sourced** = said in so many words by a listing, art
 - **Spread open, per wing: one apex, four scallops, four more points.** Each half is 4 panels. The front edge is held up on a rod, so it makes **one apex per wing** at the rod's tip, above and outboard of the hand. **No second "finger" peak rises along the top edge.** The front panel's hem drops from the apex to the outermost point, at about shoulder height. The other three panels' hems then step **diagonally down and in to the feet**, with two more tips on the way (observed in one film frame, §4).
 - **Closed: the same hem.** Tips hang down at the seams, with shallow arcs between them. The current trailing and wrapped paths mostly draw it upside down: rounded lobes hang down and the cusps point up (§6).
 - **1989 vs *Returns*: no difference you could see.** The *Returns* capes "were nearly identical to the original film's capes and are only distinguishable based on unseen interior details" (Prop Store, §5).
-- **For the sprite:** keep the count (the current wing already has 4 scallops), but drop the second upper peak. Move the apex outboard. Turn the flat hem at y = 9.8 into a diagonal from the outer point (about y = 5.8) down to the feet (§7).
+- **For Bat-Clawd:** keep the count (the current wing already has 4 scallops), but drop the second upper peak. Move the apex outboard. Turn the flat hem at y = 9.8 into a diagonal from the outer point (about y = 5.8) down to the feet (§7).
 
 ## 2. Construction: panels and points
 
@@ -46,7 +46,7 @@ Provenance key used below: **Sourced** = said in so many words by a listing, art
 - **Fastening changed.** *Returns* added "a mechanical system of bolts and spikes beneath the breast plate to secure the cowl and cape", because "if [Keaton] turned around quickly the cape would stay where it was" (Fennell 1992, as cited in [Special effects of *Batman Returns*](https://en.wikipedia.org/wiki/Special_effects_of_Batman_Returns)). This changes how the cape hangs, not its outline.
 - **Many variants in 1989.** "25 different cape looks" were made (AMC blog 2007, as cited in [*Batman* (1989 film)](https://en.wikipedia.org/wiki/Batman_(1989_film))). A builder recalls a lighter stunt cape, a "dramatic" cape for spreading, and the acting cape (forum, snippet only). These describe design trials and stunt copies, not a different hem.
 
-## 6. The closed and trailing hem in the current sprite
+## 6. The closed and trailing hem as Bat-Clawd wore it
 
 - `SCALLOPED.wingLeft` already bows its arcs **upward**: the control points at y = 8.8 sit above the endpoints at y = 9.8, so the tips point down. That matches the film's orientation.
 - `trailA` and `trailB` put every control point **below** the chord (`Q12.2 10.9 11 10.4`, `Q9 11.2 7 10`, ...). That draws rounded lobes hanging down, with the cusps pointing up between them, which is the reverse of the cape.
@@ -56,7 +56,7 @@ Provenance key used below: **Sourced** = said in so many words by a listing, art
 
 ## 7. Recommendation for the pixel silhouette
 
-Coordinates are in the sprite's grid (body x = 3–13, shoulders y = 5, feet y = 11, viewBox x −6..22, y −1..12; `mirrored` flips about x = 8 via `translate(16 0) scale(-1 1)`). The arms-up pose has the gloves at (1, 3) and (14, 3), 1×1.
+Coordinates are on Bat-Clawd's grid (body x = 3–13, shoulders y = 5, feet y = 11, viewBox x −6..22, y −1..12; `mirrored` flips about x = 8 via `translate(16 0) scale(-1 1)`). The arms-up pose has the gloves at (1, 3) and (14, 3), 1×1.
 
 **Spread wing (`wingLeft`), per wing:**
 
