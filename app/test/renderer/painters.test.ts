@@ -319,12 +319,17 @@ describe('the ash', () => {
 
   // Dust is the only warm thing in the Atmosphere, a share of the flakes in each depth.
   it('fills a share of its flakes in dust, each depth in its strength', () => {
-    const [first] = ticks(0)
-    const dust = first!.filter((f) => f.color === '#7a6a52')
-    const grey = first!.filter((f) => f.color === '#928e88')
+    // A big canvas, so the share is counted over enough flakes to mean something.
+    const painter = painterFor(ASH, seeded())
+    painter.recolor(colorOf)
+    painter.resize(1200, 1200)
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 0)
+    const dust = fills.filter((f) => f.color === '#7a6a52')
+    const grey = fills.filter((f) => f.color === '#928e88')
     expect(dust.map((f) => f.alpha)).toEqual(ASH.depths.map((d) => d.alpha))
     expect(grey.map((f) => f.alpha)).toEqual(ASH.depths.map((d) => d.alpha))
-    const share = flakes(dust).length / FLAKES
+    const share = flakes(dust).length / flakes(fills).length
     expect(share).toBeGreaterThan(0.1)
     expect(share).toBeLessThan(0.45)
   })
