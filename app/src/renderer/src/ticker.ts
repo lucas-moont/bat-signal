@@ -100,11 +100,16 @@ export function useLiveStyle<T extends HTMLElement>(
  */
 export function useFrame(active: boolean, every = 1): number {
   const [frame, setFrame] = useState(0)
-  // Restarted during render (React's pattern for reacting to a changed input), not in an effect.
+  // Restarted during render (React's pattern for reacting to a changed input), not in an effect;
+  // and 0 at once, in this render too, so nothing reads the last run's frame as this run's.
   const [wasActive, setWasActive] = useState(active)
+  let shown = frame
   if (wasActive !== active) {
     setWasActive(active)
-    if (active) setFrame(0)
+    if (active) {
+      setFrame(0)
+      shown = 0
+    }
   }
   useEffect(() => {
     if (!active) return
@@ -112,5 +117,5 @@ export function useFrame(active: boolean, every = 1): number {
       if (t % every === 0) setFrame((f) => f + 1)
     })
   }, [active, every])
-  return frame
+  return shown
 }

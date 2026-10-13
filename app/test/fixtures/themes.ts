@@ -4,8 +4,9 @@ import { THEMES, type Theme } from '../../src/shared/themes'
 
 /**
  * Stands a Theme in for VENGEANCE for the tests of the enclosing describe (or file): VENGEANCE has
- * no Lexicon, Signature pose or aura of its own to test them on. Laid over the Theme in place when
- * the tests start, so an outer stand-in's patch holds, and restored after, pass or fail.
+ * no Lexicon of its own to test one on, and a stand-in's marked poses tell a Signature pose's steps
+ * apart in the markup. Laid over the Theme in place when the tests start, so an outer stand-in's
+ * patch holds, and restored after, pass or fail.
  */
 export function standInTheme(patch: Partial<Theme>): void {
   let before: Theme

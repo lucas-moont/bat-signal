@@ -18,16 +18,32 @@
   overflow: visible;
 }
 
+/* His eyes stay white in every Theme (the Costume Rule), dimmer for a frame mid-blink. */
+.clawd__eyes {
+  fill: var(--clawd-eye);
+}
+.clawd__eyes--blink {
+  fill: var(--clawd-eye-dim);
+}
+
 /* The chest emblem: in VENGEANCE, the cowl's black. */
 .clawd__emblem {
   fill: var(--chest);
 }
-/* A black cape: its red edge makes it read on the pure-black window. */
-.clawd__cape {
+/* A cape's cloth and rim: one path in front of him (wrapped, asleep); behind him (shared/suits.ts,
+   Layer 'cape') two, the rim cut away over his body. */
+.clawd__cape,
+.clawd__cape-cloth {
   fill: var(--cape);
+}
+.clawd__cape,
+.clawd__cape-rim {
   stroke: var(--cape-rim);
   stroke-width: 0.35;
   stroke-linejoin: round;
+}
+.clawd__cape-rim {
+  fill: none;
 }
 /* Drawn behind the face, so only the outer half of the stroke shows. */
 .clawd__cowl-edge {
@@ -36,17 +52,17 @@
   stroke-width: 0.7;
   stroke-linejoin: miter;
 }
-/* Open, it stays black inside: one red thread runs along the hem, about a screen pixel wide. */
-.clawd__thread {
-  fill: none;
-  stroke: var(--thread);
-  stroke-width: 0.45;
-  stroke-linejoin: round;
-}
+/* The seam where his hands hold the wrapped cape shut. */
 .clawd__seam {
   fill: var(--thread);
 }
-
+/* A wingsuit's ribs, thin lines from the shoulder to the hem's points. */
+.clawd__rib {
+  fill: none;
+  stroke: var(--cape-rim);
+  stroke-width: 0.3;
+  stroke-linecap: round;
+}
 /* The aura, in the Theme's Alarm color, for a suit that has one (shared/suits.ts): a still filter,
    repainted only when the frame changes on the clock. A Theme may set --aura-core and --aura-glow;
    by default both are its Hot Signal. */

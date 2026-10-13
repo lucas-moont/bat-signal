@@ -69,18 +69,27 @@
   --bone-dim: #cfc6be;
   --ash-dim: #6f6862;
 
-  /* Bat-Clawd's suit (see BatClawd.tsx). Its blacks match the disc's and --shadow today but are
-     written out, not aliased: #88 redresses the suit, and the disc and the shadows must not follow. */
-  --clawd-shade: #b85f42;
+  /* Bat-Clawd's suit (outfit V, see shared/suits.ts): charcoal over his body, dark gloves, belt and
+     boots, a faint bone rim on cowl and cape. Its blacks match the disc's and --shadow today but are
+     written out, not aliased: the disc and the shadows must not follow the suit. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0908;
-  --cowl-edge: var(--signal);
+  --cowl-edge: color-mix(in srgb, var(--bone) 22%, transparent);
   --cowl-shine: var(--raised);
+  --suit: #34302d;
+  --gloves: #141110;
+  --belt: #1e1916;
+  --buckle: #7d6d62;
   --cape: #000000;
-  --cape-rim: var(--signal);
-  --thread: var(--blood);
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
   --chest: var(--cowl);
+  /* The shadow he steps out of in his Signature pose, over his body only. */
+  --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);
+  /* The flare he raises when alarmed: Hot Signal, and a smaller Pen Hot on the frames between. */
+  --flame: var(--signal-hot);
+  --flame-low: #ec2a2a;
 
   /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
   --glass-shine: #1d1714;
