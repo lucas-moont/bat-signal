@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
 import { painterFor } from '../../src/renderer/src/painters'
-import { VENGEANCE_RAIN, type LitWindowsAtmosphere, type SnowAtmosphere } from '../../src/shared/atmospheres'
+import {
+  PALE_MOONLIGHT_SNOW,
+  VENGEANCE_RAIN,
+  type LitWindowsAtmosphere,
+  type SnowAtmosphere,
+} from '../../src/shared/atmospheres'
 
 type Segment = { x0: number; y0: number; x1: number; y1: number }
 
@@ -48,6 +53,22 @@ function seeded(seed = 7) {
 }
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
+
+// The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
+// shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
+// whole panel went blank.
+describe('a painter given its colors before its size', () => {
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW])(
+    'paints nothing, and does not throw ($kind)',
+    (atmosphere) => {
+      const painter = painterFor(atmosphere, seeded())
+      painter.recolor(() => '#ffffff')
+      const { ctx, strokes, fills } = recorder()
+      expect(() => painter.paint(ctx, 0)).not.toThrow()
+      expect(strokes.flatMap((s) => s.segments).length + fills.flatMap((f) => f.rects).length).toBe(0)
+    },
+  )
+})
 
 describe('the rain', () => {
   /** As many drops as the density asks of the panel's default size. */
