@@ -117,3 +117,26 @@ describe("a Theme's aura", () => {
     expect(draw({ mood: 'sleeping' })).not.toContain('clawd--aura')
   })
 })
+
+// PALE MOONLIGHT's gold is its Alarm color and never shows at rest: its aura glows only while
+// something needs the user, not as its Signature pose plays.
+describe('an aura kept for the alarm', () => {
+  standInTheme({
+    suit: {
+      ...VENGEANCE_SUIT,
+      signature: [
+        { pose: markedPose('8.88'), look: 0 },
+        { pose: markedPose('9.99'), look: 0 },
+      ],
+      aura: 'alarmed',
+    },
+  })
+
+  it('stays off while his Signature pose plays', () => {
+    expect(draw({ mood: 'sleeping', perched: true })).not.toContain('clawd--aura')
+  })
+
+  it('glows while he is alarmed', () => {
+    expect(draw({ mood: 'alarmed' })).toContain('clawd--aura')
+  })
+})

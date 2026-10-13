@@ -487,3 +487,59 @@ export const TOAST_WORDS = {
 
 /** The words of every surface that never follows a Theme, and of the default Theme. */
 export const STANDARD_WORDS: Words = { terms: STANDARD_TERMS, voice: STANDARD_VOICE }
+
+/**
+ * PALE MOONLIGHT's words, after Tim Burton's Batman (1989): the night edition of a Gotham paper
+ * (burton-1989.md, sections 5 and 6). Its Lexicon files Stories on Your desk under stamps a tired
+ * reader still reads at a glance; its Voice is a night editor's, theatrical and a little wry.
+ */
+export const PALE_MOONLIGHT_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    case: { one: 'Story', many: 'Stories' },
+    needsYou: { label: 'Your desk', count: (n) => `${n} on your desk` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Approval',
+      error: 'Trouble',
+      waiting: 'Question',
+      reply: 'Just in',
+      stalled: 'No word',
+      'session-opened': 'Story opened',
+      'session-closed': 'Story closed',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    theme: { name: 'PALE MOONLIGHT', film: "Tim Burton's Batman (1989)" },
+    tagline: 'The city after midnight.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Gotham sleeps. For now.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} on the wire tonight.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Late edition',
+      signature: 'Above the fold',
+      nil: (t) => `Nothing for the front page tonight. Every ${lower(t.case.one)} runs without you.`,
+      caseNotes: () => 'On the beat',
+      // The newsroom's end-of-copy mark.
+      end: () => '— 30 —',
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) =>
+        lit
+          ? STANDARD_VOICE.signal.openTip(lit)
+          : `All dark over Gotham. ${STANDARD_VOICE.signal.openTip(lit)}`,
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      atmosphere: { label: 'Snow', hint: (t) => `Gotham's snow behind the ${lower(t.case.many)}` },
+    },
+  },
+}

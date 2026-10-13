@@ -18,7 +18,15 @@ Bat-Signal rests in a corner of your screen as a small signal disc. When somethi
 - shrinks to a **watch strip**, one line per session, to follow the work from the corner;
 - has a mascot: **Bat-Clawd**, Claude Code's Clawd in a cowl and cape. He sleeps wrapped in his cape when all is quiet, takes off with it streaming behind him when a session is working, and throws it open when something needs you: black inside too, but for a thin red thread along its hem.
 
-The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all.
+The look is inspired by the reds and blacks of *The Batman* (2022): every session is a case file, every alert a red ink stamp, with rain falling behind it all. That is the default Theme, VENGEANCE; Settings → Look dresses Bat-Signal as another version of Batman.
+
+## Themes
+
+| VENGEANCE, after *The Batman* (2022) | PALE MOONLIGHT, after Tim Burton's *Batman* (1989) |
+|---|---|
+| <img src="docs/screenshots/needs-you.png" width="240" alt="VENGEANCE: the needs-you list on pure black, each request stamped in red"> | <img src="docs/screenshots/moonlight-needs-you.png" width="240" alt="PALE MOONLIGHT: the same requests on a smoggy brown-black, stamped in gold as APPROVAL, TROUBLE, QUESTION and JUST IN on Your desk"> |
+| <img src="docs/screenshots/night-report.png" width="240" alt="VENGEANCE's night report, typed, with a red pen under each request"> | <img src="docs/screenshots/moonlight-night-report.png" width="240" alt="PALE MOONLIGHT's Late edition: Above the fold, gold stamps in the margin and a gold pen under each request"> |
+| <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="VENGEANCE's Bat-Clawd raising a red flare, his cape open"> | <img src="docs/screenshots/moonlight-clawd-alarmed.png" width="190" alt="PALE MOONLIGHT's Bat-Clawd as the giant bat, his cape held up in two wings, the oval on his chest lit gold"> |
 
 ## A closer look
 
@@ -36,7 +44,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Settings | Comfort, notifications and sound | The Bat-Signal at rest |
 |---|---|---|
-| <img src="docs/screenshots/settings.png" width="240" alt="Settings: the Theme picker with VENGEANCE's folder, then animations, rain, Theme words, night report, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
+| <img src="docs/screenshots/settings.png" width="240" alt="Settings: the Theme picker with the folders of VENGEANCE and PALE MOONLIGHT, then animations, rain, Theme words, night report, always on top, opacity"> | <img src="docs/screenshots/settings-comfort.png" width="240" alt="Settings further down: the global shortcut, start with Windows, an All notifications switch over one Windows notification switch per kind of news, and sound with its volume and a Test button"> | <img src="docs/screenshots/signal.png" width="96" alt="The Bat-Signal disc, lit, with five cases needing you"> |
 
 | The tray icon, at rest and lit |
 |---|
@@ -44,7 +52,7 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | Bat-Clawd asleep | On patrol | Needs you |
 |---|---|---|
-| <img src="docs/screenshots/clawd-sleeping.png" width="190" alt="Bat-Clawd asleep, sitting wrapped in his cape"> | <img src="docs/screenshots/clawd-flying.png" width="190" alt="Bat-Clawd flying, his cape streaming behind him"> | <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="Bat-Clawd alarmed, his black cape flung open, a thin red thread along its hem"> |
+| <img src="docs/screenshots/clawd-sleeping.png" width="190" alt="Bat-Clawd asleep in his suit, sitting wrapped in his cape"> | <img src="docs/screenshots/clawd-flying.png" width="190" alt="Bat-Clawd gliding in the wingsuit, arms out"> | <img src="docs/screenshots/clawd-alarmed.png" width="190" alt="Bat-Clawd alarmed, his cape flung open and a red flare raised"> |
 
 Screenshots use made-up data (`npm run shots`), never real sessions.
 
@@ -119,6 +127,6 @@ Running it from source, the checks, building the installer and releasing are in 
 
 ---
 
-Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbol from *The Batman* (2022) is a trademark of DC Comics, used here as fan art.
+Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022) and from Tim Burton's *Batman* (1989) are trademarks of DC Comics, used here as fan art; see [NOTICE](NOTICE) for them and for the fonts' licences.
 
-License: [MIT](LICENSE), except the bat emblem: see [NOTICE](NOTICE).
+License: [MIT](LICENSE), except the bat emblems and the bundled fonts, which keep their own terms: see [NOTICE](NOTICE).

@@ -1,0 +1,144 @@
+/*
+ * PALE MOONLIGHT, after Tim Burton's Batman (1989): its palette and faces (docs/research/themes/
+ * burton-1989.md, section 3). A warm, smoggy black under brass; the emblem's gold is the Alarm color
+ * and never shows at rest, while the old brass (--blood) is the gold that is off. Scoped like every
+ * Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: the median of the 1989 poster's blacks.
+ * - --signal: the median gold of the poster's oval; --signal-hot between its brighter samples.
+ * - --ink-live: lifted from the Batman Returns poster's blues: the cold of the snow.
+ */
+:root[data-theme='batman-1989'],
+[data-theme='batman-1989'] {
+  --abyss: #0d0906;
+  --smoke: #13100c;
+  --surface: #1a1510;
+  --raised: #2b2116;
+  --line: #3a3127;
+  --surface-deep: #110d09;
+  --frame: #241c14;
+  --header-fade: #100c08;
+  --sheet-top: #1f1913;
+  --shadow: #000000;
+
+  /* The Alarm color, the emblem's gold, and its "off" shade, the old brass. */
+  --blood: #7a5420;
+  --signal: #d29336;
+  --signal-glow: color-mix(in srgb, var(--signal) 40%, transparent);
+  --signal-hot: #f0c24b;
+  /* Text on the gold fill (the header's count): bone would read at about 2:1. */
+  --on-signal: var(--abyss);
+  --ink-hot: #f0c24b;
+  --ink-soft: #c98a3e;
+  --ink-live: #8fb0d3;
+  --ink: #c4bdb0;
+
+  /* Emphasis that is not an alarm is Bone: gold never shows at rest (burton-1989.md, section 3). */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 16%, transparent);
+  /* Where a pale accent needs another color: selected text on the brass in shadow, progress in the
+     snow's steel (not emphasis), and a dark thumb on a Bone switch. */
+  --selection: var(--raised);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: gold for permission and error, bronze for waiting and new replies. */
+  --stamp-hot: var(--signal-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  /* Running work in the snow's cold steel, never in the Alarm color. */
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 60%, transparent);
+
+  --danger: var(--blood);
+  --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
+
+  --clawd: #d77757;
+
+  --bone: #e9e4d8;
+  --ash: #948b7f;
+  --bone-dim: #d2ccc0;
+  /* The darkest ash that still reads at 4.5:1 on the brass in shadow: done tasks recede by their strike. */
+  --ash-dim: #928979;
+  --chevron: var(--ash);
+
+  /* Bat-Clawd's suit (outfit I, #95): Burton's black rubber lifted to a plum-grey so it reads on
+     the smog, a steel sheen on the cowl, the brass belt, and a black cape rimmed in the snow's steel. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #0b0a0b;
+  --cowl-edge: color-mix(in srgb, var(--ink-live) 35%, transparent);
+  --cowl-shine: #4a5664;
+  --suit: #2a2730;
+  --gloves: #0b0a0b;
+  --belt: var(--blood);
+  --buckle: var(--ash);
+  --cape: #000000;
+  --cape-rim: color-mix(in srgb, var(--ink-live) 40%, transparent);
+  --thread: var(--cape-rim);
+  --chest: var(--cowl);
+  /* His aura, while something needs the user: the Alarm color's light. */
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: a black bat on the oval, old brass at rest with a darker rim; lit, the oval fills
+     from the Alarm color (BatEmblem.tsx). */
+  --emblem: #0b0a0b;
+  --emblem-plate: var(--blood);
+  --emblem-plate-rim: #4a3416;
+
+  /* The Signal disc: warm black glass with the oval in it, which is what lights. */
+  --disc-bat: var(--emblem);
+  --glass-shine: #1f1913;
+  --glass: #0d0906;
+  --disc-rim-inner: #0b0806;
+  --disc-rim-outer: #241c14;
+  --lens-core: #f0c24b;
+  --lens-rim: #5a3e18;
+  --lens-bat: #050302;
+  --notice-top: #1b1510;
+  --notice-foot: #0e0b07;
+  --notice-hover-top: #251d15;
+  --notice-hover-foot: #120e09;
+
+  --haze: color-mix(in srgb, var(--blood) 12%, transparent);
+  --haze-edge: color-mix(in srgb, var(--blood) 4%, transparent);
+  --grain-opacity: 0.045;
+  /* Snow from Batman Returns over the 1989 smog: bone flakes, a brown haze from below. */
+  --snow: var(--bone);
+  --searchlight: var(--bone);
+
+  --font-display: 'Limelight', 'Georgia', serif;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: 'Special Elite', 'Courier New', monospace;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-type);
+  --font-stamp: 'Josefin Sans', 'Segoe UI', sans-serif;
+  /* Limelight is meant for large sizes: the short words under 19px (counts, names) take Josefin's caps. */
+  --font-label: var(--font-stamp);
+  /* Limelight runs wide: the masthead sets it smaller than Anton so the header keeps its room (14 to
+     16px, checked at 1x: its thin strokes hold in the one word it sets). */
+  --wordmark-size: 16px;
+  --wordmark-tracking: 1.5px;
+  /* Bone with no glow: the only light here is the oval's (burton-1989.md, section 3). */
+  --wordmark-glow: transparent;
+
+  /* The Night Report's pen, in gold pressed hard for blocked work and bronze for waiting work. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23f0c24b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23c98a3e' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  /* Its two-word name in Josefin's wide caps, a size smaller on its folder so the credit fits too. */
+  --folder-name-size: 12.5px;
+  --folder-name-tracking: 0.3px;
+
+  --stamp-tilt: -2.5deg;
+  --stamp-tilt-slight: -1.5deg;
+  --stamp-border: 1.5px;
+  --stamp-mask: none;
+
+  /* Lit, the glass stays dark: the oval in it lights instead. */
+  --disc-lens: radial-gradient(circle at 40% 35% in srgb, var(--glass-shine), var(--glass) 62%, var(--abyss));
+}

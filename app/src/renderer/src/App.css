@@ -29,16 +29,17 @@
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;
   color: var(--accent);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 35%, transparent);
+  text-shadow: 0 0 14px var(--wordmark-glow);
 }
 .header__brand {
   position: relative;
   flex: none;
 }
-/* The needs-you counter, stamped on the emblem's corner. */
+/* The needs-you counter, stamped on the emblem's corner: three pixels under the header's top edge,
+   whatever the emblem's height (the brand sits in the middle of the 54px header). */
 .header__count {
   position: absolute;
-  top: -17px;
+  top: calc(50% - 24px);
   left: 7px;
   min-width: 20px;
   padding: 2px 5px 1px;
@@ -46,7 +47,7 @@
   font-size: 13px;
   line-height: 1;
   text-align: center;
-  color: var(--bone);
+  color: var(--on-signal);
   background: var(--signal);
   border-radius: 2px;
   box-shadow: 0 0 12px var(--signal-glow);
@@ -77,8 +78,8 @@
     gap: 7px;
   }
   .header__title {
-    font-size: 19px;
-    letter-spacing: 2px;
+    font-size: calc(var(--wordmark-size) - 2px);
+    letter-spacing: calc(var(--wordmark-tracking) - 0.5px);
   }
 }
 .tabs__settings {
@@ -90,8 +91,8 @@
     padding-left: 10px;
   }
   .header__title {
-    font-size: 19px;
-    letter-spacing: 2px;
+    font-size: calc(var(--wordmark-size) - 2px);
+    letter-spacing: calc(var(--wordmark-tracking) - 0.5px);
   }
   /* At the narrowest the mascot steps aside rather than crowd the buttons, and gives back its room. */
   .header__mascot {

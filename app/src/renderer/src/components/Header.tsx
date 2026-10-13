@@ -20,7 +20,7 @@ export function Header({ needsYou, mood, onFold, onWatch, onHide }: HeaderProps)
     <header className="header">
       {/* The needs-you count hangs off the emblem like a stamp, taking no room in the row. */}
       <span className="header__brand">
-        <BatEmblem size={48} />
+        <BatEmblem size={48} lit={needsYou > 0} />
         <AnimatePresence mode="popLayout">
           {needsYou > 0 && (
             <motion.span

@@ -38,3 +38,19 @@ export const VENGEANCE_RAIN: RainAtmosphere = {
   angle: 0.26,
   depths: [0.06, 0.1, 0.16],
 }
+
+/**
+ * PALE MOONLIGHT's snow, from Batman Returns over the 1989 smog (burton-1989.md, section 9): about
+ * 35 flakes in the default panel, in three depths of bone, falling 1 to 3 pixels a tick.
+ */
+export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
+  kind: 'snow',
+  color: '--snow',
+  density: 0.25,
+  depths: [
+    { alpha: 0.18, size: 1, fall: 1 },
+    { alpha: 0.28, size: 1.5, fall: 2 },
+    { alpha: 0.4, size: 2, fall: 3 },
+  ],
+  drift: 0.5,
+}

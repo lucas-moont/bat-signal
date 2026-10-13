@@ -2,12 +2,12 @@
 // settings.json keeps; it names the film or comic, while each Theme's display name alludes to it.
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
-import { VENGEANCE_RAIN, type Atmosphere } from './atmospheres'
-import { emblem, WINGS, type Emblem } from './emblems'
-import { VENGEANCE_SUIT, type Suit } from './suits'
-import { STANDARD_WORDS, withLexicon, type Words } from './words'
+import { PALE_MOONLIGHT_SNOW, VENGEANCE_RAIN, type Atmosphere } from './atmospheres'
+import { BAT_1989, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
+import { PALE_MOONLIGHT_SUIT, VENGEANCE_SUIT, type Suit } from './suits'
+import { PALE_MOONLIGHT_WORDS, STANDARD_WORDS, withLexicon, type Words } from './words'
 
-export const THEME_IDS = ['the-batman-2022'] as const
+export const THEME_IDS = ['the-batman-2022', 'batman-1989'] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
 /** The Batman (2022), VENGEANCE: the default Theme. */
@@ -38,6 +38,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(WINGS, 'wear'),
     suit: VENGEANCE_SUIT,
     atmosphere: VENGEANCE_RAIN,
+  },
+  /** Tim Burton's Batman (1989), PALE MOONLIGHT: gold over smog, and snow. */
+  'batman-1989': {
+    flag: 'moonlight',
+    ground: '#0d0906',
+    words: PALE_MOONLIGHT_WORDS,
+    emblem: emblem(BAT_1989, 'none', OVAL_1989),
+    suit: PALE_MOONLIGHT_SUIT,
+    atmosphere: PALE_MOONLIGHT_SNOW,
   },
 }
 

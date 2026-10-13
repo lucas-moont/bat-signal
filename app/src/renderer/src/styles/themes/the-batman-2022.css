@@ -30,6 +30,8 @@
   --signal-glow: color-mix(in srgb, var(--signal) 45%, transparent);
   /* Only for tiny lit pixels (mascot eyes, live dots), where #af0006 reads too dark on black. */
   --signal-hot: #e3121b;
+  /* Text on a Signal Red fill (the header's count). */
+  --on-signal: var(--bone);
   /* Small inks for stamps and pen marks: signal-hot and the approved brick, lifted just enough
      for 4.5:1 on black at 11px. */
   --ink-hot: #ec2a2a;
@@ -94,6 +96,9 @@
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
   --chest: var(--cowl);
+  /* His aura, while something needs the user: the Alarm color's light. */
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
   /* The shadow he steps out of in his Signature pose, over his body only. */
   --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);
   /* The flare he raises when alarmed: Hot Signal, and a smaller Pen Hot on the frames between. */
@@ -138,9 +143,18 @@
   /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
      display face built for large sizes may not hold. VENGEANCE: its display face. */
   --font-label: var(--font-display);
+  /* Its name on its folder in the picker. */
+  --folder-name-size: 15px;
+  --folder-name-tracking: 0.6px;
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;
+  --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
+
+  /* The Night Report's pen strokes, drawn in their inks (an SVG can't read a variable): Pen Hot
+     pressed hard for blocked work, Pen Soft for waiting work. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ec2a2a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23d4574c' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* The stamp's shape: tilted and worn in VENGEANCE; another Theme may stamp straight and clean. */
   --stamp-tilt: -2.5deg;

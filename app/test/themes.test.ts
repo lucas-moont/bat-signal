@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, themeFromFlags, THEMES } from '../src/shared/themes'
-import { RENDERER, themeVariables } from './rendererSources'
+import { RENDERER, rendererSources, themeVariables } from './rendererSources'
 
 describe('the Themes', () => {
   // The window's background shows before the page paints, then the page's --abyss covers it: a
@@ -30,6 +30,13 @@ describe('the Themes', () => {
     expect(THEMES['the-batman-2022'].words.voice.theme).toEqual({
       name: 'VENGEANCE',
       film: 'The Batman (2022)',
+    })
+  })
+
+  it("names PALE MOONLIGHT after Tim Burton's Batman (1989)", () => {
+    expect(THEMES['batman-1989'].words.voice.theme).toEqual({
+      name: 'PALE MOONLIGHT',
+      film: "Tim Burton's Batman (1989)",
     })
   })
 
@@ -64,9 +71,32 @@ describe("the Themes' stylesheets and fonts", () => {
   })
 })
 
+// A variable one Theme sets is inherited by everything under the page, a picker folder wearing
+// another Theme included: if that Theme doesn't set it too, its folder takes the worn Theme's value
+// (a fallback in var() never applies once an ancestor sets one). So every variable the shared
+// stylesheets read, and don't set themselves, is every Theme's to set.
+describe("the shared stylesheets' variables", () => {
+  const shared = rendererSources('.css').filter(({ path }) => !path.startsWith('styles/themes/'))
+  const read = new Set(shared.flatMap(({ text }) => [...text.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]!)))
+  const setInShared = new Set([
+    ...shared.flatMap(({ text }) => [...text.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]!)),
+    // Set on an element by code (the click ripple), not by a Theme.
+    ...rendererSources('.ts', '.tsx').flatMap(({ text }) =>
+      [...text.matchAll(/setProperty\('(--[\w-]+)'/g)].map((m) => m[1]!),
+    ),
+  ])
+  const themesSet = [...read].filter((name) => !setInShared.has(name)).sort()
+
+  it.each(THEME_IDS)('are all set by %s', (id) => {
+    const vars = themeVariables(id)
+    expect(themesSet.filter((name) => !vars.has(name))).toEqual([])
+  })
+})
+
 describe('a demo page', () => {
   it('wears the Theme its hash names', () => {
     expect(themeFromFlags(new Set(['demo', 'report', 'vengeance']))).toBe('the-batman-2022')
+    expect(themeFromFlags(new Set(['demo', 'moonlight']))).toBe('batman-1989')
   })
 
   it('names no Theme without a Theme flag', () => {

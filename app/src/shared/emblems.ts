@@ -12,6 +12,18 @@ export const WINGS =
   'L97 24.5 L94 31 L78 32 L73 34.5 L64 41 L56 41 L47 34.5 L42 32 L26 31 L23 24.5 L18.5 22.5 ' +
   'L8.5 19.5 L2 21.5 Z'
 
+/**
+ * PALE MOONLIGHT's bat, after Tim Burton's Batman (1989), on the same 120x48 grid, read from the
+ * film's poster (burton-1989.md, section 8): a narrow head with short ears, a deep scoop either side
+ * of it (the oval's upper windows), wings reaching the oval's rim, two rounded lobes a side
+ * underneath and one sharp tail. Drawn as a left half and mirrored at x = 60.
+ */
+export const BAT_1989 =
+  'M60 11 L57 11 L55.6 4.6 L54.2 13.5 C52 20.5 48 22.4 43.5 22 C37 21.4 30.5 17.5 27 11.6 Q20.6 22.6 24.2 33.8 Q29.5 27.8 36.6 38.4 Q45.5 28.6 53 36.2 L60 44.2 L67 36.2 Q74.5 28.6 83.4 38.4 Q90.5 27.8 95.8 33.8 Q99.4 22.6 93 11.6 C89.5 17.5 83 21.4 76.5 22 C72 22.4 68 20.5 65.8 13.5 L64.4 4.6 L63 11 L60 11 Z'
+
+/** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
+export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
+
 /** A rectangle on an outline's grid. */
 export interface Box {
   x: number

@@ -56,6 +56,14 @@ const [vx, vy, vw, vh] = VIEW
 const [bx, by, bw, bh] = BODY_BOX
 const OFF_BODY = `M${vx - vw} ${vy - vh} h${3 * vw} v${3 * vh} h${-3 * vw} Z M${bx} ${by} h${bw} v${bh} h${-bw} Z`
 
+/** A path layer's own attributes, the same on its mirrored side. */
+const pathOf = ({ className, fill, d, smooth }: Extract<Layer, { kind: 'path' }>) => ({
+  className,
+  fill,
+  d,
+  shapeRendering: smooth ? 'geometricPrecision' : undefined,
+})
+
 function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) {
   switch (layer.kind) {
     case 'cape': {
@@ -72,10 +80,8 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
     case 'path':
       return (
         <Fragment key={key}>
-          <path className={layer.className} fill={layer.fill} d={layer.d} />
-          {layer.mirrored && (
-            <path className={layer.className} fill={layer.fill} d={layer.d} transform={MIRROR} />
-          )}
+          <path {...pathOf(layer)} />
+          {layer.mirrored && <path {...pathOf(layer)} transform={MIRROR} />}
         </Fragment>
       )
     case 'rects':
@@ -278,12 +284,16 @@ function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdPr
     el.style.translate = now === null ? '' : `0 ${BREATH[Math.floor(now / BREATH_STEP_MS) % BREATH.length]}px`
   })
 
+  // The aura: while something needs the user, and while a Signature pose is revealed unless the
+  // suit keeps it for the alarm.
+  const aura = !!suit.aura && (mood === 'alarmed' || (suit.aura === true && !!revealed && !settled && !calm))
+
   return (
     <span
       ref={ref}
       role="img"
       aria-label={watching ? said.watching : said[mood]}
-      className={`clawd${hopping ? ' clawd--hop' : ''}${suit.aura && (mood === 'alarmed' || (revealed && !settled && !calm)) ? ' clawd--aura' : ''}`}
+      className={`clawd${hopping ? ' clawd--hop' : ''}${aura ? ' clawd--aura' : ''}`}
       style={{ width: size, height: size * FRAME_ASPECT }}
       onClick={() => {
         if (calm) return

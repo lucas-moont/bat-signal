@@ -80,6 +80,8 @@
   display: grid;
   justify-items: start;
   gap: 8px;
+  /* Room under the tilted stamp when a long name and credit take the folder's spare height. */
+  padding-bottom: 5px;
   margin-bottom: auto;
   pointer-events: none;
 }
@@ -105,11 +107,12 @@
   }
 }
 
+/* Each Theme sets its name's size on its folder (a longer name, smaller). */
 .folder__name {
   font-family: var(--font-label);
-  font-size: 15px;
+  font-size: var(--folder-name-size);
   line-height: 1.05;
-  letter-spacing: 0.6px;
+  letter-spacing: var(--folder-name-tracking);
 }
 .folder:not(.folder--worn) .folder__name {
   color: var(--ash);
