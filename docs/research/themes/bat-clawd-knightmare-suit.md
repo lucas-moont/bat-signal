@@ -2,6 +2,8 @@
 
 Research note, 2026-10-09. Scope: what Ben Affleck's Batman actually wears in the Knightmare, the vision of a ruined future in *Batman v Superman: Dawn of Justice* (2016) and the epilogue of *Zack Snyder's Justice League* (2021), and how it becomes a Bat-Clawd outfit map on the prototype grid (`prototype/clawd-outfits`, `ClawdOutfits.prototype.tsx`). It replaces outfit K (the grey Batsuit with the big black bat, and the armour when alarmed) and reopens the Alarm color in [`snyder.md`](snyder.md) §3. It keeps the approved model of outfits V and I: a suit over the body, arms and legs, the cowl down to under the eyes, Clawd orange only as the jaw, white eyes, a neutral rim at rest, the back of the garment hanging behind the legs, and the aura only while alarmed.
 
+*Built in #83 as drawn here, with sleeves a shade darker than the coat (`--sleeve`) so both arms read on it, the BvS bat between the lapels in near-black on a lifted charcoal, and the coat streaming left in flight; the aura is the Theme's S-shield crimson, not Heat Vision ([`knightmare-palette.md`](knightmare-palette.md) §4).*
+
 ## TL;DR
 
 - **The outfit is desert gear worn over the Batsuit, with no cape.** It is a long, sleeved, light-brown leather duster worn open, a frayed brown scarf, flying goggles pushed up on the cowl, the cowl itself, the dark, battle-worn suit underneath (the chest bat is covered), a utility belt with a tan webbing belt and a thigh holster, olive cargo pants with knee pads, black forearm gauntlets with olive wraps, and black boots. He carries a rifle on a sling. Both films use the same look; Snyder's 2021 photo is "the same coat he wore in the Knightmare sequence" ([ScreenCrush, 4 Feb 2021](https://screencrush.com/justice-league-snyder-cut-batman-first-look/)).
