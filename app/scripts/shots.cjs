@@ -53,10 +53,11 @@ const SHOTS = [
   // The signal window: the lit disc at rest, and the disc sending a notice card up its beam.
   { name: 'signal', view: 'signal', size: [96, 96], steps: [] },
   { name: 'signal-notice', view: 'signal', hash: 'demo-news', size: [320, 230], steps: [] },
-  // Bat-Clawd up close, cut out of the panel's header in each mood.
-  { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 6, steps: [] },
-  { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 6, steps: [] },
-  { name: 'clawd-alarmed', hash: 'demo', clip: '.clawd', scale: 6, steps: [] },
+  // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom
+  // (a larger factor is ignored, and the shot comes out at 1x).
+  { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 5, steps: [] },
+  { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 5, steps: [] },
+  { name: 'clawd-alarmed', hash: 'demo', clip: '.clawd', scale: 5, steps: [] },
 ]
 
 /** The padded box of the element matching `selector`, in the pixels of an image `imageWidth` wide. */
@@ -83,7 +84,14 @@ async function shoot(
   win.setContentSize(width * scale, height * scale)
   // A different query per shot forces a fresh page: a change of hash alone would not reload it.
   await win.loadFile(HTML, { hash, query: { view, shot: name } })
-  win.webContents.setZoomFactor(scale)
+  // Chromium sometimes drops a zoom set as the page loads (the shot then comes out at 1x): set it
+  // again until the page is laid out at the shot's size.
+  for (let tries = 0; tries < 10; tries++) {
+    win.webContents.setZoomFactor(1)
+    win.webContents.setZoomFactor(scale)
+    await new Promise((r) => setTimeout(r, 100))
+    if ((await win.webContents.executeJavaScript('innerWidth')) <= width + 1) break
+  }
   await new Promise((r) => setTimeout(r, SETTLE_MS))
   if (steps.length) {
     await win.webContents.executeJavaScript(steps.join(';'))
