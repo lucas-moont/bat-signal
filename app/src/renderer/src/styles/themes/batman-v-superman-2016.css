@@ -91,12 +91,12 @@
   --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
   --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
-  /* The emblem: flat, in Bone. */
-  --emblem: var(--bone);
+  /* The emblem: flat, in the warm ash grey, neutral beside the cream wordmark (picked on screen). */
+  --emblem: var(--ash);
 
-  /* The Signal disc. Unlit: grey glass under a hard light from above, the bat a shade in it. Lit,
-     the other way round from VENGEANCE's: a pale, colorless sky with the bat burning red on it,
-     outlined in black to hold its shape (snyder.md, section 8). */
+  /* The Signal disc. Unlit: dark glass under a warm hard light from above, the bat a shade in it.
+     Lit: the Knightmare's sky with the bat black across it, as the film's own Signal throws it; the
+     crimson rings it and glows round it (picked on screen: a crimson bat on the sky jarred). */
   --disc-bat: var(--raised);
   --glass-shine: #3a2210;
   --glass: var(--abyss);
@@ -104,8 +104,8 @@
   --disc-rim-outer: var(--line);
   --lens-core: #fdebc4;
   --lens-rim: var(--signal);
-  --lens-bat: var(--signal-hot);
-  --lens-bat-edge: var(--abyss);
+  --lens-bat: var(--abyss);
+  --lens-bat-edge: transparent;
   --notice-top: #24130a;
   --notice-foot: var(--smoke);
   --notice-hover-top: #2e180c;
@@ -151,6 +151,6 @@
   --stamp-weight: 800;
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
-  /* Lit: a pale, colorless sky, the bat burning on it. */
+  /* Lit: sky to horizon haze to city haze, all sampled (knightmare-palette.md, section 5). */
   --disc-lens: radial-gradient(circle at 50% 45% in srgb, var(--lens-core), #f3daa9 60%, #e1ae66);
 }
