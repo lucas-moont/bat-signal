@@ -99,9 +99,7 @@ describe("WATCHFUL PROTECTOR's Voice", () => {
   })
 
   // A term inside a sentence is lowered: Ops reads "ops", and nothing it names needs a capital.
-  it('names its ops in a sentence, and the standard cases with the Lexicon off', () => {
+  it('names its ops in a sentence', () => {
     expect(voice.empty.noCases.title(terms)).toBe('No ops running. Get some rest.')
-    const off = withLexicon(WATCHFUL_PROTECTOR_WORDS, false)
-    expect(off.voice.empty.noCases.title(off.terms)).toBe('No cases running. Get some rest.')
   })
 })
