@@ -17,8 +17,11 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number): s
   return `translate(${cx - (bat.x + bat.width / 2) * k} ${cy - (bat.y + bat.height / 2) * k}) scale(${k})`
 }
 
-/** An outline's width, a share of the bat's: about 1.5px round a 44px bat, whatever its grid. */
-const OUTLINE_SHARE = 0.035
+/**
+ * An outline's stroke, a share of the bat's width: half of it shows outside the bat, about 1.5px
+ * round a 44px bat, whatever the emblem's grid.
+ */
+export const OUTLINE_SHARE = 0.07
 
 export function BatEmblem({
   size = 40,
@@ -103,17 +106,17 @@ export function BatEmblem({
           />
         </>
       )}
-      <path
-        d={path}
-        fill={fill}
-        filter={finish === 'wear' ? `url(#${wear})` : undefined}
-        {...(outline && {
-          stroke: outline,
-          strokeWidth: bat.width * OUTLINE_SHARE,
-          strokeLinejoin: 'round' as const,
-          paintOrder: 'stroke',
-        })}
-      />
+      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. */}
+      {outline && (
+        <path
+          d={path}
+          fill="none"
+          stroke={outline}
+          strokeWidth={bat.width * OUTLINE_SHARE}
+          strokeLinejoin="round"
+        />
+      )}
+      <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
     </svg>
   )
 }
