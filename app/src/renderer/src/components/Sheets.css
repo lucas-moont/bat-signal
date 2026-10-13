@@ -52,6 +52,13 @@
   line-height: 1.15;
   color: var(--bone);
 }
+/* A drawer's title is someone's words (a task, a subagent's brief, a command): set as a case's title,
+   in its own case. */
+.sheet__title--words {
+  font-family: var(--font-case-title);
+  font-weight: var(--case-title-weight);
+  text-transform: none;
+}
 .sheet__body {
   overflow-y: auto;
   padding: 0 16px 20px;
