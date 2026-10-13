@@ -81,7 +81,7 @@
   --suit: #22262a;
   --plate: #485058;
   --mesh: #0e1013;
-  --gloves: #0b0d10;
+  --gloves: var(--cowl);
   --belt: #8a7866;
   --buckle: #c4ab8a;
   --cape: #000000;
@@ -94,21 +94,19 @@
 
   /* The emblem: flat and matte, in fluorescent white; no plate. */
   --emblem: var(--bone);
-  --emblem-plate: var(--raised);
-  --emblem-plate-rim: var(--line);
 
   /* The Signal disc: dark steel glass with the bat a shade in it; lit, a searchlight's white core
      burning blue at its edge, the bat black across it (nolan.md, section 8). */
   --disc-bat: var(--raised);
-  --glass-shine: #0f161e;
-  --glass: #04070b;
+  --glass-shine: var(--surface);
+  --glass: var(--abyss);
   --disc-rim-inner: #05080c;
-  --disc-rim-outer: #18232e;
+  --disc-rim-outer: var(--raised);
   --lens-core: #f3f8ff;
   --lens-rim: #10305a;
-  --lens-bat: #04070b;
+  --lens-bat: var(--abyss);
   --notice-top: #111a23;
-  --notice-foot: #080d13;
+  --notice-foot: var(--smoke);
   --notice-hover-top: #172331;
   --notice-hover-foot: #0b121a;
 
