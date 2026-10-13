@@ -57,6 +57,10 @@ const SHOTS = [
   { name: 'moonlight-needs-you', hash: 'demo-moonlight', steps: [] },
   { name: 'moonlight-night-report', hash: 'demo-report-moonlight', steps: [] },
   { name: 'moonlight-clawd-alarmed', hash: 'demo-moonlight', clip: '.clawd', scale: 5, steps: [] },
+  // WATCHFUL PROTECTOR, likewise.
+  { name: 'protector-needs-you', hash: 'demo-protector', steps: [] },
+  { name: 'protector-night-report', hash: 'demo-report-protector', steps: [] },
+  { name: 'protector-clawd-alarmed', hash: 'demo-protector', clip: '.clawd', scale: 5, steps: [] },
   // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom.
   { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 5, steps: [] },
   { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 5, steps: [] },
