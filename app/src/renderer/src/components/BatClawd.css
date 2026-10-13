@@ -18,6 +18,14 @@
   overflow: visible;
 }
 
+/* His eyes stay white in every Theme (the Costume Rule), dimmer for a frame mid-blink. */
+.clawd__eyes {
+  fill: var(--clawd-eye);
+}
+.clawd__eyes--blink {
+  fill: var(--clawd-eye-dim);
+}
+
 /* The chest emblem: in VENGEANCE, the cowl's black. */
 .clawd__emblem {
   fill: var(--chest);

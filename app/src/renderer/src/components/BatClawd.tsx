@@ -104,11 +104,14 @@ function Frame({
   suit,
   pose,
   gaze,
+  blink = false,
   className,
 }: {
   suit: Suit
   pose: Pose
   gaze: { x: number; y: number }
+  /** Mid-blink: his eyes dim for a frame. */
+  blink?: boolean
   className: string
 }) {
   const emblem = useEmblem()
@@ -126,7 +129,10 @@ function Frame({
         <rect key={`${r.x},${r.y}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} />
       ))}
       {pose.front.map((layer, i) => layerShape(layer, i, emblem, offBody))}
-      <g fill={pose.eyeColor} transform={`translate(${gaze.x} ${gaze.y})`}>
+      <g
+        className={`clawd__eyes${blink ? ' clawd__eyes--blink' : ''}`}
+        transform={`translate(${gaze.x} ${gaze.y})`}
+      >
         {rects(pose.eyes === 'open' ? suit.eyes.open : suit.eyes.shut)}
       </g>
     </svg>
@@ -156,20 +162,33 @@ const BOB = [0, -1, -2, -1]
 /** How long a click's Signature pose holds its final step before he returns to his Mood: a second. */
 const CLICK_HOLD_STEPS = 4
 
-/** Each mood's flip-book: which pose to show and where to put it on a given frame. */
-const MOTION: Record<MascotMood, (frame: number, poses: Poses) => { pose: Pose; transform: string }> = {
-  // Sitting still, wrapped in the cape; the breath is written straight to the element.
-  sleeping: (_f, [a]) => ({ pose: a, transform: '' }),
-  // The cape flutters between two frames while the body bobs.
-  flying: (f, [a, b = a]) => ({
-    pose: f % 2 ? b : a,
-    transform: `translateY(${BOB[(f >> 1) % BOB.length]}px)`,
-  }),
-  // The cape flung open, eyes that blink every so often, and a shiver.
-  alarmed: (f, [a, b = a]) => ({
-    pose: f % 10 === 9 ? b : a,
-    transform: `translateX(${f % 2 ? 0.6 : -0.6}px)`,
-  }),
+/** A Mood's poses, one a frame, round and round. */
+const nth = (poses: Poses, f: number): Pose => poses[f % poses.length] ?? poses[0]
+/** The mood's motion, then the pose's own nudge (a wingsuit banking) on top of it. */
+const nudged = (motion: string, pose: Pose) =>
+  pose.transform ? `${motion} ${pose.transform}`.trim() : motion
+
+/** Each mood's flip-book on a given frame: which pose, where to put it, and whether his eyes blink. */
+export function moodFrame(
+  mood: MascotMood,
+  f: number,
+  poses: Poses,
+): { pose: Pose; transform: string; blink: boolean } {
+  switch (mood) {
+    // Sitting still, wrapped in the cape; the breath is written straight to the element.
+    case 'sleeping':
+      return { pose: poses[0], transform: nudged('', poses[0]), blink: false }
+    // A flutter (a cape trailing, a wingsuit banking) while the body bobs.
+    case 'flying': {
+      const pose = nth(poses, f)
+      return { pose, transform: nudged(`translateY(${BOB[(f >> 1) % BOB.length]}px)`, pose), blink: false }
+    }
+    // The cape flung open (or a flare flickering), a shiver, and eyes that blink every so often.
+    case 'alarmed': {
+      const pose = nth(poses, f)
+      return { pose, transform: nudged(`translateX(${f % 2 ? 0.6 : -0.6}px)`, pose), blink: f % 10 === 9 }
+    }
+  }
 }
 
 export function BatClawd({
@@ -247,9 +266,9 @@ export function BatClawd({
   const frame = calm ? 0 : clock
   const step: Step | undefined =
     revealed ?? (watching && !signature ? suit.watch[frame % suit.watch.length] : undefined)
-  const { pose, transform } = step
-    ? { pose: step.pose, transform: step.transform ?? '' }
-    : MOTION[mood](frame, suit.poses[mood])
+  const { pose, transform, blink } = step
+    ? { pose: step.pose, transform: step.transform ?? '', blink: false }
+    : moodFrame(mood, frame, suit.poses[mood])
   // Still eyes when calm or asleep; on the perch they follow the watch, otherwise the pointer.
   const stillEyes = calm || (!watching && mood === 'sleeping')
   const eyes = stillEyes ? { x: 0, y: 0 } : step ? { x: step.look, y: 0 } : gaze
@@ -279,7 +298,7 @@ export function BatClawd({
       }}
     >
       <span ref={mover} className="clawd__mover" style={{ transform }}>
-        <Frame suit={suit} pose={pose} gaze={eyes} className="clawd__frame" />
+        <Frame suit={suit} pose={pose} gaze={eyes} blink={blink} className="clawd__frame" />
       </span>
     </span>
   )

@@ -3,9 +3,10 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { BatClawd } from '../../src/renderer/src/components/BatClawd'
+import { BatClawd, moodFrame } from '../../src/renderer/src/components/BatClawd'
 import { BatEmblem } from '../../src/renderer/src/components/BatEmblem'
 import { WINGS } from '../../src/shared/emblems'
+import { markedPose } from '../fixtures/themes'
 
 const POINTS = [...WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => ({
   x: Number(m[1]),
@@ -63,6 +64,29 @@ describe('Bat-Clawd', () => {
     expect(ids).toHaveLength(2)
     expect(new Set(ids).size).toBe(2)
     expect(uses).toEqual(ids)
+  })
+})
+
+describe('his Moods on the clock', () => {
+  const a = markedPose('1')
+  const b = { ...markedPose('2'), transform: 'rotate(4deg)' }
+
+  // Two frames of the same flutter (a cape, a wingsuit banking), while the body bobs.
+  it('flies through his poses one frame each, tilting as a pose says', () => {
+    expect(moodFrame('flying', 0, [a, b]).pose).toBe(a)
+    const banked = moodFrame('flying', 1, [a, b])
+    expect(banked.pose).toBe(b)
+    expect(banked.transform).toMatch(/^translateY\(-?\d+px\) rotate\(4deg\)$/)
+  })
+
+  // A held flare flickers on every frame; his eyes blink on their own, every tenth.
+  it('flickers through his alarmed poses every frame, and blinks every tenth', () => {
+    expect([0, 1, 2].map((f) => moodFrame('alarmed', f, [a, b]).pose)).toEqual([a, b, a])
+    expect([8, 9, 19].map((f) => moodFrame('alarmed', f, [a]).blink)).toEqual([false, true, true])
+  })
+
+  it('sits still asleep', () => {
+    expect(moodFrame('sleeping', 3, [a, b])).toEqual({ pose: a, transform: '', blink: false })
   })
 })
 

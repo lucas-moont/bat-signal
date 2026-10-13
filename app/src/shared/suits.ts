@@ -37,11 +37,11 @@ export interface Pose {
   behind: readonly Layer[]
   front: readonly Layer[]
   eyes: 'open' | 'shut'
-  /** Always white (or a dimmer white, mid-blink): the Costume Rule keeps his eyes. */
-  eyeColor: string
+  /** A nudge on top of the Mood's motion while this pose shows (a wingsuit banking). */
+  transform?: string
 }
 
-/** A Mood's poses; the first is the resting one. */
+/** A Mood's poses, shown one a frame in turn (BatClawd.tsx, moodFrame); the first is the resting one. */
 export type Poses = readonly [Pose, ...Pose[]]
 
 /** One step of a script on the shared clock: a pose, and where his eyes look along the street. */
@@ -146,15 +146,7 @@ const COWL_EDGE: Layer = {
 const CHEST: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 7 }
 const behindWith = (d: string): Layer[] => [{ kind: 'path', d, className: 'clawd__cape' }, COWL_EDGE]
 
-const EYE = 'var(--clawd-eye)'
-const EYE_DIM = 'var(--clawd-eye-dim)'
-const awake = (behind: Layer[], eyeColor = EYE): Pose => ({
-  map: AWAKE,
-  behind,
-  front: [CHEST],
-  eyes: 'open',
-  eyeColor,
-})
+const awake = (behind: Layer[]): Pose => ({ map: AWAKE, behind, front: [CHEST], eyes: 'open' })
 const open: Layer[] = [
   { kind: 'cape', d: CAPE.openLeft, mirrored: true, back: true },
   { kind: 'path', d: CAPE.threadLeft, className: 'clawd__thread', mirrored: true },
@@ -204,11 +196,10 @@ export const VENGEANCE_SUIT: Suit = {
           },
         ],
         eyes: 'shut',
-        eyeColor: EYE,
       },
     ],
     flying: [flyingA, flyingB],
-    alarmed: [awake(open), awake(open, EYE_DIM)],
+    alarmed: [awake(open)],
   },
   watch: [
     STILL,
