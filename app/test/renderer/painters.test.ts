@@ -327,9 +327,11 @@ describe('the lit windows', () => {
     const switches = drawn.filter((boxes) => boxes.length > 0)
     expect(switches).toHaveLength(2)
     for (const boxes of switches) {
-      // The cell goes dark (the tower's color) and, switching on, takes a light over it.
-      expect(boxes[0]).toMatchObject({ w: 3, h: 4, color: COLORS[0], alpha: 1 })
-      for (const b of boxes) expect([b.x, b.y]).toEqual([boxes[0]!.x, boxes[0]!.y])
+      // The cell goes dark (the tower's color), half a pixel past it all round so no light is
+      // left at its edges, and, switching on, takes a light over it.
+      const [glass, ...light] = boxes
+      expect(glass).toMatchObject({ w: 4, h: 5, color: COLORS[0], alpha: 1 })
+      for (const b of light) expect(b).toMatchObject({ x: glass!.x + 0.5, y: glass!.y + 0.5, w: 3, h: 4 })
     }
   })
 

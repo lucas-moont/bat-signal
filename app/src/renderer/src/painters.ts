@@ -278,10 +278,11 @@ function litWindows(
         if ((w.light === undefined) !== on) continue
         w.light = on ? pickLight() : undefined
         litCount += on ? 1 : -1
-        // The glass afresh, then its new light over it.
+        // The glass afresh, half a pixel past the cell all round (into the mullions, glass too), so
+        // a light's soft edges on a scaled display go with it; then its new light over it.
         ctx.globalAlpha = 1
         ctx.fillStyle = colors.glass
-        ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
+        ctx.fillRect(w.x - 0.5, w.y - 0.5, CELL.w + 1, CELL.h + 1)
         lightUp(ctx, w)
         return
       }
