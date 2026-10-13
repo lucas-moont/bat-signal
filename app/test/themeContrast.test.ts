@@ -1,21 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { THEME_IDS, type ThemeId } from '../src/shared/themes'
-import { rendererSources, themeVariables } from './rendererSources'
+import { channels, rendererSources, resolved, themeVariables } from './rendererSources'
 
 type Rgb = [number, number, number]
 
 /** A variable's color as [r, g, b], following var() aliases down to a hex value. */
 function rgb(variables: Map<string, string>, name: string): Rgb {
-  const value = variables.get(name)
-  if (!value) throw new Error(`no ${name}`)
-  const alias = /^var\((--[\w-]+)\)$/.exec(value)
-  if (alias) return rgb(variables, alias[1]!)
-  const hex = /^#([0-9a-f]{6})$/i.exec(value)
-  if (!hex)
+  const value = resolved(variables, `var(${name})`)
+  if (!/^#[0-9a-f]{6}$/i.test(value))
     throw new Error(
       `${name} is ${value}, not an opaque hex: the contrast test can't measure a color-mix() or translucent text color`,
     )
-  return [0, 2, 4].map((i) => parseInt(hex[1]!.slice(i, i + 2), 16)) as Rgb
+  return channels(value)
 }
 
 /** WCAG 2 relative luminance. */

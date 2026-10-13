@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Pose, Suit } from '../src/shared/suits'
 import { THEME_IDS, THEMES } from '../src/shared/themes'
 import { CSS_COLOR_NAMES } from './cssColorNames'
-import { themeVariables } from './rendererSources'
+import { channels, resolved, themeVariables } from './rendererSources'
 
 /** The poses he wears awake: flying, alarmed, and his Signature pose's steps. */
 const awakePoses = (suit: Suit): Pose[] => [
@@ -19,22 +19,6 @@ const bodyLetter = (pose: Pose) =>
 /** A pose's map from grid row y (inclusive) to row `to` (exclusive), as its half-rows. */
 const rowsBetween = (pose: Pose, y: number, to: number) =>
   pose.map.rows.slice((y - pose.map.top) * 2, (to - pose.map.top) * 2)
-
-/** A value with every var() it names written out, as far as the Theme defines them. */
-function resolved(vars: Map<string, string>, value: string, depth = 0): string {
-  if (depth > 10) return value
-  return value.replace(/var\((--[\w-]+)\)/g, (call, name: string) => {
-    const named = vars.get(name)
-    return named === undefined ? call : resolved(vars, named, depth + 1)
-  })
-}
-
-/** A hex color's channels, 0 to 255. */
-function channels(hex: string): [number, number, number] {
-  const digits = hex.slice(1)
-  const full = digits.length < 6 ? [...digits.slice(0, 3)].map((d) => d + d).join('') : digits
-  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)) as [number, number, number]
-}
 
 /** A color's hue, in degrees. */
 function hue(hex: string): number {

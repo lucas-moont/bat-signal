@@ -22,5 +22,21 @@ export function themeVariables(theme: string): Map<string, string> {
   return new Map([...block.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map((m) => [m[1]!, m[2]!.trim()] as const))
 }
 
+/** A value with every var() it names written out, as far as the Theme defines them. */
+export function resolved(vars: Map<string, string>, value: string, depth = 0): string {
+  if (depth > 10) return value
+  return value.replace(/var\((--[\w-]+)\)/g, (call, name: string) => {
+    const named = vars.get(name)
+    return named === undefined ? call : resolved(vars, named, depth + 1)
+  })
+}
+
+/** A hex color's channels, 0 to 255. */
+export function channels(hex: string): [number, number, number] {
+  const digits = hex.slice(1)
+  const full = digits.length < 6 ? [...digits.slice(0, 3)].map((d) => d + d).join('') : digits
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)) as [number, number, number]
+}
+
 /** Every renderer source file with one of the extensions. */
 export const rendererSources = (...extensions: string[]) => sourcesUnder('renderer/src', ...extensions)

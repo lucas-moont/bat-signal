@@ -5,20 +5,29 @@ import { VENGEANCE_RAIN, type SnowAtmosphere } from '../../src/shared/atmosphere
 
 type Segment = { x0: number; y0: number; x1: number; y1: number }
 
-/** A canvas context that records the strokes it is asked for, one list of segments per stroke(). */
+type Square = { x: number; y: number; size: number }
+
+/**
+ * A canvas context that records what it is asked to draw: one list of segments per stroke() (the
+ * rain), and one list of squares per fill() (the snow).
+ */
 function recorder() {
   const strokes: { alpha: number; segments: Segment[] }[] = []
-  let path: Segment[] = []
+  const fills: { alpha: number; rects: Square[] }[] = []
+  let segments: Segment[] = []
+  let rects: Square[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
     clearRect: () => undefined,
-    beginPath: () => (path = []),
+    beginPath: () => ([segments, rects] = [[], []]),
     moveTo: (x: number, y: number) => (from = { x, y }),
-    lineTo: (x: number, y: number) => path.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
-    stroke: () => strokes.push({ alpha: ctx.globalAlpha, segments: path }),
+    lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
+    stroke: () => strokes.push({ alpha: ctx.globalAlpha, segments }),
+    rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
+    fill: () => fills.push({ alpha: ctx.globalAlpha, rects }),
   }
-  return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes }
+  return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills }
 }
 
 /** The same "random" numbers every run. */
@@ -119,20 +128,6 @@ describe('the rain', () => {
   })
 })
 
-/** A canvas context that records the rects it fills, one list per fill(). */
-function fillRecorder() {
-  const fills: { alpha: number; rects: { x: number; y: number; size: number }[] }[] = []
-  let path: { x: number; y: number; size: number }[] = []
-  const ctx = {
-    globalAlpha: 1,
-    clearRect: () => undefined,
-    beginPath: () => (path = []),
-    rect: (x: number, y: number, w: number) => path.push({ x, y, size: w }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, rects: path }),
-  }
-  return { ctx: ctx as unknown as CanvasRenderingContext2D, fills }
-}
-
 describe('the snow', () => {
   const SNOW: SnowAtmosphere = {
     kind: 'snow',
@@ -156,10 +151,10 @@ describe('the snow', () => {
   /** The snow as it appears, then after each of `ticks` ticks of the clock. */
   const ticks = (n: number, dt = 1 / FPS) => {
     const painter = snow()
-    const first = fillRecorder()
+    const first = recorder()
     painter.paint(first.ctx, 0)
     const after = Array.from({ length: n }, () => {
-      const r = fillRecorder()
+      const r = recorder()
       painter.paint(r.ctx, dt)
       return r.fills
     })
