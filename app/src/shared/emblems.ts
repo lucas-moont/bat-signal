@@ -35,6 +35,18 @@ export const BAT_2008 =
   'L77.7 28.6 L73.8 30.5 L70 31.5 L66.2 34.5 L62.3 39 L60 40.5 L57.7 39 L53.8 34.5 L50 31.5 ' +
   'L46.2 30.5 L42.3 28.6 L38.5 28.2 L31 27.4 L19 27.2 L19 19.5 Q14 11.5 0 8 Z'
 
+/**
+ * KNIGHTMARE's bat, after Zack Snyder's Batman (2016–2021), on the same 120x48 grid (snyder.md,
+ * section 8): its upper outline traced from the Batman v Superman poster, short ears with vertical
+ * outer edges and a flat crown, wing tops rising to sharp horns set higher than the ears; its lower
+ * edge drawn from a photographed sculpture, two deep scallops a side and the body tapering to a point,
+ * all chunkier and wider than the first draft. Symmetric about x = 60.
+ */
+export const BAT_2016 =
+  'M60 45 L54 40 Q49 32 41 32 Q35 33 30 38 Q26 30 17 29 Q10 29 3 34 L5 20 L9 3 Q26 9 40 14 L41.5 7 ' +
+  'L43 3 L49 11 L71 11 L77 3 L78.5 7 L80 14 Q94 9 111 3 L115 20 L117 34 Q110 29 103 29 Q94 30 90 38 ' +
+  'Q85 33 79 32 Q71 32 66 40 L60 45 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 
