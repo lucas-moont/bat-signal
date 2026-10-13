@@ -197,6 +197,15 @@ describe('the snow', () => {
     expect(fall(5)).toBeCloseTo(fall(2 / FPS))
   })
 
+  // A flake that comes back in its old column would draw the same streaks every cycle.
+  it('brings a flake back in a column of its own', () => {
+    const all = ticks(200)
+    const near = all.map((fill) => fill.at(-1)!.rects[0]!)
+    const back = near.findIndex((r, i) => i > 0 && r.y < near[i - 1]!.y)
+    expect(back).toBeGreaterThan(0)
+    expect(Math.abs(near[back]!.x - near[back - 1]!.x)).toBeGreaterThan(2 * SNOW.drift)
+  })
+
   it('keeps falling: a flake that leaves the bottom comes back above the top', () => {
     const last = ticks(600).at(-1)!
     const ys = last.flatMap((f) => f.rects.map((r) => r.y))

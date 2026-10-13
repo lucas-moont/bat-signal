@@ -116,9 +116,8 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
       ticks = 0
       layers = depths.map((): Flake[] => [])
       for (let i = howMany(width, height, density); i > 0; i--) {
-        const flake = { x: random() * width, y: random() * height, phase: 0 }
-        layers[Math.floor(random() * depths.length)]!.push(flake)
-        flake.phase = Math.floor(random() * SWAY.length)
+        const [x, y, depth] = [random() * width, random() * height, Math.floor(random() * depths.length)]
+        layers[depth]!.push({ x, y, phase: Math.floor(random() * SWAY.length) })
       }
     },
     paint(ctx, dt) {
@@ -132,8 +131,11 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
         ctx.beginPath()
         for (const f of layers[depth]!) {
           f.y += fall * step
-          // Gone below: it falls again from just above the top.
-          if (f.y > height) f.y -= height + size
+          // Gone below: it falls again from just above the top, in a column of its own.
+          if (f.y > height) {
+            f.y -= height + size
+            f.x = random() * width
+          }
           ctx.rect(f.x + sways[f.phase]!, f.y, size, size)
         }
         ctx.fill()
