@@ -10,14 +10,13 @@ const { execFileSync } = require('node:child_process')
 const { mkdirSync, mkdtempSync, rmSync, writeFileSync } = require('node:fs')
 const { tmpdir } = require('node:os')
 const { dirname, join } = require('node:path')
-const { HTML, demoWindow, click, clickText } = require('./demoWindow.cjs')
+const { demoWindow, loadZoomed, wait, click, clickText } = require('./demoWindow.cjs')
 
 const OUT = join(__dirname, '../../docs/screenshots/demo.gif')
 const SIZE = [320, 440] // the panel's default size; the disc scene uses the same frame
 const SCALE = 1.5 // sharp enough to read, small enough for a README GIF
 const FPS = 10
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 /** The centre of the first element matching `selector`, in page pixels. */
 const centreOf = (win, selector) =>
   win.webContents.executeJavaScript(
@@ -49,8 +48,7 @@ const ZOOM_SETTLE_MS = 300
 
 /** Loads a view of the demo night, at the GIF's size and scale. */
 async function open(win, view, hash) {
-  await win.loadFile(HTML, { hash, query: { view, gif: `${view}-${hash}` } })
-  win.webContents.setZoomFactor(SCALE)
+  await loadZoomed(win, { hash, query: { view, gif: `${view}-${hash}` }, scale: SCALE, width: SIZE[0] })
   await wait(ZOOM_SETTLE_MS)
 }
 

@@ -6,7 +6,7 @@
 const { app } = require('electron')
 const { mkdirSync, writeFileSync } = require('node:fs')
 const { join } = require('node:path')
-const { HTML, demoWindow, click, clickText } = require('./demoWindow.cjs')
+const { demoWindow, loadZoomed, wait, click, clickText } = require('./demoWindow.cjs')
 
 const OUT = join(__dirname, '../../docs/screenshots')
 const SCALE = 2 // retina-sharp images for the README
@@ -53,8 +53,7 @@ const SHOTS = [
   // The signal window: the lit disc at rest, and the disc sending a notice card up its beam.
   { name: 'signal', view: 'signal', size: [96, 96], steps: [] },
   { name: 'signal-notice', view: 'signal', hash: 'demo-news', size: [320, 230], steps: [] },
-  // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom
-  // (a larger factor is ignored, and the shot comes out at 1x).
+  // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom.
   { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 5, steps: [] },
   { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 5, steps: [] },
   { name: 'clawd-alarmed', hash: 'demo', clip: '.clawd', scale: 5, steps: [] },
@@ -83,22 +82,14 @@ async function shoot(
   const [width, height] = size
   win.setContentSize(width * scale, height * scale)
   // A different query per shot forces a fresh page: a change of hash alone would not reload it.
-  await win.loadFile(HTML, { hash, query: { view, shot: name } })
-  // Chromium sometimes drops a zoom set as the page loads (the shot then comes out at 1x): set it
-  // again until the page is laid out at the shot's size.
-  for (let tries = 0; tries < 10; tries++) {
-    win.webContents.setZoomFactor(1)
-    win.webContents.setZoomFactor(scale)
-    await new Promise((r) => setTimeout(r, 100))
-    if ((await win.webContents.executeJavaScript('innerWidth')) <= width + 1) break
-  }
-  await new Promise((r) => setTimeout(r, SETTLE_MS))
+  await loadZoomed(win, { hash, query: { view, shot: name }, scale, width })
+  await wait(SETTLE_MS)
   if (steps.length) {
     await win.webContents.executeJavaScript(steps.join(';'))
-    await new Promise((r) => setTimeout(r, 1200))
+    await wait(1200)
   }
   // Bat-Clawd blinks on the 10th frame at 4 fps, which is exactly where SETTLE_MS lands: wait past it.
-  if (clip) await new Promise((r) => setTimeout(r, 500))
+  if (clip) await wait(500)
   const full = await win.webContents.capturePage()
   // A clip is the element's box (padded for the cape that reaches past it), cut from the full
   // image at the image's own scale, whatever the window ended up at.
