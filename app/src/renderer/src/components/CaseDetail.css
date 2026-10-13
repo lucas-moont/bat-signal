@@ -20,8 +20,8 @@
 }
 .detail__title {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-case-title);
+  font-weight: var(--case-title-weight);
   font-size: 19px;
   letter-spacing: 0.6px;
   line-height: 1.15;

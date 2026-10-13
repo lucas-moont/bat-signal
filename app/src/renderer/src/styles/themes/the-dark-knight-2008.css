@@ -131,6 +131,11 @@
   --font-report: var(--font-mono);
   --font-stamp: var(--font-type);
   --font-label: var(--font-display);
+  /* Syncopate is unicase, its lowercase caps of another height: headings read set in caps. A case's
+     own title is the user's words, too long for its width: it keeps the body face. */
+  --heading-case: uppercase;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
   --folder-name-size: 10px;
   --folder-name-tracking: 0.5px;
   /* Syncopate runs very wide: the masthead sets it small, its caps letterspaced just enough to
@@ -159,14 +164,4 @@
     var(--signal) 78%,
     var(--blood) 100%
   );
-}
-
-/* Syncopate is unicase: its lowercase are caps of another height, so its headings read set in caps. */
-[data-theme='the-dark-knight-2008'] :is(.sheet__title, .empty__title) {
-  text-transform: uppercase;
-}
-/* A case's own title is the user's words, too long for Syncopate's width: it keeps the body face. */
-[data-theme='the-dark-knight-2008'] .detail__title {
-  font-family: var(--font-body);
-  font-weight: 600;
 }

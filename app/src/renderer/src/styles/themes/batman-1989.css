@@ -121,6 +121,9 @@
   --font-stamp: 'Josefin Sans', 'Segoe UI', sans-serif;
   /* Limelight is meant for large sizes: the short words under 19px (counts, names) take Josefin's caps. */
   --font-label: var(--font-stamp);
+  --heading-case: none;
+  --font-case-title: var(--font-display);
+  --case-title-weight: 400;
   /* Limelight runs wide: the masthead sets it smaller than Anton so the header keeps its room (14 to
      16px, checked at 1x: its thin strokes hold in the one word it sets). */
   --wordmark-size: 16px;

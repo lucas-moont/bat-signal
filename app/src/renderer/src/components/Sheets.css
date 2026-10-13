@@ -46,6 +46,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
+  text-transform: var(--heading-case);
   font-size: 20px;
   letter-spacing: 0.5px;
   line-height: 1.15;
