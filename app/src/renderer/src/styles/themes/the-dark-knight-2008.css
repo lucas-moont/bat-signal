@@ -121,6 +121,7 @@
   --tower: var(--smoke);
 
   --font-display: 'Syncopate', 'Segoe UI', sans-serif;
+  --display-weight: 400;
   --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
   /* The stencil of issued gear: the stamps and the case numbers. */
   --font-type: 'Big Shoulders Stencil', 'Bahnschrift', sans-serif;

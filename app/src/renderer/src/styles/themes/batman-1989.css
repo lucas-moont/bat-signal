@@ -116,6 +116,7 @@
   --searchlight: var(--bone);
 
   --font-display: 'Limelight', 'Georgia', serif;
+  --display-weight: 400;
   --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
   --font-type: 'Special Elite', 'Courier New', monospace;
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
