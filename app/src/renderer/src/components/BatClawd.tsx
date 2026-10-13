@@ -128,7 +128,7 @@ function Frame({
         className={`clawd__eyes${blink ? ' clawd__eyes--blink' : ''}`}
         transform={`translate(${gaze.x} ${gaze.y})`}
       >
-        {rects(pose.eyes === 'open' ? suit.eyes.open : pose.eyes === 'shut' ? suit.eyes.shut : pose.eyes)}
+        {rects(typeof pose.eyes === 'string' ? suit.eyes[pose.eyes] : pose.eyes)}
       </g>
     </svg>
   )
