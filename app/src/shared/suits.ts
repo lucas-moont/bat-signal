@@ -22,10 +22,9 @@ export type Layer =
   | { kind: 'emblem'; cx: number; cy: number; width: number }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
-   * so the gaps between his legs show cloth and no line. Mirrored like a path; `back` hangs cloth
-   * across his back too, filling those gaps when the cape is flung open.
+   * so it reads as behind him. Mirrored like a path.
    */
-  | { kind: 'cape'; d: string; mirrored?: boolean; back?: boolean }
+  | { kind: 'cape'; d: string; mirrored?: boolean }
 
 /** His body below the cowl, where a cape behind him shows no rim: x, y, width and height. */
 export const BODY_BOX = [3, 5, 10, 7] as const
@@ -141,6 +140,8 @@ const CAPE = {
   ribsLeft: 'M3 5.4 L-2.4 7.2 M3 5.4 L-0.8 8.6',
   /** Flung back and hanging open (left half; mirrored for the right). */
   openLeft: 'M3.4 5 L0.2 5.2 L-2.8 11.2 L-1.2 10.5 L0.4 11.3 L1.9 10.6 L3.4 11.2 Z',
+  /** Its back, hanging behind him when it is open: cloth in the gaps between his legs. */
+  back: 'M3.4 5 L12.6 5 L12.6 11.4 L3.4 11.4 Z',
   /** Draped from the shoulders over his arms (left half; mirrored for the right). */
   drapedLeft: 'M3 5 L1.6 5.4 L1.2 10.8 L3.2 10.6 Z',
 }
@@ -152,6 +153,7 @@ const COWL_EDGE: Layer = {
   className: 'clawd__cowl-edge',
 }
 const CHEST: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 7 }
+const BACK: Layer = { kind: 'path', d: CAPE.back, className: 'clawd__cape-cloth' }
 const pose = (map: OutfitMap, behind: Layer[], front: Layer[] = []): Pose => ({
   map,
   behind: [...behind, COWL_EDGE],
@@ -191,7 +193,8 @@ const flare = (flame: Px, flameClass: string) =>
   pose(
     RIGHT_ARM_UP,
     [
-      { kind: 'cape', d: CAPE.openLeft, mirrored: true, back: true },
+      BACK,
+      { kind: 'cape', d: CAPE.openLeft, mirrored: true },
       {
         kind: 'path',
         d: 'M11.9 -0.5 a1.6 1.6 0 1 0 3.2 0 a1.6 1.6 0 1 0 -3.2 0',
@@ -213,7 +216,7 @@ const shadowFrom = (y: number): Layer => ({
   className: 'clawd__shadow',
 })
 const draped = (shadow: number) =>
-  pose(ARMS_AWAY, [{ kind: 'cape', d: CAPE.drapedLeft, mirrored: true, back: true }], [shadowFrom(shadow)])
+  pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadow)])
 const FOOTSTEP = 'translateY(1px)'
 
 const flying = [glide, { ...glide, transform: 'rotate(4deg)' }] as const
