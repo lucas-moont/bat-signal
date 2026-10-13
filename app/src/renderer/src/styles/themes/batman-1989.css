@@ -124,6 +124,8 @@
      16px, checked at 1x: its thin strokes hold in the one word it sets). */
   --wordmark-size: 16px;
   --wordmark-tracking: 1.5px;
+  /* Bone with no glow: the only light here is the oval's (burton-1989.md, section 3). */
+  --wordmark-glow: transparent;
 
   /* The Night Report's pen, in gold pressed hard for blocked work and bronze for waiting work. */
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23f0c24b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");

@@ -29,15 +29,14 @@
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;
   color: var(--accent);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 35%, transparent);
+  text-shadow: 0 0 14px var(--wordmark-glow);
 }
 .header__brand {
   position: relative;
   flex: none;
 }
-/* The needs-you counter, stamped on the emblem's corner. */
-/* Three pixels under the header's top edge, whatever the emblem's height (the brand sits in the
-   middle of the 54px header). */
+/* The needs-you counter, stamped on the emblem's corner: three pixels under the header's top edge,
+   whatever the emblem's height (the brand sits in the middle of the 54px header). */
 .header__count {
   position: absolute;
   top: calc(50% - 24px);

@@ -3,6 +3,7 @@
 // Elite as the reporter's typewriter and JetBrains Mono for what the machine said. Loaded when
 // worn or previewed.
 import '@fontsource/limelight/400.css'
+import '@fontsource/josefin-sans/400.css'
 import '@fontsource/josefin-sans/600.css'
 import '@fontsource/josefin-sans/700.css'
 import '@fontsource/barlow-semi-condensed/400.css'

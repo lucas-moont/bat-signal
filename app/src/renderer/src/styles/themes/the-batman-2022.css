@@ -149,6 +149,7 @@
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;
+  --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
 
   /* The Night Report's pen strokes, drawn in their inks (an SVG can't read a variable): Pen Hot
      pressed hard for blocked work, Pen Soft for waiting work. */

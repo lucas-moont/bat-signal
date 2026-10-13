@@ -76,6 +76,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
   // PALE MOONLIGHT starts, as every new Theme does, with none.
   'batman-1989': {},
 }
+
 const colors = textColors()
 
 describe.each(THEME_IDS)("%s's text colors", (theme) => {

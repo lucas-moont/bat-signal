@@ -525,6 +525,7 @@ export const PALE_MOONLIGHT_WORDS: Words = {
       ...STANDARD_VOICE.report,
       name: 'Late edition',
       signature: 'Above the fold',
+      nil: (t) => `Nothing for the front page tonight. Every ${lower(t.case.one)} runs without you.`,
       caseNotes: () => 'On the beat',
       // The newsroom's end-of-copy mark.
       end: () => '— 30 —',
