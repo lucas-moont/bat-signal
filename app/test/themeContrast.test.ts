@@ -71,7 +71,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
     '--brick': 'the approved soft stamp ink, also on the failed state',
     '--stamp-soft': 'the approved files-layout soft stamp ink (the Night Report lifts it to --ink-soft)',
     '--ash-dim': 'struck-through done tasks, meant to recede',
-    '--line': 'the case-detail row chevron, a decorative icon',
+    '--chevron': 'the case-detail row chevron, a decorative icon, as quiet as a rule',
     '--ink-hot': 'the pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',
     '--ink-soft':
       'the soft pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',

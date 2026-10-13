@@ -68,6 +68,8 @@
   /* Text a step off bone and ash: log lines and idle titles; struck-through done tasks. */
   --bone-dim: #cfc6be;
   --ash-dim: #6f6862;
+  /* A row's chevron in the case detail: a decorative icon, as quiet as a rule in VENGEANCE. */
+  --chevron: var(--line);
 
   /* Bat-Clawd's suit (outfit V, see shared/suits.ts): charcoal over his body, dark gloves, belt and
      boots, a faint bone rim on cowl and cape. Its blacks match the disc's and --shadow today but are
