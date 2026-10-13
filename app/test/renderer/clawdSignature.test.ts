@@ -82,6 +82,25 @@ describe("a Theme's Signature pose", () => {
   })
 })
 
+// Burton's perch glances down to the street and back up to the Signal: a step may move his eyes
+// up or down as well as along the street.
+describe('a step that looks down', () => {
+  // On the perch, a Signature pose held takes its glances from the watch.
+  standInTheme({
+    suit: {
+      ...VENGEANCE_SUIT,
+      signature: [{ pose: markedPose('6.66'), look: 0 }],
+      watch: [{ pose: markedPose('7.77'), look: 0.2, lookY: 0.3 }],
+    },
+  })
+
+  it('moves his eyes down as well as along', () => {
+    expect(draw({ mood: 'sleeping', perched: true })).toContain(
+      'class="clawd__eyes" transform="translate(0.2 0.3)"',
+    )
+  })
+})
+
 describe("a Theme's aura", () => {
   // In the Alarm color, only while something needs the user (CONTEXT.md, Aura).
   it('glows while he is alarmed', () => {
