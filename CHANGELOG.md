@@ -15,6 +15,8 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 - The rain is a Theme's **Atmosphere**: `settings.json` keeps it as `"atmosphere"`, and an old `"rain"` carries over, so rain turned off stays off.
 - The rain falls on the clock every other effect shares, at 8 steps a second instead of its own 15, with longer streaks so it still reads as rain.
+- Bat-Clawd wears a suit in The Batman (2022): charcoal over his body, dark gloves, belt and boots, the cowl down to his eyes and his orange as his jaw. A faint pale rim replaces the red edges on his cowl and cape; red now glows around him only while something needs you.
+- In flight he glides in the wingsuit. When something needs you he raises a red flare. The intro and a click on him play **Out of the dark** (in place of the hop): he steps out of his shadow, cape draped. On the watch strip he stands that way.
 
 ## [1.1.2] - 2026-10-09
 
