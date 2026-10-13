@@ -30,6 +30,8 @@
   --signal-glow: color-mix(in srgb, var(--signal) 45%, transparent);
   /* Only for tiny lit pixels (mascot eyes, live dots), where #af0006 reads too dark on black. */
   --signal-hot: #e3121b;
+  /* Text on a Signal Red fill (the header's count). */
+  --on-signal: var(--bone);
   /* Small inks for stamps and pen marks: signal-hot and the approved brick, lifted just enough
      for 4.5:1 on black at 11px. */
   --ink-hot: #ec2a2a;

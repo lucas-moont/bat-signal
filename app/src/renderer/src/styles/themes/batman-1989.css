@@ -25,6 +25,8 @@
   --signal: #d29336;
   --signal-glow: color-mix(in srgb, var(--signal) 40%, transparent);
   --signal-hot: #f0c24b;
+  /* Text on the gold fill (the header's count): bone would read at about 2:1. */
+  --on-signal: var(--abyss);
   --ink-hot: #f0c24b;
   --ink-soft: #c98a3e;
   --ink-live: #8fb0d3;

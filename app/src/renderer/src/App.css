@@ -36,9 +36,11 @@
   flex: none;
 }
 /* The needs-you counter, stamped on the emblem's corner. */
+/* Three pixels under the header's top edge, whatever the emblem's height (the brand sits in the
+   middle of the 54px header). */
 .header__count {
   position: absolute;
-  top: -17px;
+  top: calc(50% - 24px);
   left: 7px;
   min-width: 20px;
   padding: 2px 5px 1px;
@@ -46,7 +48,7 @@
   font-size: 13px;
   line-height: 1;
   text-align: center;
-  color: var(--bone);
+  color: var(--on-signal);
   background: var(--signal);
   border-radius: 2px;
   box-shadow: 0 0 12px var(--signal-glow);

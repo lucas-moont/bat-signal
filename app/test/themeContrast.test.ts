@@ -34,7 +34,8 @@ function textColors(): string[] {
   const used = rendererSources('.css').flatMap(({ text }) =>
     [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
   )
-  return [...new Set(used)].sort()
+  // Ink on the Alarm color's fill is held to that fill, not to the dark grounds (below).
+  return [...new Set(used)].filter((c) => c !== '--on-signal').sort()
 }
 
 /** Every dark ground text sits on: the page, the panels, the sheet and the notice card. */
@@ -94,6 +95,14 @@ describe.each(THEME_IDS)("%s's text colors", (theme) => {
   it.each(Object.keys(exceptions))('%s is a text color that still needs its exception', (color) => {
     expect(colors).toContain(color)
     expect(Math.min(...GROUNDS.map((ground) => contrast(color, ground)))).toBeLessThan(4.5)
+  })
+})
+
+// The header's count sits on a chip of the Alarm color, not on a dark ground.
+describe.each(THEME_IDS)("%s's ink on its Alarm color", (theme) => {
+  it('reads at 4.5:1 or better on --signal', () => {
+    const variables = themeVariables(theme)
+    expect(ratio(rgb(variables, '--on-signal'), rgb(variables, '--signal'))).toBeGreaterThanOrEqual(4.5)
   })
 })
 

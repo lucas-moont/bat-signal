@@ -80,6 +80,8 @@
   display: grid;
   justify-items: start;
   gap: 8px;
+  /* Room under the tilted stamp when a long name and credit take the folder's spare height. */
+  padding-bottom: 5px;
   margin-bottom: auto;
   pointer-events: none;
 }
