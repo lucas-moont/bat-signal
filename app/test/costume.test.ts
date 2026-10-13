@@ -77,6 +77,21 @@ describe('the Bat-Clawd Costume Rule', () => {
     }
   })
 
+  // A pose may move his eyes (looking up, say): they stay a unit at least, inside the cowl above
+  // his jaw, so they still read as his.
+  it.each(THEME_IDS)('%s keeps the eyes a pose moves in the cowl, a unit at least', (id) => {
+    for (const pose of allPoses(THEMES[id].suit)) {
+      if (typeof pose.eyes === 'string') continue
+      for (const [x, y, w = 1, h = 1] of pose.eyes) {
+        expect(Math.min(w, h)).toBeGreaterThanOrEqual(1)
+        expect(x).toBeGreaterThanOrEqual(3)
+        expect(x + w).toBeLessThanOrEqual(13)
+        expect(y).toBeGreaterThanOrEqual(2)
+        expect(y + h).toBeLessThanOrEqual(4)
+      }
+    }
+  })
+
   it.each(THEME_IDS)('%s wears its suit over his body, arms and legs', (id) => {
     for (const pose of allPoses(THEMES[id].suit)) {
       const body = bodyLetter(pose)
