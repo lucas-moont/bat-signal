@@ -581,7 +581,7 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
     report: {
       ...STANDARD_VOICE.report,
       name: 'Sitrep',
-      dateline: (now) => `Gotham · ${formats().time.format(now)}`.toUpperCase(),
+      dateline: (now) => `GOTHAM · ${formats().time.format(now)}`,
       signature: 'Waiting on you',
       caseNotes: () => 'In the field',
       // The Theme's one film line, a fragment of Harvey Dent's, only when nothing waits.
@@ -590,8 +590,7 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
     },
     signal: {
       ...STANDARD_VOICE.signal,
-      openTip: (lit) =>
-        lit ? `The light's on. ${STANDARD_VOICE.signal.openTip(lit)}` : STANDARD_VOICE.signal.openTip(lit),
+      openTip: (lit) => (lit ? "The light's on. " : '') + STANDARD_VOICE.signal.openTip(lit),
     },
     settings: {
       ...STANDARD_VOICE.settings,
