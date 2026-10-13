@@ -28,15 +28,17 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
     if (!el || !ctx) return
     context.current = ctx
 
-    // A canvas can't read CSS variables: it takes the Atmosphere's color as a value. One it can't
-    // use (none, with no Theme on the page, or something that isn't a color) keeps the last good
-    // one, even across a resize, rather than the canvas's default black on a black page.
-    let color = ''
+    // A canvas can't read CSS variables: its painter takes the Atmosphere's colors as values. One
+    // it can't use (none, with no Theme on the page, or something that isn't a color) keeps the
+    // last good one, rather than the canvas's default black on a black page.
+    const colors = atmosphere.colors.map(() => '')
     const recolor = () => {
-      const value = getComputedStyle(el).getPropertyValue(atmosphere.color).trim()
-      if (value && CSS.supports('color', value)) color = value
-      // Rain strokes its streaks; snow fills its flakes.
-      if (color) ctx.strokeStyle = ctx.fillStyle = color
+      const style = getComputedStyle(el)
+      atmosphere.colors.forEach((name, i) => {
+        const value = style.getPropertyValue(name).trim()
+        if (value && CSS.supports('color', value)) colors[i] = value
+      })
+      painter.recolor(colors)
     }
 
     const resize = () => {
@@ -45,13 +47,12 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       el.height = Math.round(height * devicePixelRatio)
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
       ctx.lineWidth = 1
-      // Resizing the canvas resets its stroke and fill, like the line width.
-      recolor()
       painter.resize(width, height)
       // Painted at once, rather than blank until the next tick.
       painter.paint(ctx, 0)
     }
 
+    recolor()
     // The observer reports the canvas's size as it starts, and on every change after.
     const observer = new ResizeObserver(resize)
     observer.observe(el)
@@ -63,7 +64,7 @@ function Painted({ atmosphere }: { atmosphere: AtmosphereData }) {
       observer.disconnect()
       themes.disconnect()
     }
-  }, [painter, atmosphere.color])
+  }, [painter, atmosphere.colors])
 
   return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }

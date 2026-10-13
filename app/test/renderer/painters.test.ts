@@ -8,24 +8,26 @@ type Segment = { x0: number; y0: number; x1: number; y1: number }
 type Square = { x: number; y: number; size: number }
 
 /**
- * A canvas context that records what it is asked to draw: one list of segments per stroke() (the
- * rain), and one list of squares per fill() (the snow).
+ * A canvas context that records what it is asked to draw, in which color and strength: one list of
+ * segments per stroke() (the rain), and one list of squares per fill() (the snow).
  */
 function recorder() {
-  const strokes: { alpha: number; segments: Segment[] }[] = []
-  const fills: { alpha: number; rects: Square[] }[] = []
+  const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
+  const fills: { alpha: number; color: string; rects: Square[] }[] = []
   let segments: Segment[] = []
   let rects: Square[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
+    strokeStyle: '#000000',
+    fillStyle: '#000000',
     clearRect: () => undefined,
     beginPath: () => ([segments, rects] = [[], []]),
     moveTo: (x: number, y: number) => (from = { x, y }),
     lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
-    stroke: () => strokes.push({ alpha: ctx.globalAlpha, segments }),
+    stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, rects }),
+    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills }
 }
@@ -74,6 +76,15 @@ describe('the rain', () => {
   it('strokes each depth once, in its own strength', () => {
     const [, next] = twoTicks()
     expect(next.map((s) => s.alpha)).toEqual(VENGEANCE_RAIN.depths)
+  })
+
+  // A canvas can't read the Theme's variables: the page hands their values to the painter.
+  it('strokes its drops in the color it is given', () => {
+    const painter = rain()
+    painter.recolor(['#123456'])
+    const { ctx, strokes } = recorder()
+    painter.paint(ctx, 1 / FPS)
+    expect(new Set(strokes.map((s) => s.color))).toEqual(new Set(['#123456']))
   })
 
   it('falls along the wind', () => {
@@ -131,7 +142,7 @@ describe('the rain', () => {
 describe('the snow', () => {
   const SNOW: SnowAtmosphere = {
     kind: 'snow',
-    color: '--snow',
+    colors: ['--snow'],
     density: 0.25,
     depths: [
       { alpha: 0.18, size: 1, fall: 1 },
@@ -173,6 +184,14 @@ describe('the snow', () => {
     next!.forEach((f, depth) => {
       for (const r of f.rects) expect(r.size).toBe(SNOW.depths[depth]!.size)
     })
+  })
+
+  it('fills its flakes in the color it is given', () => {
+    const painter = snow()
+    painter.recolor(['#abcdef'])
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 1 / FPS)
+    expect(new Set(fills.map((f) => f.color))).toEqual(new Set(['#abcdef']))
   })
 
   // Almost straight down, each depth at its own pace: the far flakes slowest.

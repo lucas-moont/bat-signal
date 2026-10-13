@@ -6,7 +6,7 @@
 export interface RainAtmosphere {
   kind: 'rain'
   /** The Theme variable it is painted in, read from the page (a canvas can't use a variable). */
-  color: string
+  colors: readonly [rain: string]
   /** Drops per 1000 square pixels. */
   density: number
   /** Radians from vertical, the wind from the left. */
@@ -19,7 +19,7 @@ export interface RainAtmosphere {
 export interface SnowAtmosphere {
   kind: 'snow'
   /** The Theme variable it is painted in, read from the page. */
-  color: string
+  colors: readonly [snow: string]
   /** Flakes per 1000 square pixels. */
   density: number
   /** Each depth from the farthest to the nearest: its alpha, its flakes' size and fall a tick, in px. */
@@ -33,7 +33,7 @@ export type Atmosphere = RainAtmosphere | SnowAtmosphere
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
   kind: 'rain',
-  color: '--rain',
+  colors: ['--rain'],
   density: 0.32,
   angle: 0.26,
   depths: [0.06, 0.1, 0.16],
@@ -45,7 +45,7 @@ export const VENGEANCE_RAIN: RainAtmosphere = {
  */
 export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
   kind: 'snow',
-  color: '--snow',
+  colors: ['--snow'],
   density: 0.25,
   depths: [
     { alpha: 0.18, size: 1, fall: 1 },

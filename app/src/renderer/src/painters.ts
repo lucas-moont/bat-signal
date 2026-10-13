@@ -5,6 +5,8 @@ import type { Atmosphere, RainAtmosphere, SnowAtmosphere } from '@shared/atmosph
 import { FPS } from './clockRate'
 
 export interface Painter {
+  /** The values of its Atmosphere's colors, in their order, as the page reads them. */
+  recolor(colors: readonly string[]): void
   /** The canvas's new size in CSS pixels: the scene starts over to fill it. */
   resize(width: number, height: number): void
   /**
@@ -49,6 +51,7 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   let drops: Drop[] = []
   let width = 0
   let height = 0
+  let color = ''
 
   /** A drop in a depth (a random one by default): anywhere on the canvas, or just above it. */
   const spawn = (anywhere: boolean, depth = Math.floor(random() * depths.length), d = {} as Drop): Drop => {
@@ -61,6 +64,9 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   }
 
   return {
+    recolor([rain = '']) {
+      color = rain
+    },
     resize(w, h) {
       ;[width, height] = [w, h]
       drops = Array.from({ length: howMany(width, height, density) }, () => spawn(true))
@@ -68,6 +74,7 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
     paint(ctx, dt) {
       const t = Math.min(dt, MAX_DT)
       ctx.clearRect(0, 0, width, height)
+      ctx.strokeStyle = color
       depths.forEach((alpha, depth) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
@@ -109,8 +116,12 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
   let height = 0
   /** Ticks of the clock since the snow began, fractional when a tick comes late. */
   let ticks = 0
+  let color = ''
 
   return {
+    recolor([snow = '']) {
+      color = snow
+    },
     resize(w, h) {
       ;[width, height] = [w, h]
       ticks = 0
@@ -124,6 +135,7 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
       const step = Math.min(dt, MAX_DT) / STEP
       ticks += step
       ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = color
       // Each phase's sway this tick, worked out once for every flake.
       const sways = SWAY.map((_, phase) => drift * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!)
       depths.forEach(({ alpha, size, fall }, depth) => {
