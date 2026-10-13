@@ -69,8 +69,10 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
     case 'path':
       return (
         <Fragment key={key}>
-          <path className={layer.className} d={layer.d} />
-          {layer.mirrored && <path className={layer.className} d={layer.d} transform={MIRROR} />}
+          <path className={layer.className} fill={layer.fill} d={layer.d} />
+          {layer.mirrored && (
+            <path className={layer.className} fill={layer.fill} d={layer.d} transform={MIRROR} />
+          )}
         </Fragment>
       )
     case 'rects':

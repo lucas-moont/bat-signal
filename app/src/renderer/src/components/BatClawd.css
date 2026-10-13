@@ -65,26 +65,6 @@
   stroke-width: 0.3;
   stroke-linecap: round;
 }
-/* A flare held up (VENGEANCE, alarmed): the Alarm color as a light that is on (DESIGN.md). */
-.clawd__flare-stick {
-  fill: var(--ash);
-}
-.clawd__flame {
-  fill: var(--signal-hot);
-}
-.clawd__flame--low {
-  fill: var(--stamp-hot);
-}
-.clawd__flare-glow {
-  fill: var(--signal-glow);
-}
-/* A Signature pose's shadow, over his body only: on the perch's transparent window it never tints
-   the desktop around him. */
-.clawd__shadow {
-  fill: var(--cape);
-  opacity: 0.55;
-}
-
 /* The aura, in the Theme's Alarm color, for a suit that has one (shared/suits.ts): a still filter,
    repainted only when the frame changes on the clock. A Theme may set --aura-core and --aura-glow;
    by default both are its Hot Signal. */

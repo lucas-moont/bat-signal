@@ -86,6 +86,8 @@
   --thread: var(--cowl-edge);
   --rib: var(--cowl-edge);
   --chest: var(--cowl);
+  /* The shadow he steps out of in his Signature pose, over his body only. */
+  --clawd-shadow: color-mix(in srgb, var(--cape) 55%, transparent);
 
   /* The Signal disc: unlit glass, its rim, and the lit lens with the bat in its middle. */
   --glass-shine: #1d1714;

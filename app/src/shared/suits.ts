@@ -14,8 +14,11 @@ export type Px = readonly [x: number, y: number, w?: number, h?: number]
  * variables (--cape, --cape-rim, --thread, --cowl-edge, --chest), so a Theme's stylesheet colors them.
  */
 export type Layer =
-  /** A path; mirrored, it is drawn again flipped across his middle (a cape's two open halves). */
-  | { kind: 'path'; d: string; className: string; mirrored?: boolean }
+  /**
+   * A path in one color, or in a class's; mirrored, it is drawn again flipped across his middle (a
+   * cape's two open halves).
+   */
+  | { kind: 'path'; d: string; fill?: string; className?: string; mirrored?: boolean }
   /** Rects in one color, or in a class's. */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string }
   /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
@@ -189,7 +192,7 @@ const glide = pose(
 )
 
 /** The raised flare (alarmed), from the flooded arena: the cape open, a red light held up. */
-const flare = (flame: Px, flameClass: string) =>
+const flare = (flame: Px, fill: string) =>
   pose(
     RIGHT_ARM_UP,
     [
@@ -198,14 +201,14 @@ const flare = (flame: Px, flameClass: string) =>
       {
         kind: 'path',
         d: 'M11.9 -0.5 a1.6 1.6 0 1 0 3.2 0 a1.6 1.6 0 1 0 -3.2 0',
-        className: 'clawd__flare-glow',
+        fill: 'var(--signal-glow)',
       },
     ],
     [
       { kind: 'rects', px: [[13, 3, 1, 3]], fill: 'var(--suit)' },
       { kind: 'rects', px: [[13, 2, 1, 1]], fill: 'var(--gloves)' },
-      { kind: 'rects', px: [[13.25, 0, 0.5, 2]], className: 'clawd__flare-stick' },
-      { kind: 'rects', px: [flame], className: flameClass },
+      { kind: 'rects', px: [[13.25, 0, 0.5, 2]], fill: 'var(--ash)' },
+      { kind: 'rects', px: [flame], fill },
     ],
   )
 
@@ -213,7 +216,7 @@ const flare = (flame: Px, flameClass: string) =>
 const shadowFrom = (y: number): Layer => ({
   kind: 'path',
   d: y < 9 ? `M3 ${y} H13 V9 H12.6 V11 H3.4 V9 H3 Z` : `M3.4 ${y} H12.6 V11 H3.4 Z`,
-  className: 'clawd__shadow',
+  fill: 'var(--clawd-shadow)',
 })
 const draped = (shadow: number) =>
   pose(ARMS_AWAY, [BACK, { kind: 'cape', d: CAPE.drapedLeft, mirrored: true }], [shadowFrom(shadow)])
@@ -266,10 +269,7 @@ export const VENGEANCE_SUIT: Suit = {
     ],
     flying,
     // The flame flickers between Hot Signal and a smaller Pen Hot, a frame each.
-    alarmed: [
-      flare([12.75, -1, 1.5, 1], 'clawd__flame'),
-      flare([13, -1, 1, 1], 'clawd__flame clawd__flame--low'),
-    ],
+    alarmed: [flare([12.75, -1, 1.5, 1], 'var(--signal-hot)'), flare([13, -1, 1, 1], 'var(--stamp-hot)')],
   },
   watch: [
     STILL,
