@@ -2,10 +2,11 @@
 // 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, a skyline's lit windows; ash arrives as
 // another kind with its own painter (renderer/src/painters.ts).
 
+// Each kind names the Theme variables it is painted in; its painter reads them from the page by
+// name (a canvas can't use a variable).
+
 /** What every kind has. */
 interface Scene {
-  /** The Theme variables it is painted in, read from the page (a canvas can't use a variable). */
-  colors: readonly string[]
   /**
    * A still scene stays on the page, frozen, while it doesn't move (under reduced motion, and once
    * the pointer has left); a moving one leaves with its motion.
@@ -16,7 +17,8 @@ interface Scene {
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {
   kind: 'rain'
-  colors: readonly [rain: string]
+  /** The variable its drops are stroked in. */
+  color: string
   /** Drops per 1000 square pixels. */
   density: number
   /** Radians from vertical, the wind from the left. */
@@ -28,7 +30,8 @@ export interface RainAtmosphere extends Scene {
 /** Snow falling almost straight down, in depths that differ in strength, size and pace. */
 export interface SnowAtmosphere extends Scene {
   kind: 'snow'
-  colors: readonly [snow: string]
+  /** The variable its flakes are filled in. */
+  color: string
   /** Flakes per 1000 square pixels. */
   density: number
   /** Each depth from the farthest to the nearest: its alpha, its flakes' size and fall a tick, in px. */
@@ -43,16 +46,18 @@ export interface SnowAtmosphere extends Scene {
  */
 export interface LitWindowsAtmosphere extends Scene {
   kind: 'lit-windows'
-  /** The towers', their edges', then each light's, in the order of `lights`. */
-  colors: readonly [towers: string, edges: string, ...lights: string[]]
+  /** The variable the towers and their dark windows are filled in. */
+  glass: string
+  /** The variable their 1px edges are stroked in. */
+  edge: string
   /** The tallest tower's height, a share of the canvas's. */
   height: number
   /** How many towers stand along it. */
   towers: number
   /** The share of the windows lit. */
   lit: number
-  /** Each light: its share of the lit windows and its strength (alpha). */
-  lights: readonly { share: number; alpha: number }[]
+  /** Each light: its variable, its share of the lit windows and its strength (alpha). */
+  lights: readonly { color: string; share: number; alpha: number }[]
   /** Seconds between one window switching and the next. */
   every: number
   still: true
@@ -63,7 +68,7 @@ export type Atmosphere = RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
   kind: 'rain',
-  colors: ['--rain'],
+  color: '--rain',
   density: 0.32,
   angle: 0.26,
   depths: [0.06, 0.1, 0.16],
@@ -75,7 +80,7 @@ export const VENGEANCE_RAIN: RainAtmosphere = {
  */
 export const PALE_MOONLIGHT_SNOW: SnowAtmosphere = {
   kind: 'snow',
-  colors: ['--snow'],
+  color: '--snow',
   density: 0.25,
   depths: [
     { alpha: 0.18, size: 1, fall: 1 },

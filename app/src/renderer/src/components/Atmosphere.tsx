@@ -32,17 +32,17 @@ function Painted({ atmosphere, moving }: { atmosphere: AtmosphereData; moving: b
     if (!el || !ctx) return
     context.current = ctx
 
-    // A canvas can't read CSS variables: its painter takes the Atmosphere's colors as values. One
+    // A canvas can't read CSS variables: its painter asks for each of its colors by name. A value
     // it can't use (none, with no Theme on the page, or something that isn't a color) keeps the
     // last good one, rather than the canvas's default black on a black page.
-    const colors = atmosphere.colors.map(() => '')
+    const lastGood = new Map<string, string>()
     const recolor = () => {
       const style = getComputedStyle(el)
-      atmosphere.colors.forEach((name, i) => {
-        const value = style.getPropertyValue(name).trim()
-        if (value && CSS.supports('color', value)) colors[i] = value
+      painter.recolor((variable) => {
+        const value = style.getPropertyValue(variable).trim()
+        if (value && CSS.supports('color', value)) lastGood.set(variable, value)
+        return lastGood.get(variable) ?? ''
       })
-      painter.recolor(colors)
       // Painted at once: a still scene would otherwise keep its old colors until it moves.
       painter.paint(ctx, 0)
     }
@@ -70,7 +70,7 @@ function Painted({ atmosphere, moving }: { atmosphere: AtmosphereData; moving: b
       observer.disconnect()
       themes.disconnect()
     }
-  }, [painter, atmosphere.colors])
+  }, [painter])
 
   return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }

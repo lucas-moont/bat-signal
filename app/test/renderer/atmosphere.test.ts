@@ -40,11 +40,12 @@ describe('a still Atmosphere', () => {
   standInTheme({
     atmosphere: {
       kind: 'lit-windows',
-      colors: ['--smoke', '--line', '--bone'],
+      glass: '--smoke',
+      edge: '--line',
       height: 0.2,
       towers: 4,
       lit: 0.08,
-      lights: [{ share: 1, alpha: 0.2 }],
+      lights: [{ color: '--bone', share: 1, alpha: 0.2 }],
       every: 1,
       still: true,
     } satisfies LitWindowsAtmosphere,

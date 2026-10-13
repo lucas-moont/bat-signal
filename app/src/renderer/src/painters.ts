@@ -5,8 +5,8 @@ import type { Atmosphere, LitWindowsAtmosphere, RainAtmosphere, SnowAtmosphere }
 import { FPS } from './clockRate'
 
 export interface Painter {
-  /** The values of its Atmosphere's colors, in their order, as the page reads them. */
-  recolor(colors: readonly string[]): void
+  /** Its Atmosphere's colors afresh, each read from the page by its variable's name. */
+  recolor(colorOf: (variable: string) => string): void
   /** The canvas's new size in CSS pixels: the scene starts over to fill it. */
   resize(width: number, height: number): void
   /**
@@ -51,7 +51,7 @@ interface Drop {
  * old 15 frames a second relative to its step, so at 8 it covers the same share of the bigger
  * distance it falls between ticks and still reads as falling rain.
  */
-function rain({ density, angle, depths }: RainAtmosphere, random: () => number): Painter {
+function rain({ color: variable, density, angle, depths }: RainAtmosphere, random: () => number): Painter {
   const slant = Math.tan(angle)
   const dx = Math.sin(angle)
   const dy = Math.cos(angle)
@@ -72,8 +72,8 @@ function rain({ density, angle, depths }: RainAtmosphere, random: () => number):
   }
 
   return {
-    recolor([rain = '']) {
-      color = rain
+    recolor(colorOf) {
+      color = colorOf(variable)
     },
     resize(w, h) {
       ;[width, height] = [w, h]
@@ -117,7 +117,7 @@ const SWAY = [0, 1, 0, -1]
  * which at 8 steps a second reads as a slow snowfall, and sway on the clock (not at random), so a
  * flake never jitters.
  */
-function snow({ density, depths, drift }: SnowAtmosphere, random: () => number): Painter {
+function snow({ color: variable, density, depths, drift }: SnowAtmosphere, random: () => number): Painter {
   /** The flakes of each depth, from the farthest to the nearest. */
   let layers: Flake[][] = []
   let width = 0
@@ -127,8 +127,8 @@ function snow({ density, depths, drift }: SnowAtmosphere, random: () => number):
   let color = ''
 
   return {
-    recolor([snow = '']) {
-      color = snow
+    recolor(colorOf) {
+      color = colorOf(variable)
     },
     resize(w, h) {
       ;[width, height] = [w, h]
@@ -182,12 +182,13 @@ const INSET = 3
  * so the night keeps its share however long it runs.
  */
 function litWindows(
-  { height, towers, lit, lights, every }: LitWindowsAtmosphere,
+  { glass, edge, height, towers, lit, lights, every }: LitWindowsAtmosphere,
   random: () => number,
 ): Painter {
   let blocks: { x: number; y: number; w: number; h: number }[] = []
   let windows: Window[] = []
-  let colors: readonly string[] = []
+  /** The glass's, the edges' and each light's color, as last read. */
+  let colors = { glass: '', edge: '', lights: [] as string[] }
   let width = 0
   let canvasHeight = 0
   /** Whether the whole scene waits to be painted. */
@@ -196,7 +197,6 @@ function litWindows(
   let since = 0
   /** How many windows are lit. */
   let litCount = 0
-  const ink = (i: number) => colors[i] ?? ''
 
   /** One of the lights, by their shares. */
   const pickLight = () => {
@@ -208,13 +208,13 @@ function litWindows(
   const lightUp = (ctx: CanvasRenderingContext2D, { x, y, light }: Window) => {
     if (light === undefined) return
     ctx.globalAlpha = lights[light]!.alpha
-    ctx.fillStyle = ink(2 + light)
+    ctx.fillStyle = colors.lights[light]!
     ctx.fillRect(x, y, CELL.w, CELL.h)
   }
 
   return {
-    recolor(values) {
-      colors = [...values]
+    recolor(colorOf) {
+      colors = { glass: colorOf(glass), edge: colorOf(edge), lights: lights.map((l) => colorOf(l.color)) }
       whole = true
     },
     resize(w, h) {
@@ -244,8 +244,8 @@ function litWindows(
         whole = false
         ctx.clearRect(0, 0, width, canvasHeight)
         ctx.globalAlpha = 1
-        ctx.fillStyle = ink(0)
-        ctx.strokeStyle = ink(1)
+        ctx.fillStyle = colors.glass
+        ctx.strokeStyle = colors.edge
         for (const b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h)
           // On the half pixel, so the 1px edge lands on whole pixels.
@@ -266,7 +266,7 @@ function litWindows(
         litCount += on ? 1 : -1
         // The glass afresh, then its new light over it.
         ctx.globalAlpha = 1
-        ctx.fillStyle = ink(0)
+        ctx.fillStyle = colors.glass
         ctx.fillRect(w.x, w.y, CELL.w, CELL.h)
         lightUp(ctx, w)
         return

@@ -91,7 +91,7 @@ describe('the rain', () => {
   // A canvas can't read the Theme's variables: the page hands their values to the painter.
   it('strokes its drops in the color it is given', () => {
     const painter = rain()
-    painter.recolor(['#123456'])
+    painter.recolor(() => '#123456')
     const { ctx, strokes } = recorder()
     painter.paint(ctx, 1 / FPS)
     expect(new Set(strokes.map((s) => s.color))).toEqual(new Set(['#123456']))
@@ -152,7 +152,7 @@ describe('the rain', () => {
 describe('the snow', () => {
   const SNOW: SnowAtmosphere = {
     kind: 'snow',
-    colors: ['--snow'],
+    color: '--snow',
     density: 0.25,
     depths: [
       { alpha: 0.18, size: 1, fall: 1 },
@@ -198,7 +198,7 @@ describe('the snow', () => {
 
   it('fills its flakes in the color it is given', () => {
     const painter = snow()
-    painter.recolor(['#abcdef'])
+    painter.recolor(() => '#abcdef')
     const { ctx, fills } = recorder()
     painter.paint(ctx, 1 / FPS)
     expect(new Set(fills.map((f) => f.color))).toEqual(new Set(['#abcdef']))
@@ -247,24 +247,28 @@ describe('the snow', () => {
 describe('the lit windows', () => {
   const WINDOWS: LitWindowsAtmosphere = {
     kind: 'lit-windows',
-    colors: ['--smoke', '--line', '--bone', '--ink-live'],
+    glass: '--smoke',
+    edge: '--line',
     height: 0.2,
     towers: 5,
     lit: 0.08,
     lights: [
-      { share: 0.7, alpha: 0.22 },
-      { share: 0.3, alpha: 0.28 },
+      { color: '--bone', share: 0.7, alpha: 0.22 },
+      { color: '--ink-live', share: 0.3, alpha: 0.28 },
     ],
     every: 1,
     still: true,
   }
   const COLORS = ['#080d13', '#2b3743', '#e6ebee', '#7cc6c4']
+  /** The page's values for the variables, in COLORS' order. */
+  const colorOf = (variable: string) =>
+    COLORS[['--smoke', '--line', '--bone', '--ink-live'].indexOf(variable)] ?? ''
   /** A window cell: 3 by 4 pixels. */
   const isWindow = (b: Box) => b.w === 3 && b.h === 4
 
   const city = () => {
     const painter = painterFor(WINDOWS, seeded())
-    painter.recolor(COLORS)
+    painter.recolor(colorOf)
     painter.resize(320, 440)
     return painter
   }
@@ -336,7 +340,7 @@ describe('the lit windows', () => {
     // An hour of switches, then the canvas painted afresh from what is lit.
     const { ctx: idle } = recorder()
     for (let i = 0; i < 3600 * FPS; i++) painter.paint(idle, 1 / FPS)
-    painter.recolor(COLORS)
+    painter.recolor(colorOf)
     const { ctx, boxes } = recorder()
     painter.paint(ctx, 0)
     // Painted whole, only the lit windows are drawn as cells.
@@ -350,7 +354,7 @@ describe('the lit windows', () => {
   it('paints the whole scene again in new colors', () => {
     const painter = city()
     painter.paint(recorder().ctx, 0)
-    painter.recolor(['#111111', '#222222', '#333333', '#444444'])
+    painter.recolor(() => '#111111')
     const { ctx, boxes, cleared } = recorder()
     painter.paint(ctx, 1 / FPS)
     expect(cleared.times).toBe(1)
