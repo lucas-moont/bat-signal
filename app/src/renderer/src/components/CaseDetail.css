@@ -58,6 +58,11 @@
   border-left-color: var(--signal-hot);
   background: color-mix(in srgb, var(--signal) 12%, transparent);
 }
+/* Gone quiet is not waiting on you: ash, as its card's rule. */
+.alert--stalled {
+  border-left-color: var(--ash);
+  background: color-mix(in srgb, var(--ash) 8%, transparent);
+}
 .alert__line {
   flex: 1;
   min-width: 0;
