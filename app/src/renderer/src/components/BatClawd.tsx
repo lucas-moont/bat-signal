@@ -180,19 +180,24 @@ export function moodFrame(
   return { pose, transform, blink: mood === 'alarmed' && f % 10 === 9 }
 }
 
-export function BatClawd({
-  mood,
-  size = 60,
-  perched = false,
-  reveal = false,
-}: {
+interface BatClawdProps {
   mood: MascotMood
   size?: number
   /** Standing watch on the edge of the watch strip: the cape in the wind, the eyes sweeping. */
   perched?: boolean
   /** Reveals the Theme's Signature pose as he appears, then holds it (the intro). */
   reveal?: boolean
-}) {
+}
+
+/**
+ * The worn Theme's Bat-Clawd. A Theme put on while he shows dresses him afresh, as if he had just
+ * appeared: his reveal, its clock and his gaze start over, so the new Theme's Signature pose plays.
+ */
+export function BatClawd(props: BatClawdProps) {
+  return <Mascot key={useTheme()} {...props} />
+}
+
+function Mascot({ mood, size = 60, perched = false, reveal = false }: BatClawdProps) {
   const suit = useSuit()
   const calm = useIsCalm()
   const said = useWords().voice.mascot
@@ -207,13 +212,6 @@ export function BatClawd({
   const holds = reveal || perched
   const [revealing, setRevealing] = useState(holds && !!signature)
   const [settled, setSettled] = useState(false)
-  // A Theme put on while he shows reveals its own Signature pose afresh, as if he had just appeared.
-  const [shownSuit, setShownSuit] = useState(suit)
-  if (shownSuit !== suit) {
-    setShownSuit(suit)
-    setRevealing(holds && !!signature)
-    setSettled(false)
-  }
   // Something needs the user: the alarm's pose wins, and the perch's reveal waits for his watch.
   const revealShown = !!signature && revealing && mood !== 'alarmed'
   const revealClock = useFrame(!calm && revealShown && !settled, 2)
