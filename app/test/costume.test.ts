@@ -29,16 +29,27 @@ function hue(hex: string): number {
   return (h * 60 + 360) % 360
 }
 
+/** A color's saturation, 0 to 1, as HSL measures it. */
+function saturation(hex: string): number {
+  const [max, min] = [Math.max(...channels(hex)) / 255, Math.min(...channels(hex)) / 255]
+  const light = (max + min) / 2
+  return max === min ? 0 : (max - min) / (1 - Math.abs(2 * light - 1))
+}
+
 /**
- * Whether a color is neutral beside a Theme's Alarm color: a grey (its channels within 32 of each
- * other), or a hue at least 30 degrees off the alarm's, so it can't read as the alarm at his size
- * (Burton's steel against gold; Knightmare's dust against Heat Vision).
+ * Whether a color is neutral beside a Theme's Alarm colors: a grey (its channels within 32 of each
+ * other), or a muted hue (half saturated at most) at least 30 degrees off every alarm shade, so it
+ * can't read as the alarm at his size (Burton's steel against gold; Knightmare's dust against Heat
+ * Vision). A loud color passes neither way.
  */
-function isNeutralBeside(alarm: string, hex: string): boolean {
+function isNeutralBeside(alarms: readonly string[], hex: string): boolean {
   const [r, g, b] = channels(hex)
   if (Math.max(r, g, b) - Math.min(r, g, b) <= 32) return true
-  const apart = Math.abs(hue(hex) - hue(alarm))
-  return Math.min(apart, 360 - apart) >= 30
+  if (saturation(hex) > 0.5) return false
+  return alarms.every((alarm) => {
+    const apart = Math.abs(hue(hex) - hue(alarm))
+    return Math.min(apart, 360 - apart) >= 30
+  })
 }
 
 /** The colors a value is made of, once its var() calls are written out: hex, and named ones. */
@@ -78,14 +89,14 @@ describe('the Bat-Clawd Costume Rule', () => {
   // Alarm color, so neither the alarm written out nor one behind an alias passes.
   it.each(THEME_IDS)('%s rims his cowl and cape in a neutral, never in its Alarm color', (id) => {
     const vars = themeVariables(id)
-    const alarm = resolved(vars, 'var(--signal-hot)')
+    const alarms = [resolved(vars, 'var(--signal)'), resolved(vars, 'var(--signal-hot)')]
     for (const name of ['--cowl-edge', '--cape-rim', '--thread']) {
       const value = resolved(vars, vars.get(name) ?? '')
       const { hexes, names } = colorsIn(value)
       expect(value, name).not.toContain('var(')
       expect(hexes.length, name).toBeGreaterThan(0)
       expect(
-        hexes.filter((hex) => !isNeutralBeside(alarm, hex)),
+        hexes.filter((hex) => !isNeutralBeside(alarms, hex)),
         name,
       ).toEqual([])
       expect(
@@ -102,15 +113,21 @@ describe('the Bat-Clawd Costume Rule', () => {
       ['--rim', 'color-mix(in srgb, var(--pen) 40%, transparent)'],
     ])
     const [pen = ''] = colorsIn(resolved(vars, 'var(--rim)')).hexes
-    expect(isNeutralBeside(red, pen)).toBe(false)
-    expect(isNeutralBeside(red, '#c00')).toBe(false)
-    expect(isNeutralBeside(red, '#e8e1d9')).toBe(true)
+    expect(isNeutralBeside([red], pen)).toBe(false)
+    expect(isNeutralBeside([red], '#c00')).toBe(false)
+    expect(isNeutralBeside([red], '#e8e1d9')).toBe(true)
     expect(colorsIn('crimson').names).toEqual(['crimson'])
   })
 
   it("lets a Theme rim him in a hue of its own, away from its alarm's", () => {
-    expect(isNeutralBeside('#f0c24b', '#8fb0d3')).toBe(true)
-    expect(isNeutralBeside('#e60f00', '#c4aa82')).toBe(true)
-    expect(isNeutralBeside('#f0c24b', '#d29336')).toBe(false)
+    expect(isNeutralBeside(['#f0c24b'], '#8fb0d3')).toBe(true)
+    expect(isNeutralBeside(['#e60f00'], '#c4aa82')).toBe(true)
+    expect(isNeutralBeside(['#f0c24b'], '#d29336')).toBe(false)
+  })
+
+  // Far enough in hue is not enough: a loud color reads as a light at his size, whatever its hue.
+  it('reads a loud rim as no neutral, whatever its hue', () => {
+    expect(isNeutralBeside(['#af0006', '#e3121b'], '#e31290')).toBe(false)
+    expect(isNeutralBeside(['#af0006', '#e3121b'], '#e38012')).toBe(false)
   })
 })
