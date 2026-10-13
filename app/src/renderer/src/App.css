@@ -77,8 +77,8 @@
     gap: 7px;
   }
   .header__title {
-    font-size: 19px;
-    letter-spacing: 2px;
+    font-size: calc(var(--wordmark-size) - 2px);
+    letter-spacing: calc(var(--wordmark-tracking) - 0.5px);
   }
 }
 .tabs__settings {
@@ -90,8 +90,8 @@
     padding-left: 10px;
   }
   .header__title {
-    font-size: 19px;
-    letter-spacing: 2px;
+    font-size: calc(var(--wordmark-size) - 2px);
+    letter-spacing: calc(var(--wordmark-tracking) - 0.5px);
   }
   /* At the narrowest the mascot steps aside rather than crowd the buttons, and gives back its room. */
   .header__mascot {
