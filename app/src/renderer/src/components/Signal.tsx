@@ -230,7 +230,7 @@ function Disc({
     <button
       className={`disc${lit ? ' disc--lit' : ''}`}
       aria-label={voice.signal.open(terms, count)}
-      title={voice.signal.openTip(lit)}
+      title={voice.signal.openTip(count > 0)}
       {...interactive}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId)
@@ -256,7 +256,8 @@ function Disc({
     >
       {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
-        <BatEmblem size={44} title="" fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'} lit={lit} />
+        {/* The lens lights for news as well; a plate, in the Alarm color, only when something needs you. */}
+        <BatEmblem size={44} title="" fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'} lit={count > 0} />
       </span>
       <AnimatePresence>
         {count > 0 && (

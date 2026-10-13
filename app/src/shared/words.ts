@@ -156,7 +156,7 @@ export interface Voice {
   signal: {
     openCase: (t: Terms) => string
     open: (t: Terms, needsYou: number) => string
-    /** The disc's tooltip, lit (something needs the user) or not. */
+    /** The disc's tooltip, while something needs the user or not. */
     openTip: (lit: boolean) => string
   }
   watch: {
