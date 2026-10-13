@@ -18,6 +18,21 @@ describe('an emblem without a plate (VENGEANCE)', () => {
   })
 })
 
+// KNIGHTMARE's lit disc burns its bat red on a pale lens, which alone holds 2.6–3.2:1: an outline
+// under the fill keeps its shape (snyder.md, section 8).
+describe("an emblem's outline", () => {
+  it('outlines the bat under its fill, in the color given, a share of its width', () => {
+    const markup = draw({ outline: 'var(--lens-bat-edge)' })
+    expect(markup).toMatch(/<path [^>]*stroke="var\(--lens-bat-edge\)"/)
+    expect(markup).toMatch(/paint-order="stroke"/)
+    expect(markup).toMatch(new RegExp(`stroke-width="${emblem(WINGS, 'none').bat.width * 0.035}"`))
+  })
+
+  it('draws none unless given one', () => {
+    expect(draw()).not.toContain('stroke=')
+  })
+})
+
 // PALE MOONLIGHT's bat sits in an oval (burton-1989.md, section 8): old brass at rest, lit gold.
 describe('an emblem on a plate', () => {
   const PLATE = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }

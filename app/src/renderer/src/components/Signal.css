@@ -89,14 +89,6 @@
   opacity: 0;
   pointer-events: none;
 }
-/* The lit bat's outline, painted under its fill, for a Theme whose lens is pale (--lens-bat-edge). */
-.disc--lit .disc__face path {
-  stroke: var(--lens-bat-edge);
-  stroke-width: 4;
-  stroke-linejoin: round;
-  paint-order: stroke;
-}
-
 .disc--lit .disc__halo {
   opacity: 0.5;
 }
