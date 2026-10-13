@@ -36,8 +36,8 @@
     color-mix(in srgb, var(--raised) 95%, transparent),
     color-mix(in srgb, var(--surface) 95%, transparent)
   );
-  box-shadow: 0 6px 18px -8px var(--accent-glow);
-  border-color: var(--accent-glow);
+  box-shadow: 0 6px 18px -8px var(--hover-glow);
+  border-color: var(--hover-glow);
 }
 .card:focus-visible {
   outline: 1px solid var(--accent);
@@ -194,8 +194,8 @@
 .progress__fill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg in srgb, var(--accent-deep), var(--accent-hot));
-  box-shadow: 0 0 6px var(--accent-glow);
+  background: linear-gradient(90deg in srgb, var(--progress-deep), var(--progress-hot));
+  box-shadow: 0 0 6px var(--progress-glow);
 }
 .progress__label {
   font-family: var(--font-mono);

@@ -102,7 +102,7 @@
   padding: 0 6px;
   display: grid;
   place-items: center;
-  font-family: var(--font-display);
+  font-family: var(--font-label);
   font-size: 15px;
   color: var(--bone);
   background: var(--abyss);

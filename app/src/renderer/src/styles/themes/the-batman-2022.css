@@ -45,6 +45,19 @@
   --accent-hot: var(--signal-hot);
   --accent-deep: var(--blood);
   --accent-glow: var(--signal-glow);
+  /* Where the accent spreads past a mark, each its own so a Theme can keep any of them neutral:
+     selected text, a card under the pointer, the progress bar, a sheet's top edge, a switch's
+     thumb, and the glows around the wordmark and the intro's title. VENGEANCE: the accent. */
+  --selection: var(--accent);
+  --hover-glow: var(--accent-glow);
+  --progress-deep: var(--accent-deep);
+  --progress-hot: var(--accent-hot);
+  --progress-glow: var(--accent-glow);
+  --spill: var(--accent);
+  --spill-glow: var(--accent-glow);
+  --thumb: var(--bone);
+  --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
+  --intro-glow: var(--accent-glow);
 
   /* Stamp inks by tier, so no stamp reads an alarm shade directly. */
   --brick: #c9463d;
@@ -123,6 +136,9 @@
   /* The night report's body, and the stamps' face: both the typewriter in VENGEANCE. */
   --font-report: var(--font-type);
   --font-stamp: var(--font-type);
+  /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
+     display face built for large sizes may not hold. VENGEANCE: its display face. */
+  --font-label: var(--font-display);
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;
