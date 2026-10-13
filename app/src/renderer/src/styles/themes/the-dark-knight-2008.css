@@ -57,6 +57,8 @@
   --in-progress-glow: color-mix(in srgb, var(--ink-live) 60%, transparent);
 
   --danger: var(--blood);
+  /* What waits on you is sodium: its rule too, dimmed, never the Alarm color's off shade. */
+  --waiting-rule: color-mix(in srgb, var(--ink-soft) 55%, var(--surface));
   /* The Night Report's margin rule: a plain rule, no color at rest. */
   --report-rule: var(--line);
 

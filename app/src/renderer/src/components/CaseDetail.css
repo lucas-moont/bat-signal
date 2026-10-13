@@ -49,9 +49,9 @@
   gap: 10px;
   padding: 9px 10px;
   border: 1px solid var(--line);
-  border-left: 3px solid var(--blood);
+  border-left: 3px solid var(--waiting-rule);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--blood) 8%, transparent);
+  background: color-mix(in srgb, var(--waiting-rule) 8%, transparent);
 }
 .alert--permission,
 .alert--error {

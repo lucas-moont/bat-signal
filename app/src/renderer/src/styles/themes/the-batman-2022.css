@@ -68,6 +68,8 @@
 
   /* The Quit button's hover, and the Night Report's margin rule. */
   --danger: var(--blood);
+  /* The left rule beside what waits on you (a card, an alert in a case): in its stamp's family. */
+  --waiting-rule: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
 
   --clawd: #d77757;

@@ -55,6 +55,7 @@
   --in-progress-glow: color-mix(in srgb, var(--ink-live) 60%, transparent);
 
   --danger: var(--blood);
+  --waiting-rule: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
 
   --clawd: #d77757;
