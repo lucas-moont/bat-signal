@@ -33,6 +33,13 @@ describe('the Themes', () => {
     })
   })
 
+  it("names PALE MOONLIGHT after Tim Burton's Batman (1989)", () => {
+    expect(THEMES['batman-1989'].words.voice.theme).toEqual({
+      name: 'PALE MOONLIGHT',
+      film: "Tim Burton's Batman (1989)",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -67,6 +74,7 @@ describe("the Themes' stylesheets and fonts", () => {
 describe('a demo page', () => {
   it('wears the Theme its hash names', () => {
     expect(themeFromFlags(new Set(['demo', 'report', 'vengeance']))).toBe('the-batman-2022')
+    expect(themeFromFlags(new Set(['demo', 'moonlight']))).toBe('batman-1989')
   })
 
   it('names no Theme without a Theme flag', () => {

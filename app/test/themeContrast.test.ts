@@ -72,8 +72,9 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
     '--ink-soft':
       'the soft pen ink, tuned to 4.5:1 on black where the report sits; short only on hover tints',
   },
+  // PALE MOONLIGHT starts, as every new Theme does, with none.
+  'batman-1989': {},
 }
-
 const colors = textColors()
 
 describe.each(THEME_IDS)("%s's text colors", (theme) => {

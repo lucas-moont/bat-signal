@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import { ThemePicker, themeAfter } from '../../src/renderer/src/components/ThemePicker'
 import { VENGEANCE_SUIT } from '../../src/shared/suits'
+import { THEME_IDS } from '../../src/shared/themes'
 import { markedPose, standInTheme } from '../fixtures/themes'
 
 const draw = () =>
@@ -43,25 +44,31 @@ describe('the Theme picker', () => {
     expect(html).toContain(`role="radiogroup" aria-labelledby="${label}"`)
   })
 
-  // One folder per Theme: VENGEANCE alone today.
+  // One folder per Theme: the worn one (VENGEANCE, the default) checked and the only one in the tab order.
   it('shows each Theme as a folder, the worn one checked and in the tab order', () => {
     const radios = draw().match(/<button[^>]*role="radio"[^>]*>/g) ?? []
-    expect(radios).toHaveLength(1)
+    expect(radios).toHaveLength(THEME_IDS.length)
+    expect(radios.filter((r) => r.includes('aria-checked="true"'))).toHaveLength(1)
     expect(radios[0]).toContain('aria-checked="true"')
     expect(radios[0]).toContain('tabindex="0"')
+    expect(radios.slice(1).every((r) => r.includes('tabindex="-1"'))).toBe(true)
   })
 
   it('names each Theme and credits its film', () => {
     const html = draw()
     expect(html).toContain('VENGEANCE')
     expect(html).toContain('after The Batman (2022)')
+    expect(html).toContain('PALE MOONLIGHT')
+    expect(html).toContain('after Tim Burton&#x27;s Batman (1989)')
   })
 
   // Each folder wears its own Theme, so it shows that Theme's colors, stamp word and suit.
   it('dresses each folder in its own Theme, with its stamp and a still Bat-Clawd', () => {
     const html = draw()
     expect(html).toMatch(/role="radio"[^>]*data-theme="the-batman-2022"/)
+    expect(html).toMatch(/role="radio"[^>]*data-theme="batman-1989"/)
     expect(html).toContain('>Permission<')
+    expect(html).toContain('>Approval<')
     expect(html).toContain('clawd__frame')
   })
 
