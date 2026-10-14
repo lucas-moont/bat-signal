@@ -42,17 +42,17 @@ Read the full tables in `app/src/renderer/src/styles/themes/<id>.css`. The key v
 | line | #31302f | #3a3127 | #2b3743 | #5a3419 |
 | signal / signal-hot (Alarm) | #af0006 / #e3121b | #d29336 / #f0c24b (gold) | #2f7fe0 / #3d8bff (Blue Flame) | #a8102f / #ff405f (S-shield crimson) |
 | ink-hot / ink-soft | #ec2a2a / #d4574c | #f0c24b / #c98a3e | #5aa9ff / #e9a04b | #ff5c72 / #e1ae66 |
-| ink-live (working) | #e8a33d amber | #8fb0d3 steel | mercury | bone |
+| ink-live (working) | #e8a33d amber | #8fb0d3 steel | #7cc6c4 mercury | bone |
 | ink / bone / ash | #bdb4aa / #e8e1d9 / #8a817a | #c4bdb0 / #e9e4d8 / #948b7f | #bfc8d0 / #e6ebee / #8a99a8 | #e0cfb0 / #f7e8c8 / #a39886 |
 | accent | signal red | bone | bone | bone |
 | display / stamp / report | Anton / Special Elite / Special Elite | Limelight / Josefin Sans / Special Elite | Syncopate / Big Shoulders Stencil / JetBrains Mono | Archivo 800 / Archivo / Barlow |
 | Atmosphere | rain, red glow from below | snow, brown smog | lit windows (static skyline) | ash, haze from above |
-| Suit | black, red edge, jagged cape hem | grey suit, gold oval plate, belt, scalloped cape | armour, straight hem, Blue Flame aura | desert duster, goggles, scarf |
+| Suit | black, red edge, jagged cape hem | grey suit, gold oval plate, belt, scalloped cape | black plated suit, straight hem, Blue Flame aura | desert duster, goggles, scarf, no cape |
 | Signature | "Out of the dark", front-on | "Under the Signal", three-quarter, looking up | "Sonar", crouch + ring | the Knightmare |
 | Voice | Bruce's journal, terse, bleak | night-edition newsroom, wry | ops briefing (Fox, Gordon) | weary veteran, Alfred in his ear |
 | Lexicon (Case · Needs you · Permission · Error · Waiting · New reply · Stalled) | standard | Story · Your desk · Approval · Trouble · Question · Just in · No word | Op · On you · Clearance · Fault · Your move · Checked in · No contact | Case · Your call · Authorize · Damaged · Orders? · New intel · Stuck |
 
-Claimed by these four, so off-limits as a Theme's main idea: pure black ground with a red alarm and a typewriter (VENGEANCE); a gold or yellow oval as the alarm, "Story", any press or newsroom frame, Art Deco (PALE MOONLIGHT); a night-blue or steel-blue ground, ops words, stencil type, a sonar ring, a teal detective-mode look (WATCHFUL PROTECTOR); armour as a costume, a grey suit with a big chest bat, falling ash, amber desert, a duster (KNIGHTMARE). Lightning flashes are out for everyone: a flash with no news cries wolf.
+Claimed by these four, so off-limits as a Theme's main idea: pure black ground with a red alarm and a typewriter (VENGEANCE); a gold or yellow oval as the alarm, "Story", any press or newsroom frame, Art Deco (PALE MOONLIGHT); a night-blue or steel-blue ground, ops words, stencil type, a sonar ring, a teal detective-mode look (WATCHFUL PROTECTOR); falling ash, amber desert, a duster, goggles and scarf (KNIGHTMARE). Lightning flashes are out for everyone: a flash with no news cries wolf.
 
 ## 4. Who claims what in Wave 2
 
@@ -67,7 +67,7 @@ Four dossiers are written at the same time. To keep them from reaching for the s
 
 ## 5. Known risks for the jury
 
-- **DKR must find a place of its own** (jury §9, LUC-80). It may not use a gold or yellow oval as its alarm, "Story", any print press frame, a night-blue ground, armour, a grey suit with a big chest bat, or lightning flashes. The maintainer wants DKR because fans love it, so the dossier has to be **creative**, not cut it. Leads: the TV talking heads (a broadcast Voice, not a newspaper one; make the difference concrete: a ticker, a studio, an anchor, a static layer), the 16-panel grid, Varley's watercolours, the lightning leap as the Signature, the old Batman in the rain, the horse.
+- **DKR must find a place of its own** (jury §9, LUC-80). It may not use a gold or yellow oval as its alarm, "Story", any print press frame, a night-blue ground, or lightning flashes. The Wave 1 jury also kept the armour, the grey suit and the big chest bat for Snyder, but KNIGHTMARE shipped as the desert resistance without them (`suits.ts` has no armour), so they are open again, and they are DKR's own: Snyder borrowed them from Miller. Say whether DKR takes them back. The maintainer wants DKR because fans love it, so the dossier has to be **creative**, not cut it. Leads: the TV talking heads (a broadcast Voice, not a newspaper one; make the difference concrete: a ticker, a studio, an anchor, a static layer), the 16-panel grid, Varley's watercolours, the lightning leap as the Signature, the old Batman in the rain, the horse.
 - **Year One against VENGEANCE.** Both are noir and both could use a journal. VENGEANCE owns Bruce's journal. Gordon's half of Year One is the obvious exit; the dossier should argue it or find another one.
 - **Year One against *The Long Halloween*** (Wave 3). Both are early-years crime stories. Say what Year One takes so that Long Halloween can still have its own palette and Voice later (Tim Sale's heavy blacks, holidays, the Roman).
 - **Arkham Asylum against the Arkham games** (Wave 3). The Wave 1 jury gave "asylum green" to the games as their way in. Arkham Asylum should not need it; if the dossier finds it does, it must say so, so the maintainer can decide now.
