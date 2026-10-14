@@ -26,8 +26,8 @@ After v1.0: sign the installer through SignPath Foundation, so Smart App Control
 
 Each theme dresses Bat-Signal as one version of Batman: palette, type, Bat-Clawd's costume and poses, the emblem, the disc, the Atmosphere behind the panel and the words. VENGEANCE, after The Batman (2022), stays the default. Themes ship in waves, each opened by research and a design jury ([`docs/research/themes/`](research/themes/)) and closed by a release. Tracked in [#70](https://github.com/lucas-moont/bat-signal/issues/70).
 
-- [ ] Wave 0, the foundation: every colour and word from the theme, live switching, per-theme poses, the Lexicon switch, the Atmosphere, the picker
-- [ ] Wave 1, films (v1.2): PALE MOONLIGHT (Burton), WATCHFUL PROTECTOR (Nolan), KNIGHTMARE (Snyder), and a refreshed VENGEANCE Bat-Clawd
+- [x] Wave 0, the foundation: every colour and word from the theme, live switching, per-theme poses, the Lexicon switch, the Atmosphere, the picker
+- [x] Wave 1, films (v1.2): PALE MOONLIGHT (Burton), WATCHFUL PROTECTOR (Nolan), KNIGHTMARE (Snyder), and a refreshed VENGEANCE Bat-Clawd
 - [ ] Wave 2, comics (v1.3): The Dark Knight Returns, Absolute Batman, Year One, Arkham Asylum
 - [ ] Wave 3, classics (v1.4): The Animated Series, The Long Halloween, the Arkham games, Adam West, Lego Batman
 
