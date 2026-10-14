@@ -139,8 +139,8 @@
   --wordmark-tracking: 1.5px;
   --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
 
-  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ff4d57' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23b8a383' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ff5c72' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23c49b67' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* Archivo caps a degree off true, in a box, under a coarse grit like dust blown across paint. */
   --stamp-tilt: -1deg;
