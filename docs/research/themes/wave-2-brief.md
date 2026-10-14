@@ -61,7 +61,7 @@ Four dossiers are written at the same time. To keep them from reaching for the s
 | Theme | Its territory | Leave to the others |
 |---|---|---|
 | *The Dark Knight Returns* | Lynn Varley's painted colour; the TV: talking heads, the 16-panel grid, broadcast, static; the old, huge Batman; the lightning leap and the horse as poses (not as flashes) | flat colour, noir, Gordon (Year One); collage and the asylum (Arkham Asylum); the axe and industrial Gotham (Absolute) |
-| *Absolute Batman* | Nick Dragotta's heavy line and Frank Martin's colour; the working-class giant; the axe emblem; the 2024 brutalist Gotham | painted colour (DKR, Arkham Asylum); noir (Year One) |
+| *Absolute Batman* | Nick Dragotta's heavy line and Frank Martin's colour; the working-class giant; the axe emblem; the 2024 Gotham (blocky, geometric, glass and cold, in the creators' words) | painted colour (DKR, Arkham Asylum); noir (Year One) |
 | *Year One* | Mazzucchelli's line and Richmond Lewis's flat colour; the first year; Gordon's half of the story; the dirty city | TV and broadcast (DKR); journal Voice already used by VENGEANCE (see §5) |
 | *Arkham Asylum* | McKean's painted collage, photographs and texture; the asylum as a house; the hand-lettered voices | asylum green as a ground, if the Arkham games (Wave 3) need it (see §5) |
 
