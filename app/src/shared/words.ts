@@ -635,10 +635,11 @@ export const KNIGHTMARE_WORDS: Words = {
     report: {
       ...STANDARD_VOICE.report,
       name: 'Still standing',
-      dateline: (now) => formats().time.format(now),
       signature: 'Yours to decide',
       caseNotes: () => 'Still out there',
-      end: () => "That's the lot. Get some sleep.",
+      // Sleep only when nothing waits; otherwise, back to it.
+      end: (waiting) =>
+        waiting ? "That's the lot. Some of it still needs you." : "That's the lot. Get some sleep.",
     },
     settings: {
       ...STANDARD_VOICE.settings,

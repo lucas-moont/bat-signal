@@ -5,7 +5,13 @@ import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
-import { STANDARD_TERMS, STANDARD_WORDS, WATCHFUL_PROTECTOR_WORDS, withLexicon } from '../src/shared/words'
+import {
+  KNIGHTMARE_WORDS,
+  STANDARD_TERMS,
+  STANDARD_WORDS,
+  WATCHFUL_PROTECTOR_WORDS,
+  withLexicon,
+} from '../src/shared/words'
 import { standInTheme } from './fixtures/themes'
 import { opsWords, permission } from './fixtures/words'
 
@@ -101,5 +107,20 @@ describe("WATCHFUL PROTECTOR's Voice", () => {
   // A term inside a sentence is lowered: Ops reads "ops", and nothing it names needs a capital.
   it('names its ops in a sentence', () => {
     expect(voice.empty.noCases.title(terms)).toBe('No ops running. Get some rest.')
+  })
+})
+
+describe("KNIGHTMARE's Voice", () => {
+  const { voice } = KNIGHTMARE_WORDS
+
+  // Alfred sends him to bed only when nothing is left waiting on him.
+  it('ends the report with sleep only when nothing waits', () => {
+    expect(voice.report.end(0)).toBe("That's the lot. Get some sleep.")
+    expect(voice.report.end(3)).toBe("That's the lot. Some of it still needs you.")
+  })
+
+  it('dates its report as every report is, day and time', () => {
+    expect(voice.report.name).toBe('Still standing')
+    expect(voice.report.dateline(new Date(2026, 9, 13, 2, 14))).toBe('TUE 13 OCT · 02:14')
   })
 })
