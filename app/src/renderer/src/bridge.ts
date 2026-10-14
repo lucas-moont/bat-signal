@@ -1,6 +1,6 @@
 // The window's link to the main process. Without the preload bridge a stand-in takes over:
 // in a plain browser (design review) or when asked with #demo / #demo-quiet / #demo-busy / #demo-news (and -watch for the
-// strip, -report for the night report, -silent for sessions the plugin never heard from)
+// strip and its perch, -report for the night report, -silent for sessions the plugin never heard from)
 // (screenshots) it serves the made-up Gotham night; inside the real app a missing bridge is an error, and the
 // window stays empty rather than showing fake sessions as if they were real.
 import { beforeNewsDemoSnapshot, busyDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '@shared/demo'
@@ -66,7 +66,8 @@ function standIn(first: StoreSnapshot, next?: StoreSnapshot): BatSignalApi {
   })
   const status = observable(statusOf(settings.current()))
   settings.on((next) => status.set(statusOf(next)))
-  const mode = observable<WindowMode>(isSignalView ? 'signal' : flags.has('watch') ? 'watch' : 'panel')
+  // -watch: the panel shrinks to the strip, and the signal window becomes its perch.
+  const mode = observable<WindowMode>(flags.has('watch') ? 'watch' : isSignalView ? 'signal' : 'panel')
   let lastOpened: OpenMode = 'panel'
   return {
     getSnapshot: snapshot.get,
