@@ -121,14 +121,10 @@ const LEGEND = {
 /** Each unit row twice: the grid at half-row resolution. */
 const twice = (rows: readonly string[]) => rows.flatMap((row) => [row, row])
 
+/** The cowl's brow, with its shine. */
+const BROW = '....chhccccc....'
 /** The cowl down to his eyes, with its shine and two ear tips, and Clawd's orange as his jaw. */
-const HEAD = twice([
-  '....c......c....',
-  '....chhccccc....',
-  '...cccccccccc...',
-  '...cccccccccc...',
-  '...cc######cc...',
-])
+const HEAD = twice(['....c......c....', BROW, '...cccccccccc...', '...cccccccccc...', '...cc######cc...'])
 const SUIT = '...SSSSSSSSSS...'
 /** The belt and its buckle, then the suit's last half-row and his four booted legs. */
 const BELOW_WAIST = [
@@ -629,15 +625,15 @@ const KNIGHTMARE_LEGEND = {
  * neck, the coat's collar either side.
  */
 const KNIGHTMARE_HEAD = [
-  ...HEAD.map((row) => (row === '....chhccccc....' ? '...ffllffllff...' : row)),
+  ...HEAD.map((row) => (row === BROW ? '...ffllffllff...' : row)),
   '...CrrrrrrrrC...',
   '...CCrrrrrrCC...',
 ]
 /** His torso between the lapels; his arms out in the coat's darker sleeves, gloved. */
 const LAPELS = '...CSSSSSSSSC...'
 const SLEEVES = '.gvCSSSSSSSSCvg.'
-const knightmareMap = (rows: readonly string[], chest = [SLEEVES, LAPELS]) =>
-  map(chest, rows, KNIGHTMARE_LEGEND, KNIGHTMARE_HEAD)
+const knightmareMap = (rows: readonly string[]) =>
+  map([SLEEVES, LAPELS], rows, KNIGHTMARE_LEGEND, KNIGHTMARE_HEAD)
 /** The coat closed down to his shins, his legs under it. */
 const COAT_SHUT = knightmareMap([
   '...CbbbkkbbbC...',
@@ -654,10 +650,11 @@ const COAT_OPEN = knightmareMap([
   ...twice(['....g.g..g.g....']),
   '....g.g..g.g....',
 ])
-const KNIGHTMARE_SEATED = knightmareMap([], [LAPELS, LAPELS, LAPELS])
+/** Sitting, the coat wrapped round him: his torso, and nothing below (seated draws his feet). */
+const KNIGHTMARE_SEATED = map([LAPELS, LAPELS, LAPELS], [], KNIGHTMARE_LEGEND, KNIGHTMARE_HEAD)
 
-/** The BvS bat on his chest, between the lapels, under the scarf. */
-const CHEST_BAT: Layer = { kind: 'emblem', cx: 8, cy: 6.9, width: 5.6 }
+/** The BvS bat on his chest, between the lapels, below the scarf and above the belt (y 6 to 8). */
+const CHEST_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 4.4 }
 
 /** The duster, its hem straight with a few heavy points (bat-clawd-knightmare-suit.md, section 4). */
 const DUSTER = {
@@ -731,6 +728,6 @@ export const KNIGHTMARE_SUIT: Suit = {
   // On the perch he watches the horizon; once a cycle a gust lifts the coat.
   watch: watchOn(KNIGHTMARE, [{ look: 0.3 }, { look: -0.3 }], [{ pose: gusted, look: 0 }]),
   signature: KNIGHTMARE,
-  // Heat Vision is the Alarm color and never shows at rest: no aura as the coat snaps.
+  // S-shield crimson is the Alarm color and never shows at rest: no aura as the coat snaps.
   aura: 'alarmed',
 }
