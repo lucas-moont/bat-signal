@@ -55,6 +55,7 @@
   position: absolute;
   bottom: var(--intro-title-bottom);
   font-family: var(--font-display);
+  font-weight: var(--display-weight);
   font-size: 30px;
   letter-spacing: 8px;
   color: var(--accent);

@@ -4,6 +4,16 @@ Research note, 2026-10-09. Scope: one Bat-Signal Theme after Ben Affleck's Batma
 
 Revised 2026-10-09 after the wave 1 jury (`jury-wave-1.md` §10).
 
+**Built in #83 (2026-10-14)** as `batman-v-superman-2016`, demo flag `knightmare`. Where this note and the build differ, the build follows the maintainer's decisions on screen:
+- **The palette is the Knightmare's amber**, not this note's greys: [`knightmare-palette.md`](knightmare-palette.md), sampled from the five official trailers, picked on screen against the armour fight in the rain. Brown-black grounds, Bone from the sky (`#f7e8c8`), the city haze `#e1ae66` for what waits, Bone for what runs.
+- **The Alarm color is S-shield crimson `#ff405f`** (text `#ff5c72`), not Heat Vision: `#e60f00` sat 3.7 ΔE00 from VENGEANCE's red.
+- **The lit Signal** is the desert sky (`#fdebc4` → `#f3daa9` → `#e1ae66`) with the bat **black** across it, as the film's Signal throws it; the crimson rings it and glows round it. **Pieces of its glass are gone**, the dark of the lamp showing through (the maintainer's idea, picked over cracks). The masthead's bat is the warm ash grey.
+- **The emblem** follows the film's: measured on the DCEU emblem and matched to §8's poster outline, about 2.2:1, the wing horns highest, a convex outer sweep, small ears, one scallop and a hook tooth a side, a deep V (picked on screen from three candidates).
+- **Type:** Archivo 800 at 18px for the masthead (picked against 16px), the headings and the stamps (10.5px, so AUTHORIZE fits the narrowest margin); the report in Barlow.
+- **Atmosphere:** ash and sand, half each, blown sideways under a sky-coloured haze from above; it leaves with its motion and stands frozen under reduced motion. The reveal's dust (§9) waits for LUC-112.
+- **Bat-Clawd:** outfit M with its coat streaming left in flight (picked on screen), a one-colour aura (picked against a white-hot core), and the Knightmare as the Signature pose; the armour is not a pose.
+- **"Men are still good."** waits for the Signature caption work (LUC-112/#109).
+
 ## 1. TL;DR
 
 - **The Theme in one sentence:** an old, tired Batman leads a guerrilla resistance against Superman's regime across a grey desert under falling ash, with Alfred's dry voice in his ear, and the only colour that ever burns is red, when something needs you.

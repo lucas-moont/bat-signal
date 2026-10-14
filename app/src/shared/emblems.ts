@@ -35,6 +35,19 @@ export const BAT_2008 =
   'L77.7 28.6 L73.8 30.5 L70 31.5 L66.2 34.5 L62.3 39 L60 40.5 L57.7 39 L53.8 34.5 L50 31.5 ' +
   'L46.2 30.5 L42.3 28.6 L38.5 28.2 L31 27.4 L19 27.2 L19 19.5 Q14 11.5 0 8 Z'
 
+/**
+ * KNIGHTMARE's bat, after Zack Snyder's Batman (2016–2021), on the same 120x48 grid: the DCEU
+ * emblem as Ben Affleck's suit, the Signal and the logo wear it (measured on its emblem image, and
+ * matched to the poster's upper outline, snyder.md, section 8). About 2.2:1; the wing horns are the
+ * highest points, each outer edge sweeps down convex to a low outer point, small ears on a flat
+ * head, one scallop and a small hook tooth a side, then a long run to a deep V. Symmetric about x = 60.
+ */
+export const BAT_2016 =
+  'M60 47.6 L39.1 33.9 Q34.8 33.4 30.1 33.9 L27.5 38.3 Q26.1 34.3 23 33.7 Q15.6 36.1 7.8 40.2 ' +
+  'C7.8 22.5 25.2 5.2 34.3 0.5 L35.8 4 Q36.5 5.1 37.8 5.4 L51.3 8.4 L51.3 2.4 L55 6.2 L60 6.2 ' +
+  'L65 6.2 L68.7 2.4 L68.7 8.4 L82.2 5.4 Q83.5 5.1 84.2 4 L85.7 0.5 C94.8 5.2 112.2 22.5 112.2 40.2 ' +
+  'Q104.4 36.1 97 33.7 Q93.9 34.3 92.5 38.3 L89.9 33.9 Q85.2 33.4 80.9 33.9 L60 47.6 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 

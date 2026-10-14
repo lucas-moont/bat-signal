@@ -217,6 +217,7 @@
 .empty__title {
   margin: 0;
   font-family: var(--font-display);
+  font-weight: var(--display-weight);
   text-transform: var(--heading-case);
   font-size: 20px;
   letter-spacing: 1.5px;

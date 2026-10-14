@@ -24,7 +24,7 @@
 .header__title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: var(--display-weight);
   font-size: var(--wordmark-size);
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;

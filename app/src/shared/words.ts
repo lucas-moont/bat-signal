@@ -602,3 +602,49 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
     },
   },
 }
+
+/**
+ * KNIGHTMARE's words, after Zack Snyder's Batman (snyder.md, sections 5 and 6): a veteran's
+ * resistance in Superman's ruined world, Alfred's dry care in his ear. Cases stay cases.
+ */
+export const KNIGHTMARE_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    needsYou: { label: 'Your call', count: (n) => `${n} ${n === 1 ? 'awaits' : 'await'} your call` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Authorize',
+      error: 'Damaged',
+      waiting: 'Orders?',
+      reply: 'New intel',
+      stalled: 'Stuck',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    theme: { name: 'KNIGHTMARE', film: "Zack Snyder's Batman v Superman and Justice League" },
+    tagline: "The world isn't lost yet.",
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Nothing needs you. Do try to sleep.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} running. Sit down, for once.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Still standing',
+      signature: 'Yours to decide',
+      caseNotes: () => 'Still out there',
+      // Sleep only when nothing waits; otherwise, back to it.
+      end: (waiting) =>
+        waiting ? "That's the lot. Some of it still needs you." : "That's the lot. Get some sleep.",
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'The workshop',
+      atmosphere: { label: 'Ash', hint: (t) => `Ash on the wind behind the ${lower(t.case.many)}` },
+    },
+  },
+}

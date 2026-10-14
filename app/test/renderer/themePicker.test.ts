@@ -68,9 +68,11 @@ describe('the Theme picker', () => {
     expect(html).toMatch(/role="radio"[^>]*data-theme="the-batman-2022"/)
     expect(html).toMatch(/role="radio"[^>]*data-theme="batman-1989"/)
     expect(html).toMatch(/role="radio"[^>]*data-theme="the-dark-knight-2008"/)
+    expect(html).toMatch(/role="radio"[^>]*data-theme="batman-v-superman-2016"/)
     expect(html).toContain('>Permission<')
     expect(html).toContain('>Approval<')
     expect(html).toContain('>Clearance<')
+    expect(html).toContain('>Authorize<')
     expect(html).toContain('clawd__frame')
   })
 

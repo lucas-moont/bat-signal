@@ -76,6 +76,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
   // PALE MOONLIGHT starts, as every new Theme does, with none.
   'batman-1989': {},
   'the-dark-knight-2008': {},
+  'batman-v-superman-2016': {},
 }
 
 const colors = textColors()
