@@ -666,10 +666,6 @@ const KNIGHTMARE_SEATED: OutfitMap = {
 /** The BvS bat on his chest, between the lapels, under the scarf. */
 const CHEST_BAT: Layer = { kind: 'emblem', cx: 8, cy: 6.9, width: 5.6 }
 
-/** A path's x mirrored across his middle: a coat blown the other way. */
-const flipX = (d: string) =>
-  d.replace(/(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => `${16 - Number(x)} ${y}`)
-
 /** The duster, its hem straight with a few heavy points (bat-clawd-knightmare-suit.md, section 4). */
 const DUSTER = {
   /** Flying: it streams back in a heavy tail, hemmed at the knees (two frames of a flutter). */
@@ -696,9 +692,8 @@ const LINING: Layer = { kind: 'path', d: DUSTER.lining, fill: 'var(--coat-lining
 const knightmarePose = (map: OutfitMap, behind: Layer[], eyes: Pose['eyes'] = 'open') =>
   pose(map, behind, [], { chest: [CHEST_BAT], eyes })
 
-/** Flying, the duster streaming behind him (to the right, if `blown` says so). */
-const flyingIn = (trail: string, blown: 'left' | 'right') =>
-  knightmarePose(COAT_SHUT, [{ kind: 'cape', d: blown === 'left' ? trail : flipX(trail) }, LINING])
+/** Flying, the duster streaming behind him, to the left (picked on screen). */
+const flyingIn = (trail: string) => knightmarePose(COAT_SHUT, [{ kind: 'cape', d: trail }, LINING])
 
 /** Alarmed: the coat swung open, its lining behind his legs. */
 const swungOpen = knightmarePose(COAT_OPEN, [
@@ -733,14 +728,11 @@ const KNIGHTMARE: Script = [
   { pose: knightmare, look: 0 },
 ]
 
-/** Which way his coat streams in flight, until it is picked on screen. */
-const COAT_BLOWN: 'left' | 'right' = 'left'
-
 export const KNIGHTMARE_SUIT: Suit = {
   eyes: EYES,
   poses: {
     sleeping: [seated(KNIGHTMARE_SEATED, DUSTER.wrapped)],
-    flying: [flyingIn(DUSTER.trailA, COAT_BLOWN), flyingIn(DUSTER.trailB, COAT_BLOWN)],
+    flying: [flyingIn(DUSTER.trailA), flyingIn(DUSTER.trailB)],
     alarmed: [swungOpen],
   },
   // On the perch he watches the horizon; once a cycle a gust lifts the coat.
