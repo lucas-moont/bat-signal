@@ -622,7 +622,7 @@ export const KNIGHTMARE_WORDS: Words = {
   },
   voice: {
     ...STANDARD_VOICE,
-    theme: { name: 'KNIGHTMARE', film: "Zack Snyder's Batman v Superman and Justice League" },
+    theme: { name: 'KNIGHTMARE', film: "Zack Snyder's Batman v Superman" },
     tagline: "The world isn't lost yet.",
     empty: {
       ...STANDARD_VOICE.empty,

@@ -4,6 +4,10 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-14
+
+Three film Themes join The Batman (2022), each a version of Batman with its own palette, type, words, Atmosphere and Bat-Clawd.
+
 ### Added
 
 - **PALE MOONLIGHT**, a second Theme, after Tim Burton's *Batman* (1989). Gold over a smoggy brown-black, gold only when something needs you, and the 1989 bat in its oval. It speaks of Stories on Your desk, with APPROVAL, TROUBLE, QUESTION, JUST IN and NO WORD stamps and a Late edition for the night report. Snow falls behind the panel. Bat-Clawd wears Keaton's suit, with the oval on his chest that lights up, and a cape cut like the film's. Pick it in Settings → Look.
@@ -185,7 +189,8 @@ A corner companion.
 
 - Live sessions rebuilt from the files Claude Code already writes: titles, messages, tasks, subagents and background commands, and what needs you.
 
-[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/lucas-moont/bat-signal/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/lucas-moont/bat-signal/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/lucas-moont/bat-signal/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/lucas-moont/bat-signal/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/lucas-moont/bat-signal/compare/v1.0.1...v1.1.0

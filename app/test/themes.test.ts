@@ -47,10 +47,11 @@ describe('the Themes', () => {
     })
   })
 
-  it("names KNIGHTMARE after Zack Snyder's Batman v Superman and Justice League", () => {
+  // Credited for the film the Knightmare first appeared in, short enough for its picker folder.
+  it("names KNIGHTMARE after Zack Snyder's Batman v Superman", () => {
     expect(THEMES['batman-v-superman-2016'].words.voice.theme).toEqual({
       name: 'KNIGHTMARE',
-      film: "Zack Snyder's Batman v Superman and Justice League",
+      film: "Zack Snyder's Batman v Superman",
     })
   })
 
