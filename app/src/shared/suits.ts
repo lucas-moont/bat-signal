@@ -140,11 +140,12 @@ const BELOW_WAIST = [
 ]
 const map = (
   chest: readonly string[],
-  rows = BELOW_WAIST,
+  rows: readonly string[] = BELOW_WAIST,
   legend: OutfitMap['legend'] = LEGEND,
+  head: readonly string[] = HEAD,
 ): OutfitMap => ({
   top: 0,
-  rows: [...HEAD, ...twice(chest), ...rows],
+  rows: [...head, ...twice(chest), ...rows],
   legend,
 })
 
@@ -623,24 +624,20 @@ const KNIGHTMARE_LEGEND = {
   v: 'var(--sleeve)',
   p: 'var(--pants)',
 }
-/** The cowl with its ears, the goggles pushed up across the brow, and Clawd's orange as his jaw. */
-const KNIGHTMARE_HEAD = twice([
-  '....c......c....',
-  '...ffllffllff...',
-  '...cccccccccc...',
-  '...cccccccccc...',
-  '...cc######cc...',
-])
-/** The scarf at his neck, the coat's collar either side, then his torso between the lapels. */
-const SCARF = ['...CrrrrrrrrC...', '...CCrrrrrrCC...']
+/**
+ * V's cowl with the goggles pushed up across the brow in place of its shine, then the scarf at his
+ * neck, the coat's collar either side.
+ */
+const KNIGHTMARE_HEAD = [
+  ...HEAD.map((row) => (row === '....chhccccc....' ? '...ffllffllff...' : row)),
+  '...CrrrrrrrrC...',
+  '...CCrrrrrrCC...',
+]
+/** His torso between the lapels; his arms out in the coat's darker sleeves, gloved. */
 const LAPELS = '...CSSSSSSSSC...'
-/** His arms out, in the coat's darker sleeves, gloved. */
 const SLEEVES = '.gvCSSSSSSSSCvg.'
-const knightmareMap = (rows: readonly string[]): OutfitMap => ({
-  top: 0,
-  rows: [...KNIGHTMARE_HEAD, ...SCARF, ...twice([SLEEVES, LAPELS]), ...rows],
-  legend: KNIGHTMARE_LEGEND,
-})
+const knightmareMap = (rows: readonly string[], chest = [SLEEVES, LAPELS]) =>
+  map(chest, rows, KNIGHTMARE_LEGEND, KNIGHTMARE_HEAD)
 /** The coat closed down to his shins, his legs under it. */
 const COAT_SHUT = knightmareMap([
   '...CbbbkkbbbC...',
@@ -657,11 +654,7 @@ const COAT_OPEN = knightmareMap([
   ...twice(['....g.g..g.g....']),
   '....g.g..g.g....',
 ])
-const KNIGHTMARE_SEATED: OutfitMap = {
-  top: 0,
-  rows: [...KNIGHTMARE_HEAD, ...SCARF, ...twice([LAPELS, LAPELS, LAPELS])],
-  legend: KNIGHTMARE_LEGEND,
-}
+const KNIGHTMARE_SEATED = knightmareMap([], [LAPELS, LAPELS, LAPELS])
 
 /** The BvS bat on his chest, between the lapels, under the scarf. */
 const CHEST_BAT: Layer = { kind: 'emblem', cx: 8, cy: 6.9, width: 5.6 }
