@@ -81,7 +81,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     suit: WATCHFUL_PROTECTOR_SUIT,
     atmosphere: WATCHFUL_PROTECTOR_WINDOWS,
   },
-  /** Zack Snyder's Batman v Superman (2016) and Justice League, KNIGHTMARE: grey ash, one red. */
+  /** Zack Snyder's Batman v Superman (2016) and Justice League, KNIGHTMARE: desert amber, one crimson. */
   'batman-v-superman-2016': {
     flag: 'knightmare',
     ground: '#100804',

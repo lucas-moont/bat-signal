@@ -28,7 +28,7 @@
   --on-signal: var(--bone);
   --ink-hot: #ff5c72;
   --ink-soft: #e1ae66;
-  /* Bone works: no cool color left in a black-and-white world. */
+  /* Bone, the sky's light, marks what runs: the stamp word carries the tier. */
   --ink-live: var(--bone);
   --ink: #e0cfb0;
 
@@ -51,7 +51,7 @@
   --in-progress: var(--bone);
   --in-progress-glow: color-mix(in srgb, var(--bone) 40%, transparent);
 
-  /* Quit's hover stays grey: red is an alarm, and its tooltip says what it does. */
+  /* Quit's hover stays a shadow: crimson is an alarm, and its tooltip says what it does. */
   --danger: var(--raised);
   --waiting-rule: var(--blood);
   --report-rule: var(--line);
@@ -60,8 +60,8 @@
 
   --bone: #f7e8c8;
   --ash: #a39886;
-  --bone-dim: #e0cfb0;
-  --ash-dim: #a39886;
+  --bone-dim: var(--ink);
+  --ash-dim: var(--ash);
   --chevron: var(--ash);
 
   /* Bat-Clawd in the Knightmare's desert gear (outfit M, #95): a brown leather duster with darker
@@ -106,14 +106,16 @@
   --lens-rim: var(--signal);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
-  --notice-top: #24130a;
+  --notice-top: var(--surface);
   --notice-foot: var(--smoke);
   --notice-hover-top: #2e180c;
   --notice-hover-foot: #1c0e07;
 
   /* Hard light from above, the film's grain, and ash on the desert wind (a quarter of it dust). */
-  --haze: color-mix(in srgb, #f3daa9 6%, transparent);
-  --haze-edge: color-mix(in srgb, #f3daa9 2%, transparent);
+  /* The sky's haze on the horizon, sampled. */
+  --horizon: #f3daa9;
+  --haze: color-mix(in srgb, var(--horizon) 6%, transparent);
+  --haze-edge: color-mix(in srgb, var(--horizon) 2%, transparent);
   --haze-inset: -35% -20% auto -20%;
   --grain-opacity: 0.05;
   --searchlight: var(--bone);
@@ -132,7 +134,7 @@
   --font-label: var(--font-display);
   --heading-case: none;
   --font-case-title: var(--font-display);
-  --case-title-weight: 800;
+  --case-title-weight: var(--display-weight);
   --folder-name-size: 14px;
   --folder-name-tracking: 0.3px;
   --wordmark-size: 18px;
@@ -148,14 +150,14 @@
   --stamp-border: 1.5px;
   /* A half size under the others: Archivo's AUTHORIZE fits the narrowest panel's margin. */
   --stamp-size: 10.5px;
-  --stamp-weight: 800;
+  --stamp-weight: var(--display-weight);
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
-  /* Lit: sky to horizon haze to city haze, all sampled (knightmare-palette.md, section 5). */
   /* Broken: pieces of the glass gone, the dark of the lamp showing through, as everything is after the
      fall (the maintainer's idea, picked on screen over cracks). */
   --lens-cracks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M37 0 L64 0 L64 26 L59 24 L56 18 L58 13 L52 15 L49 10 L44 12 L42 7 L39 6 Z' fill='%23100804'/%3E%3Cpath d='M6 44 L13 41 L17 45 L22 44 L23 50 L19 54 L21 59 L12 64 L0 64 L0 50 Z' fill='%23100804'/%3E%3Cpath d='M47 64 L48 57 L52 55 L53 51 L58 50 L64 46 L64 64 Z' fill='%23100804'/%3E%3Cg fill='none' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M39 6 L42 7 L44 12 L49 10 L52 15 L58 13 L56 18 L59 24' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M13 41 L17 45 L22 44 L23 50 L19 54 L21 59' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M48 57 L52 55 L53 51 L58 50' stroke='%23fff6e0' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M44 12 L41 17 L37 18' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M56 18 L53 22 L54 27' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M22 44 L25 42' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M23 50 L28 51' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3Cpath d='M53 51 L56 47' stroke='%23100804' stroke-opacity='.7' stroke-width='.7'/%3E%3C/g%3E%3C/svg%3E");
+  /* Lit: sky to horizon haze to city haze, all sampled (knightmare-palette.md, section 5). */
   --disc-lens:
     var(--lens-cracks) center / 100% 100% no-repeat,
-    radial-gradient(circle at 50% 45% in srgb, var(--lens-core), #f3daa9 60%, #e1ae66);
+    radial-gradient(circle at 50% 45% in srgb, var(--lens-core), var(--horizon) 60%, var(--ink-soft));
 }
