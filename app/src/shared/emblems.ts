@@ -62,6 +62,22 @@ export const BAT_1987 =
   'L98.5 31.3 L112.2 38 L120 46 L117.1 28.1 L114.7 13.2 L107.2 2 L99.8 9.5 L73.7 10.2 L66.8 2 ' +
   'L63.7 7 L60 7 Z'
 
+/**
+ * ANCIENT GRACE's bat, after Frank Miller's The Dark Knight Returns (1986), on the same 120x48 grid:
+ * the second suit's big black bat, traced from the Book Three cover, where it stands alone in a white
+ * glow (year-one-bat.md, section 5). About 1.05:1, round: each wing's outer edge one arc down to a
+ * hooked lower tip, a deep round notch between each wing's upper tip and the head, a narrow tall head
+ * with two thin upright ears, and two sharp V notches a side underneath, then a long pointed tail,
+ * the lowest point. Mirrored at x = 60.
+ */
+export const BAT_1986 =
+  'M60 8.1 L58.6 8.1 L57.6 4.9 L55.5 13.9 C51.9 13.8 46.6 10 47 5.9 C47.1 3.4 47.6 1.8 48.6 1 ' +
+  'C40.9 3.4 35.6 11.2 35.6 21.4 C35.6 31.5 42.1 40.9 50.4 43.9 L48.6 41.7 L46.8 38 L46 32.1 ' +
+  'L48.2 33.6 L50.2 36 L51.5 37.8 L52.7 36.2 L55.3 33.4 L57.2 37.2 L58.4 41.3 L60 47 L61.6 41.3 ' +
+  'L62.8 37.2 L64.7 33.4 L67.3 36.2 L68.5 37.8 L69.8 36 L71.8 33.6 L74 32.1 L73.2 38 L71.4 41.7 ' +
+  'L69.6 43.9 C77.9 40.9 84.4 31.5 84.4 21.4 C84.4 11.2 79.1 3.4 71.4 1 C72.4 1.8 72.9 3.4 73 5.9 ' +
+  'C73.4 10 68.1 13.8 64.5 13.9 L62.4 4.9 L61.4 8.1 L60 8.1 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 
