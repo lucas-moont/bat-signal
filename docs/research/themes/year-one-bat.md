@@ -2,7 +2,7 @@
 
 Research note, 2026-10-15. Scope: trace the chest bat of the first suit in *Batman: Year One* (1987) and the big black bat of the second suit in *The Dark Knight Returns* (1986), compare them at 64px on the disc and at chest size, and read Bruce's window line in #404 on a page. It answers jury-wave-2 §3.14, `year-one.md` §8 and §12, and `dark-knight-returns.md` §8 and §12.
 
-*Built in #122: BAT_1987 ships as traced here (`app/src/shared/emblems.ts`). The Theme shipped with the trade paperback's red as its alarm and a grey suit with a collar, so on the lit disc the rings are red, not the magenta below, and the chest bat is 2.5 units wide, not 5. BAT_1986 is not shipped; it waits for #120.*
+*Built in #122: BAT_1987 ships as traced here (`app/src/shared/emblems.ts`). The Theme shipped with the trade paperback's red as its alarm and a grey suit with a collar, so on the lit disc the rings are red, not the magenta below, and the chest bat is 2.73 units wide (a full unit tall), not 5. BAT_1986 is not shipped; it waits for #120.*
 
 Provenance key used below: **Read** = seen by us on a reproduction of a page or cover, named with its URL. **Measured** = taken off that image with a script, in pixels. **Inferred** = our reading of what those facts imply.
 
@@ -17,13 +17,10 @@ Provenance key used below: **Read** = seen by us on a reproduction of a page or 
 
 ## 2. The window line
 
-- **Read** on the original art board of #404, story page 22, reproduced by Polygon from the 2024 Artist's Edition ([Polygon, image 609×880](https://cdn.vox-cdn.com/uploads/chorus_asset/file/25467551/MAZZUCHELLI_BATMAN_404_22.jpg); [article](https://www.polygon.com/24166217/batman-year-one-artist-edition-david-mazzucchelli-frank-miller-dc-comics-idw)). The page's last tier has five caption boxes, in this order:
-  - `...I have seen it before...somewhere...`
-  - `...it frightened me... as a boy...`
-  - `...frightened me...`
+- **Read** on the original art board of #404, story page 22, reproduced by Polygon from the 2024 Artist's Edition ([Polygon, image 609×880](https://cdn.vox-cdn.com/uploads/chorus_asset/file/25467551/MAZZUCHELLI_BATMAN_404_22.jpg); [article](https://www.polygon.com/24166217/batman-year-one-artist-edition-david-mazzucchelli-frank-miller-dc-comics-idw)). The page's last tier ends in two caption boxes (only these two are quoted here, per ADR 0001's "very short"):
   - `...yes. Father.` (an ellipsis before a lowercase "yes", then "Father" capitalised on its own line. The mark after "yes" reads as a full stop, but the captions are about 4px tall in this 609px image, so a comma can't be ruled out)
   - `I shall become a bat.` (its own box, at the bottom of the panel with the bust)
-- The top two tiers are the ones PopOptiq and Goomba Stomp reproduce: `Without warning, it comes...` and `...crashing through the window of your study ...and mine...`.
+- The top two tiers are the ones PopOptiq and Goomba Stomp reproduce.
 - **Why the board counts as the page.** The lettering is pasted on the board. aeindex's review of the Artist's Edition says it "is fully lettered by Todd Klein on the boards, so we can read our way through" ([aeindex](https://aeindex.org/reviews/david-mazzucchellis-batman-year-one-artists-edition/)). So the printed page should carry the same words, but **no printed 1987 or Absolute page of it was seen** (§8).
 - **The transcriptions** in `year-one.md` §12 differ from the board: "Yes, father. I shall become a bat." (India Art Review, a fan account on X) merges the two boxes; "I shall become a bat" (Goodreads, PopOptiq's heading) matches the second box; "I will become the bat" (one review) does not match.
 
