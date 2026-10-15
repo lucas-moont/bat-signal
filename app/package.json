@@ -29,6 +29,7 @@
     "@eslint/js": "^10.0.0",
     "@fontsource/anton": "^5.3.0",
     "@fontsource/archivo": "^5.3.0",
+    "@fontsource/bangers": "^5.3.0",
     "@fontsource/barlow-semi-condensed": "^5.3.0",
     "@fontsource/big-shoulders-stencil": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
@@ -86,6 +87,10 @@
       {
         "from": "node_modules/@fontsource/archivo/LICENSE",
         "to": "licenses/Archivo.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/bangers/LICENSE",
+        "to": "licenses/Bangers.txt"
       },
       {
         "from": "node_modules/@fontsource/barlow-semi-condensed/LICENSE",
