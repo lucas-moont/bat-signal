@@ -974,8 +974,8 @@ const graceMap = (chest: readonly string[], rows: readonly string[] = BELOW_WAIS
   map(chest, rows, GRACE_LEGEND, GRACE_HEAD)
 const GRACE_STANDING = graceMap([SUIT, SUIT, SUIT])
 const GRACE_SEATED = graceMap([SUIT, SUIT, SUIT, SUIT], [])
-/** The right fist thrown ahead, the legs tucked under him: only their first half-row shows. */
-const GRACE_LEAPING = graceMap([REACHING, SUIT, SUIT], BELOW_WAIST.slice(0, 3))
+/** The right fist thrown ahead, at x 14, the legs tucked under him: only their first half-row shows. */
+const GRACE_LEAPING = graceMap(['...SSSSSSSSSSSg.', SUIT, SUIT], BELOW_WAIST.slice(0, 3))
 /**
  * The armour: plates over his chest and on his shoulders, a unit past his body each side, a lit
  * edge along their tops (it is what reads at his size: the plates are near the suit's grey); his
@@ -1005,8 +1005,10 @@ const TAILS = {
   /** Closed around him, asleep, its tails at his feet. */
   wrapped: `M2.6 6.4 L13.4 6.4 ${TAIL_HEM}`,
   /** The drop: spread over his head like a canopy, its tails hanging at his sides (two frames). */
-  canopyA: 'M3 5 L-1.4 4.6 L-3 8 L-3.4 2.4 Q8 -3 19.4 2.4 L19 8 L17.4 4.6 L13 5 Z',
-  canopyB: 'M3 5 L-1.4 5.2 L-3 8.4 L-3.4 3.2 Q8 -2 19.4 3.2 L19 8.4 L17.4 5.2 L13 5 Z',
+  canopyA: 'M3 5 L-1.4 4.6 L-3 8 L-3 2.4 Q8 -4.4 19 2.4 L19 8 L17.4 4.6 L13 5 Z',
+  canopyB: 'M3 5 L-1.4 5.2 L-3 8.4 L-3 3.2 Q8 -3.2 19 3.2 L19 8.4 L17.4 5.2 L13 5 Z',
+  /** On the ledge, gathered behind him before the leap: its tails tucked in. */
+  bunched: 'M3.4 5 L12.6 5 L13 10.6 L3 10.6 Z',
   /** The leap: streaming back and up in one heavy sheet, its two tails apart. */
   streaming: 'M3 5 L13 5 L12.6 9.4 L3 9.4 L-1.2 8.2 L-4 4.4 L-2 5 L-4 0.8 L-0.4 3.6 Z',
 }
@@ -1015,7 +1017,11 @@ const TAILS = {
 const gracePose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, behind, front, { chest: [SECOND_SUIT_BAT], edge: GRACE_COWL_EDGE })
 
-/** The drop (flying): his arms up, the cape spread over his head, the gloves at its edges. */
+/**
+ * The drop (flying): his arms raised out to the cape's edges, holding it spread over his head like a
+ * canopy that peaks a unit above the frame (the overlay draws past it); a frame later it is a unit
+ * lower, its edge sinking on the air.
+ */
 const drop = (canopy: string) =>
   gracePose(
     GRACE_STANDING,
@@ -1025,17 +1031,23 @@ const drop = (canopy: string) =>
         kind: 'rects',
         px: [
           [2, 4, 1, 1],
-          [1, 3, 1, 1],
+          [1, 3.5, 1, 1],
+          [0, 3, 1, 1],
+          [-1, 2.5, 1, 1],
+          [-2, 2, 1, 1],
           [13, 4, 1, 1],
-          [14, 3, 1, 1],
+          [14, 3.5, 1, 1],
+          [15, 3, 1, 1],
+          [16, 2.5, 1, 1],
+          [17, 2, 1, 1],
         ],
         fill: 'var(--suit)',
       },
       {
         kind: 'rects',
         px: [
-          [0, 2, 1, 1],
-          [15, 2, 1, 1],
+          [-3, 2, 1, 1],
+          [18, 2, 1, 1],
         ],
         fill: 'var(--gloves)',
       },
@@ -1069,7 +1081,7 @@ const LAUNCH = 'translateY(-4px) rotate(-15deg)'
  */
 const THE_LEAP: Script = [
   {
-    pose: gracePose(GRACE_STANDING, [{ kind: 'cape', d: TAILS.hanging }]),
+    pose: gracePose(GRACE_STANDING, [{ kind: 'cape', d: TAILS.bunched }]),
     look: GAZE,
     transform: 'translateY(2px)',
   },
