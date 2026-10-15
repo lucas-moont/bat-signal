@@ -62,6 +62,12 @@ describe('the Theme picker', () => {
     expect(html).toContain('after Tim Burton&#x27;s Batman (1989)')
   })
 
+  // A folder's Bat-Clawd is his Signature pose's final step, its nudge included: ANCIENT GRACE holds
+  // the leap tilted there, as on the perch, not standing level in mid-air.
+  it("holds a Signature pose's final nudge in its folder", () => {
+    expect(draw()).toMatch(/class="clawd__mover" style="transform:[^"]*rotate\(-15deg\)/)
+  })
+
   // Each folder wears its own Theme, so it shows that Theme's colors, stamp word and suit.
   it('dresses each folder in its own Theme, with its stamp and a still Bat-Clawd', () => {
     const html = draw()
@@ -70,11 +76,13 @@ describe('the Theme picker', () => {
     expect(html).toMatch(/role="radio"[^>]*data-theme="the-dark-knight-2008"/)
     expect(html).toMatch(/role="radio"[^>]*data-theme="batman-v-superman-2016"/)
     expect(html).toMatch(/role="radio"[^>]*data-theme="batman-year-one-1987"/)
+    expect(html).toMatch(/role="radio"[^>]*data-theme="the-dark-knight-returns-1986"/)
     expect(html).toContain('>Permission<')
     expect(html).toContain('>Approval<')
     expect(html).toContain('>Clearance<')
     expect(html).toContain('>Authorize<')
     expect(html).toContain('>Sign here<')
+    expect(html).toContain('>OK to air?<')
     expect(html).toContain('clawd__frame')
   })
 

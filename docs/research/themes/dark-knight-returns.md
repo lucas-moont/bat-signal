@@ -4,6 +4,17 @@ Research note, 2026-10-14. Scope: one Bat-Signal Theme after *Batman: The Dark K
 
 Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
 
+**Built in #120 (2026-10-15)** as `the-dark-knight-returns-1986`, demo flag `grace`. Where this note and the build differ, the build follows the maintainer's decisions on screen:
+- **The night blue of the Book One cover, not the tank grey.** The grounds take the sky behind the bolt (the S-C sample `#35455c` as `--line`; surface `#101830`, raised `#1a2646`, abyss `#080b14`), and what waits on you takes its lighter blue lifted to read as text (`#7ea7d8`), over the tank grey and the phosphor green (§3). The maintainer chose it from a labelled comparison knowing what it costs, recorded here and in `jury-wave-2.md` §9: the grounds sit 9.2 / 10.1 ΔE00 from WATCHFUL PROTECTOR's (at the Wave rule's floor), the waiting ink 3.9 from PALE MOONLIGHT's working steel and 9.5 from WATCHFUL PROTECTOR's alarm, and the grounds 4.8 / 6.5 from *Absolute*'s drafted violet, so BLUE COLLAR, unbuilt, is the one that moves. Bone, `--ink` and Ash lean to the same blue. Lightning Cyan and the scanlined lit disc stay as drafted.
+- **The chest bat is BAT_1986 stretched to about 2.2:1**, 6.6 × 3 units (y 6–9), the shape the chest takes on the Book Two cover ([`year-one-bat.md`](year-one-bat.md) §4), over the round bat as traced (3.2 wide) and over the 8-unit cap. The emblem layer gained an optional height, so the chest still wears the Theme's own path. The disc and the masthead wear the round bat. The belt stays suit grey.
+- **Asleep without the TV set:** he sleeps wrapped in the cape, as in every Theme.
+- **Stronger static:** about 85 specks at alphas 0.08–0.18 (density 0.6) and the roll bar at 4.5%, over §9's 0.04–0.10. It stands as one frozen frame under reduced motion (`still: 'calm'`, as KNIGHTMARE's ash).
+- **The leap** stays the Signature pose, LATEST stays, Bangers at 12px stays.
+- **The credit** is "Frank Miller's The Dark Knight Returns", without the year: with it, the picker folder ran to a third line. No-break spaces keep the title whole on the second line.
+- **Typed lines in Barlow:** `--font-type` (a case's number, who spoke, the empty strip's sentence) is Barlow, not Bangers, which has no lowercase.
+- **The armour** reads by a lit edge across the breastplate's top as well as the shoulders; the ears are not cut to a stub (half a unit would be below the floor).
+- **Still open:** the Signature caption "The time has come." waits for #109, which gives every Theme its caption; the name's wording ("Gliding with ancient grace") is still unconfirmed on a printed page (§12; one more search on 2026-10-15 found nothing).
+
 The Wave 1 jury found DKR boxed in ([`jury-wave-1.md`](jury-wave-1.md) §3, §9): PALE MOONLIGHT holds the gold oval and the newsroom, WATCHFUL PROTECTOR the night blue, and lightning flashes cry wolf. This dossier's job is to find it a space of its own.
 
 ## 1. TL;DR

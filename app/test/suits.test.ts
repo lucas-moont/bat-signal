@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
+  watchOn,
   type Pose,
   type Script,
 } from '../src/shared/suits'
@@ -74,5 +76,27 @@ describe("BECOME A BAT's watch", () => {
       const here = swarm(step.pose)
       expect(here?.kind === 'path' && held?.kind === 'path' && here.d.startsWith(held.d)).toBe(true)
     }
+  })
+})
+
+// The watch holds his Signature pose's final step, its nudge included: a tilt there (ANCIENT GRACE's
+// leap) must not leave him standing upright on the perch.
+describe("ANCIENT GRACE's watch", () => {
+  it('holds the leap tilted in every step', () => {
+    for (const step of ANCIENT_GRACE_SUIT.watch)
+      expect([step.transform, step.pose.transform].join(' ')).toMatch(/rotate\(-15deg\)/)
+  })
+})
+
+// A watch holds the Signature pose's final nudge through every step, its glances and its beat too:
+// a beat of its own (a ping, a crossing bat) must not snap a tilted pose level.
+describe('a watch on a nudged Signature pose', () => {
+  it('keeps the nudge in its glances and its beat', () => {
+    const tilted: Script = [
+      { pose, look: 0 },
+      { pose, look: 0, transform: 'rotate(-15deg)' },
+    ]
+    const watch = watchOn(tilted, [{ look: 0.3 }, { look: -0.3 }], [{ pose, look: 0 }])
+    for (const step of watch) expect(step.transform).toBe('rotate(-15deg)')
   })
 })

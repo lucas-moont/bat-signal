@@ -33,8 +33,11 @@ export type Layer =
     }
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
-  /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
-  | { kind: 'emblem'; cx: number; cy: number; width: number }
+  /**
+   * The Theme's emblem across his chest, centred on (cx, cy), `width` units wide and as tall as its
+   * shape makes it, or `height` units tall, stretched (a round bat on a wide chest).
+   */
+  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
@@ -177,23 +180,30 @@ const COWL_EDGE: Layer = {
 }
 const CHEST: Layer = { kind: 'emblem', cx: 8, cy: 7, width: 7 }
 const BACK: Layer = { kind: 'path', d: CAPE.back, className: 'clawd__cape-cloth' }
-/** A pose: the cape and cowl's edge behind him, his chest emblem (or a Theme's own) and the rest in front. */
+/**
+ * A pose: the cape and cowl's edge (or a cowl's own) behind him, his chest emblem (or a Theme's own)
+ * and the rest in front.
+ */
 const pose = (
   map: OutfitMap,
   behind: Layer[],
   front: Layer[] = [],
-  { chest = [CHEST], eyes = 'open' }: { chest?: Layer[]; eyes?: Pose['eyes'] } = {},
+  {
+    chest = [CHEST],
+    eyes = 'open',
+    edge = COWL_EDGE,
+  }: { chest?: Layer[]; eyes?: Pose['eyes']; edge?: Layer } = {},
 ): Pose => ({
   map,
-  behind: [...behind, COWL_EDGE],
+  behind: [...behind, edge],
   front: [...chest, ...front],
   eyes,
 })
 
 /** Sitting, wrapped in a cape closed in front of him: only his gloved hands and boots show. */
-const seated = (map: OutfitMap, wrapped: string): Pose => ({
+const seated = (map: OutfitMap, wrapped: string, edge: Layer = COWL_EDGE): Pose => ({
   map,
-  behind: [COWL_EDGE],
+  behind: [edge],
   front: [
     {
       kind: 'rects',
@@ -227,12 +237,14 @@ const BEAT_ROOM = 4
  * still, or a beat of his own (a sonar's ping) in their place. Last, so a reveal that just played
  * its own beat isn't followed by another a moment later.
  */
-const watchOn = (
+export const watchOn = (
   signature: Script,
   glances: [Partial<Step>, Partial<Step>],
   beat: readonly Step[] = [],
 ): Script => {
-  const STILL: Step = { pose: scriptAt(signature, Infinity).pose, look: 0 }
+  // The final step's pose and nudge (a leap's tilt), its eyes back to looking ahead.
+  const { pose, transform } = scriptAt(signature, Infinity)
+  const STILL: Step = { pose, look: 0, transform }
   const still = (n: number) => Array<Step>(n).fill(STILL)
   return [
     STILL,
@@ -240,7 +252,8 @@ const watchOn = (
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
     ...still(BEAT_ROOM - Math.min(beat.length, BEAT_ROOM)),
-    ...beat.slice(0, BEAT_ROOM),
+    // The beat keeps the nudge unless a step brings its own.
+    ...beat.slice(0, BEAT_ROOM).map((step) => ({ transform, ...step })),
   ]
 }
 
@@ -754,8 +767,10 @@ const YEAR_ONE_STANDING = yearOneMap([SUIT, SUIT])
 /** His arms out, gloved, holding the cape open. */
 const YEAR_ONE_ARMS_OUT = yearOneMap(['.gSSSSSSSSSSSSg.', SUIT])
 const YEAR_ONE_SEATED = yearOneMap([SUIT, SUIT, SUIT], [])
+/** His right arm thrown ahead, gloved. */
+const REACHING = '...SSSSSSSSSSSSg'
 /** One arm reaching ahead as he flies to the right. */
-const YEAR_ONE_REACHING = yearOneMap(['...SSSSSSSSSSSSg', SUIT])
+const YEAR_ONE_REACHING = yearOneMap([REACHING, SUIT])
 
 /**
  * Year One's own bat on the grey, 2.73 units wide so it stands a full unit tall (the Wave's floor),
@@ -937,5 +952,155 @@ export const BECOME_A_BAT_SUIT: Suit = {
   watch: watchOn(THE_SWARM, [UP_LEFT, { look: 0 }], CROSSING),
   signature: THE_SWARM,
   // Trade Paperback Red is the Alarm color and never shows at rest: no aura as the bats gather.
+  aura: 'alarmed',
+}
+
+// --- ANCIENT GRACE: the second suit, after Frank Miller's The Dark Knight Returns
+// (dark-knight-returns.md, section 7). The old man's bulk: a neutral grey suit with the second suit's
+// big black bat on the chest, a suit-grey belt so the bat never merges with it, a black cowl whose
+// short ears are set wide on a broad, boxy head, and a heavy black cape with two long tails; the
+// armour he wore against Superman only when something needs the user. ---
+
+/** Outfit G's legend: V's, with the armour's plates and their lit edge. */
+const GRACE_LEGEND = { ...LEGEND, A: 'var(--armour)', e: 'var(--armour-edge)' }
+/** The cowl with its short ears set wide, at the head's outer corners, and a heavy brow. */
+const GRACE_HEAD = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4)]
+/** The cowl's outline with the wide-set ears, behind the face, so only its outer edge shows. */
+const GRACE_COWL_EDGE: Layer = {
+  kind: 'path',
+  d: 'M3 5 L3 0 L4 0 L4 1 L12 1 L12 0 L13 0 L13 5 Z',
+  className: 'clawd__cowl-edge',
+}
+const graceMap = (chest: readonly string[], rows: readonly string[] = BELOW_WAIST) =>
+  map(chest, rows, GRACE_LEGEND, GRACE_HEAD)
+const GRACE_STANDING = graceMap([SUIT, SUIT, SUIT])
+const GRACE_SEATED = graceMap([SUIT, SUIT, SUIT, SUIT], [])
+/** The right fist thrown ahead, at x 14, the legs tucked under him: only their first half-row shows. */
+const GRACE_LEAPING = graceMap(['...SSSSSSSSSSSg.', SUIT, SUIT], BELOW_WAIST.slice(0, 3))
+/**
+ * The armour: plates over his chest and on his shoulders, a unit past his body each side, a lit
+ * edge along their tops (it is what reads at his size: the plates are near the suit's grey), which
+ * reaches up under the cowl's lower corners beside his jaw; his jaw and eyes as ever.
+ */
+const PLATES = '...AAAAAAAAAA...'
+const GRACE_ARMOUR = map([PLATES, PLATES], BELOW_WAIST, GRACE_LEGEND, [
+  ...GRACE_HEAD.slice(0, 9),
+  '..eec######cee..',
+  '..eeeeeeeeeeee..',
+  '..AAAAAAAAAAAA..',
+])
+
+/**
+ * The second suit's big bat on the grey: BAT_1986 stretched to about 2.2:1, the shape the chest
+ * takes on the Book Two cover (year-one-bat.md, section 4), 6.6 units wide and 3 tall, from y 6 to
+ * 9, a unit of suit under his jaw and beside it (jury-wave-2.md, section 5). Picked on screen over
+ * the round bat as traced (3.2 wide) and over 8 units.
+ */
+const SECOND_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 6.6, height: 3 }
+
+/** The heavy cape's hem: straight between two long tails, one at each outer corner, ending at y 11.5. */
+const TAIL_HEM = 'L14.6 11.5 L12.6 10.8 L3.4 10.8 L1.4 11.5 Z'
+const TAILS = {
+  /** Hanging behind him from the shoulders. */
+  hanging: `M3 5 L13 5 ${TAIL_HEM}`,
+  /** Closed around him, asleep, its tails at his feet. */
+  wrapped: `M2.6 6.4 L13.4 6.4 ${TAIL_HEM}`,
+  /** The drop: spread over his head like a canopy, its tails hanging at his sides (two frames). */
+  canopyA: 'M3 5 L-1.4 4.6 L-3 8 L-3 2.4 Q8 -4.4 19 2.4 L19 8 L17.4 4.6 L13 5 Z',
+  canopyB: 'M3 5 L-1.4 5.2 L-3 8.4 L-3 3.2 Q8 -3.2 19 3.2 L19 8.4 L17.4 5.2 L13 5 Z',
+  /** On the ledge, gathered behind him before the leap: its tails tucked in. */
+  bunched: 'M3.4 5 L12.6 5 L13 10.6 L3 10.6 Z',
+  /** The leap: streaming back and up in one heavy sheet, its two tails apart. */
+  streaming: 'M3 5 L13 5 L12.6 9.4 L3 9.4 L-1.2 8.2 L-4 4.4 L-2 5 L-4 0.8 L-0.4 3.6 Z',
+}
+
+/** A pose in the second suit: its own cowl edge, the big bat on his chest. */
+const gracePose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, behind, front, { chest: [SECOND_SUIT_BAT], edge: GRACE_COWL_EDGE })
+
+/**
+ * The drop (flying): his arms raised out to the cape's edges, holding it spread over his head like a
+ * canopy that peaks a unit above the frame (the overlay draws past it); a frame later it is a unit
+ * lower, its edge sinking on the air.
+ */
+const drop = (canopy: string) =>
+  gracePose(
+    GRACE_STANDING,
+    [{ kind: 'cape', d: canopy }],
+    [
+      {
+        kind: 'rects',
+        px: [
+          [2, 4, 1, 1],
+          [1, 3.5, 1, 1],
+          [0, 3, 1, 1],
+          [-1, 2.5, 1, 1],
+          [-2, 2, 1, 1],
+          [13, 4, 1, 1],
+          [14, 3.5, 1, 1],
+          [15, 3, 1, 1],
+          [16, 2.5, 1, 1],
+          [17, 2, 1, 1],
+        ],
+        fill: 'var(--suit)',
+      },
+      {
+        kind: 'rects',
+        px: [
+          [-3, 2, 1, 1],
+          [18, 2, 1, 1],
+        ],
+        fill: 'var(--gloves)',
+      },
+    ],
+  )
+
+/** The armour (alarmed), Book Four's exoframe: the cape thrown back behind it. */
+const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
+
+/**
+ * The bolt behind the leap: a jagged path a unit wide, from above his head down past his feet, in
+ * the screen's white, never a flash.
+ */
+const BOLT =
+  'M11.5 -6 L12.5 -6 L10.2 -1.3 L12.3 -0.8 L8.4 5.1 L10.3 5.6 L5.5 14 L4.5 14 L8.6 5.9 L6.7 5.4 ' +
+  'L10.6 -0.2 L8.7 -0.7 Z'
+/** Leaping, the bolt behind him at a strength, or not yet there. */
+const leaping = (bolt?: number) => {
+  const behind: Layer[] = [{ kind: 'cape', d: TAILS.streaming }]
+  if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt })
+  return gracePose(GRACE_LEAPING, behind)
+}
+/** Launched: raised about two units at the header's size (a nudge is in px) and tilted. */
+const LAUNCH = 'translateY(-4px) rotate(-15deg)'
+
+/**
+ * The lightning leap (the Signature pose), after the Book One cover: on the ledge, then launched,
+ * tilted and tucked, the cape streaming back; then the bolt appears behind him all at once, never
+ * drawn stroke by stroke or flashed, and stays, dimming a step later as he holds the leap like a
+ * freeze-frame on a screen.
+ */
+const THE_LEAP: Script = [
+  {
+    pose: gracePose(GRACE_STANDING, [{ kind: 'cape', d: TAILS.bunched }]),
+    look: GAZE,
+    transform: 'translateY(2px)',
+  },
+  { pose: leaping(), look: GAZE, transform: LAUNCH },
+  { pose: leaping(0.6), look: GAZE, transform: LAUNCH },
+  { pose: leaping(0.4), look: GAZE, transform: LAUNCH },
+]
+
+export const ANCIENT_GRACE_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(GRACE_SEATED, TAILS.wrapped, GRACE_COWL_EDGE)],
+    flying: [drop(TAILS.canopyA), drop(TAILS.canopyB)],
+    alarmed: [armoured],
+  },
+  // On the perch he holds the leap, looks ahead, then down to the street.
+  watch: watchOn(THE_LEAP, [{ look: GAZE }, { look: 0, lookY: 0.4 }]),
+  signature: THE_LEAP,
+  // Lightning Cyan is the Alarm color and never shows at rest: the bolt is the screen's white.
   aura: 'alarmed',
 }

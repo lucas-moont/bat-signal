@@ -64,6 +64,13 @@ describe('the Themes', () => {
     })
   })
 
+  it("names ANCIENT GRACE after Frank Miller's The Dark Knight Returns", () => {
+    expect(THEMES['the-dark-knight-returns-1986'].words.voice.theme).toEqual({
+      name: 'ANCIENT GRACE',
+      film: "Frank Miller's The\u00a0Dark\u00a0Knight\u00a0Returns",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -131,6 +138,7 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
     expect(themeFromFlags(new Set(['demo', 'knightmare']))).toBe('batman-v-superman-2016')
     expect(themeFromFlags(new Set(['demo', 'yearone']))).toBe('batman-year-one-1987')
+    expect(themeFromFlags(new Set(['demo', 'grace']))).toBe('the-dark-knight-returns-1986')
   })
 
   it('names no Theme without a Theme flag', () => {
