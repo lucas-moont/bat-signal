@@ -87,6 +87,8 @@ Off the table: red (VENGEANCE, and KNIGHTMARE's crimson; the heartbeat `#ea2b17`
 
 **Lightning cyan.** Miller's own idea for the book is the bolt: "striking like lightning as a force for justice". The bolt's edge on the cover is a pale cyan at hue 217–237°; the alarm is that hue at full chroma, `#3fdcff` (hue 225°). It is not a flash: it is a colour that lights only when something needs you, like every Theme's alarm. The Wave 1 jury's ban was on lightning *flashes* (a flash with no news cries wolf), not on the colour.
 
+**Why it meets the Alarm color rule.** `CONTEXT.md` and ADR 0001 ask for the hottest colour in the palette, or a red when nothing reads as an alarm. In this cool palette the cyan is the most intense colour: C* 41 at L* 82, where the grounds, Bone, Ash and the suit are greys at C* 1–5. The one other coloured ink, the phosphor-green waiting ink, is paler and less chromatic (L* 86, C* 37) and sits 36.0 ΔE00 away at hue 130° against the cyan's 225°; outside the alarm's own fill, the nearest token is `--ink`, 21.5 away. (Clawd's orange is the mascot's, in every Theme, not the palette's.)
+
 **Withdrawn: Palette B, arcade magenta `#ff3fa4`.** It was the first draft's fallback, from the Mutants' arcade neon. The jury measured it 8.0 from *Year One*'s alarm and 5.4 from *Arkham Asylum*'s, so it is no longer available (jury §3.10).
 
 **Measured** (ΔE00, computed by us from the hex values with CIEDE2000; the Wave 2 values are the jury's revised ones, §2 and §9):
