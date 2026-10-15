@@ -138,7 +138,7 @@ interface Flake {
   phase: number
 }
 
-/** A flake's sway, a step a tick: out one way, back, out the other way, back. */
+/** A flake's or a puff's sway, a step a tick: out one way, back, out the other way, back. */
 const SWAY = [0, 1, 0, -1]
 
 /** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
