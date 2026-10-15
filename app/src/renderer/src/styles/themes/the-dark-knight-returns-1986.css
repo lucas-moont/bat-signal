@@ -1,40 +1,43 @@
 /*
  * ANCIENT GRACE, after Frank Miller's The Dark Knight Returns: its palette and faces
  * (docs/research/themes/dark-knight-returns.md, section 3). A television left on in a dark room in
- * 1986: Lynn Varley's tank grey for the room, the screen's white for what runs, a green-phosphor glow
- * for what waits on you, and the lightning the old man leaps across for the one thing that needs you.
+ * 1986, under the Book One cover's night: the sky behind the bolt for the room and for what waits on
+ * you, the screen's white for what runs, and the lightning the old man leaps across for the one
+ * thing that needs you.
  * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
- * - --line: Varley's tank grey, as sampled from her painted colour art for Book Two; the grounds are
- *   that grey's hue darkened (jury-wave-2.md, section 9.1).
+ * - --line: the cover's night sky, as sampled; the grounds are its hue darkened. The maintainer's pick
+ *   on screen over the dossier's tank grey, knowing it sits about 9 to 10 ΔE00 from WATCHFUL
+ *   PROTECTOR's night blue (jury-wave-2.md, section 9, follow-up).
+ * - --ink-soft: the cover's lighter blue, lifted until it reads as text; picked on screen over the
+ *   phosphor green, knowing it sits 3.9 ΔE00 from PALE MOONLIGHT's working steel.
  * - --signal-hot: Lightning Cyan, the hue of the bolt's edge on the Book One cover at full chroma;
  *   --signal, the same at a lower lightness. --lens-core: the bolt's white core, sampled.
- * - --ink-soft: a pale phosphor green, a CRT's glow (no sample: the jury's proposal).
  */
 :root[data-theme='the-dark-knight-returns-1986'],
 [data-theme='the-dark-knight-returns-1986'] {
-  --abyss: #090c0b;
-  --smoke: #0d110f;
-  --surface: #131a17;
-  --raised: #1d2622;
-  --line: #3b403d;
-  --surface-deep: #0b0f0d;
-  --frame: #161d1a;
-  --header-fade: #0b0f0d;
-  --sheet-top: #18201c;
+  --abyss: #080b14;
+  --smoke: #0b0f1b;
+  --surface: #101830;
+  --raised: #1a2646;
+  --line: #35455c;
+  --surface-deep: #0a0e1a;
+  --frame: #131c34;
+  --header-fade: #0a0e1a;
+  --sheet-top: #151f38;
   --shadow: #000000;
 
-  /* The Alarm color, Lightning Cyan, and the phosphor green in shadow, which marks the disc's hover
+  /* The Alarm color, Lightning Cyan, and the night sky's blue in shadow, which marks the disc's hover
      and the waiting rule: never the alarm. */
-  --blood: #3e4c36;
+  --blood: #24375a;
   --signal: #12a9d6;
   --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
   --signal-hot: #3fdcff;
   --on-signal: var(--abyss);
   --ink-hot: var(--signal-hot);
-  --ink-soft: #bde3a1;
+  --ink-soft: #7ea7d8;
   /* The screen's white marks what runs: LIVE is Bone, never cyan. */
   --ink-live: var(--bone);
-  --ink: #c2cbc6;
+  --ink: #c2c9d4;
 
   /* Emphasis that is not an alarm is Bone: nothing at rest is cyan. */
   --accent: var(--bone);
@@ -48,7 +51,7 @@
 
   --brick: var(--ink-soft);
   /* Stamp inks by tier: OK TO AIR? and DEAD AIR in Lightning Cyan, YOU'RE ON and LATEST in the
-     phosphor green, FROZEN and OFF AIR in Ash. */
+     night sky's lighter blue, FROZEN and OFF AIR in Ash. */
   --stamp-hot: var(--ink-hot);
   --stamp-soft: var(--ink-soft);
   --stamp-quiet: var(--ash);
@@ -67,8 +70,8 @@
 
   --clawd: #d77757;
 
-  --bone: #e9f2ee;
-  --ash: #939c97;
+  --bone: #e8eef6;
+  --ash: #939cab;
   --bone-dim: var(--ink);
   --ash-dim: var(--ash);
   --chevron: var(--ash);
@@ -78,17 +81,17 @@
      a heavy black cape with two long tails; the armour, only when something needs you. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
-  --cowl: #0d100e;
+  --cowl: #0b0e15;
   --cowl-edge: color-mix(in srgb, #e8e1d9 22%, transparent);
   --cowl-shine: var(--raised);
   --suit: #666864;
   --gloves: var(--cowl);
   --belt: var(--suit);
   --buckle: var(--ash);
-  --cape: #050605;
+  --cape: #05060a;
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
-  --chest: #070807;
+  --chest: #06070b;
   /* The armour's plates and their lit edge (the alarmed Pose). */
   --armor: #5b635e;
   --armor-edge: #9aa49e;
@@ -101,9 +104,9 @@
   /* The Signal disc: a TV screen. Unlit: dark glass, the bat a shade in it. Lit: the screen comes
      on, the bolt's white into Lightning Cyan, the black bat across it, scanlines over it. */
   --disc-bat: var(--raised);
-  --glass-shine: #1c2420;
+  --glass-shine: #18223c;
   --glass: var(--abyss);
-  --disc-rim-inner: #050807;
+  --disc-rim-inner: #05070e;
   --disc-rim-outer: var(--line);
   --lens-core: #f8feff;
   --lens-rim: var(--signal);
@@ -111,8 +114,8 @@
   --lens-bat-edge: transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);
-  --notice-hover-top: #202924;
-  --notice-hover-foot: #111714;
+  --notice-hover-top: #1e2a4a;
+  --notice-hover-foot: #0f1628;
 
   /* The set's own glow, low and centred in front of the viewer, white and never cyan; the film
      grain; and the static between channels, in the screen's white. */
@@ -149,7 +152,7 @@
   --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
 
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%233fdcff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23bde3a1' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%237ea7d8' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* A caption over a TV picture: Bangers is slanted already, so the box sits straight and clean. */
   --stamp-tilt: 0deg;
