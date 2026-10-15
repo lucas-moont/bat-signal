@@ -254,12 +254,12 @@ Every aliased text token (`--accent`, `--ink-live`, `--brick`, `--chevron`, `--b
 | PALE MOONLIGHT | 54.6 | 52.3 | 7.8 / 14.5 | 24.5 (steel) | 19.1 |
 | WATCHFUL PROTECTOR | 39.1 | 43.5 | 10.2 / 16.8 | 36.7 (mercury) | 16.4 |
 | KNIGHTMARE | 12.9 | 10.2 | 7.9 / 13.0 | 15.6 (its Bone) | 11.1 |
-| ANCIENT GRACE (DKR, revised) | 70.0 (cyan) | 68.7 | 13.7 / 21.7 | 11.7 (its Bone) | 16.7 (phosphor green) |
+| ANCIENT GRACE (DKR, revised) | 70.0 (cyan) | 68.7 | 13.7 / 21.7 | 12.7 (its Bone) | 16.7 (phosphor green) |
 | BLUE COLLAR (Absolute) | 69.0 (lemon) | 66.4 | 9.5 / 11.0 | 19.6 (lavender) | 34.4 (mauve) |
-| BECOME A BAT (Year One, revised) | 11.9 (magenta) | 12.2 | 17.3 / 27.7 | 12.4 (its Bone) | 11.4 (canary) |
+| BECOME A BAT (Year One, revised) | 11.9 (magenta) | 12.2 | 17.3 / 27.7 | 17.4 (its Bone) | 11.4 (canary) |
 | Clawd `#d77757` | 24.2 | 23.2 | | 31.5 | 26.9 |
 
-Four Themes now run in Bone (KNIGHTMARE, DKR, Year One, this one). The new Wave rule asks working inks to sit more than ~5 apart; this Bone is 11.7–15.6 from the other three, because it leans rose where theirs lean cream, green and grey. The draft's periwinkle working ink is gone, so the 9.4 against PALE MOONLIGHT's steel and the 5.7 against BLUE COLLAR's lavender are gone with it.
+Four Themes now run in Bone (KNIGHTMARE, DKR, Year One, this one). The new Wave rule asks working inks to sit more than ~5 apart; this Bone is 12.7–17.4 from the other three, because it leans rose where theirs lean cream, green and grey. The draft's periwinkle working ink is gone, so the 9.4 against PALE MOONLIGHT's steel and the 5.7 against BLUE COLLAR's lavender are gone with it.
 
 ## 4. Type
 
@@ -333,7 +333,7 @@ The body, eyes, arms and legs keep their pixels (`suits.ts`: the 16×11 grid, ey
 
 **The problem the jury found (§5):** as drafted he is a silhouette. The suit was 1.36:1 on the ground and the cape 1.04:1, so the bleeding hem and the chest bat did not exist at rest; only the cowl's rim, the jaw and the eyes carried him. That is true to McKean, but a detail nobody can see is not a detail. Three fixes:
 
-1. **A plum-grey suit, `#55425e`.** 2.16:1 against the cowl, so the chest bat in cowl ink reads as a dark shape at 2.16:1 (VENGEANCE ships 1.52, KNIGHTMARE 1.49); 2.07:1 on the surface; the jaw stays 2.86:1 against it. It sits 14.6–38.3 ΔE00 from every other Theme's suit (PALE MOONLIGHT's dark plum-grey is the closest, 14.6). Option: `#4a3a56`, darker and more of a shadow, at 1.89:1. The cowl and cape stay Batman's blue-black ink: the figure is a shadow, the body under it is not.
+1. **A plum-grey suit, `#55425e`.** 2.16:1 against the cowl, so the chest bat in cowl ink reads as a dark shape at 2.16:1 (VENGEANCE ships 1.52, KNIGHTMARE 1.49); 2.07:1 on the surface; the jaw stays 2.86:1 against it. It sits 14.6–53.3 ΔE00 from every other Theme's suit (PALE MOONLIGHT's dark plum-grey is the closest, 14.6). Option: `#4a3a56`, darker and more of a shadow, at 1.89:1. The cowl and cape stay Batman's blue-black ink: the figure is a shadow, the body under it is not.
 2. **The bleeding hem drawn in the rim's blue.** The last 1.5 units of the cape are a one-unit checker whose cells are filled in `--cape-rim` (`--batman-blue` at 45%: 2.62:1 on the surface), not in the cape's own black. The hem reads as a pale speckle dissolving into the dark, which is what the bleed was meant to be.
 3. **The rim follows every dither cell**, so the cape's edge never turns into a cut-off black block. Drawn as rects (jury §6), no new part type.
 
@@ -413,9 +413,9 @@ Scored with the jury's rules: C = clearly different, ~ = close, = = same; a Them
 | vs PALE MOONLIGHT | C: plum vs smog brown (7.8 / 14.5); claret vs gold (54.6); Bone vs steel (24.5) | C: old-style serif vs Art Deco + geometric | C: ears; bleed vs scallops; no oval or belt vs oval + belt | C: scratches vs snow; side vs below | C: house vs newsroom | **5** |
 | vs WATCHFUL PROTECTOR | C: plum vs blue steel (10.2 / 16.8); claret vs blue; Bone vs mercury | C | C: tall ears vs thin; a speckled bleed vs a straight hem; a bat vs a lit relief | C: both have a still layer (~), but a scratch a second that heals vs a window a second, and side light vs below | C: house vs ops; the dateline is a sentence now | **5** |
 | vs KNIGHTMARE | C: plum vs scorched brown (7.9 / 13.0); claret vs crimson (12.9, one red-pink family); both run in Bone (15.6 apart) | C | C: cape vs duster; tall ears; a bat from life vs the BvS bat | C: scratches vs ash; cold side vs warm above | C: house vs a veteran; the close no longer copies KNIGHTMARE's | **5** |
-| vs ANCIENT GRACE (DKR) | C: plum vs tank grey (13.7 / 21.7); claret vs cyan (70.0); both Bone (11.7) | C: IM Fell vs Bangers | C: tall vs wide-set ears; bleed vs two tails; a bat at 2.16:1 vs a big black bat | C: the same `noise` painter, but hairlines that live 2–3 s vs specks that live a tick; side light vs a white glow low | C: a house vs a broadcast | **5** |
+| vs ANCIENT GRACE (DKR) | C: plum vs tank grey (13.7 / 21.7); claret vs cyan (70.0); both Bone (12.7) | C: IM Fell vs Bangers | C: tall vs wide-set ears; bleed vs two tails; a bat at 2.16:1 vs a big black bat | C: the same `noise` painter, but hairlines that live 2–3 s vs specks that live a tick; side light vs a white glow low | C: a house vs a broadcast | **5** |
 | vs BLUE COLLAR (Absolute) | C: plum vs violet (9.5 / 11.0); claret vs lemon (69.0); Bone vs lavender (19.6) | C: IM Fell vs Bungee | C: ears now this Theme's alone; bleed vs blades; a bat vs a block | C: scratches vs bats crossing | C: a house vs a work shift | **5** |
-| vs BECOME A BAT (Year One) | C: plum vs olive (17.3 / 27.7); claret vs magenta (11.9, one family); both Bone (12.4) | C: an old-style serif vs Permanent Marker / Neucha (the upright hand is gone) | C: tall vs standard ears; a dark figure vs the only light suit. Both hems are soft at 54px (~) | C: scratches vs rising smoke | C: a house vs a notebook | **5** |
+| vs BECOME A BAT (Year One) | C: plum vs olive (17.3 / 27.7); claret vs magenta (11.9, one family); both Bone (17.4) | C: an old-style serif vs Permanent Marker / Neucha (the upright hand is gone) | C: tall vs standard ears; a dark figure vs the only light suit. Both hems are soft at 54px (~) | C: scratches vs rising smoke | C: a house vs a notebook | **5** |
 
 **Inside this Theme:** claret alarm, paper waiting and Bone working are 20–41 ΔE00 apart, so the tiers never blur.
 
