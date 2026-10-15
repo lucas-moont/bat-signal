@@ -5,7 +5,9 @@ import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
+import { THEME_IDS, THEMES } from '../src/shared/themes'
 import {
+  BECOME_A_BAT_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
   STANDARD_WORDS,
@@ -122,5 +124,75 @@ describe("KNIGHTMARE's Voice", () => {
   it('dates its report as every report is, day and time', () => {
     expect(voice.report.name).toBe('Still standing')
     expect(voice.report.dateline(new Date(2026, 9, 13, 2, 14))).toBe('TUE 13 OCT · 02:14')
+  })
+})
+
+describe("BECOME A BAT's Voice", () => {
+  const { terms, voice } = BECOME_A_BAT_WORDS
+
+  // Gordon's notebook, dated as Year One's scene breaks are: the month and the day, no time.
+  it('dates its Notebook as the book dates a scene', () => {
+    expect(voice.report.name).toBe('Notebook')
+    expect(voice.report.dateline(new Date(2026, 9, 14, 2, 14))).toBe('October 14')
+  })
+
+  // His close says whether a name is still on anything, never sends anyone to bed (year-one.md, section 5).
+  it('ends the report on whether your name is still on anything', () => {
+    expect(voice.report.end(0)).toBe("That's all I've got. Nothing here has your name on it.")
+    expect(voice.report.end(2)).toBe("That's all I've got. Your name's still on some of it.")
+  })
+
+  it('names its cases in a sentence', () => {
+    expect(voice.empty.noCases.title(terms)).toBe('No cases open. Enjoy it while it lasts.')
+  })
+
+  // A case closing is a small win in a crooked city (year-one.md, section 5).
+  it('marks a case closing as one honest thing', () => {
+    expect(voice.noticeLine.closed).toBe('Case closed. One honest thing today.')
+  })
+
+  // The swarm on the perch is read aloud for what it is.
+  it('names Bat-Clawd in his swarm for a screen reader', () => {
+    expect(voice.mascot.watching).toBe('Bat-Clawd in a swarm of bats')
+  })
+
+  // Quiet means all clear; he just doesn't trust it.
+  it('doubts an all-clear, and keeps the hint plain', () => {
+    expect(voice.empty.quiet).toEqual({
+      title: "Quiet so far. I don't trust it.",
+      hint: 'Nothing needs you right now.',
+    })
+  })
+})
+
+// Parallel writing converges: two Wave 2 closes copied KNIGHTMARE's word for word (jury-wave-2.md,
+// section 3.13). A Theme's own lines are its own; only the standard ones are shared.
+describe("each Theme's Voice", () => {
+  /** The lines a Voice speaks: its sentences, and what its sentence-makers say for a few cases. */
+  const lines = ({ terms, voice }: typeof STANDARD_WORDS) => [
+    voice.tagline,
+    voice.empty.quiet.title,
+    voice.empty.unheard.title,
+    voice.empty.noCases.title(terms),
+    voice.report.name,
+    voice.report.signature,
+    voice.report.nil(terms),
+    voice.report.caseNotes(terms),
+    voice.report.end(0),
+    voice.report.end(2),
+    voice.signal.openTip(false),
+    voice.signal.openTip(true),
+    voice.settings.kicker,
+  ]
+  const standard = new Set(lines(STANDARD_WORDS))
+
+  it('repeats no line of another Theme', () => {
+    const said = new Map<string, string>()
+    for (const theme of THEME_IDS)
+      for (const line of lines(THEMES[theme].words)) {
+        if (line === undefined || standard.has(line)) continue
+        expect(said.get(line) ?? theme, `"${line}" in ${theme}`).toBe(theme)
+        said.set(line, theme)
+      }
   })
 })

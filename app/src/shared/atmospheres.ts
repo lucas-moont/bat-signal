@@ -173,3 +173,19 @@ export const KNIGHTMARE_ASH: AshAtmosphere = {
   ],
   still: 'calm',
 }
+
+/**
+ * BECOME A BAT's smoke off the street (year-one.md, section 9): five soft olive puffs, one leaving
+ * the bottom edge every eight-tenths of a second, swelling from 12 to 40 pixels and fading from a
+ * tenth to nothing as they rise 2 pixels a tick over four seconds.
+ */
+export const BECOME_A_BAT_SMOKE: SmokeAtmosphere = {
+  kind: 'smoke',
+  color: '--smoke-puff',
+  puffs: 5,
+  size: [12, 40],
+  alpha: 0.1,
+  rise: 2,
+  life: 4,
+  sway: 1,
+}

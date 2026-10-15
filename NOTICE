@@ -9,12 +9,14 @@ icons drawn from them in app/resources/icons/, and the pictures in docs/screensh
 - the bat symbol from The Batman (2022), worn by the VENGEANCE Theme and drawn in the icons;
 - the bat-in-oval symbol from Tim Burton's Batman (1989), worn by the PALE MOONLIGHT Theme;
 - the bat symbol from Christopher Nolan's Dark Knight trilogy, worn by the WATCHFUL PROTECTOR Theme;
-- the bat symbol from Zack Snyder's Batman v Superman, worn by the KNIGHTMARE Theme.
+- the bat symbol from Zack Snyder's Batman v Superman, worn by the KNIGHTMARE Theme;
+- the bat symbol of the first suit in Frank Miller and David Mazzucchelli's Batman: Year One (1987),
+  worn by the BECOME A BAT Theme.
 
 The fonts are bundled from Fontsource under their own licences, not the MIT License:
-- Anton, Archivo, Barlow Semi Condensed, Big Shoulders Stencil, JetBrains Mono, Josefin Sans and Limelight:
-  SIL Open Font License 1.1;
-- Special Elite and Syncopate: Apache License 2.0.
+- Anton, Archivo, Barlow Semi Condensed, Big Shoulders Stencil, JetBrains Mono, Josefin Sans, Limelight
+  and Neucha: SIL Open Font License 1.1;
+- Permanent Marker, Special Elite and Syncopate: Apache License 2.0.
 Each licence ships with the app (resources/licenses/<family>.txt), beside this notice and the
 MIT License, and with its package (app/node_modules/@fontsource/<family>/LICENSE).
 

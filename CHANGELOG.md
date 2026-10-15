@@ -4,6 +4,10 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Added
+
+- **BECOME A BAT**, a fifth Theme and the first after a comic: Frank Miller and David Mazzucchelli's *Batman: Year One* (1987). Gordon's notebook from his first year in a crooked city: an olive-khaki grime, his canary for what waits on you, and the flat red of the collected edition's cover only when something needs you. It speaks in Gordon's voice, with SIGN HERE, GONE WRONG, SEE ME and MEMO, and the night report becomes his Notebook, dated as the book dates a scene, its headings in canary caption boxes. Smoke rises off the street behind the panel. Bat-Clawd wears the first suit, grey with a black collar, a canary belt and Year One's own bat; the intro and a click play **The swarm**: bats rise up his side and gather over his head.
+
 ## [1.2.0] - 2026-10-14
 
 Three film Themes join The Batman (2022), each a version of Batman with its own palette, type, words, Atmosphere and Bat-Clawd.

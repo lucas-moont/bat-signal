@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flyingBat, type Wings } from '../src/shared/bats'
+import { flock, flyingBat, type Wings } from '../src/shared/bats'
 
 /** The points of a path drawn in straight lines, as [x, y] pairs. */
 const pointsOf = (d: string) =>
@@ -7,7 +7,7 @@ const pointsOf = (d: string) =>
 
 const span = (values: number[]) => [Math.min(...values), Math.max(...values)] as const
 
-// One bat drawing, shared: BECOME A BAT's swarm and BLUE COLLAR's colony will fly it (jury-wave-2.md, section 6).
+// One bat drawing, shared: BECOME A BAT's swarm flies it, and BLUE COLLAR's colony will (jury-wave-2.md, section 6).
 describe.each<Wings>(['up', 'down'])('a flying bat, wings %s', (wings) => {
   it('spans the width it is given, centered where it is put', () => {
     const [left, right] = span(pointsOf(flyingBat(wings, 3, -1, 2.4)).map(([x]) => x))
@@ -39,5 +39,17 @@ describe('a flying bat', () => {
     }
     expect(tipY('up')).toBeLessThan(0)
     expect(tipY('down')).toBeGreaterThan(0)
+  })
+})
+
+// A swarm or a colony is many bats in one path, so it paints as one mass.
+describe('a flock', () => {
+  it('is each of its bats, one path after another', () => {
+    expect(
+      flock([
+        [0, 0, 2, 'up'],
+        [4, 1, 3, 'down'],
+      ]),
+    ).toBe(`${flyingBat('up', 0, 0, 2)} ${flyingBat('down', 4, 1, 3)}`)
   })
 })

@@ -3,14 +3,16 @@
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
 import {
+  BECOME_A_BAT_SMOKE,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
   WATCHFUL_PROTECTOR_WINDOWS,
   type Atmosphere,
 } from './atmospheres'
-import { BAT_1989, BAT_2008, BAT_2016, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
+import { BAT_1987, BAT_1989, BAT_2008, BAT_2016, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
 import {
+  BECOME_A_BAT_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
   VENGEANCE_SUIT,
@@ -18,6 +20,7 @@ import {
   type Suit,
 } from './suits'
 import {
+  BECOME_A_BAT_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
   STANDARD_WORDS,
@@ -31,6 +34,7 @@ export const THEME_IDS = [
   'batman-1989',
   'the-dark-knight-2008',
   'batman-v-superman-2016',
+  'batman-year-one-1987',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -89,6 +93,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_2016, 'none'),
     suit: KNIGHTMARE_SUIT,
     atmosphere: KNIGHTMARE_ASH,
+  },
+  /** Frank Miller and David Mazzucchelli's Batman: Year One (1987), BECOME A BAT: olive grime, smoke. */
+  'batman-year-one-1987': {
+    flag: 'yearone',
+    ground: '#0d0e06',
+    words: BECOME_A_BAT_WORDS,
+    emblem: emblem(BAT_1987, 'none'),
+    suit: BECOME_A_BAT_SUIT,
+    atmosphere: BECOME_A_BAT_SMOKE,
   },
 }
 

@@ -244,6 +244,10 @@ const formats = () =>
     day: new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: '2-digit', month: 'short' }),
     time: new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }),
   })
+/** "October 14", as Year One's scene breaks date a page: built only for the Theme that dates so. */
+let monthDayFormat: Intl.DateTimeFormat | undefined
+const monthDay = (now: Date) =>
+  (monthDayFormat ??= new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' })).format(now)
 const dateline = (now: Date) => {
   const { day, time } = formats()
   return `${day.format(now).replace(',', '').toUpperCase()} · ${time.format(now)}`
@@ -646,5 +650,64 @@ export const KNIGHTMARE_WORDS: Words = {
       kicker: 'The workshop',
       atmosphere: { label: 'Ash', hint: (t) => `Ash on the wind behind the ${lower(t.case.many)}` },
     },
+  },
+}
+
+/**
+ * BECOME A BAT's words, after Frank Miller and David Mazzucchelli's Batman: Year One (year-one.md,
+ * sections 5 and 6): Gordon's notebook from his first year, plain, wry, tired and honest about being
+ * scared. A precinct's plain words: a note left on a desk. Case, Needs you and Stalled stay.
+ */
+export const BECOME_A_BAT_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Sign here',
+      error: 'Gone wrong',
+      waiting: 'See me',
+      reply: 'Memo',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // Short enough for its picker folder (picked on screen): the full credit ran to a third line. A
+    // no-break space keeps the book's title on one line.
+    theme: { name: 'BECOME A BAT', film: "Frank Miller's Year\u00a0One" },
+    // True of both men on January 4.
+    tagline: 'New in town.',
+    empty: {
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: "Quiet so far. I don't trust it." },
+      unheard: { ...STANDARD_VOICE.empty.unheard, title: 'Nothing on the radio. That proves nothing.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} open. Enjoy it while it lasts.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Notebook',
+      dateline: monthDay,
+      signature: 'Needs your signature',
+      nil: () => 'Nothing needs your signature. They can manage without you tonight.',
+      caseNotes: () => 'On the street',
+      // He doesn't send anyone to bed: he says whether your name is still on anything.
+      end: (waiting) =>
+        waiting
+          ? "That's all I've got. Your name's still on some of it."
+          : "That's all I've got. Nothing here has your name on it.",
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : 'Quiet on the radio. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'The squad room',
+      atmosphere: { label: 'Smoke', hint: (t) => `Smoke off the street behind the ${lower(t.case.many)}` },
+    },
+    // On the perch he stands in his Signature pose.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd in a swarm of bats' },
+    noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. One honest thing today.' },
   },
 }

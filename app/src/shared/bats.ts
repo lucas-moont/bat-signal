@@ -1,5 +1,5 @@
 // A small bat in flight, one drawing shared by the Themes that show bats (jury-wave-2.md, section 6):
-// BECOME A BAT's swarm will fly it, on Bat-Clawd's grid, and BLUE COLLAR's colony. Ours, drawn plain
+// BECOME A BAT's swarm flies it, on Bat-Clawd's grid, and BLUE COLLAR's colony will. Ours, drawn plain
 // so it reads at a few pixels: two short ears, a body, and scalloped wings in two frames of a beat.
 
 /** Which frame of the wingbeat: the tips raised above the body, or swept below it. */
@@ -68,3 +68,10 @@ export function flyingBat(wings: Wings, cx: number, cy: number, width: number): 
   )
   return `M${points.join(' L')} Z`
 }
+
+/** A bat in a flock: its body at (cx, cy), `width` units wide, in its frame of the wingbeat. */
+export type BatAt = readonly [cx: number, cy: number, width: number, wings: Wings]
+
+/** Many bats as one path, so they paint as one mass. */
+export const flock = (bats: readonly BatAt[]): string =>
+  bats.map(([cx, cy, width, wings]) => flyingBat(wings, cx, cy, width)).join(' ')

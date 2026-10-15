@@ -48,6 +48,20 @@ export const BAT_2016 =
   'L65 6.2 L68.7 2.4 L68.7 8.4 L82.2 5.4 Q83.5 5.1 84.2 4 L85.7 0.5 C94.8 5.2 112.2 22.5 112.2 40.2 ' +
   'Q104.4 36.1 97 33.7 Q93.9 34.3 92.5 38.3 L89.9 33.9 Q85.2 33.4 80.9 33.9 L60 47.6 Z'
 
+/**
+ * BECOME A BAT's bat, after Batman: Year One (1987), on the same 120x48 grid: the first suit's chest
+ * bat, traced from David Mazzucchelli's standing pin-up of it (year-one-bat.md, section 5). About
+ * 2.7:1, wide and flat: a sharp horn at each wing's upper outer corner, two short ears on a narrow
+ * head, nearly upright outer edges to sharp lower wingtips, and underneath a notch, a small point
+ * and a notch a side, then a pointed tail as low as the wingtips. The two halves averaged and
+ * mirrored at x = 60.
+ */
+export const BAT_1987 =
+  'M60 7 L56.3 7 L53.2 2 L46.3 10.2 L20.2 9.5 L12.8 2 L5.3 13.2 L2.9 28.1 L0 46 L7.8 38 L21.5 31.3 ' +
+  'L33.3 35.8 L40.7 32.1 L46.3 33.1 L54.4 38 L60 46 L65.6 38 L73.7 33.1 L79.3 32.1 L86.7 35.8 ' +
+  'L98.5 31.3 L112.2 38 L120 46 L117.1 28.1 L114.7 13.2 L107.2 2 L99.8 9.5 L73.7 10.2 L66.8 2 ' +
+  'L63.7 7 L60 7 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 
