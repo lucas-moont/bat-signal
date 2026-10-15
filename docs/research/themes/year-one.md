@@ -19,7 +19,7 @@ Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
 - **Bat-Clawd:** Year One's own black bat on the only light suit (jury §9.5). The suit lightens to chalk (`#d0d3cc`) so the orange jaw reads at 2.08:1 instead of 1.16:1, or, the on-screen alternative, a 1-unit cowl-black collar under the jaw, which leaves room for only a 2.5-unit bat. The cowl, cape, gloves, boots and trunks are a neutral near-black (no blue). The bat is 5 units wide at y 6.0–8.0, resting on a full unit of solid canary belt so that nothing black comes within a unit of it; it is traced from the 2016 Absolute Book One and compared with DKR's at 64px before either is drawn. The hem has four deep, uneven points. He flies with a trailing feathered cape, not the leap, which is DKR's Signature figure.
 - **Signature pose: "The swarm"** (kept, jury §9.10). The bats gather into **one lopsided cloud, about 7×4 units, up and to the left, swallowing his left ear and shoulder**, and his cape flares out to the left beneath it. It is drawn with the bat shape it shares with *Absolute Batman*'s colony. Two front-on stands are taken (VENGEANCE and WATCHFUL PROTECTOR's Sonar, which shipped standing), so the outline must lean: a figure dissolving into bats at the top left.
 - **Atmosphere:** the `smoke` painter (approved, jury §9.12): soft olive puffs that rise, swell and fade over a smog lit from the street.
-- **Engine PR:** the `smoke` painter; `--font-dateline` (Year One's); boxed report headings (`--caption-paper`, `--caption-ink`, generic, defaulting to no box); `--font-headline` (shared with DKR and *Absolute*); the shared two-frame bat path (with *Absolute*'s colony); optionally a `--grain-texture` for a halftone. **Theme PR:** the CSS, fonts, words, suit and the traced `BAT_1987` path.
+- **Engine PR:** what jury §9.12 approves: the `smoke` painter, `--font-dateline` (Year One's), `--font-headline` (shared with DKR and *Absolute*) and the shared two-frame bat path (with *Absolute*'s colony). One ask beyond §9.12, for the maintainer to approve in this PR: the boxed report headings. `.report__heading` reads no variable for a box today, so it would read `--caption-paper` and `--caption-ink`, which every other Theme then sets to today's look (jury §6). Without it, the headings stay as every Theme's. The halftone `--grain-texture` is dropped. **Theme PR:** the CSS, fonts, words, suit and the traced `BAT_1987` path.
 
 ## 2. Visual identity and sources
 
@@ -189,11 +189,11 @@ Every variable a shipped Theme sets, in the order of `the-dark-knight-2008.css`,
 | `--notice-hover-top` / `--notice-hover-foot` | `#252810` / `#14160a` | P | |
 | `--haze` / `--haze-edge` | 12% / 4% of `--smog` | P | Smog lit from the street |
 | `--haze-inset` | `auto -20% -35% -20%` | P | From below |
-| `--grain-opacity` | `0.045` | P | Film grain, or halftone if `--grain-texture` lands |
+| `--grain-opacity` | `0.045` | P | Film grain (the halftone is dropped, §9) |
 | `--searchlight` | `var(--bone)` | P | Intro |
 | `--smog` (own) | `#575d4b` | C87, #404 cover olive, sampled | Haze colour |
 | `--smoke-puff` (own) | `#62664a` | P | Atmosphere smoke (3.25:1 on abyss: shapes, not text) |
-| `--caption-paper` / `--caption-ink` (engine, generic) | `var(--ink-soft)` / `var(--abyss)` | Gordon's caption boxes | Report headings, 14.22:1 |
+| `--caption-paper` / `--caption-ink` (Year One's engine ask, §1; every other Theme would set `transparent` / `var(--ash)`) | `var(--ink-soft)` / `var(--abyss)` | Gordon's caption boxes | Report headings, 14.22:1 |
 | Fonts | `--font-display: 'Permanent Marker'`, `--display-weight: 400`, `--font-headline: 'Neucha'` (shared token), `--font-dateline: var(--font-body)` at 700 (Year One's token), `--font-body` Barlow Semi Condensed, `--font-type: 'Neucha'`, `--font-mono` JetBrains Mono, `--font-report` and `--font-stamp: var(--font-type)`, `--font-label: var(--font-body)` | §4 | |
 | Type settings | `--heading-case: none`, `--font-case-title: var(--font-body)`, `--case-title-weight: 600`, `--folder-name-size: 15px`, `--folder-name-tracking: 0.5px`, `--wordmark-size: 19px`, `--wordmark-tracking: 1px`, `--wordmark-glow: 18% bone` | P, to judge on screen | |
 | Pens | `--pen-hot` stroke `#ff6ad9` 1.5, `--pen-soft` stroke `#e6e08a` 1.1 | P | |
@@ -260,7 +260,7 @@ No lettering from the book is used: Todd Klein's captions are his own hand, and 
 
 **Who speaks.** Gordon, writing his notes: first person, present tense, plain, wry, tired, a little scared and honest about it, a family man in a department he cannot trust. What separates him from VENGEANCE's Bruce is the man, not the tense. He does not send the user to bed (VENGEANCE, WATCHFUL PROTECTOR and KNIGHTMARE do), and **he leaves work-shift words to *Absolute*** (no "on the job", no "shift", no "clock"; jury §3.13). No line repeats another Theme's sentence. *Quiet* and *dark* mean only "nothing needs you".
 
-**The dated caption.** The Night Report's dateline is the month and the day, as the book's scene breaks print them: "October 14", in Barlow bold (`--font-dateline`), mixed case, no box, no time. The report's headings go into Gordon's canary caption boxes (`--caption-paper`, dark ink, Neucha).
+**The dated caption.** The Night Report's dateline is the month and the day, as the book's scene breaks print them: "October 14", in Barlow bold (`--font-dateline`), mixed case, no box, no time. The report's headings go into Gordon's canary caption boxes (`--caption-paper`, dark ink, Neucha), if the maintainer approves that engine ask (§1).
 
 **Sample lines** (ours; none quotes the book):
 
@@ -384,7 +384,7 @@ Add it to `emblems.ts` as `BAT_1987` on the shared 120×48 grid, symmetric about
 - Gated like the others: it moves while the pointer is over the window and for a few seconds after news, and is absent under reduced motion.
 - The engine needs a `SmokeAtmosphere` type in `atmospheres.ts` (colour, count, `rise`, `grow`, `life`, `sway`) and its painter in `painters.ts` (radial-gradient circles on the canvas).
 
-**Fallback:** the haze alone, with no moving parts. **Halftone grain (optional):** a faint dot screen in place of the film grain, after the 2016 Absolute's 1987 book printed "on stock that simulates the look and feel of the original comics" ([DC](https://www.dc.com/graphic-novels/batman-year-one-1987/absolute-batman-year-one)). It needs the optional `--grain-texture` variable (jury §6).
+**Fallback:** the haze alone, with no moving parts. **Halftone grain: dropped.** A faint dot screen in place of the film grain, after the 2016 Absolute's 1987 book printed "on stock that simulates the look and feel of the original comics" ([DC](https://www.dc.com/graphic-novels/batman-year-one-1987/absolute-batman-year-one)), would need a `--grain-texture` variable, which the engine the maintainer approved (jury §9.12) does not include. The film grain stays.
 
 ## 10. Distinctiveness
 
