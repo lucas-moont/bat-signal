@@ -112,7 +112,7 @@ Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to w
 
 **Flags and verdicts:**
 1. **Bone, DKR – WATCHFUL PROTECTOR 4.5** (also Absolute – Arkham 5.1, WATCHFUL PROTECTOR – Absolute 5.3). No fix. Bone is the text white, and near-whites sit close, as near-blacks do: VENGEANCE and PALE MOONLIGHT ship 2.5 apart. The ~5 rule is for working and waiting inks, and Bone is not WATCHFUL PROTECTOR's or Absolute's working ink. DKR's untinted Bone (`#eef1e8`) would be 6.0 from WATCHFUL PROTECTOR but 4.5 from PALE MOONLIGHT, so the tint only moves the near pair. Keep it.
-2. **Raised tones under ~10:** VENGEANCE – Arkham 9.2, and WATCHFUL PROTECTOR – DKR at 10.0. Both are the values §2 proposed and accepted. No fix.
+2. **Raised tones under ~10:** VENGEANCE – Arkham 9.2, and WATCHFUL PROTECTOR – DKR at 10.0. Both are the values §2 proposed. DKR's is on the line. Arkham's misses it by 0.8: it is the one recorded exception, judged on screen at Arkham's build, with `#2e1724` as the fallback (§3.2). No fix now.
 3. **Alarms:** Year One – Arkham 11.9 and KNIGHTMARE – Arkham 12.9 are above 10, as §3.10 accepted. Every recommended alarm is at least 24.2 from Clawd. No fix.
 4. **Year One's A3** (`#f2605e`) is 6.1 from KNIGHTMARE's alarm and `--ink-hot`, 5.0 fill to fill, and 10.4 from Clawd. It breaks the ~10 alarm rule against KNIGHTMARE. Year One's dossier says so itself. A3 stays a comparison picture, not an available alarm. A2 stays.
 5. **Cross-role pairs:** Absolute's lemon against Year One's canary (8.3, §3.11) and DKR's cyan against WATCHFUL PROTECTOR's mercury (12.9, §3.10) are unchanged and already settled. One new near pair: Arkham's waiting paper `#d6c49a` is 8.9 from KNIGHTMARE's working Bone. It is above 5, and the stamp word carries the tier, as in §3.11. No fix.
@@ -187,7 +187,7 @@ Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to w
      - Arkham's sampled blue-black is 2.5 / 3.8 from WATCHFUL PROTECTOR.
      - A neutral charcoal (`#151515` / `#222222`) is 2.1 from VENGEANCE's surface.
      - The dossier's own plum (`#191018` / `#281a26`) is 8.2 / 9.2 from Absolute.
-     - The warmer plum above clears every Theme. Claret on it reads at 5.19:1 on the raised tone.
+     - The warmer plum above clears every Theme's surface by 7.1 or more, and every raised tone by 10 or more but one: it is 9.2 from VENGEANCE's `#27150e`, 0.8 short of the ~10 rule below. That is recorded as the one exception, judged on screen at Arkham's build. The fallback is the raised tone lifted a little and given more chroma, `#2e1724`: 10.6 from VENGEANCE's and 10.8 from Absolute's, and every Arkham text token still passes on it (the tightest, `--signal-hot`, at 5.16:1). Claret on the proposed `#2b1822` reads at 5.19:1.
    - **Tie-break:** Absolute's violet is sampled (the #2 night city `#463c60`; the trade-dress indigo `#3e4176`). Arkham's own dossier calls its violet "a design choice", a shift away from its sampled blue to clear WATCHFUL PROTECTOR. Absolute keeps it.
 3. **Bangers in two Themes.** DKR sets its display and stamps in Bangers; Absolute its stamps. Wave rule: display and stamp families are unique to each Theme.
    - **Fix:** Absolute's stamps move to Bungee, its own display, so one family does both (KNIGHTMARE's model). Blocky signage suits a work site: PERMIT?, BLOWN, JAMMED read as site signs. Our estimate from the dossier's own measurement (BAT-SIGNAL is 107px at 16px, about 0.67em a capital) puts PERMISSION near 74px at 11px before tracking, so it fits the narrow margin only near 10px. Measure it. If it fails, take Luckiest Guy (Apache-2.0, with a NOTICE line), the dossier's own stamp alternative.
@@ -243,7 +243,7 @@ Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to w
 16. **Caps-only display faces in three Themes.** Bangers (DKR), Bungee (Absolute) and Permanent Marker (Year One) have no lowercase. `--font-display` also sets the empty-state and sheet titles at 20px. Absolute and Year One ask for a `--font-headline` token; DKR needs it too (§2, §6).
 
 **Wave rules that follow** (for the docs PR, alongside Wave 1's):
-- A new Theme's surface sits at least ~6 ΔE00, and its raised tone at least ~10, from every other Theme's, and its dossier names its hue family.
+- A new Theme's surface sits at least ~6 ΔE00, and its raised tone at least ~10, from every other Theme's, and its dossier names its hue family. The one recorded exception is Arkham's raised tone, 9.2 from VENGEANCE's (§3.2).
 - No two Themes share a working or waiting ink within ~5 ΔE00.
 - A doubled Lexicon word goes to the Theme whose frame owns it; the other takes an in-frame word or the standard one.
 - No Voice line repeats another Theme's sentence.
