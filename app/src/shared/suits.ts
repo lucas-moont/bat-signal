@@ -899,15 +899,21 @@ const THE_SWARM: Script = [
   { pose: inSwarm([...CLOUD, STRAGGLER_HIGH]), ...UP_LEFT },
   { pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW]), ...UP_LEFT },
 ]
-/** Once a watch, the high straggler crosses over his head to the right, his eyes following it. */
-const CROSSING: readonly Step[] = [
-  { pose: inSwarm([...CLOUD, STRAGGLER_LOW, [7, -0.2, 2, 'up']]), look: 0, lookY: -0.4 },
-  {
-    pose: inSwarm([...CLOUD, STRAGGLER_LOW, [13, 0.4, 2, 'down']]),
-    look: GAZE,
-    lookY: -0.4,
-  },
-]
+/**
+ * Once a watch, one more bat leaves the cloud and crosses over his head to the right, his eyes
+ * following it, until it is gone past his shoulder; the cloud and its stragglers stay as they are.
+ */
+const CROSSING: readonly Step[] = (
+  [
+    [[6.5, -0.4, 2, 'up'], 0],
+    [[13, 0.2, 2, 'down'], GAZE],
+    [[19.5, 0.6, 1.8, 'up'], GAZE],
+  ] as const
+).map(([bat, look]) => ({
+  pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW, bat]),
+  look,
+  lookY: -0.4,
+}))
 
 /** Flying right, one arm reaching ahead, the cape trailing to the left. */
 const yearOneFlying = (trail: string) => yearOnePose(YEAR_ONE_REACHING, [{ kind: 'cape', d: trail }])

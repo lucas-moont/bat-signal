@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { scriptAt, stillStep, VENGEANCE_SUIT, type Script } from '../src/shared/suits'
+import {
+  BECOME_A_BAT_SUIT,
+  scriptAt,
+  stillStep,
+  VENGEANCE_SUIT,
+  type Pose,
+  type Script,
+} from '../src/shared/suits'
 import { THEME_IDS, THEMES } from '../src/shared/themes'
 
 const pose = VENGEANCE_SUIT.poses.flying[0]
@@ -52,4 +59,20 @@ describe("a Theme's watch on the perch", () => {
       expect(suit.watch[0].pose).toEqual(stillStep(suit).pose)
     },
   )
+})
+
+// The perch's watch loops back to its first step: a bat that crossed in the last one must not jump
+// back into the cloud. Every step keeps the held swarm; a crossing bat only adds to it.
+describe("BECOME A BAT's watch", () => {
+  const swarm = (pose: Pose) =>
+    pose.front.find((layer) => layer.kind === 'path' && layer.fill === 'var(--swarm)')
+  const held = swarm(stillStep(BECOME_A_BAT_SUIT).pose)
+
+  it('keeps the held swarm in every step', () => {
+    expect(held?.kind).toBe('path')
+    for (const step of BECOME_A_BAT_SUIT.watch) {
+      const here = swarm(step.pose)
+      expect(here?.kind === 'path' && held?.kind === 'path' && here.d.startsWith(held.d)).toBe(true)
+    }
+  })
 })
