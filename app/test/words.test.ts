@@ -146,6 +146,16 @@ describe("BECOME A BAT's Voice", () => {
     expect(voice.empty.noCases.title(terms)).toBe('No cases open. Enjoy it while it lasts.')
   })
 
+  // A case closing is a small win in a crooked city (year-one.md, section 5).
+  it('marks a case closing as one honest thing', () => {
+    expect(voice.noticeLine.closed).toBe('Case closed. One honest thing today.')
+  })
+
+  // The swarm on the perch is read aloud for what it is.
+  it('names Bat-Clawd in his swarm for a screen reader', () => {
+    expect(voice.mascot.watching).toBe('Bat-Clawd in a swarm of bats')
+  })
+
   // Quiet means all clear; he just doesn't trust it.
   it('doubts an all-clear, and keeps the hint plain', () => {
     expect(voice.empty.quiet).toEqual({

@@ -705,5 +705,8 @@ export const BECOME_A_BAT_WORDS: Words = {
       kicker: 'The squad room',
       atmosphere: { label: 'Smoke', hint: (t) => `Smoke off the street behind the ${lower(t.case.many)}` },
     },
+    // On the perch he stands in his Signature pose.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd in a swarm of bats' },
+    noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. One honest thing today.' },
   },
 }
