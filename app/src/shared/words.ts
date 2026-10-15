@@ -248,6 +248,8 @@ const formats = () =>
 let monthDayFormat: Intl.DateTimeFormat | undefined
 const monthDay = (now: Date) =>
   (monthDayFormat ??= new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' })).format(now)
+/** A dateline with no day: a word, then the time in the 24-hour clock ("GOTHAM · 02:14"). */
+const timeAfter = (word: string) => (now: Date) => `${word} · ${formats().time.format(now)}`
 const dateline = (now: Date) => {
   const { day, time } = formats()
   return `${day.format(now).replace(',', '').toUpperCase()} · ${time.format(now)}`
@@ -585,7 +587,7 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
     report: {
       ...STANDARD_VOICE.report,
       name: 'Sitrep',
-      dateline: (now) => `GOTHAM · ${formats().time.format(now)}`,
+      dateline: timeAfter('GOTHAM'),
       signature: 'Waiting on you',
       caseNotes: () => 'In the field',
       // The Theme's one film line, a fragment of Harvey Dent's, only when nothing waits.
@@ -754,7 +756,7 @@ export const ANCIENT_GRACE_WORDS: Words = {
       ...STANDARD_VOICE.report,
       name: 'Bulletin',
       // Live, not an edition: the time only, no place.
-      dateline: (now) => `LIVE · ${formats().time.format(now)}`,
+      dateline: timeAfter('LIVE'),
       signature: 'Your segment',
       nil: (t) => `Nothing for your segment. Every ${lower(t.case.one)} stays on the air without you.`,
       caseNotes: () => 'Around the dial',
