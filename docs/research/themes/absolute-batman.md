@@ -40,7 +40,7 @@ What makes this version recognisable, in order of strength:
 
 ## 3. Palette
 
-**Provenance key.** *S* = sampled by us (median RGB of a hand-picked region, or the top cluster of a 5- or 10-colour median-cut quantisation). Every *S* hex names its image. *P* = proposed by us, with its sampled parent. All images are **digital RGB files** released by DC for press and solicitation, not scans of the printed comic. The printed book is CMYK on paper and will differ. These digital files are the closest thing to the colourist's own output we can reach, so they are the edition we prefer; but **no hex here is a measurement of the printed comic.** Scripts: `scratchpad/scripts-absolute/sample.py`, `page_palette.py`, `colour.py`, `tables.py` (kept outside the repo).
+**Provenance key.** *S* = sampled by us (median RGB of a hand-picked region, or the top cluster of a 5- or 10-colour median-cut quantisation). Every *S* hex names its image. *P* = proposed by us, with its sampled parent. All images are **digital RGB files** released by DC for press and solicitation, not scans of the printed comic. The printed book is CMYK on paper and will differ. These digital files are the closest thing to the colourist's own output we can reach, so they are the edition we prefer; but **no hex here is a measurement of the printed comic.**
 
 | Image | What it is | Source |
 |---|---|---|
@@ -283,7 +283,7 @@ The book's masthead is two pieces: "ABSOLUTE" in a wide, rounded, squared sans, 
 
 **Bungee is caps-only** (measured: its lowercase glyphs are the capitals). For the stamps that is what we want. For headlines it is not: `--font-display` also sets the empty-state title and the sheet titles (`Cards.css` `.empty__title`, `Sheets.css` `.sheet__title`, 20px), and an all-clear in shouting capitals is the wrong register. **Decided** (jury-wave-2 §6, §9.12): the engine adds the shared `--font-headline` token, default `var(--font-display)` so no shipped Theme changes; DKR, BLUE COLLAR and Year One point it at a face with lowercase. Here it is Barlow Semi Condensed.
 
-**Stamp widths in Bungee, measured** (PIL on the Google Fonts TTF; script `scratchpad/scripts-absolute/stamprooms.py`). The rooms are those `stampWidth.test.ts` reads from the CSS: the Night Report margin, 101px for the boxed stamp at 0.12em; the narrowest panel's margin, 87px at 0.04em; the watch strip, 72px unboxed at the stamp size less 1.5px; the notice card, 272px. A boxed stamp adds 12px of padding and two borders. PERMISSION has to fit too, because with the Lexicon off the stamps say the standard words in this face.
+**Stamp widths in Bungee, measured** (computed by us with PIL on the Google Fonts TTF). The rooms are those `stampWidth.test.ts` reads from the CSS: the Night Report margin, 101px for the boxed stamp at 0.12em; the narrowest panel's margin, 87px at 0.04em; the watch strip, 72px unboxed at the stamp size less 1.5px; the notice card, 272px. A boxed stamp adds 12px of padding and two borders. PERMISSION has to fit too, because with the Lexicon off the stamps say the standard words in this face.
 
 | Bungee | PERMISSION (margin / narrow / strip, px) | Verdict |
 |---|---|---|

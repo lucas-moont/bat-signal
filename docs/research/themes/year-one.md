@@ -56,7 +56,7 @@ The edition labels for the 2005 covers follow Ultimate Batman Comics (fan site),
 
 ## 3. Palette
 
-**Provenance key.** Every hex was sampled by us (Python and Pillow: median RGB of a region with ink-black line art and white paper dropped; "sat15" is the median of the region's 15% most saturated pixels; "red mask" keeps pixels with R > 1.9 G and R > 1.9 B) from compressed JPEG or PNG files. None is a measurement of a printed page. The scripts live in the session scratchpad, not the repo.
+**Provenance key.** Every hex was sampled by us (Python and Pillow: median RGB of a region with ink-black line art and white paper dropped; "sat15" is the median of the region's 15% most saturated pixels; "red mask" keeps pixels with R > 1.9 G and R > 1.9 B) from compressed JPEG or PNG files. None is a measurement of a printed page.
 
 - **R-DC**: the 1988 recolour, three interior pages DC published with its 2024 article (700×1080 JPEG; painted texture, no halftone). DC does not say which restoration.
 - **R-UBC**: the 1988 recolour, "the published page from the collected edition" (edition unnamed), fan-site scans of 300–580px, and Lewis's colour plate for #406 page 2.

@@ -89,7 +89,7 @@ Off the table: red (VENGEANCE, and KNIGHTMARE's crimson; the heartbeat `#ea2b17`
 
 **Withdrawn: Palette B, arcade magenta `#ff3fa4`.** It was the first draft's fallback, from the Mutants' arcade neon. The jury measured it 8.0 from *Year One*'s alarm and 5.4 from *Arkham Asylum*'s, so it is no longer available (jury §3.10).
 
-**Measured** (ΔE00, computed by us; scripts in the session scratchpad, `scripts-dkr/palette.py` and `palette2.py`; the Wave 2 values are the jury's revised ones, §2 and §9):
+**Measured** (ΔE00, computed by us from the hex values with CIEDE2000; the Wave 2 values are the jury's revised ones, §2 and §9):
 
 | | VENGEANCE `#e3121b` | PALE MOONLIGHT `#f0c24b` | WATCHFUL PROTECTOR `#3d8bff` | KNIGHTMARE `#ff405f` | *Year One* `#ff4dd2` | *Absolute* `#ecf05a` | *Arkham* `#ec5c94` | Clawd `#d77757` |
 |---|---|---|---|---|---|---|---|---|
