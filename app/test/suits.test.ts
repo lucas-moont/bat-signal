@@ -92,7 +92,10 @@ describe("ANCIENT GRACE's watch", () => {
 // a beat of its own (a ping, a crossing bat) must not snap a tilted pose level.
 describe('a watch on a nudged Signature pose', () => {
   it('keeps the nudge in its glances and its beat', () => {
-    const tilted: Script = [{ pose, look: 0 }, { pose, look: 0, transform: 'rotate(-15deg)' }]
+    const tilted: Script = [
+      { pose, look: 0 },
+      { pose, look: 0, transform: 'rotate(-15deg)' },
+    ]
     const watch = watchOn(tilted, [{ look: 0.3 }, { look: -0.3 }], [{ pose, look: 0 }])
     for (const step of watch) expect(step.transform).toBe('rotate(-15deg)')
   })
