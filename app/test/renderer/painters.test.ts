@@ -105,7 +105,7 @@ const SMOKE: SmokeAtmosphere = {
 const NOISE: NoiseAtmosphere = {
   kind: 'noise',
   color: '--static',
-  mark: { kind: 'speck', size: 1 },
+  size: 1,
   density: 0.5,
   alphas: [0.04, 0.07, 0.1],
   life: 1 / FPS,
@@ -517,7 +517,7 @@ describe('the noise', () => {
     const specks = frame!.fills.flatMap((f) => f.rects)
     expect(specks).toHaveLength(Math.round(((320 * 440) / 1000) * NOISE.density))
     for (const s of specks) {
-      expect(s.size).toBe(NOISE.mark.size)
+      expect(s.size).toBe(NOISE.size)
       expect(s.x).toBeGreaterThanOrEqual(0)
       expect(s.x).toBeLessThan(320)
       expect(s.y).toBeGreaterThanOrEqual(0)
