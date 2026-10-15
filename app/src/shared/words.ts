@@ -238,15 +238,16 @@ const asClause = (label: string) => (label.charAt(0).toLowerCase() + label.slice
 
 // Built once, on first use: a formatter is costly to make, the dateline renders with every snapshot,
 // and the main process, which loads this file for the tray, never types one.
-let datelineFormats:
-  { day: Intl.DateTimeFormat; time: Intl.DateTimeFormat; monthDay: Intl.DateTimeFormat } | undefined
+let datelineFormats: { day: Intl.DateTimeFormat; time: Intl.DateTimeFormat } | undefined
 const formats = () =>
   (datelineFormats ??= {
     day: new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: '2-digit', month: 'short' }),
     time: new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }),
-    // "October 14", as Year One's scene breaks date a page.
-    monthDay: new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' }),
   })
+/** "October 14", as Year One's scene breaks date a page: built only for the Theme that dates so. */
+let monthDayFormat: Intl.DateTimeFormat | undefined
+const monthDay = (now: Date) =>
+  (monthDayFormat ??= new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' })).format(now)
 const dateline = (now: Date) => {
   const { day, time } = formats()
   return `${day.format(now).replace(',', '').toUpperCase()} · ${time.format(now)}`
@@ -686,7 +687,7 @@ export const BECOME_A_BAT_WORDS: Words = {
     report: {
       ...STANDARD_VOICE.report,
       name: 'Notebook',
-      dateline: (now) => formats().monthDay.format(now),
+      dateline: monthDay,
       signature: 'Needs your signature',
       nil: () => 'Nothing needs your signature. They can manage without you tonight.',
       caseNotes: () => 'On the street',
