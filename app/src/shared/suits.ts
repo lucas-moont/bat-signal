@@ -961,7 +961,7 @@ export const BECOME_A_BAT_SUIT: Suit = {
 // armour he wore against Superman only when something needs the user. ---
 
 /** Outfit G's legend: V's, with the armour's plates and their lit edge. */
-const GRACE_LEGEND = { ...LEGEND, A: 'var(--armor)', e: 'var(--armor-edge)' }
+const GRACE_LEGEND = { ...LEGEND, A: 'var(--armour)', e: 'var(--armour-edge)' }
 /** The cowl with its short ears set wide, at the head's outer corners, and a heavy brow. */
 const GRACE_HEAD = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4)]
 /** The cowl's outline with the wide-set ears, behind the face, so only its outer edge shows. */
