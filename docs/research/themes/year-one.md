@@ -4,6 +4,14 @@ Research note, 2026-10-14. Scope: one Bat-Signal Theme after *Batman: Year One* 
 
 Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
 
+**Built in #122 (2026-10-15)** as `batman-year-one-1987`, demo flag `yearone`. Where this note and the build differ, the build follows the maintainer's decisions on screen:
+- **Alarm: A3, the trade paperback's red** (`#b32c33` fill, `#f2605e` lit and as ink, Bone on the chip), over A2's magenta, knowing it sits 6.1 ΔE00 from KNIGHTMARE's crimson (§3). The cost is recorded here, not hidden: the two Themes' alarms are told apart by their grounds and the picker.
+- **Suit: S2**, the 1987 covers' grey `#9a9e9a` with a cowl-black collar under the jaw, over the chalk S1. The chest bat is 2.5 units wide, from y 7 to 8.
+- **The swarm's bats are lit in Ash** (the khaki grey), with no rim, over dark bats with a rim, which vanished at his real size. The cloud is drawn with the shared `flyingBat` (`app/src/shared/bats.ts`).
+- **SEE ME** stays, and the Night Report stays in **Neucha**.
+- **Credit:** "Frank Miller's Year One": the full credit ran to a third line on its picker folder.
+- **The emblem** is traced in [`year-one-bat.md`](year-one-bat.md), and the name's line is read there on the #404 board: "I shall become a bat." (§12).
+
 ## 1. TL;DR
 
 - **The Theme in one sentence:** Gordon's notebook from his first year in a crooked city: an olive-khaki Gotham of grime and smoke, his canary caption paper, the chalk-grey first suit with no oval, and the magenta of the 1987 newsprint kept for the one thing that needs you.
@@ -414,7 +422,7 @@ With A3 as the alarm instead, the palette axis still scores C everywhere (ground
 
 ## 12. Unverified items
 
-- **The window line's exact wording.** Checked again on 2026-10-14. A page reproduction of the scene in #404 was found ([PopOptiq](https://www.popoptiq.com/top-10-batman-year-one-moments/); also reproduced by [Goomba Stomp](https://tilt.goombastomp.com/culture/batman-year-one-the-best-moments/)): the bat crashing through the glass, and Bruce's captions "Without warning, it comes..." and "...crashing through the window of your study ...and mine...". The panel with the line itself is not in it. Transcriptions differ: "Yes, father. I shall become a bat." (India Art Review, and a fan account on X), "I shall become a bat" (Goodreads, PopOptiq's heading), "I will become the bat" (one review). Scans Daily, TV Tropes, the DC fandom wiki and Wikiquote returned 403, 402 or 404. **The name's three words, "become a bat", must be read on a page of #404 (or the Absolute Book One) before the Theme ships.**
+- **The window line's exact wording.** Checked again on 2026-10-14. A page reproduction of the scene in #404 was found ([PopOptiq](https://www.popoptiq.com/top-10-batman-year-one-moments/); also reproduced by [Goomba Stomp](https://tilt.goombastomp.com/culture/batman-year-one-the-best-moments/)): the bat crashing through the glass, and Bruce's captions "Without warning, it comes..." and "...crashing through the window of your study ...and mine...". The panel with the line itself is not in it. Transcriptions differ: "Yes, father. I shall become a bat." (India Art Review, and a fan account on X), "I shall become a bat" (Goodreads, PopOptiq's heading), "I will become the bat" (one review). Scans Daily, TV Tropes, the DC fandom wiki and Wikiquote returned 403, 402 or 404. *Read on 2026-10-15 on the original board of #404, page 22, in two caption boxes, "...yes. Father." and "I shall become a bat." ([`year-one-bat.md`](year-one-bat.md) §2). Not yet checked on a printed page; the lettering is pasted on the board.*
 - **The alarm A2 is ours.** `#ff4dd2` is process magenta turned 16° toward violet, 13.2 ΔE00 from `#ec008c` and 19.5 from the sampled 1987 pink. That the 1987 pinks are tints of the magenta plate is how four-colour newsprint works, not a statement from Lewis.
 - **A3's red** is sampled from Penguin Random House's cover file for ISBN 9781401207526 (a later printing, DC's current logo). DC's shaded mock-up of the same design reads `#ab282e`–`#af2930`, a fan-site scan of an earlier printing `#ce1131`. Who coloured the cover (Lewis, Mazzucchelli or a DC designer) was not found. That it is "the most famous" Year One cover is the maintainer's reading; it is the standard trade paperback.
 - **The 2005 edition labels** (ivory-and-brick hardcover, red softcover) follow the fan site; Wikipedia dates the trade paperback February 2007.

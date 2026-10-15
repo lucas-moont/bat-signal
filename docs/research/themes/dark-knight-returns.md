@@ -389,6 +389,8 @@ Under reduced motion: step 4 only. The intro and a click play the same reveal; a
 
 **Shape (the second suit's bat, drawn by us):** a wide black bat with no oval, about 2.6:1, read from the reproductions in §2 (proportions **unverified**, §12). Short ears on a flat, broad head; the wings reaching out nearly level, their upper edge rising slightly to the tips; the lower edge in three scallops per side, separated by points; a short pointed tail. It must differ from KNIGHTMARE's `BAT_2016` at 54px, which descends from it: this one is flatter and wider, with level wings, where the BvS bat sweeps its wing horns up and drops to a deep V. Drawn as a left half on the 120×48 grid and mirrored at x = 60, finish `none`, like the others. The tray and toast icons stay single (Wave 1 jury §2).
 
+*Traced on 2026-10-15 in [`year-one-bat.md`](year-one-bat.md) §4–6, from the Book Three cover: about 1.05:1, round, two V notches a side, so it does not read like Year One's 2.7:1 bat. The path, BAT_1986, waits there for this Theme's build; the chest version on the Book Two cover may be wider (up to about 2.2:1), which would mean comparing again.*
+
 **Trace before drawing, and compare with *Year One*'s** (jury §3.14). *Year One*'s 1987 bat has the same written description ("wide and level-winged, small head, two short ears, scalloped underneath, no oval"). Trace this one from a clean image of the second suit and *Year One*'s from its source, and compare the two at 64px on the disc before either is drawn into `emblems.ts`. If they read alike, this Theme's tells are its flat, broad head and its three scallops a side; the trace decides.
 
 **The 64px Signal disc: a TV screen.**
