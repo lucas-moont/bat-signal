@@ -1071,17 +1071,14 @@ const drop = (canopy: string) =>
 /** The armour (alarmed), Book Four's exoframe: the cape thrown back behind it. */
 const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 
-/**
- * The bolt behind the leap, top right to bottom left as on the Book One cover: from above his fist
- * down through the gap between his legs, a jagged path a unit wide, white with a blue light around
- * it, never a flash. Drawn as seen, then turned back by his tilt about the pivot, so it stands 14
- * degrees off vertical once he leans into the leap.
- */
 /** How far the leap leans him forward, in degrees, clockwise as CSS turns. */
 const TILT = 12
 /** Where CSS turns him: the middle of his frame, on his grid. */
 const PIVOT = [8, 5.5] as const
-/** A path of absolute points turned `degrees` about the pivot, a decimal kept. */
+/**
+ * A path turned `degrees` about the pivot, a decimal kept. Its points must be absolute x y pairs
+ * (M and L): a relative command, H, V or a comma would be turned wrong.
+ */
 const turned = (d: string, degrees: number) => {
   const [cx, cy] = PIVOT
   const [cos, sin] = [Math.cos((degrees * Math.PI) / 180), Math.sin((degrees * Math.PI) / 180)]
@@ -1091,6 +1088,12 @@ const turned = (d: string, degrees: number) => {
     return `${at(cx + dx * cos - dy * sin)} ${at(cy + dx * sin + dy * cos)}`
   })
 }
+/**
+ * The bolt behind the leap, top right to bottom left as on the Book One cover: from above his fist
+ * down through the gap between his legs, a jagged path a unit wide, white with a blue light around
+ * it, never a flash. Drawn as seen, then turned back by his tilt about the pivot, so it stands 14
+ * degrees off vertical once he leans into the leap.
+ */
 const BOLT = turned(
   'M11.6 -6 L12.6 -6 L11.4 -1.6 L12.6 -1.2 L9.6 5 L10.6 5.4 L7.6 14 L6.6 14 L9.2 6.2 L8.2 5.8 ' +
     'L11.2 -0.4 L10 -0.8 Z',
