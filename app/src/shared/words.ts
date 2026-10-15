@@ -737,7 +737,9 @@ export const ANCIENT_GRACE_WORDS: Words = {
   },
   voice: {
     ...STANDARD_VOICE,
-    theme: { name: 'ANCIENT GRACE', film: "Frank Miller's The Dark Knight Returns (1986)" },
+    // Short enough for its picker folder: with its year, the credit ran to a third line. No-break
+    // spaces keep the book's title whole on the second.
+    theme: { name: 'ANCIENT GRACE', film: "Frank Miller's The\u00a0Dark\u00a0Knight\u00a0Returns" },
     tagline: 'Live, from Gotham.',
     empty: {
       ...STANDARD_VOICE.empty,
