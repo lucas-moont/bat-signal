@@ -56,6 +56,9 @@
   --danger: var(--raised);
   --waiting-rule: var(--blood);
   --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 
@@ -131,6 +134,10 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   /* The report is plain working text: neither a log nor a typewriter. */
   --font-report: var(--font-body);
+  --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
+  --font-dateline: var(--font-report);
+  --dateline-weight: 400;
   --font-stamp: var(--font-display);
   /* Short words under 19px (the strip's name, the counts, a folder's name) in Barlow: Archivo's width
      pushed the watch strip's name onto two lines beside its count. */

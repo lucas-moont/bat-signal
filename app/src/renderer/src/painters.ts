@@ -6,6 +6,7 @@ import type {
   Atmosphere,
   LitWindowsAtmosphere,
   RainAtmosphere,
+  SmokeAtmosphere,
   SnowAtmosphere,
 } from '@shared/atmospheres'
 import { FPS } from './clockRate'
@@ -43,6 +44,8 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return litWindows(atmosphere, random)
     case 'ash':
       return ash(atmosphere, random)
+    case 'smoke':
+      return smoke(atmosphere, random)
   }
 }
 
@@ -135,8 +138,12 @@ interface Flake {
   phase: number
 }
 
-/** A flake's sway, a step a tick: out one way, back, out the other way, back. */
+/** A flake's or a puff's sway, a step a tick: out one way, back, out the other way, back. */
 const SWAY = [0, 1, 0, -1]
+
+/** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
+const swayAt = (amount: number, ticks: number, phase: number) =>
+  amount * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!
 
 /**
  * Snow: flakes in depths, each depth filled as one path a tick. They fall a few pixels a tick,
@@ -172,7 +179,7 @@ function snow({ color: variable, density, depths, drift }: SnowAtmosphere, rando
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
       // Each phase's sway this tick, worked out once for every flake.
-      const sways = SWAY.map((_, phase) => drift * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!)
+      const sways = SWAY.map((_, phase) => swayAt(drift, ticks, phase))
       depths.forEach(({ alpha, size, fall }, depth) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
@@ -392,6 +399,76 @@ function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: 
           ctx.rect(m.x, m.y, size, size)
         }
         ctx.fill()
+      }
+    },
+  }
+}
+
+interface Puff {
+  /** The column it rises in. */
+  x: number
+  /** Ticks since it left the street, fractional when a tick comes late. */
+  age: number
+  /** Where in the sway it starts, so the puffs don't sway in step. */
+  phase: number
+}
+
+/** A puff's soft edge: the discs it is painted as, each a share of its width, the widest first. */
+const PUFF_RINGS = [1, 0.7, 0.4]
+
+/**
+ * Smoke: a few puffs rise from the bottom edge, each swelling and fading to nothing over its life,
+ * swaying on the clock as snow does. They leave the street one after another, so the smoke never
+ * pulses; a puff that is gone leaves again from the street, in a column of its own.
+ */
+function smoke(
+  { color: variable, puffs: count, size, alpha, rise, life, sway }: SmokeAtmosphere,
+  random: () => number,
+): Painter {
+  /** A puff's life in ticks of the clock. */
+  const lifeTicks = life / STEP
+  let puffs: Puff[] = []
+  let width = 0
+  let height = 0
+  /** Ticks of the clock since the smoke began. */
+  let ticks = 0
+  let color = ''
+
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      ticks = 0
+      puffs = Array.from({ length: count }, (_, i) => ({
+        x: random() * width,
+        age: (i * lifeTicks) / count,
+        phase: Math.floor(random() * SWAY.length),
+      }))
+    },
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      ticks += step
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = color
+      for (const p of puffs) {
+        p.age += step
+        while (p.age >= lifeTicks) {
+          p.age -= lifeTicks
+          p.x = random() * width
+        }
+        const t = p.age / lifeTicks
+        const radius = (size[0] + (size[1] - size[0]) * t) / 2
+        const x = p.x + swayAt(sway, ticks, p.phase)
+        // It leaves with its center on the bottom edge, half of it still below.
+        const y = height - rise * p.age
+        ctx.globalAlpha = (alpha * (1 - t)) / PUFF_RINGS.length
+        for (const ring of PUFF_RINGS) {
+          ctx.beginPath()
+          ctx.arc(x, y, radius * ring, 0, 2 * Math.PI)
+          ctx.fill()
+        }
       }
     },
   }

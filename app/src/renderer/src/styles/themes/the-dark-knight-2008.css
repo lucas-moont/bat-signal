@@ -61,6 +61,9 @@
   --waiting-rule: color-mix(in srgb, var(--ink-soft) 55%, var(--surface));
   /* The Night Report's margin rule: a plain rule, no color at rest. */
   --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 
@@ -128,6 +131,10 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   /* The Night Report is a printed log, not a typed page. */
   --font-report: var(--font-mono);
+  --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
+  --font-dateline: var(--font-report);
+  --dateline-weight: 400;
   --font-stamp: var(--font-type);
   /* Short words under 19px (the counts, a folder's name) in Barlow: Syncopate is for large caps, and
      the disc's count is a Barlow numeral (nolan.md, section 8). */

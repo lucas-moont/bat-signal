@@ -34,8 +34,17 @@ function textColors(): string[] {
   const used = rendererSources('.css').flatMap(({ text }) =>
     [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
   )
-  // Ink on the Alarm color's fill is held to that fill, not to the dark grounds (below).
-  return [...new Set(used)].filter((c) => c !== '--on-signal').sort()
+  return [...new Set(used)].filter((c) => !(c in PAPERS)).sort()
+}
+
+/**
+ * Inks held to a paper of their own, not to the dark grounds: the count on the Alarm color's chip,
+ * and the Night Report's headings in a caption box. A paper that is transparent leaves its ink on
+ * the dark grounds after all.
+ */
+const PAPERS: Record<string, string> = {
+  '--on-signal': '--signal',
+  '--caption-ink': '--caption-paper',
 }
 
 /** Every dark ground text sits on: the page, the panels, the sheet and the notice card. */
@@ -101,11 +110,13 @@ describe.each(THEME_IDS)("%s's text colors", (theme) => {
   })
 })
 
-// The header's count sits on a chip of the Alarm color, not on a dark ground.
-describe.each(THEME_IDS)("%s's ink on its Alarm color", (theme) => {
-  it('reads at 4.5:1 or better on --signal', () => {
-    const variables = themeVariables(theme)
-    expect(ratio(rgb(variables, '--on-signal'), rgb(variables, '--signal'))).toBeGreaterThanOrEqual(4.5)
+describe.each(THEME_IDS)("%s's inks on their own paper", (theme) => {
+  const variables = themeVariables(theme)
+
+  it.each(Object.entries(PAPERS))('%s reads at 4.5:1 or better on %s', (ink, paper) => {
+    const grounds = resolved(variables, `var(${paper})`) === 'transparent' ? GROUNDS : [paper]
+    for (const ground of grounds)
+      expect(ratio(rgb(variables, ink), rgb(variables, ground)), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
   })
 })
 

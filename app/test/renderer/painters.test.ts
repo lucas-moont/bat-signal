@@ -6,6 +6,7 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type AshAtmosphere,
+  type SmokeAtmosphere,
   type SnowAtmosphere,
 } from '../../src/shared/atmospheres'
 
@@ -15,19 +16,22 @@ type Square = { x: number; y: number; size: number }
 
 type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
 
+type Disc = { x: number; y: number; r: number }
+
 /**
  * A canvas context that records what it is asked to draw, in which color and strength: one list of
- * segments per stroke() (the rain), one list of squares per fill() (the snow), and each box filled
- * or outlined on its own (the lit windows), and how often it is cleared.
+ * segments per stroke() (the rain), one list of squares and of discs per fill() (the snow, the
+ * smoke), and each box filled or outlined on its own (the lit windows), and how often it is cleared.
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
-  const fills: { alpha: number; color: string; rects: Square[] }[] = []
+  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[] }[] = []
   const boxes: Box[] = []
   const outlines: Box[] = []
   const cleared = { times: 0 }
   let segments: Segment[] = []
   let rects: Square[] = []
+  let discs: Disc[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
@@ -38,12 +42,13 @@ function recorder() {
       boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
     strokeRect: (x: number, y: number, w: number, h: number) =>
       outlines.push({ x, y, w, h, color: ctx.strokeStyle, alpha: ctx.globalAlpha }),
-    beginPath: () => ([segments, rects] = [[], []]),
+    beginPath: () => ([segments, rects, discs] = [[], [], []]),
     moveTo: (x: number, y: number) => (from = { x, y }),
     lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
     stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects }),
+    arc: (x: number, y: number, r: number) => discs.push({ x, y, r }),
+    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
@@ -79,18 +84,31 @@ const ASH: AshAtmosphere = {
   ],
 }
 
+/** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
+const SMOKE: SmokeAtmosphere = {
+  kind: 'smoke',
+  color: '--smoke-puff',
+  puffs: 4,
+  size: [12, 40],
+  alpha: 0.1,
+  rise: 2,
+  life: 4,
+  sway: 1,
+}
+
 // The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, SMOKE])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
       painter.recolor(() => '#ffffff')
       const { ctx, strokes, fills } = recorder()
       expect(() => painter.paint(ctx, 0)).not.toThrow()
-      expect(strokes.flatMap((s) => s.segments).length + fills.flatMap((f) => f.rects).length).toBe(0)
+      const drawn = [...strokes.flatMap((s) => s.segments), ...fills.flatMap((f) => [...f.rects, ...f.discs])]
+      expect(drawn).toHaveLength(0)
     },
   )
 })
@@ -358,6 +376,106 @@ describe('the ash', () => {
       expect(r.y).toBeGreaterThan(-10)
       expect(r.y).toBeLessThan(440 + 10)
     }
+  })
+})
+
+describe('the smoke', () => {
+  const smoke = (atmosphere = SMOKE) => {
+    const painter = painterFor(atmosphere, seeded())
+    painter.recolor(() => '#62664a')
+    painter.resize(320, 440)
+    return painter
+  }
+
+  type Puff = { x: number; y: number; r: number; alpha: number }
+  /**
+   * The puffs in a frame, in the order painted: a puff is a few discs about one center (its soft
+   * edge), so its width is its widest disc's and its strength the sum of its discs' alphas.
+   */
+  const puffsIn = (fills: { alpha: number; discs: Disc[] }[]): Puff[] => {
+    const puffs = new Map<string, Puff>()
+    for (const { alpha, discs } of fills)
+      for (const { x, y, r } of discs) {
+        const key = `${x},${y}`
+        const p = puffs.get(key) ?? { x, y, r: 0, alpha: 0 }
+        puffs.set(key, { ...p, r: Math.max(p.r, r), alpha: p.alpha + alpha })
+      }
+    return [...puffs.values()]
+  }
+  const frames = (n: number, dt = 1 / FPS, painter = smoke()) => fillsOver(painter, n, dt).map(puffsIn)
+
+  it('puts as many puffs on the canvas as it asks, in the color it is given, soft at the edge', () => {
+    const painter = smoke()
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 0)
+    expect(puffsIn(fills)).toHaveLength(SMOKE.puffs)
+    for (const f of fills) expect(f.color).toBe('#62664a')
+    // More than one disc a puff: it fades out toward its edge.
+    expect(fills.flatMap((f) => f.discs).length).toBeGreaterThan(SMOKE.puffs)
+  })
+
+  // Off the street: every puff is in the bottom of the panel, below how far one can rise in its life.
+  it('keeps its puffs near the bottom edge', () => {
+    const highest = 440 - SMOKE.rise * SMOKE.life * FPS - SMOKE.size[1]
+    for (const frame of frames(100))
+      for (const p of frame) {
+        expect(p.y).toBeGreaterThan(highest)
+        expect(p.y - p.r).toBeLessThan(440)
+      }
+  })
+
+  it('rises, swells and fades a tick at a time', () => {
+    const [first, next] = frames(1)
+    first!.forEach((a, i) => {
+      const b = next![i]!
+      if (b.y > a.y) return // gone, and back at the street
+      expect(a.y - b.y).toBeCloseTo(SMOKE.rise)
+      expect(b.r).toBeGreaterThan(a.r)
+      expect(b.alpha).toBeLessThan(a.alpha)
+    })
+  })
+
+  // Four seconds from the street to nothing: then it leaves the street again, somewhere new.
+  it('fades a puff to nothing over its life, then sends it up again from the street', () => {
+    const all = frames(SMOKE.life * FPS + 1)
+    const lives = all.map((frame) => frame[0]!)
+    const gone = lives.findIndex((p, i) => i > 0 && p.y > lives[i - 1]!.y)
+    expect(gone).toBe(SMOKE.life * FPS)
+    expect(lives[gone - 1]!.alpha).toBeLessThan(0.01)
+    expect(lives[gone]!.y).toBe(440)
+    expect(lives[gone]!.r).toBe(SMOKE.size[0] / 2)
+    expect(lives[gone]!.alpha).toBeCloseTo(SMOKE.alpha)
+    expect(all.at(-1)).toHaveLength(SMOKE.puffs)
+  })
+
+  // They leave the street one after another, never all at once: the smoke never pulses.
+  it('keeps its puffs at different heights', () => {
+    for (const frame of frames(50)) expect(new Set(frame.map((p) => p.y)).size).toBe(SMOKE.puffs)
+  })
+
+  it('sways a puff a little either way as it rises, never more', () => {
+    const lives = frames(SMOKE.life * FPS - 1).map((frame) => frame[0]!)
+    const xs = lives.map((p) => p.x)
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(2 * SMOKE.sway)
+  })
+
+  // A late tick may carry a short-lived puff past more than one whole life.
+  it('never paints a puff past the end of its life, however short', () => {
+    const brief = { ...SMOKE, life: 0.2 }
+    for (const frame of frames(20, 2 / FPS, smoke(brief)))
+      for (const p of frame) {
+        expect(p.r).toBeLessThanOrEqual(brief.size[1] / 2)
+        expect(p.alpha).toBeGreaterThanOrEqual(0)
+      }
+  })
+
+  it('rises as far as the time between ticks, up to two ticks', () => {
+    const risen = (dt: number) => {
+      const [first, next] = frames(1, dt)
+      return first![1]!.y - next![1]!.y
+    }
+    expect(risen(2 / FPS)).toBeCloseTo(2 * risen(1 / FPS))
+    expect(risen(5)).toBeCloseTo(risen(2 / FPS))
   })
 })
 

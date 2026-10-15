@@ -71,6 +71,9 @@
   /* The left rule beside what waits on you (a card, an alert in a case): in its stamp's family. */
   --waiting-rule: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 
@@ -147,6 +150,10 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   /* The night report's body, and the stamps' face: both the typewriter in VENGEANCE. */
   --font-report: var(--font-type);
+  --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
+  --font-dateline: var(--font-report);
+  --dateline-weight: 400;
   --font-stamp: var(--font-type);
   /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
      display face built for large sizes may not hold. VENGEANCE: its display face. */

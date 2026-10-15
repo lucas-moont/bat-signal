@@ -216,8 +216,8 @@
 }
 .empty__title {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: var(--display-weight);
+  font-family: var(--font-headline);
+  font-weight: var(--headline-weight);
   text-transform: var(--heading-case);
   font-size: 20px;
   letter-spacing: 1.5px;

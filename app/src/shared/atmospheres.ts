@@ -1,6 +1,6 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
 // 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, WATCHFUL PROTECTOR's lit windows, ash on a
-// desert wind; each kind has its painter (renderer/src/painters.ts).
+// desert wind, smoke off the street; each kind has its painter (renderer/src/painters.ts).
 
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
@@ -83,7 +83,33 @@ export interface AshAtmosphere extends Scene {
   depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
 }
 
-export type Atmosphere = RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere
+/**
+ * Smoke off the street: soft round puffs rise from the bottom edge, a few at a time, each swelling
+ * and fading to nothing as it rises, swaying a little on the clock.
+ */
+export interface SmokeAtmosphere extends Scene {
+  kind: 'smoke'
+  /** The variable the puffs are filled in. */
+  color: string
+  /** How many puffs rise at once. */
+  puffs: number
+  /** A puff's width as it leaves the street, and as it is gone, in px. */
+  size: readonly [number, number]
+  /**
+   * Its strength (alpha) as it leaves the street, about that at its heart and softer toward its
+   * edge (its discs overlap there, so their alphas compound rather than add); it fades to nothing.
+   */
+  alpha: number
+  /** How far it rises a tick, in px. */
+  rise: number
+  /** Seconds from the street to nothing. */
+  life: number
+  /** How far it sways either way as it rises, in px. */
+  sway: number
+}
+
+export type Atmosphere =
+  RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere | SmokeAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
