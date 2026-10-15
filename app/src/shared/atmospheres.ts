@@ -119,8 +119,7 @@ export interface NoiseAtmosphere extends Scene {
   /** The variable its marks and its band are filled in. */
   color: string
   /** The mark: a speck, a square `size` px wide. */
-  mark: 'speck'
-  size: number
+  mark: { kind: 'speck'; size: number }
   /** Marks per 1000 square pixels. */
   density: number
   /** The strengths (alphas) a mark may have, one picked for each. */

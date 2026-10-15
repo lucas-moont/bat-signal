@@ -494,7 +494,7 @@ const BAND_LAYERS = [1, 0.6, 0.3]
  * over them and comes in again from above the top once it has rolled off the bottom.
  */
 function noise(
-  { color: variable, size, density, alphas, life, band }: NoiseAtmosphere,
+  { color: variable, mark: { size }, density, alphas, life, band }: NoiseAtmosphere,
   random: () => number,
 ): Painter {
   /** The marks at each strength, none until it has a size. */
