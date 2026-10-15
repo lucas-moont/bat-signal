@@ -979,8 +979,8 @@ const GRACE_SEATED = graceMap([SUIT, SUIT, SUIT, SUIT], [])
 const GRACE_LEAPING = graceMap(['...SSSSSSSSSSSg.', SUIT, SUIT], BELOW_WAIST.slice(0, 3))
 /**
  * The armour: plates over his chest and on his shoulders, a unit past his body each side, a lit
- * edge along their tops (it is what reads at his size: the plates are near the suit's grey); his
- * cowl, jaw and eyes as ever.
+ * edge along their tops (it is what reads at his size: the plates are near the suit's grey), which
+ * reaches up under the cowl's lower corners beside his jaw; his jaw and eyes as ever.
  */
 const PLATES = '...AAAAAAAAAA...'
 const GRACE_ARMOUR = map([PLATES, PLATES], BELOW_WAIST, GRACE_LEGEND, [
@@ -1071,7 +1071,7 @@ const leaping = (bolt?: number) => {
   if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt })
   return gracePose(GRACE_LEAPING, behind)
 }
-/** Launched: raised two units and tilted. */
+/** Launched: raised about two units at the header's size (a nudge is in px) and tilted. */
 const LAUNCH = 'translateY(-4px) rotate(-15deg)'
 
 /**
