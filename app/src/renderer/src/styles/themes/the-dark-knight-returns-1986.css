@@ -66,7 +66,7 @@
   /* The report's headings as every Theme but BECOME A BAT sets them: no paper, Ash, underlined. */
   --caption-paper: transparent;
   --caption-ink: var(--ash);
-  --caption-rule: 1px solid var(--report-rule);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 
