@@ -57,6 +57,9 @@
   --danger: var(--blood);
   --waiting-rule: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 

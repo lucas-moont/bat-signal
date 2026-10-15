@@ -82,15 +82,20 @@
 .notes__terminal {
   margin: 0 0 8px calc(var(--margin) + 12px);
 }
+/* A heading may sit in a caption box, a Theme's paper behind it: drawn round the words by a
+   shadow, so the words keep their place whether the paper shows or not. */
 .report__heading {
+  width: fit-content;
   margin: 0 0 4px calc(var(--margin) + 12px);
   font: inherit;
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  text-decoration: underline;
+  text-decoration: var(--caption-rule);
   text-underline-offset: 4px;
-  color: var(--ash);
+  color: var(--caption-ink);
+  background: var(--caption-paper);
+  box-shadow: 0 0 0 3px var(--caption-paper);
 }
 /* The plugin hint, typed into the report under its heading. */
 .report .plugin-hint {

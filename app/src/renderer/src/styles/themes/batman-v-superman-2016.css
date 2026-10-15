@@ -56,6 +56,9 @@
   --danger: var(--raised);
   --waiting-rule: var(--blood);
   --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 

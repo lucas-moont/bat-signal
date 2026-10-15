@@ -71,6 +71,9 @@
   /* The left rule beside what waits on you (a card, an alert in a case): in its stamp's family. */
   --waiting-rule: var(--blood);
   --report-rule: color-mix(in srgb, var(--blood) 75%, transparent);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
 
   --clawd: #d77757;
 

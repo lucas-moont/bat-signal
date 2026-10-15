@@ -34,8 +34,9 @@ function textColors(): string[] {
   const used = rendererSources('.css').flatMap(({ text }) =>
     [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
   )
-  // Ink on the Alarm color's fill is held to that fill, not to the dark grounds (below).
-  return [...new Set(used)].filter((c) => c !== '--on-signal').sort()
+  // Ink on the Alarm color's fill is held to that fill, and a caption's ink to its paper, not to
+  // the dark grounds (below).
+  return [...new Set(used)].filter((c) => c !== '--on-signal' && c !== '--caption-ink').sort()
 }
 
 /** Every dark ground text sits on: the page, the panels, the sheet and the notice card. */
@@ -106,6 +107,18 @@ describe.each(THEME_IDS)("%s's ink on its Alarm color", (theme) => {
   it('reads at 4.5:1 or better on --signal', () => {
     const variables = themeVariables(theme)
     expect(ratio(rgb(variables, '--on-signal'), rgb(variables, '--signal'))).toBeGreaterThanOrEqual(4.5)
+  })
+})
+
+// The Night Report's headings: in a caption box, on its paper; without one, on the dark grounds.
+describe.each(THEME_IDS)("%s's report headings", (theme) => {
+  it('read at 4.5:1 or better on whatever they sit on', () => {
+    const variables = themeVariables(theme)
+    const ink = rgb(variables, '--caption-ink')
+    const paper = resolved(variables, 'var(--caption-paper)')
+    const grounds = paper === 'transparent' ? GROUNDS : ['--caption-paper']
+    for (const ground of grounds)
+      expect(ratio(ink, rgb(variables, ground)), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
   })
 })
 
