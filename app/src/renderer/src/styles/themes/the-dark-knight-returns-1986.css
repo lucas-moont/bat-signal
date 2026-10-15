@@ -82,7 +82,7 @@
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0e15;
-  --cowl-edge: color-mix(in srgb, #e8e1d9 22%, transparent);
+  --cowl-edge: color-mix(in srgb, var(--bone) 22%, transparent);
   --cowl-shine: var(--raised);
   --suit: #666864;
   --gloves: var(--cowl);
