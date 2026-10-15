@@ -919,6 +919,6 @@ export const BECOME_A_BAT_SUIT: Suit = {
   // On the perch he stands in the swarm, looks up at it and back; once a watch, a bat crosses.
   watch: watchOn(THE_SWARM, [UP_LEFT, { look: 0 }], CROSSING),
   signature: THE_SWARM,
-  // Newsprint Magenta is the Alarm color and never shows at rest: no aura as the bats gather.
+  // Trade Paperback Red is the Alarm color and never shows at rest: no aura as the bats gather.
   aura: 'alarmed',
 }
