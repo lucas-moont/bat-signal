@@ -3,7 +3,7 @@
 // details under a grid cell), the Poses of each Mood, his watch on the perch and, if the Theme has
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
-import { flyingBat, type Wings } from './bats'
+import { flock, type BatAt } from './bats'
 import { BAT_1989, emblem, OVAL_1989 } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
@@ -796,9 +796,6 @@ const FIRST_CAPE = {
     'L4.4 9.4 L3.1 10.7 L1.7 9.7 Z',
 }
 
-/** Bats in flight as one mass: each a body at (cx, cy), `width` units wide, in a frame of its beat. */
-type BatAt = readonly [cx: number, cy: number, width: number, wings: Wings]
-
 /**
  * A swarm: the bats lit from the street in the khaki Ash, so they read on the dark (picked on screen
  * over bats in the cape's black with a rim, which vanished at his real size).
@@ -806,7 +803,7 @@ type BatAt = readonly [cx: number, cy: number, width: number, wings: Wings]
 const swarmOf = (bats: readonly BatAt[]): Layer[] => [
   {
     kind: 'path',
-    d: bats.map(([cx, cy, width, wings]) => flyingBat(wings, cx, cy, width)).join(' '),
+    d: flock(bats),
     fill: 'var(--ash)',
     smooth: true,
   },
