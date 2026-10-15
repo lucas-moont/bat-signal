@@ -65,7 +65,7 @@ describe('the Theme picker', () => {
   // A folder's Bat-Clawd is his Signature pose's final step, its nudge included: ANCIENT GRACE holds
   // the leap tilted there, as on the perch, not standing level in mid-air.
   it("holds a Signature pose's final nudge in its folder", () => {
-    expect(draw()).toMatch(/class="clawd__mover" style="transform:[^"]*rotate\(-15deg\)/)
+    expect(draw()).toMatch(/class="clawd__mover" style="transform:[^"]*rotate\(12deg\)/)
   })
 
   // Each folder wears its own Theme, so it shows that Theme's colors, stamp word and suit.

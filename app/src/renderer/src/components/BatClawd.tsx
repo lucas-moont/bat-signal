@@ -11,6 +11,7 @@ import { mapRects, type OutfitMap, type Rect } from '@shared/outfits'
 import type { Emblem } from '@shared/emblems'
 import {
   BODY_BOX,
+  VIEW,
   GAZE,
   scriptAt,
   stillStep,
@@ -47,7 +48,6 @@ function rectsOf(map: OutfitMap): Rect[] {
 const MIRROR = 'translate(16 0) scale(-1 1)'
 
 /** The 28x13 view around his 16x11 grid: x, y, width and height. Layers may reach past it. */
-const VIEW = [-6, -1, 28, 13] as const
 /** His frame's height for its width. */
 const FRAME_ASPECT = VIEW[3] / VIEW[2]
 
@@ -98,7 +98,7 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
           key={key}
           className="clawd__emblem"
           d={emblem.path}
-          transform={batAt(emblem, layer.cx, layer.cy, layer.width, layer.height)}
+          transform={batAt(emblem, layer.cx, layer.cy, layer.width)}
           shapeRendering="geometricPrecision"
         />
       )

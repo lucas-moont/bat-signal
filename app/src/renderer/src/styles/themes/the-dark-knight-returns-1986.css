@@ -1,43 +1,42 @@
 /*
  * ANCIENT GRACE, after Frank Miller's The Dark Knight Returns: its palette and faces
- * (docs/research/themes/dark-knight-returns.md, section 3). A television left on in a dark room in
- * 1986, under the Book One cover's night: the sky behind the bolt for the room and for what waits on
- * you, the screen's white for what runs, and the lightning the old man leaps across for the one
- * thing that needs you.
+ * (docs/research/themes/dark-knight-returns.md, section 3; dkr-rework.md, section 6). A television
+ * left on in a dark room in 1986, in the book's icy night: the pale blue of its storm and TV pages
+ * darkened for the room, its storm sky for what waits on you, the screen's white for what runs, and
+ * the lightning the old man leaps across for the one thing that needs you.
  * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
- * - --line: the cover's night sky, as sampled; the grounds are its hue darkened. The maintainer's pick
- *   on screen over the dossier's tank grey, knowing it sits about 9 to 10 ΔE00 from WATCHFUL
- *   PROTECTOR's night blue (jury-wave-2.md, section 9, follow-up).
- * - --ink-soft: the cover's lighter blue, lifted until it reads as text; picked on screen over the
- *   phosphor green, knowing it sits 3.9 ΔE00 from PALE MOONLIGHT's working steel.
- * - --signal-hot: Lightning Cyan, the hue of the bolt's edge on the Book One cover at full chroma;
- *   --signal, the same at a lower lightness. --lens-core: the bolt's white core, sampled.
+ * - The grounds: the interiors' icy blue at hue ~225, the bolt edge's family, darkened (picked on
+ *   screen over the night blue shipped first, which had drifted violet off every sampled sky, and
+ *   over the cover's own slate, which merges with WATCHFUL PROTECTOR's).
+ * - --ink-soft: the Book One storm sky, sampled from the interiors.
+ * - --signal-hot: Lightning Cyan, the bolt's edge pushed toward cyan at full chroma; --signal, the
+ *   same at a lower lightness. --lens-core: the bolt's white core, sampled.
  */
 :root[data-theme='the-dark-knight-returns-1986'],
 [data-theme='the-dark-knight-returns-1986'] {
-  --abyss: #080b14;
-  --smoke: #0b0f1b;
-  --surface: #101830;
-  --raised: #1a2646;
-  --line: #35455c;
-  --surface-deep: #0a0e1a;
-  --frame: #131c34;
-  --header-fade: #0a0e1a;
-  --sheet-top: #151f38;
+  --abyss: #000f12;
+  --smoke: #00151a;
+  --surface: #001f27;
+  --raised: #002f39;
+  --line: #224f59;
+  --surface-deep: #001418;
+  --frame: #00242c;
+  --header-fade: #001418;
+  --sheet-top: #002730;
   --shadow: #000000;
 
-  /* The Alarm color, Lightning Cyan, and the night sky's blue in shadow, which marks the disc's hover
+  /* The Alarm color, Lightning Cyan, and the storm sky's blue in shadow, which marks the disc's hover
      and the waiting rule: never the alarm. */
-  --blood: #24375a;
+  --blood: #254a55;
   --signal: #12a9d6;
   --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
   --signal-hot: #3fdcff;
   --on-signal: var(--abyss);
   --ink-hot: var(--signal-hot);
-  --ink-soft: #7ea7d8;
+  --ink-soft: #7aadbf;
   /* The screen's white marks what runs: LIVE is Bone, never cyan. */
   --ink-live: var(--bone);
-  --ink: #c2c9d4;
+  --ink: #b9c9cd;
 
   /* Emphasis that is not an alarm is Bone: nothing at rest is cyan. */
   --accent: var(--bone);
@@ -51,7 +50,7 @@
 
   --brick: var(--ink-soft);
   /* Stamp inks by tier: OK TO AIR? and DEAD AIR in Lightning Cyan, YOU'RE ON and LATEST in the
-     night sky's lighter blue, FROZEN and OFF AIR in Ash. */
+     storm sky's blue, FROZEN and OFF AIR in Ash. */
   --stamp-hot: var(--ink-hot);
   --stamp-soft: var(--ink-soft);
   --stamp-quiet: var(--ash);
@@ -70,8 +69,8 @@
 
   --clawd: #d77757;
 
-  --bone: #e8eef6;
-  --ash: #939cab;
+  --bone: #e4f0f3;
+  --ash: #93a5a9;
   --bone-dim: var(--ink);
   --ash-dim: var(--ash);
   --chevron: var(--ash);
@@ -81,20 +80,22 @@
      a heavy black cape with two long tails; the armour, only when something needs you. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
-  --cowl: #0b0e15;
+  --cowl: #081114;
   --cowl-edge: color-mix(in srgb, var(--bone) 22%, transparent);
   --cowl-shine: var(--raised);
   --suit: #666864;
   --gloves: var(--cowl);
   --belt: var(--suit);
   --buckle: var(--ash);
-  --cape: #05060a;
+  --cape: #030809;
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
-  --chest: #06070b;
+  --chest: #04090b;
   /* The armour's plates and their lit edge (the alarmed Pose). */
   --armour: #5b635e;
   --armour-edge: #9aa49e;
+  /* The blue light around the leap's white bolt (picked on screen over the cover's paler edge blue). */
+  --bolt-glow: #5fa6e6;
   --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
   --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
@@ -104,9 +105,9 @@
   /* The Signal disc: a TV screen. Unlit: dark glass, the bat a shade in it. Lit: the screen comes
      on, the bolt's white into Lightning Cyan, the black bat across it, scanlines over it. */
   --disc-bat: var(--raised);
-  --glass-shine: #18223c;
+  --glass-shine: var(--raised);
   --glass: var(--abyss);
-  --disc-rim-inner: #05070e;
+  --disc-rim-inner: #00090b;
   --disc-rim-outer: var(--line);
   --lens-core: #f8feff;
   --lens-rim: var(--signal);
@@ -114,8 +115,8 @@
   --lens-bat-edge: transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);
-  --notice-hover-top: #1e2a4a;
-  --notice-hover-foot: #0f1628;
+  --notice-hover-top: #083741;
+  --notice-hover-foot: #001a21;
 
   /* The screen's own glow, the panel being the set: low and centred in front of the viewer, white
      and never cyan; the film grain; and the static between channels, in the screen's white. */
@@ -152,7 +153,7 @@
   --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
 
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%233fdcff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%237ea7d8' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%237aadbf' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* A caption over a TV picture: Bangers is slanted already, so the box sits straight and clean. */
   --stamp-tilt: 0deg;
@@ -170,4 +171,12 @@
       transparent 1px 3px
     ),
     radial-gradient(circle at 50% 45% in srgb, var(--lens-core), var(--signal-hot) 55%, var(--signal));
+}
+
+/* The leap's bolt (white, its layer's fill) with a blue light round it, as the cover paints it
+   (the maintainer's ask on screen): a near glow, and a wide halo laid twice so it lights the air. */
+:root[data-theme='the-dark-knight-returns-1986'] .clawd__bolt,
+[data-theme='the-dark-knight-returns-1986'] .clawd__bolt {
+  filter: drop-shadow(0 0 0.6px var(--bolt-glow)) drop-shadow(0 0 2.6px var(--bolt-glow))
+    drop-shadow(0 0 2.6px var(--bolt-glow));
 }

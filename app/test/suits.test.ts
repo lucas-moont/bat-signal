@@ -84,7 +84,7 @@ describe("BECOME A BAT's watch", () => {
 describe("ANCIENT GRACE's watch", () => {
   it('holds the leap tilted in every step', () => {
     for (const step of ANCIENT_GRACE_SUIT.watch)
-      expect([step.transform, step.pose.transform].join(' ')).toMatch(/rotate\(-15deg\)/)
+      expect([step.transform, step.pose.transform].join(' ')).toMatch(/rotate\(12deg\)/)
   })
 })
 
