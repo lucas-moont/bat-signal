@@ -104,7 +104,7 @@ const NOISE: NoiseAtmosphere = {
   mark: { kind: 'speck', size: 1 },
   density: 0.5,
   alphas: [0.04, 0.07, 0.1],
-  life: 1,
+  life: 1 / FPS,
   band: { height: 24, alpha: 0.03, fall: 3 },
 }
 
@@ -555,7 +555,7 @@ describe('the noise', () => {
   // moves each tick and the noise never pulses.
   it('keeps each speck in place for its life, a share of them moving each tick', () => {
     const life = 3
-    const at = over(9, 1 / FPS, noise({ ...NOISE, life })).map(spots)
+    const at = over(9, 1 / FPS, noise({ ...NOISE, life: life / FPS })).map(spots)
     const n = at[0]!.length
     const movedAt = (k: number) => at.flatMap((frame, i) => (i > 0 && frame[k] !== at[i - 1]![k] ? [i] : []))
     for (let k = 0; k < n; k++) {

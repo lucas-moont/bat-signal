@@ -497,6 +497,8 @@ function noise(
   { color: variable, mark: { size }, density, alphas, life, band }: NoiseAtmosphere,
   random: () => number,
 ): Painter {
+  /** A mark's life in ticks of the clock. */
+  const lifeTicks = life / STEP
   /** The marks at each strength, none until it has a size. */
   let layers: Mark[][] = alphas.map((): Mark[] => [])
   let width = 0
@@ -520,7 +522,7 @@ function noise(
       bandY = 0
       layers = alphas.map((): Mark[] => [])
       for (let i = 0; i < howMany(width, height, density); i++) {
-        const m = { x: 0, y: 0, age: i % life }
+        const m = { x: 0, y: 0, age: i % lifeTicks }
         place(m)
         layers[Math.floor(random() * alphas.length)]!.push(m)
       }
@@ -535,8 +537,8 @@ function noise(
         ctx.beginPath()
         for (const m of layers[level]!) {
           m.age += step
-          if (m.age >= life) {
-            m.age %= life
+          if (m.age >= lifeTicks) {
+            m.age %= lifeTicks
             place(m)
           }
           ctx.rect(m.x, m.y, size, size)
