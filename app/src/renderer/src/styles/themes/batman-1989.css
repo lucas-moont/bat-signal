@@ -125,6 +125,7 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   --font-report: var(--font-type);
   --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
   --font-dateline: var(--font-report);
   --dateline-weight: 400;
   --font-stamp: 'Josefin Sans', 'Segoe UI', sans-serif;

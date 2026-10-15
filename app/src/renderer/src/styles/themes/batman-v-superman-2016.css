@@ -135,6 +135,7 @@
   /* The report is plain working text: neither a log nor a typewriter. */
   --font-report: var(--font-body);
   --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
   --font-dateline: var(--font-report);
   --dateline-weight: 400;
   --font-stamp: var(--font-display);

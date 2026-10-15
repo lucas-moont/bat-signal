@@ -132,6 +132,7 @@
   /* The Night Report is a printed log, not a typed page. */
   --font-report: var(--font-mono);
   --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
   --font-dateline: var(--font-report);
   --dateline-weight: 400;
   --font-stamp: var(--font-type);

@@ -151,6 +151,7 @@
   /* The night report's body, and the stamps' face: both the typewriter in VENGEANCE. */
   --font-report: var(--font-type);
   --font-headline: var(--font-display);
+  --headline-weight: var(--display-weight);
   --font-dateline: var(--font-report);
   --dateline-weight: 400;
   --font-stamp: var(--font-type);
