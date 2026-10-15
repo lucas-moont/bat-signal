@@ -6,13 +6,15 @@ Bat-Signal stops being tied to one look. Each Theme dresses it as one version of
 
 Each Theme's emblem follows that version's bat symbol closely, redrawn by us as a vector path and credited to DC as a trademark, the way the 2022 emblem already is (#67). Title wordmarks, film and comic images, commercial fonts and long dialogue stay out; very short iconic lines may appear sparingly. Fonts must be open (OFL or Apache) so they can ship inside the app. Being a non-profit fan project does not change what a trademark or a font licence allows: the realistic risk is a takedown notice against the public repository, which is the project's showcase, so the line goes as close to each version as fan projects are commonly allowed to go, and no further.
 
+One narrow exception, added in wave 2 (`docs/research/themes/jury-wave-2.md` §9): when a work shows no bat symbol of its own, its Theme may draw the bat the work itself shows, from life, credited as our drawing. *Arkham Asylum: A Serious House on Serious Earth* is the first case. This is not a licence for "inspired by" emblems: a version that has a symbol still uses it.
+
 ## Rules that follow
 
 - "Red always means something" becomes the Alarm color rule: each Theme keeps one color for "something needs you" and uses it nowhere else. It is the hottest color in the palette, or a red that suits the palette when nothing in it reads as an alarm.
 - Every Theme is dark. A light panel in a screen corner, on top of a terminal all day, would be a torch in the user's face.
 - The concepts keep their names (Case, Needs you, Stamp). A Theme may rename them through its Lexicon, which the user can turn off, and never in Windows notifications or the tray, where the words must be understood out of context.
 - Bat-Clawd keeps its orange body, its white eyes and its three moods in every Theme; a Theme changes the cowl, the cape and the emblem, and may swap poses for homages.
-- A design jury compares each new Theme with the existing ones before it is built. Where two versions overlap (Snyder's suit is drawn from The Dark Knight Returns), the maintainer picks which to honour instead of shipping two look-alikes. In wave 1 that kept Snyder as the Knightmare and sent The Dark Knight Returns to wave 2 to find room of its own.
+- A design jury compares each new Theme with the existing ones before it is built. Where two versions overlap (Snyder's suit is drawn from The Dark Knight Returns), the maintainer picks which to honour instead of shipping two look-alikes. In wave 1 that kept Snyder as the Knightmare and sent The Dark Knight Returns to wave 2 to find room of its own. In wave 2 it gave the grey suit, the big chest bat and the armour back to The Dark Knight Returns.
 
 ## Considered options
 
