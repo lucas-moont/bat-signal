@@ -12,7 +12,7 @@ import {
   type Atmosphere,
 } from './atmospheres'
 import {
-  BAT_1986_CHEST,
+  BAT_1986,
   BAT_1987,
   BAT_1989,
   BAT_2008,
@@ -122,7 +122,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     flag: 'grace',
     ground: '#000f12',
     words: ANCIENT_GRACE_WORDS,
-    emblem: emblem(BAT_1986_CHEST, 'none'),
+    emblem: emblem(BAT_1986, 'none'),
     suit: ANCIENT_GRACE_SUIT,
     atmosphere: ANCIENT_GRACE_STATIC,
   },

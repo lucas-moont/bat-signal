@@ -63,14 +63,14 @@ export const BAT_1987 =
   'L63.7 7 L60 7 Z'
 
 /**
- * ANCIENT GRACE's chest bat, after the second suit in Batman: The Dark Knight Returns (2012-13),
+ * ANCIENT GRACE's bat, worn on his chest, the disc and the masthead: the second suit's in Batman: The Dark Knight Returns (2012-13),
  * traced front-on from Part 2 and matching the comic's ink where it shows (dkr-rework.md, section
  * 3): about 2.3:1, wide, the horns at each wing's upper outer corner its highest points, a top edge
  * climbing to them from two short ears, convex outer edges to sharp wingtips at mid-height, and
  * underneath a middle point and one shallow scallop a side, then a long run to a pointed tail, the
  * lowest point. Mirrored at x = 60.
  */
-export const BAT_1986_CHEST =
+export const BAT_1986 =
   'M60 5.5 L55.9 5.5 L54.4 2 L52.7 4.7 L45.6 4.7 L38.1 3.7 L30.7 2 L23.2 0 L19.5 3 L14.5 8 ' +
   'L9.5 14.7 L6.5 20.1 L4.5 25.4 L9.5 25.4 L14.5 26.4 L19.5 29.1 L24.4 33.1 L28.4 38.8 L31.9 35.8 ' +
   'L36.9 34.1 L40.6 33.8 L45.6 34.6 L50.5 37.1 L55.5 41.3 L60 47.6 L64.5 41.3 L69.5 37.1 L74.4 34.6 ' +

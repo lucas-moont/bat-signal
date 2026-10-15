@@ -1010,7 +1010,7 @@ const GRACE_ARMOUR = map(
 )
 
 /**
- * The second suit's bat across his barrel chest, wide as the films draw it (BAT_1986_CHEST, 2.3:1):
+ * The second suit's bat across his barrel chest, wide as the films draw it (BAT_1986, 2.3:1):
  * 6.9 units wide and 3 tall, from y 6 to 9, a unit of suit under his jaw.
  */
 const SECOND_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 6.9 }
