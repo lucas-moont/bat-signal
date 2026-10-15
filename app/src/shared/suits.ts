@@ -960,8 +960,8 @@ export const BECOME_A_BAT_SUIT: Suit = {
 
 /** Outfit G's legend: V's, with the armour's plates and their lit edge. */
 const GRACE_LEGEND = { ...LEGEND, A: 'var(--armour)', e: 'var(--armour-edge)' }
-/** The cowl with its short ears set wide, at the head's outer corners, and a heavy brow. */
-const GRACE_HEAD = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4)]
+/** The cowl's crown, down to his eyes: short ears set wide, at the head's outer corners, a heavy brow. */
+const GRACE_CROWN = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4, 7)]
 /** The cowl's outline with the wide-set ears, behind the face, so only its outer edge shows. */
 const GRACE_COWL_EDGE: Layer = {
   kind: 'path',
@@ -973,26 +973,26 @@ const GRACE_COWL_EDGE: Layer = {
  * rising beside the cowl to his jaw, so his head sits sunk between them and reads small; a barrel
  * chest over a narrower waist. In the suit's grey, so the cowl doesn't widen into a bigger black head.
  */
-const BULKY_HEAD = [...GRACE_HEAD.slice(0, 7), '..SccccccccccS..', '.SScc######ccSS.', '.SScc######ccSS.']
-/** The barrel: x 1 to 15. */
+const BULKY_HEAD = [...GRACE_CROWN, '..SccccccccccS..', '.SScc######ccSS.', '.SScc######ccSS.']
+/** The barrel, x 1 to 15: its half-rows from his shoulders down, before the waist. */
 const WIDE = '.SSSSSSSSSSSSSS.'
+const BARREL = [WIDE, WIDE, WIDE, WIDE, WIDE]
+/** The belt between the gloves hanging beside him, then the suit's last half-row and his legs. */
+const HANGING_BELOW = ['.g.bbbbkkbbbb.g.', ...BELOW_WAIST.slice(1)]
 const graceMap = (rows: readonly string[]) => map([], rows, GRACE_LEGEND, BULKY_HEAD)
 /** Standing: the barrel, his gloves hanging beside it, the waist back to x 3–13 at the belt. */
 const GRACE_STANDING = graceMap([
-  WIDE,
-  WIDE,
-  WIDE,
+  ...BARREL.slice(0, 3),
   '.gSSSSSSSSSSSSg.',
   '.gSSSSSSSSSSSSg.',
   '.g.SSSSSSSSSS.g.',
-  '.g.bbbbkkbbbb.g.',
-  ...BELOW_WAIST.slice(1),
+  ...HANGING_BELOW,
 ])
 /** His arms raised or away: the barrel, then the waist. */
-const GRACE_ARMS_AWAY = graceMap([WIDE, WIDE, WIDE, WIDE, WIDE, SUIT, ...BELOW_WAIST])
-const GRACE_SEATED = graceMap([WIDE, WIDE, WIDE, WIDE, WIDE, WIDE, SUIT, SUIT])
+const GRACE_ARMS_AWAY = graceMap([...BARREL, SUIT, ...BELOW_WAIST])
+const GRACE_SEATED = graceMap([...BARREL, WIDE, SUIT, SUIT])
 /** In the air: the barrel and the waist, his legs drawn tucked beside the map. */
-const GRACE_LEAPING = graceMap([WIDE, WIDE, WIDE, WIDE, WIDE, SUIT, ...BELOW_WAIST.slice(0, 2)])
+const GRACE_LEAPING = graceMap([...BARREL, SUIT, ...BELOW_WAIST.slice(0, 2)])
 /**
  * The armour: plates over his chest and pauldrons a unit past his shoulders (x 0–16), a lit edge
  * along their tops (it is what reads at his size: the plates are near the suit's grey), rising
@@ -1001,18 +1001,9 @@ const GRACE_LEAPING = graceMap([WIDE, WIDE, WIDE, WIDE, WIDE, SUIT, ...BELOW_WAI
 const PLATES = '.gAAAAAAAAAAAAg.'
 const GRACE_ARMOUR = map(
   [],
-  [
-    'eeeeeeeeeeeeeeee',
-    'AAAAAAAAAAAAAAAA',
-    PLATES,
-    PLATES,
-    PLATES,
-    '.g.AAAAAAAAAA.g.',
-    '.g.bbbbkkbbbb.g.',
-    ...BELOW_WAIST.slice(1),
-  ],
+  ['eeeeeeeeeeeeeeee', 'AAAAAAAAAAAAAAAA', PLATES, PLATES, PLATES, '.g.AAAAAAAAAA.g.', ...HANGING_BELOW],
   GRACE_LEGEND,
-  [...GRACE_HEAD.slice(0, 7), '.eeccccccccccee.', 'eAAcc######ccAAe', 'eAAcc######ccAAe'],
+  [...GRACE_CROWN, '.eeccccccccccee.', 'eAAcc######ccAAe', 'eAAcc######ccAAe'],
 )
 
 /**
@@ -1083,12 +1074,28 @@ const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 /**
  * The bolt behind the leap, top right to bottom left as on the Book One cover: from above his fist
  * down through the gap between his legs, a jagged path a unit wide, white with a blue light around
- * it, never a flash. Drawn turned back by his tilt about its pivot (8, 5.5), so it stands 14 degrees
- * off vertical once he leans into the leap.
+ * it, never a flash. Drawn as seen, then turned back by his tilt about the pivot, so it stands 14
+ * degrees off vertical once he leans into the leap.
  */
-const BOLT =
-  'M9.1 -6.5 L10.1 -6.7 L9.8 -2.2 L11.1 -2 L9.5 4.7 L10.5 4.9 L9.4 13.9 L8.4 14.1 L9.3 5.9 ' +
-  'L8.3 5.8 L9.9 -0.9 L8.6 -1.1 Z'
+/** How far the leap leans him forward, in degrees, clockwise as CSS turns. */
+const TILT = 12
+/** Where CSS turns him: the middle of his frame, on his grid. */
+const PIVOT = [8, 5.5] as const
+/** A path of absolute points turned `degrees` about the pivot, a decimal kept. */
+const turned = (d: string, degrees: number) => {
+  const [cx, cy] = PIVOT
+  const [cos, sin] = [Math.cos((degrees * Math.PI) / 180), Math.sin((degrees * Math.PI) / 180)]
+  const at = (v: number) => String(Number(v.toFixed(1)))
+  return d.replace(/(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => {
+    const [dx, dy] = [Number(x) - cx, Number(y) - cy]
+    return `${at(cx + dx * cos - dy * sin)} ${at(cy + dx * sin + dy * cos)}`
+  })
+}
+const BOLT = turned(
+  'M11.6 -6 L12.6 -6 L11.4 -1.6 L12.6 -1.2 L9.6 5 L10.6 5.4 L7.6 14 L6.6 14 L9.2 6.2 L8.2 5.8 ' +
+    'L11.2 -0.4 L10 -0.8 Z',
+  -TILT,
+)
 /**
  * In the leap, after the Book One cover (dkr-rework.md, section 5): his near arm raised, the forearm
  * across above his brow with its fins up and the fist ahead; his far arm reaching down and forward;
@@ -1132,7 +1139,7 @@ const leaping = (bolt?: number) => {
  * leap, top forward toward where he faces, as the cover's figure leans 24 degrees (rotate turns
  * clockwise; half that reads on a body that is all head and torso).
  */
-const LAUNCH = 'translateY(-4px) rotate(12deg)'
+const LAUNCH = `translateY(-4px) rotate(${TILT}deg)`
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge facing right, then
