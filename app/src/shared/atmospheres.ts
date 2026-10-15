@@ -220,18 +220,19 @@ export const BECOME_A_BAT_SMOKE: SmokeAtmosphere = {
 }
 
 /**
- * ANCIENT GRACE's static between channels (dark-knight-returns.md, section 9): about 70 specks of the
+ * ANCIENT GRACE's static between channels (dark-knight-returns.md, section 9): about 85 specks of the
  * screen's white in the default panel, each living a tick of the clock so they flicker in place, at
- * three faint strengths, and a soft roll bar 24px tall moving down 3 pixels a tick, as an old set's
- * picture rolls. Under reduced motion it stands as one frozen frame.
+ * three strengths (made stronger on screen than the dossier's 0.04 to 0.10), and a soft roll bar 24px
+ * tall moving down 3 pixels a tick, as an old set's picture rolls. Under reduced motion it stands as
+ * one frozen frame.
  */
 export const ANCIENT_GRACE_STATIC: NoiseAtmosphere = {
   kind: 'noise',
   color: '--static',
   size: 1,
-  density: 0.5,
-  alphas: [0.04, 0.07, 0.1],
+  density: 0.6,
+  alphas: [0.08, 0.12, 0.18],
   life: 1 / 8,
-  band: { height: 24, alpha: 0.03, fall: 3 },
+  band: { height: 24, alpha: 0.045, fall: 3 },
   still: 'calm',
 }
