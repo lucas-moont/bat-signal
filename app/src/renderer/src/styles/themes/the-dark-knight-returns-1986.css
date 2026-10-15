@@ -117,8 +117,8 @@
   --notice-hover-top: #1e2a4a;
   --notice-hover-foot: #0f1628;
 
-  /* The set's own glow, low and centred in front of the viewer, white and never cyan; the film
-     grain; and the static between channels, in the screen's white. */
+  /* The screen's own glow, the panel being the set: low and centred in front of the viewer, white
+     and never cyan; the film grain; and the static between channels, in the screen's white. */
   --haze: color-mix(in srgb, var(--bone) 5%, transparent);
   --haze-edge: color-mix(in srgb, var(--bone) 2%, transparent);
   --haze-inset: auto -10% -40% -10%;
@@ -163,12 +163,11 @@
   --stamp-mask: none;
 
   /* Lit: a screen's scanlines, a 1px line every 3px, over the bolt's white into Lightning Cyan. */
-  --lens-scanlines: repeating-linear-gradient(
-    to bottom in srgb,
-    color-mix(in srgb, var(--abyss) 10%, transparent) 0 1px,
-    transparent 1px 3px
-  );
   --disc-lens:
-    var(--lens-scanlines),
+    repeating-linear-gradient(
+      to bottom in srgb,
+      color-mix(in srgb, var(--abyss) 10%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
     radial-gradient(circle at 50% 45% in srgb, var(--lens-core), var(--signal-hot) 55%, var(--signal));
 }

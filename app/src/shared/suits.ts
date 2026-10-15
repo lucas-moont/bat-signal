@@ -1062,8 +1062,9 @@ const LAUNCH = 'translateY(-4px) rotate(-15deg)'
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge, then launched,
- * tilted and tucked, the cape streaming back; the bolt is drawn whole behind him and stays, then
- * dims as he holds the leap like a freeze-frame on a screen.
+ * tilted and tucked, the cape streaming back; then the bolt appears behind him all at once, never
+ * drawn stroke by stroke or flashed, and stays, dimming a step later as he holds the leap like a
+ * freeze-frame on a screen.
  */
 const THE_LEAP: Script = [
   {
