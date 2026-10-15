@@ -638,6 +638,26 @@ describe('the noise', () => {
       for (const y of tops) expect(y).toBeGreaterThanOrEqual(-NOISE.band!.height)
     })
 
+    // The canvas comes and goes with its motion, and a new one always started the bar at the top:
+    // it starts anywhere along its roll, and a resize leaves it where it is.
+    it('starts anywhere along its roll, and stays put through a resize', () => {
+      const starts = [1, 2, 3, 4, 5].map((seed) => {
+        const painter = painterFor(NOISE, seeded(seed))
+        painter.recolor(() => '#e9f2ee')
+        painter.resize(320, 440)
+        return span(framesOver(painter, 0)[0].boxes).top
+      })
+      expect(new Set(starts).size).toBe(starts.length)
+      for (const top of starts) {
+        expect(top).toBeGreaterThanOrEqual(-NOISE.band!.height)
+        expect(top).toBeLessThanOrEqual(440)
+      }
+      const painter = noise()
+      const before = span(framesOver(painter, 0)[0].boxes).top
+      painter.resize(300, 400)
+      expect(span(framesOver(painter, 0)[0].boxes).top).toBe(before)
+    })
+
     it('has none when it asks for none', () => {
       const { band: _, ...plain } = NOISE
       const [boxes] = bars(over(0, 1 / FPS, noise(plain)))

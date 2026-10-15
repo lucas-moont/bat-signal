@@ -503,7 +503,7 @@ function noise(
   let layers: Mark[][] = alphas.map((): Mark[] => [])
   let width = 0
   let height = 0
-  /** The band's top, none until it has a size. */
+  /** The band's top: none without a band, or until the canvas first has a size. */
   let bandTop: number | undefined
   let color = ''
 
@@ -519,7 +519,9 @@ function noise(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      bandTop = band ? 0 : undefined
+      // Anywhere along its roll the first time, so a new canvas doesn't always start it at the top;
+      // a resize leaves it where it is.
+      if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
       let born = 0
       layers = scatter(
         { count: howMany(width, height, density), lists: alphas.length, width, height },
