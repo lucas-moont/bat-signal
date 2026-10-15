@@ -47,7 +47,7 @@ A Theme's own names for Case, Needs you, the words inside a Stamp and the other 
 _Avoid_: Translation, aliases, slang
 
 **Atmosphere**:
-A Theme's ambient effect behind the panel, such as rain, snow, ash, smoke or a skyline's lit windows.
+A Theme's ambient effect behind the panel, such as rain, snow, ash, smoke, a screen's static or a skyline's lit windows.
 _Avoid_: Weather, particles, rain (as the general name)
 
 **Bat-Clawd**:
