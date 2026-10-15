@@ -30,7 +30,7 @@
   --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
   --signal-hot: #f2605e;
   --on-signal: var(--bone);
-  --ink-hot: #f2605e;
+  --ink-hot: var(--signal-hot);
   --ink-soft: #e6e08a;
   /* Khaki newsprint white marks what runs: the stamp word carries the tier. */
   --ink-live: var(--bone);
@@ -90,6 +90,8 @@
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
   --chest: var(--abyss);
+  /* The swarm's bats, lit khaki from the street (picked on screen). */
+  --swarm: var(--ash);
   --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
   --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 

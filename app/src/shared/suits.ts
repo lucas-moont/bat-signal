@@ -804,7 +804,7 @@ const swarmOf = (bats: readonly BatAt[]): Layer[] => [
   {
     kind: 'path',
     d: flock(bats),
-    fill: 'var(--ash)',
+    fill: 'var(--swarm)',
     smooth: true,
   },
 ]
