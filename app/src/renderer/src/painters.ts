@@ -141,6 +141,10 @@ interface Flake {
 /** A flake's sway, a step a tick: out one way, back, out the other way, back. */
 const SWAY = [0, 1, 0, -1]
 
+/** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
+const swayAt = (amount: number, ticks: number, phase: number) =>
+  amount * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!
+
 /**
  * Snow: flakes in depths, each depth filled as one path a tick. They fall a few pixels a tick,
  * which at 8 steps a second reads as a slow snowfall, and sway on the clock (not at random), so a
@@ -175,7 +179,7 @@ function snow({ color: variable, density, depths, drift }: SnowAtmosphere, rando
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
       // Each phase's sway this tick, worked out once for every flake.
-      const sways = SWAY.map((_, phase) => drift * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!)
+      const sways = SWAY.map((_, phase) => swayAt(drift, ticks, phase))
       depths.forEach(({ alpha, size, fall }, depth) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
@@ -456,7 +460,7 @@ function smoke(
         }
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
-        const x = p.x + sway * SWAY[(Math.floor(ticks) + p.phase) % SWAY.length]!
+        const x = p.x + swayAt(sway, ticks, p.phase)
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
         ctx.globalAlpha = (alpha * (1 - t)) / PUFF_RINGS.length
