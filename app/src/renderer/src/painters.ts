@@ -454,7 +454,7 @@ function smoke(
       ctx.fillStyle = color
       for (const p of puffs) {
         p.age += step
-        if (p.age >= lifeTicks) {
+        while (p.age >= lifeTicks) {
           p.age -= lifeTicks
           p.x = random() * width
         }

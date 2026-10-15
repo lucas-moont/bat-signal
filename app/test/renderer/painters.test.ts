@@ -459,6 +459,16 @@ describe('the smoke', () => {
     expect(Math.max(...xs) - Math.min(...xs)).toBe(2 * SMOKE.sway)
   })
 
+  // A late tick may carry a short-lived puff past more than one whole life.
+  it('never paints a puff past the end of its life, however short', () => {
+    const brief = { ...SMOKE, life: 0.2 }
+    for (const frame of frames(20, 2 / FPS, smoke(brief)))
+      for (const p of frame) {
+        expect(p.r).toBeLessThanOrEqual(brief.size[1] / 2)
+        expect(p.alpha).toBeGreaterThanOrEqual(0)
+      }
+  })
+
   it('rises as far as the time between ticks, up to two ticks', () => {
     const risen = (dt: number) => {
       const [first, next] = frames(1, dt)
