@@ -6,9 +6,10 @@ Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
 
 **Built in #122 (2026-10-15)** as `batman-year-one-1987`, demo flag `yearone`. Where this note and the build differ, the build follows the maintainer's decisions on screen:
 - **Alarm: A3, the trade paperback's red** (`#b32c33` fill, `#f2605e` lit and as ink, Bone on the chip), over A2's magenta, knowing it sits 6.1 ΔE00 from KNIGHTMARE's crimson (§3). The cost is recorded here, not hidden: the two Themes' alarms are told apart by their grounds and the picker.
-- **Suit: S2**, the 1987 covers' grey `#9a9e9a` with a cowl-black collar under the jaw, over the chalk S1. The chest bat is 2.5 units wide, from y 7 to 8.
-- **The swarm's bats are lit in Ash** (the khaki grey), with no rim, over dark bats with a rim, which vanished at his real size. The cloud is drawn with the shared `flyingBat` (`app/src/shared/bats.ts`).
+- **Suit: S2**, the 1987 covers' grey `#9a9e9a` with a cowl-black collar under the jaw, over the chalk S1. The chest bat is 2.73 units wide, so it stands a full unit tall from y 7 to 8 (the Wave's floor).
+- **The swarm's bats are lit in Ash** (the khaki grey, `--swarm`), with no rim, over dark bats with a rim, which vanished at his real size. At his real size they read as a loose flock rather than one solid mass, and the cloud is wider than §7's (x −5.5 to 5.4, so one bat covers his left ear); the maintainer saw it so and kept it. The stragglers sit a little in from §7's places, inside his box. It is drawn with the shared `flock()` (`app/src/shared/bats.ts`).
 - **SEE ME** stays, and the Night Report stays in **Neucha**.
+- **The lit Signal prints flat:** a rule scoped to the Theme drops the lens shading every other Theme wears, keeping only the glow (picked on screen).
 - **Credit:** "Frank Miller's Year One": the full credit ran to a third line on its picker folder.
 - **The emblem** is traced in [`year-one-bat.md`](year-one-bat.md), and the name's line is read there on the #404 board: "I shall become a bat." (§12).
 
