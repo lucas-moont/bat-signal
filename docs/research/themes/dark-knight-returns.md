@@ -19,10 +19,11 @@ The Wave 1 jury found DKR boxed in ([`jury-wave-1.md`](jury-wave-1.md) §3, §9)
 - **Bat-Clawd takes back DKR's own pieces** (jury §9.5): a neutral grey suit (`#666864`) with **a big black chest bat, at most 8 units wide, between y 6 and the belt**, a suit-grey belt so the bat never merges with it, a cape with two long tails ending at y 11.5, and **the armour as the alarmed Pose**. **Signature pose: the lightning leap**, held like the #1 cover, with a still bolt in Bone behind him, never a flash. Option B: the horse.
 - **Atmosphere: TV static** on the shared **`noise` painter** (with *Arkham Asylum*'s scratches, jury §6 and §9.12): specks that live one tick, and a slow roll bar. Lit from the screen, low and centred.
 
-**Open questions for the maintainer** (after the jury; the rest is decided in §9 of [`jury-wave-2.md`](jury-wave-2.md)):
+**Open question for the maintainer** (after the jury; the rest is decided in §9 of [`jury-wave-2.md`](jury-wave-2.md)):
 
-1. **Signature: the lightning leap** (held mid-air like a freeze-frame) **or the horse** (needs a prototype for size)? *Recommended: the leap.* Decide on screen at 54px, with the bolt.
-2. **Permission: OK TO AIR?** (kept by the jury) **or GO AHEAD?** (radio procedure, near WATCHFUL PROTECTOR's ops register)? *Recommended: OK TO AIR?*
+- **Signature: the lightning leap** (held mid-air like a freeze-frame) **or the horse** (needs a prototype for size)? *Recommended: the leap.* Decide on screen at 54px, with the bolt.
+
+**Decided:** Permission is **OK TO AIR?** The jury kept it (§4) and the maintainer adopted every §4 Lexicon word (§9.9). GO AHEAD? is dropped: it is radio procedure, near WATCHFUL PROTECTOR's ops register.
 
 **Decide on screen** (from labelled comparison images, as the jury lists them): the cyan alarm and the lit lens beside WATCHFUL PROTECTOR's; the phosphor-green waiting ink; the leap and its bolt at 54px; the static as "a set left on", not a broken one; Bangers at 12px (its small `Z` in FROZEN); LATEST against NEW REPLY.
 
@@ -308,7 +309,7 @@ Frame: a TV station's control room. The test is the jury's (Wave 1 §5): a tired
 |---|---|---|---|
 | Case | **Channel** (plural **Channels**) | A Slack channel, a Go channel, a release channel: all "a stream you follow", which is right. "Channel #b47c0d" reads like a channel number | Kept by the maintainer (§9.9). The jury notes it bars Channel from a later Adam West Lexicon |
 | Needs you | **Your cue** ("1 cue for you", "3 cues for you") | Heard as "your queue", which still means "things waiting for you" | Kept by the jury |
-| Permission | **OK TO AIR?** | "Air" is TV slang, but "OK …?" carries it: something asks for an OK before it runs. A question, so it reads as blocking | Kept by the jury. GO AHEAD? is the alternative (open question 2) |
+| Permission | **OK TO AIR?** | "Air" is TV slang, but "OK …?" carries it: something asks for an OK before it runs. A question, so it reads as blocking | Kept by the jury (§4) and adopted (§9.9). GO AHEAD? is dropped: radio procedure, near WATCHFUL PROTECTOR's ops register |
 | Error | **DEAD AIR** | A broadcast failure: the picture or sound has died. "Dead" reads as failed, at the right severity | Jury §4: replaces BREAKING, which read as "breaking news" (new, not failed) or a "breaking change" |
 | Waiting | **YOU'RE ON** | The cue to speak: the camera is on you, it is your turn. Not "on hold" | Jury §4: replaces OVER TO YOU, 4px wider than PERMISSION. It completes **Your cue** |
 | New reply | **LATEST** | "Latest version", the npm tag; on a card under a reply line it reads as "the latest reply" | Kept; fall back to NEW REPLY if it misreads on screen |
