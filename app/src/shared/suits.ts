@@ -3,6 +3,7 @@
 // details under a grid cell), the Poses of each Mood, his watch on the perch and, if the Theme has
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
+import { flyingBat, type Wings } from './bats'
 import { BAT_1989, emblem, OVAL_1989 } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
@@ -729,5 +730,194 @@ export const KNIGHTMARE_SUIT: Suit = {
   watch: watchOn(KNIGHTMARE, [{ look: 0.3 }, { look: -0.3 }], [{ pose: gusted, look: 0 }]),
   signature: KNIGHTMARE,
   // S-shield crimson is the Alarm color and never shows at rest: no aura as the coat snaps.
+  aura: 'alarmed',
+}
+
+// --- BECOME A BAT: the first suit, after Batman: Year One (year-one.md, section 7). The grey suit of
+// the 1987 covers, with a cowl-black collar under his orange jaw so the jaw reads on it (picked on
+// screen over a lighter chalk suit); a neutral near-black cowl, cape, gloves, boots and trunks; a
+// full unit of solid canary capsule belt; Year One's own small black bat between the collar and the
+// belt; and a cape whose hem falls in four deep, uneven points a side. ---
+
+/** The canary belt, a full unit and solid, then the dark trunks at his thighs and his four boots. */
+const YEAR_ONE_BELOW = [
+  ...twice(['...bbbbbbbbbb...']),
+  '....c.c..c.c....',
+  '....g.g..g.g....',
+  ...twice(['....g.g..g.g....']),
+]
+/** The cowl-black collar under his jaw, a unit tall. */
+const COLLAR = '...cccccccccc...'
+const yearOneMap = (chest: readonly string[], rows: readonly string[] = YEAR_ONE_BELOW) =>
+  map([COLLAR, ...chest], rows)
+const YEAR_ONE_STANDING = yearOneMap([SUIT, SUIT])
+/** His arms out, gloved, holding the cape open. */
+const YEAR_ONE_ARMS_OUT = yearOneMap(['.gSSSSSSSSSSSSg.', SUIT])
+const YEAR_ONE_SEATED = yearOneMap([SUIT, SUIT, SUIT], [])
+/** One arm reaching ahead as he flies to the right. */
+const YEAR_ONE_REACHING = yearOneMap(['...SSSSSSSSSSSSg', SUIT])
+
+/**
+ * Year One's own bat on the grey, 2.5 units wide, from y 7 to 8: a unit of suit below the collar
+ * (the Wave rule), resting on the canary belt.
+ */
+const FIRST_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 2.5 }
+
+/** The cape's hem: four deep points a side, of unequal depth and spacing, and the two halves unlike. */
+const FIRST_CAPE = {
+  /** Hanging behind him from the shoulders. */
+  hanging:
+    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
+    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L3.1 11.5 L2.4 10.0 L1.6 11.5 L1.4 9.4 Z',
+  /** Hanging, its left half lifted out under the swarm as if the bats' wingbeat pulled it. */
+  flared:
+    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
+    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L2.6 11.0 L1.0 9.3 L-0.6 10.6 L-2.0 9.6 Z',
+  /** Half lifted, on the way. */
+  lifting:
+    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
+    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L3.0 11.3 L1.8 9.4 L0.4 11.0 L-0.2 9.4 Z',
+  /** Trailing behind him to the left as he flies right, its points as uneven as the hanging hem's. */
+  trailA:
+    'M3 5 L13 5 L13.4 9.2 L12.4 10.9 L11.4 9.4 L9.6 11.1 L8.4 8.9 L6.8 11.3 L5.4 9.7 L2.6 11.2 ' +
+    'L1.2 9.0 L-1.0 10.8 L-2.2 8.9 L-4.4 10.4 L-3.6 8.6 L-5.4 7.2 L-1.4 6.4 Z',
+  /** The same a beat later, the trailing points lifted on the air. */
+  trailB:
+    'M3 5 L13 5 L13.4 9.0 L12.4 10.5 L11.4 9.1 L9.6 10.6 L8.4 8.6 L6.8 10.7 L5.4 9.2 L2.6 10.5 ' +
+    'L1.2 8.5 L-1.0 9.9 L-2.2 8.2 L-4.4 9.3 L-3.6 7.8 L-5.4 6.4 L-1.4 6.0 Z',
+  /** Flung open and hanging from his outstretched arms: the left half, then the right, unalike. */
+  openLeft: 'M3.4 5 L0 5.2 L-2.6 11.3 L-1.4 9.9 L-0.4 11.4 L0.9 10.0 L2.0 11.2 L3.4 10.4 Z',
+  openRight: 'M12.6 5 L16 5.2 L18.4 11.0 L17.0 10.1 L16.2 11.4 L14.6 9.8 L13.6 11.3 L12.6 10.5 Z',
+  /** Closed around him, asleep: the hem's uneven points at his feet. */
+  wrapped:
+    'M2.6 6.4 L13.4 6.4 L14.3 10.6 L12.6 9.5 L11.4 10.9 L9.8 9.7 L8.6 10.8 L7.2 9.6 L5.8 10.9 ' +
+    'L4.4 9.4 L3.1 10.7 L1.7 9.7 Z',
+}
+
+/** Bats in flight as one mass: each a body at (cx, cy), `width` units wide, in a frame of its beat. */
+type BatAt = readonly [cx: number, cy: number, width: number, wings: Wings]
+
+/**
+ * A swarm: the bats lit from the street in the khaki Ash, so they read on the dark (picked on screen
+ * over bats in the cape's black with a rim, which vanished at his real size).
+ */
+const swarmOf = (bats: readonly BatAt[]): Layer[] => [
+  {
+    kind: 'path',
+    d: bats.map(([cx, cy, width, wings]) => flyingBat(wings, cx, cy, width)).join(' '),
+    fill: 'var(--ash)',
+    smooth: true,
+  },
+]
+
+/** The cloud: seven bats up and to his left, over his left ear and shoulder, clear of his eyes. */
+const CLOUD: readonly BatAt[] = [
+  [-3.8, 0.8, 3.4, 'up'],
+  [-1.6, -0.1, 3, 'down'],
+  [0.6, 1, 3.2, 'up'],
+  [-2.6, 2.2, 2.8, 'down'],
+  [2.2, 0.2, 2.6, 'up'],
+  [3.6, 1.4, 2.6, 'down'],
+  [0, 2.6, 2.4, 'up'],
+]
+/** Two stragglers broken off the cloud, inside the box so their rims aren't cut. */
+const STRAGGLER_HIGH: BatAt = [-4.8, -0.3, 2, 'down']
+const STRAGGLER_LOW: BatAt = [-3.2, 4.6, 2.2, 'up']
+
+/** Standing in the swarm: the cape hanging (`cape`), the bats in front of him. */
+const inSwarm = (bats: readonly BatAt[], cape: string) =>
+  pose(YEAR_ONE_STANDING, [{ kind: 'cape', d: cape }], swarmOf(bats), { chest: [FIRST_SUIT_BAT] })
+
+/** His eyes up and to the left, at the cloud. */
+const UP_LEFT = { look: -GAZE, lookY: -0.4 }
+
+/**
+ * The swarm (the tenement siege, where he calls the bats from the cave and goes out in them): bats
+ * rise from his feet up his left side, close into one lopsided cloud over his left ear, and his cape
+ * lifts out under them (six steps, four a second).
+ */
+const THE_SWARM: Script = [
+  {
+    pose: inSwarm(
+      [
+        [-2.4, 10, 2.4, 'up'],
+        [-0.4, 10.8, 2.2, 'down'],
+        [1.4, 9.6, 2.4, 'up'],
+      ],
+      FIRST_CAPE.hanging,
+    ),
+    look: -GAZE,
+    lookY: 0.4,
+  },
+  {
+    pose: inSwarm(
+      [
+        [-2.6, 8.4, 2.4, 'down'],
+        [-0.6, 9.4, 2.4, 'up'],
+        [-3.4, 6.6, 2.6, 'up'],
+        [-1, 7, 2.4, 'down'],
+        [-2.2, 4.8, 2.6, 'down'],
+        [0.4, 5.4, 2.4, 'up'],
+      ],
+      FIRST_CAPE.lifting,
+    ),
+    look: -GAZE,
+  },
+  {
+    pose: inSwarm(
+      [
+        [-3.6, 5.6, 2.6, 'up'],
+        [-1.4, 6.4, 2.4, 'down'],
+        [-2.8, 3.8, 2.8, 'down'],
+        [-0.4, 4, 2.6, 'up'],
+        [1.6, 3.4, 2.4, 'down'],
+        [-4, 2, 2.6, 'up'],
+        [-1.6, 1.8, 2.8, 'up'],
+        [0.8, 1.6, 2.6, 'down'],
+        [2.8, 0.8, 2.4, 'up'],
+      ],
+      FIRST_CAPE.flared,
+    ),
+    look: -GAZE,
+    lookY: -0.2,
+  },
+  { pose: inSwarm(CLOUD, FIRST_CAPE.flared), ...UP_LEFT },
+  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH], FIRST_CAPE.flared), ...UP_LEFT },
+  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW], FIRST_CAPE.flared), ...UP_LEFT },
+]
+/** Once a watch, the high straggler crosses over his head to the right, his eyes following it. */
+const CROSSING: readonly Step[] = [
+  { pose: inSwarm([...CLOUD, STRAGGLER_LOW, [7, -0.2, 2, 'up']], FIRST_CAPE.flared), look: 0, lookY: -0.4 },
+  {
+    pose: inSwarm([...CLOUD, STRAGGLER_LOW, [13, 0.4, 2, 'down']], FIRST_CAPE.flared),
+    look: GAZE,
+    lookY: -0.4,
+  },
+]
+
+/** Flying right, one arm reaching ahead, the cape trailing to the left. */
+const yearOneFlying = (trail: string) =>
+  pose(YEAR_ONE_REACHING, [{ kind: 'cape', d: trail }], [], { chest: [FIRST_SUIT_BAT] })
+
+export const BECOME_A_BAT_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(YEAR_ONE_SEATED, FIRST_CAPE.wrapped)],
+    // Two frames on the flying cadence: the hem lifts on the air.
+    flying: [yearOneFlying(FIRST_CAPE.trailA), yearOneFlying(FIRST_CAPE.trailB)],
+    // The cape flung open from his outstretched arms, legs apart.
+    alarmed: [
+      pose(
+        YEAR_ONE_ARMS_OUT,
+        [BACK, { kind: 'cape', d: FIRST_CAPE.openLeft }, { kind: 'cape', d: FIRST_CAPE.openRight }],
+        [],
+        { chest: [FIRST_SUIT_BAT] },
+      ),
+    ],
+  },
+  // On the perch he stands in the swarm, looks up at it and back; once a watch, a bat crosses.
+  watch: watchOn(THE_SWARM, [UP_LEFT, { look: 0 }], CROSSING),
+  signature: THE_SWARM,
+  // Newsprint Magenta is the Alarm color and never shows at rest: no aura as the bats gather.
   aura: 'alarmed',
 }
