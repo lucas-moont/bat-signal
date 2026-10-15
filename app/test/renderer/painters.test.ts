@@ -61,17 +61,21 @@ function seeded(seed = 7) {
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
-/** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
-function fillsOver(painter: Painter, n: number, dt = 1 / FPS) {
+/** What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart. */
+function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
   const first = recorder()
   painter.paint(first.ctx, 0)
   const after = Array.from({ length: n }, () => {
     const r = recorder()
     painter.paint(r.ctx, dt)
-    return r.fills
+    return r
   })
-  return [first.fills, ...after]
+  return [first, ...after] as const
 }
+
+/** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
+const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
+  framesOver(painter, n, dt).map((r) => r.fills)
 
 /** Ash blown in two depths, a quarter of it dust. */
 const ASH: AshAtmosphere = {
@@ -503,17 +507,7 @@ describe('the noise', () => {
     return painter
   }
 
-  /** What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart. */
-  const over = (n: number, dt = 1 / FPS, painter = noise()) => {
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const after = Array.from({ length: n }, () => {
-      const r = recorder()
-      painter.paint(r.ctx, dt)
-      return r
-    })
-    return [first, ...after]
-  }
+  const over = (n: number, dt = 1 / FPS, painter = noise()) => framesOver(painter, n, dt)
   /** Where the specks are in a frame, as "x,y". */
   const spots = ({ fills }: ReturnType<typeof recorder>) =>
     fills.flatMap((f) => f.rects.map((r) => `${r.x},${r.y}`))
@@ -579,7 +573,7 @@ describe('the noise', () => {
 
   describe('its roll bar', () => {
     const bars = (frames: ReturnType<typeof over>) => frames.map((f) => f.boxes)
-    /** The bar's top and bottom in a frame: its widest box's. */
+    /** The bar's top and bottom in a frame: its tallest box's. */
     const span = (boxes: Box[]) => {
       const tall = boxes.reduce((a, b) => (b.h > a.h ? b : a))
       return { top: tall.y, bottom: tall.y + tall.h }
@@ -660,17 +654,7 @@ describe('the lit windows', () => {
   }
 
   /** The skyline as it appears, then what each of `n` ticks of the clock draws. */
-  const ticks = (n: number) => {
-    const painter = city()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const after = Array.from({ length: n }, () => {
-      const r = recorder()
-      painter.paint(r.ctx, 1 / FPS)
-      return r
-    })
-    return [first, ...after] as const
-  }
+  const ticks = (n: number) => framesOver(city(), n)
 
   // Flat-roofed slabs along the bottom, about a fifth of the panel tall, edged in their own color.
   it('stands its towers along the bottom, as tall as its height at most', () => {
