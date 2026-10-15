@@ -1130,8 +1130,15 @@ const LEAP_LIMBS: Layer[] = [
 /** Leaping, the bolt behind him at a strength, or not yet there. */
 const leaping = (bolt?: number) => {
   const behind: Layer[] = [{ kind: 'cape', d: TAILS.wedge }]
-  // White, lit blue around it: the Theme's stylesheet paints the bolt's class.
-  if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, className: 'clawd__bolt', opacity: bolt })
+  // White, lit blue around it by the Theme's stylesheet, which gives the bolt's class its glow.
+  if (bolt !== undefined)
+    behind.unshift({
+      kind: 'path',
+      d: BOLT,
+      fill: 'var(--lens-core)',
+      className: 'clawd__bolt',
+      opacity: bolt,
+    })
   return gracePose(GRACE_LEAPING, behind, LEAP_LIMBS)
 }
 /**
