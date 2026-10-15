@@ -53,7 +53,7 @@ export const BAT_2016 =
  * bat, traced from David Mazzucchelli's standing pin-up of it (year-one-bat.md, section 5). About
  * 2.7:1, wide and flat: a sharp horn at each wing's upper outer corner, two short ears on a narrow
  * head, nearly upright outer edges to sharp lower wingtips, and underneath a notch, a small point
- * and a notch a side, then a rounded tail as low as the wingtips. The two halves averaged and
+ * and a notch a side, then a pointed tail as low as the wingtips. The two halves averaged and
  * mirrored at x = 60.
  */
 export const BAT_1987 =
