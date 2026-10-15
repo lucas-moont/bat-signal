@@ -41,6 +41,9 @@ export type Layer =
    */
   | { kind: 'cape'; d: string; mirrored?: boolean }
 
+/** His frame on his grid, the viewBox he is drawn in: x, y, width and height. */
+export const VIEW = [-6, -1, 28, 13] as const
+
 /** His body below the cowl, where a cape behind him shows no rim: x, y, width and height. */
 export const BODY_BOX = [3, 5, 10, 7] as const
 
@@ -1073,8 +1076,8 @@ const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 
 /** How far the leap leans him forward, in degrees, clockwise as CSS turns. */
 const TILT = 12
-/** Where CSS turns him: the middle of his frame, on his grid. */
-const PIVOT = [8, 5.5] as const
+/** Where CSS turns him (the mover's default transform-origin): the middle of his frame, on his grid. */
+const PIVOT = [VIEW[0] + VIEW[2] / 2, VIEW[1] + VIEW[3] / 2] as const
 /**
  * A path turned `degrees` about the pivot, a decimal kept. Its points must be absolute x y pairs
  * (M and L): a relative command, H, V or a comma would be turned wrong.
