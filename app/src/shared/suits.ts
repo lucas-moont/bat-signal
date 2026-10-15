@@ -33,8 +33,11 @@ export type Layer =
     }
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
-  /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
-  | { kind: 'emblem'; cx: number; cy: number; width: number }
+  /**
+   * The Theme's emblem across his chest, centred on (cx, cy), `width` units wide and as tall as its
+   * shape makes it, or `height` units tall, stretched (a round bat on a wide chest).
+   */
+  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
@@ -994,10 +997,12 @@ const GRACE_ARMOUR: OutfitMap = {
 }
 
 /**
- * The second suit's bat on the grey, round as BAT_1986 is: 3.2 units wide and 3 tall, from y 6 to 9,
- * a unit of suit under his jaw and a unit either side of it (jury-wave-2.md, section 5).
+ * The second suit's big bat on the grey: BAT_1986 stretched to about 2.2:1, the shape the chest
+ * takes on the Book Two cover (year-one-bat.md, section 4), 6.6 units wide and 3 tall, from y 6 to
+ * 9, a unit of suit under his jaw and beside it (jury-wave-2.md, section 5). Picked on screen over
+ * the round bat as traced (3.2 wide) and over 8 units.
  */
-const SECOND_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 3.2 }
+const SECOND_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 6.6, height: 3 }
 
 /** The heavy cape: straight between two long tails, one at each outer corner, ending at y 11.5. */
 const TAILS = {
