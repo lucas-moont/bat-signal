@@ -101,7 +101,7 @@ const SMOKE: SmokeAtmosphere = {
   sway: 1,
 }
 
-/** Static: specks at three strengths that live a tick each, and a roll bar 24px tall. */
+/** Static: specks at three strengths that live a tick each, and a band 24px tall, its roll bar. */
 const NOISE: NoiseAtmosphere = {
   kind: 'noise',
   color: '--static',
@@ -593,7 +593,7 @@ describe('the noise', () => {
     expect(spots(b)).toEqual(spots(a))
   })
 
-  describe('its roll bar', () => {
+  describe('its band', () => {
     const bars = (frames: ReturnType<typeof over>) => frames.map((f) => f.boxes)
     /** The bar's top and bottom in a frame: its tallest box's. */
     const span = (boxes: Box[]) => {
