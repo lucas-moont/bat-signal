@@ -1021,29 +1021,6 @@ const TAILS = {
 const gracePose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, behind, front, { chest: [SECOND_SUIT_BAT], edge: GRACE_COWL_EDGE })
 
-/**
- * The old set beside him asleep: a 1986 television, its bezel a unit wide around a dark screen with
- * a few specks of static on it, a V antenna on top.
- */
-const TV_SET: Layer[] = [
-  { kind: 'rects', px: [[14.5, 6.5, 4, 3.5]], fill: 'var(--line)' },
-  { kind: 'rects', px: [[15.5, 7.5, 2, 1.5]], fill: 'var(--tv)' },
-  {
-    kind: 'rects',
-    px: [
-      [15.8, 7.7, 0.4, 0.4],
-      [16.9, 8.3, 0.4, 0.4],
-    ],
-    fill: 'var(--static)',
-    opacity: 0.2,
-  },
-  {
-    kind: 'path',
-    d: 'M16.4 6.5 L15.4 5.3 L15.7 5.2 L16.5 6.2 L17.3 5.2 L17.6 5.3 L16.6 6.5 Z',
-    fill: 'var(--line)',
-  },
-]
-
 /** The drop (flying): his arms up, the cape spread over his head, the gloves at its edges. */
 const drop = (canopy: string) =>
   gracePose(
@@ -1112,12 +1089,7 @@ const THE_LEAP: Script = [
 export const ANCIENT_GRACE_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [
-      (() => {
-        const asleep = seated(GRACE_SEATED, TAILS.wrapped, GRACE_COWL_EDGE)
-        return { ...asleep, front: [...asleep.front, ...TV_SET] }
-      })(),
-    ],
+    sleeping: [seated(GRACE_SEATED, TAILS.wrapped, GRACE_COWL_EDGE)],
     flying: [drop(TAILS.canopyA), drop(TAILS.canopyB)],
     alarmed: [armoured],
   },
