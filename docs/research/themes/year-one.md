@@ -98,7 +98,7 @@ Read plainly: the recolour is blue at night with khaki greys, lavender, salmon a
 
 ### The Alarm color: two options
 
-The brief says to prefer the edition the artist approved. The recolour itself has no free alarm colour: its reds are VENGEANCE's and KNIGHTMARE's family, its salmon and orange are Clawd's, its canary is the Theme's own waiting ink. So both options come from somewhere else in the book's history: the 1987 newsprint (Lewis's own, and scanned by the artists for the 2016 Absolute) or the collected edition's cover.
+The brief says to prefer the edition the artist approved. The recolour itself has no free Alarm color: its reds are VENGEANCE's and KNIGHTMARE's family, its salmon and orange are Clawd's, its canary is the Theme's own waiting ink. So both options come from somewhere else in the book's history: the 1987 newsprint (Lewis's own, and scanned by the artists for the 2016 Absolute) or the collected edition's cover.
 
 **A2. Newsprint Magenta (recommended).** The 1987 pinks are tints of the magenta printing plate on newsprint. Process magenta (`#ec008c`) sits at h 354°; this is that magenta at full screen strength, turned 16° toward violet so it clears Arkham's claret. *Proposed, not sampled:* 13.2 ΔE00 from `#ec008c`, 19.5 from the sampled 1987 pink. The jury kept it: "Year One owns pink most strongly" (jury §3.10).
 
@@ -354,7 +354,7 @@ The grey suit, the big black chest bat and the armour belong to DKR now (jury §
 
 **Alternatives** (on screen if the cloud fails): **B. The window** (seated in the chair, a bat on its top, glass shards): it collides with his own sleeping pose, which outranks. **C. The leap**: DKR's figure.
 
-**Aura:** `'alarmed'`. The alarm colour never shows as the swarm plays.
+**Aura:** `'alarmed'`. The Alarm color never shows as the swarm plays.
 
 ## 8. Emblem
 
