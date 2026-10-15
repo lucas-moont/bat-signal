@@ -173,7 +173,7 @@
     radial-gradient(circle at 50% 45% in srgb, var(--lens-core), var(--signal-hot) 55%, var(--signal));
 }
 
-/* The leap's bolt (white, the bolt's own core, its layer's fill) with a blue light round it as the cover paints it
+/* The leap's bolt (white, its layer's fill) with a blue light round it, as the cover paints it
    (the maintainer's ask on screen): a near glow, and a wide halo laid twice so it lights the air. */
 :root[data-theme='the-dark-knight-returns-1986'] .clawd__bolt,
 [data-theme='the-dark-knight-returns-1986'] .clawd__bolt {
