@@ -60,7 +60,7 @@ describe('the Themes', () => {
   it("names BECOME A BAT after Frank Miller's Year One", () => {
     expect(THEMES['batman-year-one-1987'].words.voice.theme).toEqual({
       name: 'BECOME A BAT',
-      film: "Frank Miller's Year One",
+      film: "Frank Miller's Year One",
     })
   })
 

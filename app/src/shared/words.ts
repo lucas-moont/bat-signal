@@ -670,8 +670,9 @@ export const BECOME_A_BAT_WORDS: Words = {
   },
   voice: {
     ...STANDARD_VOICE,
-    // Short enough for its picker folder (picked on screen): the full credit ran to a third line.
-    theme: { name: 'BECOME A BAT', film: "Frank Miller's Year One" },
+    // Short enough for its picker folder (picked on screen): the full credit ran to a third line. A
+    // no-break space keeps the book's title on one line.
+    theme: { name: 'BECOME A BAT', film: "Frank Miller's Year One" },
     // True of both men on January 4.
     tagline: 'New in town.',
     empty: {
