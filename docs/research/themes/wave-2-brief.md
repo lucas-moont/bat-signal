@@ -26,7 +26,7 @@ From the jury's Wave rules (§4), ADR 0001, `DESIGN.md`, `CONTEXT.md` and the th
 - **Stamp words fit** the rendered width of PERMISSION in the Theme's own stamp face (`stampWidth.test.ts`).
 - **The Alarm color appears nowhere else** (`CONTEXT.md`). Nothing warm at rest next to the orange mascot unless it is clearly not the alarm.
 - ***Dark* and *quiet* mean all clear.** Stalled needs another word.
-- **No two Signature poses share an outline at 54px.** Taken: a symmetric front-on stand (VENGEANCE, "Out of the dark"), three-quarter looking up under the Signal (PALE MOONLIGHT), a crouch with a sonar ring (WATCHFUL PROTECTOR), the duster-and-goggles Knightmare (KNIGHTMARE).
+- **No two Signature poses share an outline at 54px.** Taken: a symmetric front-on stand (VENGEANCE, "Out of the dark"), three-quarter looking up under the Signal (PALE MOONLIGHT), a standing figure inside a sonar ring (WATCHFUL PROTECTOR; it shipped standing, not crouched), the duster-and-goggles Knightmare (KNIGHTMARE).
 - **Display names are unique** and allude to the work, with the year and the work in the credit (jury §10.4): VENGEANCE, PALE MOONLIGHT, WATCHFUL PROTECTOR, KNIGHTMARE.
 - **Lexicon words** must give the standard meaning to a tired developer at a glance (jury §5). The Lexicon can be switched off; toasts and the tray always use standard words.
 - **Homage, not copy** (ADR 0001): palette, mood, our own drawings. No logos, no traced panels, no character art, no quoted dialogue longer than a short phrase.
@@ -48,7 +48,7 @@ Read the full tables in `app/src/renderer/src/styles/themes/<id>.css`. The key v
 | display / stamp / report | Anton / Special Elite / Special Elite | Limelight / Josefin Sans / Special Elite | Syncopate / Big Shoulders Stencil / JetBrains Mono | Archivo 800 / Archivo / Barlow |
 | Atmosphere | rain, red glow from below | snow, brown smog | lit windows (static skyline) | ash, haze from above |
 | Suit | black, red edge, jagged cape hem | grey suit, gold oval plate, belt, scalloped cape | black plated suit, straight hem, Blue Flame aura | desert duster, goggles, scarf, no cape |
-| Signature | "Out of the dark", front-on | "Under the Signal", three-quarter, looking up | "Sonar", crouch + ring | the Knightmare |
+| Signature | "Out of the dark", front-on | "Under the Signal", three-quarter, looking up | "Sonar", standing in a ring | the Knightmare |
 | Voice | Bruce's journal, terse, bleak | night-edition newsroom, wry | ops briefing (Fox, Gordon) | weary veteran, Alfred in his ear |
 | Lexicon (Case · Needs you · Permission · Error · Waiting · New reply · Stalled) | standard | Story · Your desk · Approval · Trouble · Question · Just in · No word | Op · On you · Clearance · Fault · Your move · Checked in · No contact | Case · Your call · Authorize · Damaged · Orders? · New intel · Stuck |
 
