@@ -6,6 +6,7 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type AshAtmosphere,
+  type NoiseAtmosphere,
   type SmokeAtmosphere,
   type SnowAtmosphere,
 } from '../../src/shared/atmospheres'
@@ -60,17 +61,21 @@ function seeded(seed = 7) {
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
-/** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
-function fillsOver(painter: Painter, n: number, dt = 1 / FPS) {
+/** What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart. */
+function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
   const first = recorder()
   painter.paint(first.ctx, 0)
   const after = Array.from({ length: n }, () => {
     const r = recorder()
     painter.paint(r.ctx, dt)
-    return r.fills
+    return r
   })
-  return [first.fills, ...after]
+  return [first, ...after] as const
 }
+
+/** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
+const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
+  framesOver(painter, n, dt).map((r) => r.fills)
 
 /** Ash blown in two depths, a quarter of it dust. */
 const ASH: AshAtmosphere = {
@@ -96,18 +101,33 @@ const SMOKE: SmokeAtmosphere = {
   sway: 1,
 }
 
+/** Static: specks at three strengths that live a tick each, and a band 24px tall, its roll bar. */
+const NOISE: NoiseAtmosphere = {
+  kind: 'noise',
+  color: '--static',
+  size: 1,
+  density: 0.5,
+  alphas: [0.04, 0.07, 0.1],
+  life: 1 / FPS,
+  band: { height: 24, alpha: 0.03, fall: 3 },
+}
+
 // The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, SMOKE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, SMOKE, NOISE])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
       painter.recolor(() => '#ffffff')
-      const { ctx, strokes, fills } = recorder()
+      const { ctx, strokes, fills, boxes } = recorder()
       expect(() => painter.paint(ctx, 0)).not.toThrow()
-      const drawn = [...strokes.flatMap((s) => s.segments), ...fills.flatMap((f) => [...f.rects, ...f.discs])]
+      const drawn = [
+        ...strokes.flatMap((s) => s.segments),
+        ...fills.flatMap((f) => [...f.rects, ...f.discs]),
+        ...boxes,
+      ]
       expect(drawn).toHaveLength(0)
     },
   )
@@ -479,6 +499,173 @@ describe('the smoke', () => {
   })
 })
 
+describe('the noise', () => {
+  const noise = (atmosphere: NoiseAtmosphere = NOISE) => {
+    const painter = painterFor(atmosphere, seeded())
+    painter.recolor(() => '#e9f2ee')
+    painter.resize(320, 440)
+    return painter
+  }
+
+  const over = (n: number, dt = 1 / FPS, painter = noise()) => framesOver(painter, n, dt)
+  /** Where the specks are in a frame, as "x,y". */
+  const spots = ({ fills }: ReturnType<typeof recorder>) =>
+    fills.flatMap((f) => f.rects.map((r) => `${r.x},${r.y}`))
+
+  it('scatters as many specks as its density asks, each its size, in its color and strengths', () => {
+    const [frame] = over(0)
+    const specks = frame!.fills.flatMap((f) => f.rects)
+    expect(specks).toHaveLength(Math.round(((320 * 440) / 1000) * NOISE.density))
+    for (const s of specks) {
+      expect(s.size).toBe(NOISE.size)
+      expect(s.x).toBeGreaterThanOrEqual(0)
+      expect(s.x).toBeLessThan(320)
+      expect(s.y).toBeGreaterThanOrEqual(0)
+      expect(s.y).toBeLessThan(440)
+    }
+    for (const f of frame!.fills) {
+      expect(f.color).toBe('#e9f2ee')
+      expect(NOISE.alphas).toContain(f.alpha)
+    }
+    // Every strength is used, not only one.
+    expect(new Set(frame!.fills.filter((f) => f.rects.length).map((f) => f.alpha)).size).toBe(
+      NOISE.alphas.length,
+    )
+  })
+
+  // Static flickers in place: a speck that lives a tick is somewhere else on the next, anywhere on
+  // the screen, never a step down from where it was (that would be snow).
+  it('puts every speck somewhere new each tick when it lives a tick', () => {
+    const frames = over(5)
+    for (let i = 1; i < frames.length; i++) {
+      const before = new Set(spots(frames[i - 1]!))
+      const now = spots(frames[i]!)
+      expect(now).toHaveLength(before.size)
+      expect(now.filter((s) => before.has(s)).length).toBeLessThan(now.length / 10)
+    }
+  })
+
+  // A mark that lives longer stays put that long; they were born a tick apart, so a share of them
+  // moves each tick and the noise never pulses.
+  it('keeps each speck in place for its life, a share of them moving each tick', () => {
+    const life = 3
+    const at = over(9, 1 / FPS, noise({ ...NOISE, life: life / FPS })).map(spots)
+    const n = at[0]!.length
+    const movedAt = (k: number) => at.flatMap((frame, i) => (i > 0 && frame[k] !== at[i - 1]![k] ? [i] : []))
+    for (let k = 0; k < n; k++) {
+      const ticks = movedAt(k)
+      expect(ticks.length).toBeGreaterThanOrEqual(2)
+      for (let j = 1; j < ticks.length; j++) expect(ticks[j]! - ticks[j - 1]!).toBe(life)
+    }
+    for (let i = 1; i < at.length; i++) {
+      const moved = at[i]!.filter((s, k) => s !== at[i - 1]![k]).length
+      expect(Math.abs(moved - n / life)).toBeLessThanOrEqual(1)
+    }
+  })
+
+  // The page's clock is a timer, a hair early or late each tick: static still flickers every tick,
+  // and a longer life still lasts its whole ticks.
+  it('counts whole ticks on a clock that runs a hair early or late', () => {
+    const jittered = (life: number) => {
+      const painter = noise({ ...NOISE, life: life / FPS })
+      const first = recorder()
+      painter.paint(first.ctx, 0)
+      const frames = [spots(first)]
+      for (let i = 0; i < 12; i++) {
+        const r = recorder()
+        painter.paint(r.ctx, (i % 2 ? 1.002 : 0.998) / FPS)
+        frames.push(spots(r))
+      }
+      return frames
+    }
+    const statics = jittered(1)
+    for (let i = 1; i < statics.length; i++) expect(statics[i]![0]).not.toBe(statics[i - 1]![0])
+    const longer = jittered(3)
+    const moves = longer.flatMap((frame, i) => (i > 0 && frame[0] !== longer[i - 1]![0] ? [i] : []))
+    for (let j = 1; j < moves.length; j++) expect(moves[j]! - moves[j - 1]!).toBe(3)
+  })
+
+  it('stands still while no time passes', () => {
+    const painter = noise()
+    const [a, b] = [recorder(), recorder()]
+    painter.paint(a.ctx, 0)
+    painter.paint(b.ctx, 0)
+    expect(spots(b)).toEqual(spots(a))
+  })
+
+  describe('its band', () => {
+    const bars = (frames: ReturnType<typeof over>) => frames.map((f) => f.boxes)
+    /** The bar's top and bottom in a frame: its tallest box's. */
+    const span = (boxes: Box[]) => {
+      const tall = boxes.reduce((a, b) => (b.h > a.h ? b : a))
+      return { top: tall.y, bottom: tall.y + tall.h }
+    }
+
+    it('spans the canvas, as tall as it asks, soft at its edges, in its color', () => {
+      const [boxes] = bars(over(0))
+      expect(boxes!.length).toBeGreaterThan(1)
+      for (const b of boxes!) {
+        expect(b.x).toBe(0)
+        expect(b.w).toBe(320)
+        expect(b.color).toBe('#e9f2ee')
+      }
+      const { top, bottom } = span(boxes!)
+      expect(bottom - top).toBe(NOISE.band!.height)
+      // Its boxes stack about one middle, so it is strongest there; together as strong as it asks.
+      const middles = new Set(boxes!.map((b) => b.y + b.h / 2))
+      expect(middles.size).toBe(1)
+      expect(boxes!.reduce((sum, b) => sum + b.alpha, 0)).toBeCloseTo(NOISE.band!.alpha)
+    })
+
+    it('rolls down a few pixels a tick, as far as the time between ticks, up to two', () => {
+      const moved = (dt: number) => {
+        const [a, b] = bars(over(1, dt))
+        return span(b!).top - span(a!).top
+      }
+      expect(moved(1 / FPS)).toBeCloseTo(NOISE.band!.fall)
+      expect(moved(2 / FPS)).toBeCloseTo(2 * NOISE.band!.fall)
+      expect(moved(5)).toBeCloseTo(2 * NOISE.band!.fall)
+    })
+
+    // Off the bottom, it comes in again from above the top, as an old set's picture rolls.
+    it('comes back from above the top once it has rolled off the bottom', () => {
+      const ticks = Math.ceil((440 + NOISE.band!.height) / NOISE.band!.fall) + 2
+      const tops = bars(over(ticks)).map((boxes) => span(boxes).top)
+      const back = tops.findIndex((y, i) => i > 0 && y < tops[i - 1]!)
+      expect(back).toBeGreaterThan(0)
+      expect(tops[back - 1]!).toBeGreaterThan(440 - NOISE.band!.fall)
+      expect(tops[back]!).toBeLessThan(0)
+      for (const y of tops) expect(y).toBeGreaterThanOrEqual(-NOISE.band!.height)
+    })
+
+    // The canvas comes and goes with its motion, and a new one always started the bar at the top:
+    // it starts anywhere along its roll, and a resize leaves it where it is.
+    it('starts anywhere along its roll, and stays put through a resize', () => {
+      const starts = [1, 2, 3, 4, 5].map((seed) => {
+        const painter = painterFor(NOISE, seeded(seed))
+        painter.recolor(() => '#e9f2ee')
+        painter.resize(320, 440)
+        return span(framesOver(painter, 0)[0].boxes).top
+      })
+      expect(new Set(starts).size).toBe(starts.length)
+      for (const top of starts) {
+        expect(top).toBeGreaterThanOrEqual(-NOISE.band!.height)
+        expect(top).toBeLessThanOrEqual(440)
+      }
+      const painter = noise()
+      const before = span(framesOver(painter, 0)[0].boxes).top
+      painter.resize(300, 400)
+      expect(span(framesOver(painter, 0)[0].boxes).top).toBe(before)
+    })
+
+    it('has none when it asks for none', () => {
+      const { band: _, ...plain } = NOISE
+      const [boxes] = bars(over(0, 1 / FPS, noise(plain)))
+      expect(boxes).toHaveLength(0)
+    })
+  })
+})
+
 describe('the lit windows', () => {
   const WINDOWS: LitWindowsAtmosphere = {
     kind: 'lit-windows',
@@ -509,17 +696,7 @@ describe('the lit windows', () => {
   }
 
   /** The skyline as it appears, then what each of `n` ticks of the clock draws. */
-  const ticks = (n: number) => {
-    const painter = city()
-    const first = recorder()
-    painter.paint(first.ctx, 0)
-    const after = Array.from({ length: n }, () => {
-      const r = recorder()
-      painter.paint(r.ctx, 1 / FPS)
-      return r
-    })
-    return [first, ...after] as const
-  }
+  const ticks = (n: number) => framesOver(city(), n)
 
   // Flat-roofed slabs along the bottom, about a fifth of the panel tall, edged in their own color.
   it('stands its towers along the bottom, as tall as its height at most', () => {

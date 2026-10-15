@@ -5,6 +5,7 @@ import type {
   AshAtmosphere,
   Atmosphere,
   LitWindowsAtmosphere,
+  NoiseAtmosphere,
   RainAtmosphere,
   SmokeAtmosphere,
   SnowAtmosphere,
@@ -46,6 +47,8 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return ash(atmosphere, random)
     case 'smoke':
       return smoke(atmosphere, random)
+    case 'noise':
+      return noise(atmosphere, random)
   }
 }
 
@@ -469,6 +472,92 @@ function smoke(
           ctx.arc(x, y, radius * ring, 0, 2 * Math.PI)
           ctx.fill()
         }
+      }
+    },
+  }
+}
+
+interface Mark {
+  x: number
+  y: number
+  /** Whole ticks since it appeared where it is. */
+  age: number
+}
+
+/** A band's soft edge: the boxes it is painted as, about one middle, each a share of its height. */
+const BAND_LAYERS = [1, 0.6, 0.3]
+
+/**
+ * Noise: marks at a few strengths, each strength filled as one path a tick. A mark stays put for its
+ * life, then appears somewhere else on the canvas: it flickers in place and never falls. The marks
+ * were born a tick apart, so a share of them moves each tick. A band, if it has one, rolls down
+ * over them and comes in again from above the top once it has rolled off the bottom.
+ */
+function noise(
+  { color: variable, size, density, alphas, life, band }: NoiseAtmosphere,
+  random: () => number,
+): Painter {
+  /** A mark's life in whole ticks of the clock, one at least. */
+  const lifeTicks = Math.max(1, Math.round(life / STEP))
+  /** The marks at each strength, none until it has a size. */
+  let layers: Mark[][] = alphas.map((): Mark[] => [])
+  let width = 0
+  let height = 0
+  /** The band's top: none without a band, or until the canvas first has a size. */
+  let bandTop: number | undefined
+  let color = ''
+
+  /** Somewhere new on the canvas, on whole pixels. */
+  const place = (m: Mark) => {
+    m.x = Math.floor(random() * width)
+    m.y = Math.floor(random() * height)
+  }
+
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      // Anywhere along its roll the first time, so a new canvas doesn't always start it at the top;
+      // a resize leaves it where it is.
+      if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
+      let born = 0
+      layers = scatter(
+        { count: howMany(width, height, density), lists: alphas.length, width, height },
+        random,
+        () => Math.floor(random() * alphas.length),
+        (x, y) => ({ x: Math.floor(x), y: Math.floor(y), age: born++ % lifeTicks }),
+      )
+    },
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
+      // freeze whole on every early one.
+      const ticks = Math.round(step)
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = color
+      alphas.forEach((alpha, level) => {
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        for (const m of layers[level]!) {
+          m.age += ticks
+          if (m.age >= lifeTicks) {
+            m.age %= lifeTicks
+            place(m)
+          }
+          ctx.rect(m.x, m.y, size, size)
+        }
+        ctx.fill()
+      })
+      if (!band || bandTop === undefined) return
+      bandTop += band.fall * step
+      if (bandTop > height) bandTop -= height + band.height
+      const middle = bandTop + band.height / 2
+      ctx.globalAlpha = band.alpha / BAND_LAYERS.length
+      for (const share of BAND_LAYERS) {
+        const h = band.height * share
+        ctx.fillRect(0, middle - h / 2, width, h)
       }
     },
   }

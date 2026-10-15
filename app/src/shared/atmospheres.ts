@@ -1,6 +1,7 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
 // 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, WATCHFUL PROTECTOR's lit windows, ash on a
-// desert wind, smoke off the street; each kind has its painter (renderer/src/painters.ts).
+// desert wind, smoke off the street, noise on a screen; each kind has its painter
+// (renderer/src/painters.ts).
 
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
@@ -108,8 +109,36 @@ export interface SmokeAtmosphere extends Scene {
   sway: number
 }
 
+/**
+ * Noise on a screen: marks scattered over the panel that stay put for their life and then appear
+ * somewhere else, never falling, born a tick apart so the noise never pulses; and, if it asks for
+ * one, a soft band rolling down the panel, as an old set's picture rolls.
+ */
+export interface NoiseAtmosphere extends Scene {
+  kind: 'noise'
+  /** The variable its marks and its band are filled in. */
+  color: string
+  /** Its marks' size: each a speck, a square this many px wide. */
+  size: number
+  /** Marks per 1000 square pixels. */
+  density: number
+  /** The strengths (alphas) a mark may have, one picked for each. */
+  alphas: readonly number[]
+  /**
+   * How long a mark stays put, in seconds, counted in whole ticks of the clock (one at least): a
+   * tick for static, which flickers in place.
+   */
+  life: number
+  /**
+   * The band: its height and how far it rolls down a tick, in px, and its strength (alpha), about
+   * that at its middle and softer toward its edges (its boxes overlap there, so their alphas
+   * compound rather than add).
+   */
+  band?: { height: number; alpha: number; fall: number }
+}
+
 export type Atmosphere =
-  RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere | SmokeAtmosphere
+  RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere | SmokeAtmosphere | NoiseAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
