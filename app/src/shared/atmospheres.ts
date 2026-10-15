@@ -129,7 +129,11 @@ export interface NoiseAtmosphere extends Scene {
    * tick for static, which flickers in place.
    */
   life: number
-  /** The band: its height, its strength at its middle, and how far it rolls down a tick, in px. */
+  /**
+   * The band: its height and how far it rolls down a tick, in px, and its strength (alpha), about
+   * that at its middle and softer toward its edges (its boxes overlap there, so their alphas
+   * compound rather than add).
+   */
   band?: { height: number; alpha: number; fall: number }
 }
 
