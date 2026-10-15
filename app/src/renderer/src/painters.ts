@@ -503,8 +503,8 @@ function noise(
   let layers: Mark[][] = alphas.map((): Mark[] => [])
   let width = 0
   let height = 0
-  /** The band's top. */
-  let bandY = 0
+  /** The band's top, none until it has a size. */
+  let bandTop: number | undefined
   let color = ''
 
   /** Somewhere new on the canvas, on whole pixels. */
@@ -519,16 +519,16 @@ function noise(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      bandY = 0
-      layers = alphas.map((): Mark[] => [])
-      for (let i = 0; i < howMany(width, height, density); i++) {
-        const m = { x: 0, y: 0, age: i % lifeTicks }
-        place(m)
-        layers[Math.floor(random() * alphas.length)]!.push(m)
-      }
+      bandTop = band ? 0 : undefined
+      let born = 0
+      layers = scatter(
+        { count: howMany(width, height, density), lists: alphas.length, width, height },
+        random,
+        () => Math.floor(random() * alphas.length),
+        (x, y) => ({ x: Math.floor(x), y: Math.floor(y), age: born++ % lifeTicks }),
+      )
     },
     paint(ctx, dt) {
-      if (!width || !height) return
       const step = Math.min(dt, MAX_DT) / STEP
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
@@ -545,10 +545,10 @@ function noise(
         }
         ctx.fill()
       })
-      if (!band) return
-      bandY += band.fall * step
-      if (bandY > height) bandY -= height + band.height
-      const middle = bandY + band.height / 2
+      if (!band || bandTop === undefined) return
+      bandTop += band.fall * step
+      if (bandTop > height) bandTop -= height + band.height
+      const middle = bandTop + band.height / 2
       ctx.globalAlpha = band.alpha / BAND_LAYERS.length
       for (const share of BAND_LAYERS) {
         const h = band.height * share
