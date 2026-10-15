@@ -163,7 +163,7 @@
 
   /* Lit: a screen's scanlines, a 1px line every 3px, over the bolt's white into Lightning Cyan. */
   --lens-scanlines: repeating-linear-gradient(
-    to bottom,
+    to bottom in srgb,
     color-mix(in srgb, var(--abyss) 10%, transparent) 0 1px,
     transparent 1px 3px
   );

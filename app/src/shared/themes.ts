@@ -3,6 +3,7 @@
 // A Theme's colors live in its stylesheet (renderer/src/styles/themes/<id>.css); what the main
 // process or the renderer's code needs lives here.
 import {
+  ANCIENT_GRACE_STATIC,
   BECOME_A_BAT_SMOKE,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
@@ -10,8 +11,19 @@ import {
   WATCHFUL_PROTECTOR_WINDOWS,
   type Atmosphere,
 } from './atmospheres'
-import { BAT_1987, BAT_1989, BAT_2008, BAT_2016, emblem, OVAL_1989, WINGS, type Emblem } from './emblems'
 import {
+  BAT_1986,
+  BAT_1987,
+  BAT_1989,
+  BAT_2008,
+  BAT_2016,
+  emblem,
+  OVAL_1989,
+  WINGS,
+  type Emblem,
+} from './emblems'
+import {
+  ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
@@ -20,6 +32,7 @@ import {
   type Suit,
 } from './suits'
 import {
+  ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
@@ -35,6 +48,7 @@ export const THEME_IDS = [
   'the-dark-knight-2008',
   'batman-v-superman-2016',
   'batman-year-one-1987',
+  'the-dark-knight-returns-1986',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -102,6 +116,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_1987, 'none'),
     suit: BECOME_A_BAT_SUIT,
     atmosphere: BECOME_A_BAT_SMOKE,
+  },
+  /** Frank Miller's The Dark Knight Returns (1986), ANCIENT GRACE: a TV left on, Lightning Cyan, static. */
+  'the-dark-knight-returns-1986': {
+    flag: 'grace',
+    ground: '#090c0b',
+    words: ANCIENT_GRACE_WORDS,
+    emblem: emblem(BAT_1986, 'none'),
+    suit: ANCIENT_GRACE_SUIT,
+    atmosphere: ANCIENT_GRACE_STATIC,
   },
 }
 
