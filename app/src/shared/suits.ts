@@ -763,20 +763,22 @@ const YEAR_ONE_REACHING = yearOneMap(['...SSSSSSSSSSSSg', SUIT])
  */
 const FIRST_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 2.5 }
 
+/**
+ * The hanging cape from its left shoulder round its right half and middle, its hem's points uneven;
+ * each way it hangs ends with its own left half.
+ */
+const HEM_RIGHT =
+  'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
+  'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4'
+
 /** The cape's hem: four deep points a side, of unequal depth and spacing, and the two halves unlike. */
 const FIRST_CAPE = {
   /** Hanging behind him from the shoulders. */
-  hanging:
-    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
-    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L3.1 11.5 L2.4 10.0 L1.6 11.5 L1.4 9.4 Z',
+  hanging: `${HEM_RIGHT} L3.1 11.5 L2.4 10.0 L1.6 11.5 L1.4 9.4 Z`,
   /** Hanging, its left half lifted out under the swarm as if the bats' wingbeat pulled it. */
-  flared:
-    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
-    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L2.6 11.0 L1.0 9.3 L-0.6 10.6 L-2.0 9.6 Z',
+  flared: `${HEM_RIGHT} L2.6 11.0 L1.0 9.3 L-0.6 10.6 L-2.0 9.6 Z`,
   /** Half lifted, on the way. */
-  lifting:
-    'M1.6 5 L14.4 5 L14.6 9.2 L14.1 11.5 L13.3 9.0 L12.6 10.5 L11.6 9.0 L10.0 11.5 L9.2 9.9 L8.5 11.4 ' +
-    'L7.5 8.9 L6.3 10.6 L5.5 9.1 L4.8 11.4 L3.9 9.4 L3.0 11.3 L1.8 9.4 L0.4 11.0 L-0.2 9.4 Z',
+  lifting: `${HEM_RIGHT} L3.0 11.3 L1.8 9.4 L0.4 11.0 L-0.2 9.4 Z`,
   /** Trailing behind him to the left as he flies right, its points as uneven as the hanging hem's. */
   trailA:
     'M3 5 L13 5 L13.4 9.2 L12.4 10.9 L11.4 9.4 L9.6 11.1 L8.4 8.9 L6.8 11.3 L5.4 9.7 L2.6 11.2 ' +
@@ -824,9 +826,13 @@ const CLOUD: readonly BatAt[] = [
 const STRAGGLER_HIGH: BatAt = [-4.8, -0.3, 2, 'down']
 const STRAGGLER_LOW: BatAt = [-3.2, 4.6, 2.2, 'up']
 
-/** Standing in the swarm: the cape hanging (`cape`), the bats in front of him. */
-const inSwarm = (bats: readonly BatAt[], cape: string) =>
-  pose(YEAR_ONE_STANDING, [{ kind: 'cape', d: cape }], swarmOf(bats), { chest: [FIRST_SUIT_BAT] })
+/** A pose in the first suit, Year One's bat on his chest. */
+const yearOnePose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, behind, front, { chest: [FIRST_SUIT_BAT] })
+
+/** Standing in the swarm, the bats in front of him, his cape flared under them unless it says otherwise. */
+const inSwarm = (bats: readonly BatAt[], cape = FIRST_CAPE.flared) =>
+  yearOnePose(YEAR_ONE_STANDING, [{ kind: 'cape', d: cape }], swarmOf(bats))
 
 /** His eyes up and to the left, at the cloud. */
 const UP_LEFT = { look: -GAZE, lookY: -0.4 }
@@ -864,40 +870,36 @@ const THE_SWARM: Script = [
     look: -GAZE,
   },
   {
-    pose: inSwarm(
-      [
-        [-3.6, 5.6, 2.6, 'up'],
-        [-1.4, 6.4, 2.4, 'down'],
-        [-2.8, 3.8, 2.8, 'down'],
-        [-0.4, 4, 2.6, 'up'],
-        [1.6, 3.4, 2.4, 'down'],
-        [-4, 2, 2.6, 'up'],
-        [-1.6, 1.8, 2.8, 'up'],
-        [0.8, 1.6, 2.6, 'down'],
-        [2.8, 0.8, 2.4, 'up'],
-      ],
-      FIRST_CAPE.flared,
-    ),
+    pose: inSwarm([
+      [-3.6, 5.6, 2.6, 'up'],
+      [-1.4, 6.4, 2.4, 'down'],
+      [-2.8, 3.8, 2.8, 'down'],
+      [-0.4, 4, 2.6, 'up'],
+      [1.6, 3.4, 2.4, 'down'],
+      [-4, 2, 2.6, 'up'],
+      [-1.6, 1.8, 2.8, 'up'],
+      [0.8, 1.6, 2.6, 'down'],
+      [2.8, 0.8, 2.4, 'up'],
+    ]),
     look: -GAZE,
     lookY: -0.2,
   },
-  { pose: inSwarm(CLOUD, FIRST_CAPE.flared), ...UP_LEFT },
-  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH], FIRST_CAPE.flared), ...UP_LEFT },
-  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW], FIRST_CAPE.flared), ...UP_LEFT },
+  { pose: inSwarm(CLOUD), ...UP_LEFT },
+  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH]), ...UP_LEFT },
+  { pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW]), ...UP_LEFT },
 ]
 /** Once a watch, the high straggler crosses over his head to the right, his eyes following it. */
 const CROSSING: readonly Step[] = [
-  { pose: inSwarm([...CLOUD, STRAGGLER_LOW, [7, -0.2, 2, 'up']], FIRST_CAPE.flared), look: 0, lookY: -0.4 },
+  { pose: inSwarm([...CLOUD, STRAGGLER_LOW, [7, -0.2, 2, 'up']]), look: 0, lookY: -0.4 },
   {
-    pose: inSwarm([...CLOUD, STRAGGLER_LOW, [13, 0.4, 2, 'down']], FIRST_CAPE.flared),
+    pose: inSwarm([...CLOUD, STRAGGLER_LOW, [13, 0.4, 2, 'down']]),
     look: GAZE,
     lookY: -0.4,
   },
 ]
 
 /** Flying right, one arm reaching ahead, the cape trailing to the left. */
-const yearOneFlying = (trail: string) =>
-  pose(YEAR_ONE_REACHING, [{ kind: 'cape', d: trail }], [], { chest: [FIRST_SUIT_BAT] })
+const yearOneFlying = (trail: string) => yearOnePose(YEAR_ONE_REACHING, [{ kind: 'cape', d: trail }])
 
 export const BECOME_A_BAT_SUIT: Suit = {
   eyes: EYES,
@@ -907,12 +909,11 @@ export const BECOME_A_BAT_SUIT: Suit = {
     flying: [yearOneFlying(FIRST_CAPE.trailA), yearOneFlying(FIRST_CAPE.trailB)],
     // The cape flung open from his outstretched arms, legs apart.
     alarmed: [
-      pose(
-        YEAR_ONE_ARMS_OUT,
-        [BACK, { kind: 'cape', d: FIRST_CAPE.openLeft }, { kind: 'cape', d: FIRST_CAPE.openRight }],
-        [],
-        { chest: [FIRST_SUIT_BAT] },
-      ),
+      yearOnePose(YEAR_ONE_ARMS_OUT, [
+        BACK,
+        { kind: 'cape', d: FIRST_CAPE.openLeft },
+        { kind: 'cape', d: FIRST_CAPE.openRight },
+      ]),
     ],
   },
   // On the perch he stands in the swarm, looks up at it and back; once a watch, a bat crosses.
