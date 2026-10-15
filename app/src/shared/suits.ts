@@ -237,7 +237,7 @@ const BEAT_ROOM = 4
  * still, or a beat of his own (a sonar's ping) in their place. Last, so a reveal that just played
  * its own beat isn't followed by another a moment later.
  */
-const watchOn = (
+export const watchOn = (
   signature: Script,
   glances: [Partial<Step>, Partial<Step>],
   beat: readonly Step[] = [],
@@ -252,7 +252,8 @@ const watchOn = (
     { ...STILL, ...glances[0] },
     { ...STILL, ...glances[1] },
     ...still(BEAT_ROOM - Math.min(beat.length, BEAT_ROOM)),
-    ...beat.slice(0, BEAT_ROOM),
+    // The beat keeps the nudge unless a step brings its own.
+    ...beat.slice(0, BEAT_ROOM).map((step) => ({ transform, ...step })),
   ]
 }
 
