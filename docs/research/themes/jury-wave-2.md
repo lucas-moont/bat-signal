@@ -86,6 +86,41 @@ A Theme stays only if it scores C against every other Theme on at least 3 axes. 
 - Absolute – Year One: Silhouette drops to ~ (Absolute's ears return to standard), and Voice becomes C (Year One's work-shift lines go). It stays **4**.
 - Absolute – KNIGHTMARE (Atmosphere ~), DKR – PALE MOONLIGHT (Voice ~) and Year One – KNIGHTMARE (Voice ~) stay at **4**. All three are inherent to the sources, and none needs a fix.
 
+### After the revisions
+
+The four dossiers were revised in parallel after §9, and each measured the others against this note's proposed values. So we measured the eight final palettes against each other: the four revised token maps and the four shipped stylesheets, with `var()` resolved. Same script and checks as above. **Result: no rule breaks, and no score changes.** Some quoted distances are out of date (flag 7).
+
+**Final key colours**
+
+| Theme | Surface / raised | Alarm | Working | Waiting | Bone | Suit |
+|---|---|---|---|---|---|---|
+| DKR | `#131a17` / `#1d2622` | `#3fdcff` | Bone | `#bde3a1` | `#e9f2ee` | `#666864` |
+| Absolute | `#17132a` / `#221c3c` | `#ecf05a` | `#b8b0e0` | `#d79bbd` | `#f1eef6` | `#3f6b6e` |
+| Year One | `#191b0b` / `#292c11` | `#ff4dd2` (A3: `#f2605e`) | Bone | `#e6e08a` | `#e2e3c8` | `#d0d3cc` (S1; S2 `#9a9e9a`) |
+| Arkham | `#1a0f15` / `#2b1822` | `#ec5c94` | Bone | `#d6c49a` | `#f3e5e8` | `#55425e` |
+
+**Closest other Theme, per role** (ΔE00, against all seven others)
+
+| Theme | Surface | Raised | Alarm | Working | Waiting | Bone | Suit | Alarm vs Clawd |
+|---|---|---|---|---|---|---|---|---|
+| DKR | Year One 6.4 | WATCHFUL PROTECTOR 10.0 | WATCHFUL PROTECTOR 28.7 | Year One 9.7 | Year One 12.0 | WATCHFUL PROTECTOR **4.5** | Absolute 13.9 | 59.2 |
+| Absolute | Arkham 9.5 | Arkham 11.0 | PALE MOONLIGHT 15.8 | PALE MOONLIGHT 13.8 | VENGEANCE 26.5 | Arkham 5.1 | DKR 13.9 | 46.2 |
+| Year One | DKR 6.4 | DKR 11.1 | Arkham 11.9 | KNIGHTMARE 6.9 | Arkham 11.4 | PALE MOONLIGHT 6.8 | DKR 33.7 | 34.6 |
+| Arkham | VENGEANCE 7.1 | VENGEANCE **9.2** | Year One 11.9 | DKR 12.7 | KNIGHTMARE 11.1 | Absolute 5.1 | PALE MOONLIGHT 14.6 | 24.2 |
+
+Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to working: DKR 36.0 / 22.8, Absolute 56.5 / 54.8, Year One 67.9 / 51.2 (A3: 48.4 / 40.8), Arkham 42.9 / 32.6. The abysses and cowls are near-blacks, 1.8–4.5 apart, as the shipped ones are.
+
+**Flags and verdicts:**
+1. **Bone, DKR – WATCHFUL PROTECTOR 4.5** (also Absolute – Arkham 5.1, WATCHFUL PROTECTOR – Absolute 5.3). No fix. Bone is the text white, and near-whites sit close, as near-blacks do: VENGEANCE and PALE MOONLIGHT ship 2.5 apart. The ~5 rule is for working and waiting inks, and Bone is not WATCHFUL PROTECTOR's or Absolute's working ink. DKR's untinted Bone (`#eef1e8`) would be 6.0 from WATCHFUL PROTECTOR but 4.5 from PALE MOONLIGHT, so the tint only moves the near pair. Keep it.
+2. **Raised tones under ~10:** VENGEANCE – Arkham 9.2, and WATCHFUL PROTECTOR – DKR at 10.0. Both are the values §2 proposed and accepted. No fix.
+3. **Alarms:** Year One – Arkham 11.9 and KNIGHTMARE – Arkham 12.9 are above 10, as §3.10 accepted. Every recommended alarm is at least 24.2 from Clawd. No fix.
+4. **Year One's A3** (`#f2605e`) is 6.1 from KNIGHTMARE's alarm and `--ink-hot`, 5.0 fill to fill, and 10.4 from Clawd. It breaks the ~10 alarm rule against KNIGHTMARE. Year One's dossier says so itself. A3 stays a comparison picture, not an available alarm. A2 stays.
+5. **Cross-role pairs:** Absolute's lemon against Year One's canary (8.3, §3.11) and DKR's cyan against WATCHFUL PROTECTOR's mercury (12.9, §3.10) are unchanged and already settled. One new near pair: Arkham's waiting paper `#d6c49a` is 8.9 from KNIGHTMARE's working Bone. It is above 5, and the stamp word carries the tier, as in §3.11. No fix.
+6. **DKR's fallback alarm:** none to measure. Palette B is withdrawn in the dossier.
+7. **Stale quotes in the dossiers.** DKR, Year One and Arkham run in Bone, and each tinted its own after this note. Each then measured the others against the Bones this note proposed (`#eef1e8`, `#ecebdc`, `#ece9f3`). The final pairs: DKR – Year One **9.7** (quoted 6.0 and 7.5), DKR – Arkham **12.7** (quoted 9.9 and 11.7), Year One – Arkham **17.4** (quoted 18.1 and 12.4), Absolute's lavender – Arkham's Bone **19.6** (quoted 18.1 in Absolute's dossier, and in §1 and §2 above). The suits have the same problem. DKR and Absolute quote Year One's S2 grey (20.1, 25.3); the recommended chalk S1 is 33.7 and 37.8. Absolute quotes Arkham's draft suit (31.6); the final `#55425e` is 30.4. No verdict changes: the closest working inks are still 6.9 apart. The dossiers' wording needs the corrected numbers; the palettes don't change.
+
+**Contrast:** every text token of the four Themes passes 4.5:1 on its abyss, surface and raised tone, and on its lightest hover ground. The tightest are Year One's A3 (4.52 on raised), Arkham's `--signal-hot` (4.92 on its hover tone, 5.19 on raised) and Year One's A2 (4.95 on raised). Ink on the alarm fill: DKR 7.18, Absolute 12.33, Year One 5.46 (A3, Bone on the red: 4.83), Arkham 6.02.
+
 ## 2. Verdict per Theme
 
 - **DKR (TRIUMPHANT): keep, with changes.** The dossier does what the brief asked: it finds DKR a place of its own. It moves from print to broadcast, takes a cyan alarm from the lightning and a green-grey from Varley's own paint, and makes the lightning leap a Signature without a flash.
