@@ -78,10 +78,11 @@ describe("BECOME A BAT's watch", () => {
   })
 })
 
-// The watch keeps his Signature pose's final pose, not its step: a tilt on the step alone would leave
-// him standing upright on the perch, the leap gone.
+// The watch holds his Signature pose's final step, its nudge included: a tilt there (ANCIENT GRACE's
+// leap) must not leave him standing upright on the perch.
 describe("ANCIENT GRACE's watch", () => {
   it('holds the leap tilted in every step', () => {
-    for (const step of ANCIENT_GRACE_SUIT.watch) expect(step.pose.transform).toMatch(/rotate\(-15deg\)/)
+    for (const step of ANCIENT_GRACE_SUIT.watch)
+      expect([step.transform, step.pose.transform].join(' ')).toMatch(/rotate\(-15deg\)/)
   })
 })

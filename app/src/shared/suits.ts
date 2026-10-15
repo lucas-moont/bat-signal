@@ -242,7 +242,9 @@ const watchOn = (
   glances: [Partial<Step>, Partial<Step>],
   beat: readonly Step[] = [],
 ): Script => {
-  const STILL: Step = { pose: scriptAt(signature, Infinity).pose, look: 0 }
+  // The final step's pose and nudge (a leap's tilt), its eyes back to looking ahead.
+  const { pose, transform } = scriptAt(signature, Infinity)
+  const STILL: Step = { pose, look: 0, transform }
   const still = (n: number) => Array<Step>(n).fill(STILL)
   return [
     STILL,
@@ -1061,14 +1063,13 @@ const armoured = pose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }], [], {
 const BOLT =
   'M11.5 -6 L12.5 -6 L10.2 -1.3 L12.3 -0.8 L8.4 5.1 L10.3 5.6 L5.5 14 L4.5 14 L8.6 5.9 L6.7 5.4 ' +
   'L10.6 -0.2 L8.7 -0.7 Z'
-/** Launched: raised two units and tilted, on the pose so the perch's watch, which keeps it, holds it. */
-const leaping = (bolt?: number): Pose => ({
-  ...gracePose(GRACE_LEAPING, [
+const leaping = (bolt?: number) =>
+  gracePose(GRACE_LEAPING, [
     ...(bolt ? [{ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt } as const] : []),
     { kind: 'cape', d: TAILS.streaming },
-  ]),
-  transform: 'translateY(-4px) rotate(-15deg)',
-})
+  ])
+/** Launched: raised two units and tilted. */
+const LAUNCH = 'translateY(-4px) rotate(-15deg)'
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge, then launched,
@@ -1081,9 +1082,9 @@ const THE_LEAP: Script = [
     look: GAZE,
     transform: 'translateY(2px)',
   },
-  { pose: leaping(), look: GAZE },
-  { pose: leaping(0.6), look: GAZE },
-  { pose: leaping(0.4), look: GAZE },
+  { pose: leaping(), look: GAZE, transform: LAUNCH },
+  { pose: leaping(0.6), look: GAZE, transform: LAUNCH },
+  { pose: leaping(0.4), look: GAZE, transform: LAUNCH },
 ]
 
 export const ANCIENT_GRACE_SUIT: Suit = {
