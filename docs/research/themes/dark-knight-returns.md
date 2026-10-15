@@ -146,7 +146,7 @@ The 101 variables every shipped Theme sets, plus the new `--font-headline` (the 
 | `--waiting-rule` | `var(--blood)` | P | |
 | `--report-rule` | `var(--line)` | P | |
 | `--clawd` | `#d77757` | Claude Code's `clawd_body`, unchanged | |
-| `--bone` | `#e9f2ee` | P: the white of the TV boxes, tinted to the ground's hue (6.0 from *Year One*'s Bone) | Text, working |
+| `--bone` | `#e9f2ee` | P: the white of the TV boxes, tinted to the ground's hue (9.7 from *Year One*'s Bone) | Text, working |
 | `--ash` | `#939c97` | P: S-A greys lifted | Secondary text |
 | `--bone-dim` | `var(--ink)` | P | |
 | `--ash-dim` | `var(--ash)` | P | |
@@ -156,7 +156,7 @@ The 101 variables every shipped Theme sets, plus the new `--font-headline` (the 
 | `--cowl` | `#0d100e` | P: S-A ink | Cowl, gloves |
 | `--cowl-edge` | `color-mix(in srgb, #e8e1d9 22%, transparent)` | P: the neutral rim the Costume Rule asks for | |
 | `--cowl-shine` | `var(--raised)` | P | |
-| `--suit` | `#666864` | Jury §2: a neutral grey, 13.9 from *Absolute*'s revised teal `#3f6b6e` and 20.1 from *Year One*'s light grey; the black bat reads on it at 3.56:1 | Suit, and the belt |
+| `--suit` | `#666864` | Jury §2: a neutral grey, 13.9 from *Absolute*'s revised teal `#3f6b6e` and 33.7 from *Year One*'s chalk `#d0d3cc`; the black bat reads on it at 3.56:1 | Suit, and the belt |
 | `--gloves` | `#0d100e` | P | |
 | `--belt` | `var(--suit)` | Jury §5: a suit-grey belt, so the chest bat never merges with it | Only the buckle shows |
 | `--buckle` | `var(--ash)` | P | |
@@ -230,7 +230,7 @@ No exceptions are needed. In Bat-Clawd: the black chest bat on the grey suit is 
 
 **Tier separation.** Hot cyan and soft phosphor green are 36.0 ΔE00 apart; the green is 24.6 from Ash and 19.6 from Bone, so the three tiers (needs you now, waiting, quiet) read apart. The first draft's pale Robin yellow (`#e3dc86`) is withdrawn: it was 0.9 from *Year One*'s canary, which the jury gave to *Year One* (§3.1, §9.1). A pale-cyan soft ink (`#a9dff0`) was also tried and rejected: 9.6 from the hot cyan, with a luminance ratio of 1.12. **Why phosphor green:** it is the glow of a green-phosphor screen and of the static's afterglow, it belongs to the TV frame and to no Theme's alarm, and it sits at hue 130° on a ground at 166°, close enough to belong and far enough to read. It has no sample in the book: it is proposed (§12). **Decide on screen**, including beside Clawd orange (46.3 ΔE00 apart).
 
-**Waiting inks across the app** (ΔE00 from `#bde3a1`; the new Wave rule asks for ~5 or more): VENGEANCE `#d4574c` 55.9, PALE MOONLIGHT `#c98a3e` 34.5, WATCHFUL PROTECTOR `#e9a04b` 32.9, KNIGHTMARE `#e1ae66` 26.6, *Year One* `#e6e08a` 12.0, *Absolute* `#d79bbd` 50.2, *Arkham* `#d6c49a` 16.7. Against working inks: WATCHFUL PROTECTOR's mercury 22.4, *Year One*'s Bone 17.2.
+**Waiting inks across the app** (ΔE00 from `#bde3a1`; the new Wave rule asks for ~5 or more): VENGEANCE `#d4574c` 55.9, PALE MOONLIGHT `#c98a3e` 34.5, WATCHFUL PROTECTOR `#e9a04b` 32.9, KNIGHTMARE `#e1ae66` 26.6, *Year One* `#e6e08a` 12.0, *Absolute* `#d79bbd` 50.2, *Arkham* `#d6c49a` 16.7. Against working inks: WATCHFUL PROTECTOR's mercury 22.4, *Year One*'s Bone 13.0.
 
 ### The ground, against the other Themes
 
@@ -238,15 +238,15 @@ Moved after the jury (§3.1, §9.1) from h 140° to h ~166°, the hue of Varley'
 
 | | surface `#131a17` (h 166°) | raised `#1d2622` (h 165°) | working Bone `#e9f2ee` vs their working ink |
 |---|---|---|---|
-| VENGEANCE | 7.0 | 18.3 | 30.2 (amber) |
-| PALE MOONLIGHT | 8.0 | 12.4 | 23.5 (steel) |
-| WATCHFUL PROTECTOR (h 263–265°) | 8.3 | 10.0 | 22.1 (mercury) |
-| KNIGHTMARE | 16.1 | 21.0 | 11.4 (Bone `#f7e8c8`) |
-| *Year One*, revised (`#191b0b` / `#292c11`, h ~110°) | **6.4** | **11.1** | **6.0** (Bone `#ecebdc`) |
-| *Absolute*, revised (`#17132a` / `#221c3c`) | 18.1 | 21.5 | 24.8 (lavender) |
-| *Arkham*, revised (`#1a0f15` / `#2b1822`) | 13.7 | 21.7 | 9.9 (Bone `#ece9f3`) |
+| VENGEANCE | 7.0 | 18.3 | 31.6 (amber) |
+| PALE MOONLIGHT | 8.0 | 12.4 | 22.6 (steel) |
+| WATCHFUL PROTECTOR (h 263–265°) | 8.3 | 10.0 | 20.3 (mercury) |
+| KNIGHTMARE | 16.1 | 21.0 | 13.1 (Bone `#f7e8c8`) |
+| *Year One*, revised (`#191b0b` / `#292c11`, h ~110°) | **6.4** | **11.1** | **9.7** (Bone `#e2e3c8`) |
+| *Absolute*, revised (`#17132a` / `#221c3c`) | 18.1 | 21.5 | 25.0 (lavender) |
+| *Arkham*, revised (`#1a0f15` / `#2b1822`) | 13.7 | 21.7 | 12.7 (Bone `#f3e5e8`) |
 
-Every surface is at least ~6 and every raised tone at least ~10 from every other Theme's, as the new Wave rule asks (jury §3). Bone was tinted from `#eef1e8` to `#e9f2ee` (h 166°) so that it is 6.0 from *Year One*'s Bone, not 4.6: both run in Bone, and the rule wants working inks ~5 apart. Every abyss in the app is within 1–6 of every other, as near-blacks are. **Not asylum green:** chroma 1–5, a grey; the jury leaves the Arkham games a saturated green with chroma 15 or more (§8).
+Every surface is at least ~6 and every raised tone at least ~10 from every other Theme's, as the new Wave rule asks (jury §3). Bone was tinted from `#eef1e8` to `#e9f2ee` (h 166°) to sit with the ground. Both Themes run in Bone, and the rule wants working inks ~5 apart: *Year One*'s final Bone (`#e2e3c8`) is 9.7 from this one tinted and 7.5 untinted, so either passes. What the tint changes is the closest Bone in the app: untinted, it is PALE MOONLIGHT's, 4.5 away; tinted, WATCHFUL PROTECTOR's, also 4.5. Neither is a working ink here, and near-whites sit close as near-blacks do (jury §1, after the revisions, flag 1). Every abyss in the app is within 1–6 of every other, as near-blacks are. **Not asylum green:** chroma 1–5, a grey; the jury leaves the Arkham games a saturated green with chroma 15 or more (§8).
 
 ## 4. Type
 
@@ -342,7 +342,7 @@ The body, eyes, arms and legs keep their pixels. Clawd's orange jaw and white ey
 The maintainer gave the grey suit, the big black chest bat and the armour back to this Theme (jury §9.5). They are Miller's; Snyder borrowed them, and KNIGHTMARE shipped without them (`suits.ts` has no armour, and KNIGHTMARE's chest bat is 4.4 units on a charcoal suit inside a duster). KNIGHTMARE keeps the desert, the duster, the goggles and the Knightmare. *Year One* keeps its own smaller black bat on the only light suit; *Absolute* keeps its block on its teal.
 
 - **Cowl:** black (`--cowl`), with short ears **set wide**, at the head's outer corners (x = 3 and x = 12, one unit each) instead of x = 4 and 11: a broad, boxy old head, not a pointed one (a 1-unit shift, 2px: it counts, jury §5). The brow row heavy (`...cccchhcccc...`, shine in the middle). A faint neutral rim (`--cowl-edge`) per the Costume Rule.
-- **Suit:** a neutral grey, `--suit` `#666864` (jury §2): 13.9 ΔE00 from *Absolute*'s revised teal `#3f6b6e` and 20.1 from *Year One*'s light grey, so the three grey suits sit at least 10 apart (§9.5). 3.49:1 on the page; 1.79:1 against the orange jaw, which hue carries, as on every shipped suit.
+- **Suit:** a neutral grey, `--suit` `#666864` (jury §2): 13.9 ΔE00 from *Absolute*'s revised teal `#3f6b6e` and 33.7 from *Year One*'s chalk `#d0d3cc`, so the three grey suits sit at least 10 apart (§9.5). 3.49:1 on the page; 1.79:1 against the orange jaw, which hue carries, as on every shipped suit.
 - **The big black bat, fitted at real size** (the jury's §5 finding: a 9-unit bat at 2.6:1 is 3.5 units tall, does not fit between the jaw and the belt, merges with the dark belt at 1.51:1, and joins the cape at its wingtips):
   - **Width at most 8 units and height at most 3:** `width = min(8, 3 × the traced aspect)`. At the estimated 2.6:1 that is **7.8 × 3 units**, centred at `cx 8, cy 7.5`, so **y 6–9** and **x 4.1–11.9**. At 60px that is about 16×6px; at 54px about 15×6px. Still the biggest chest mark in the app (KNIGHTMARE's 4.4, *Year One*'s 6).
   - **One unit of grey above it:** the jaw ends at y 5 and the bat starts at y 6, so it never reads as the cowl dripping.
@@ -423,18 +423,18 @@ Scored by the jury's rules (Wave 1 §1): C = clearly different, ~ = close, = = s
 
 | Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
 |---|---|---|---|---|---|---|
-| ANCIENT GRACE – VENGEANCE | C: tank grey vs warm black (7.0 / 18.3); cyan vs red (75.6); Bone vs amber (30.2) | C: Bangers / Bangers vs Anton / Special Elite | C: wide-set ears, two-tail hem, a big black bat on grey vs standard ears, a zigzag, a dark dash; a tilted leap vs a front-on stand | C: specks flickering in place and a roll bar, a white glow low vs diagonal rain, red glow from below | C: a broadcast with a Lexicon vs Bruce's journal with none. The one line, "The time has come.", is Bruce's inner voice: it stays on the Signature click | **5** |
-| ANCIENT GRACE – PALE MOONLIGHT | C: tank grey vs smog brown (8.0 / 12.4); cyan vs gold (47.3); Bone vs steel (23.5). The yellow waiting ink, 12.2 from its gold, is gone | C: no family shared | C: no oval, no brass belt; two tails vs scallops; a leap vs three-quarter under an oval | C: flicker in place vs falling flakes; white vs brown smog | **~**: both are news media at night. The medium differs (TV vs print) and the Lexicons share no word, but the frame is a cousin. The jury keeps it: inherent to the source, no fix (§1) | **4** |
-| ANCIENT GRACE – WATCHFUL PROTECTOR | C: hue 166° vs 263° (8.3 / 10.0); cyan vs blue (28.7, plain, same family); Bone vs mercury (22.1). The alarm is 12.9 from its *working* mercury: decide on screen | C: Bangers vs Syncopate / Big Shoulders Stencil | C: wide-set vs standard ears; two tails vs a straight hem; a black bat on grey vs a lit relief on black; a tilted leap vs a front-on stand | C: flicker vs a still skyline; both lit low, white vs mercury | C: a TV studio vs an ops briefing. "Control room", LIVE and STANDBY lean toward radio procedure; kept to those three, and OK TO AIR? rather than GO AHEAD? | **5** |
-| ANCIENT GRACE – KNIGHTMARE | C: tank grey vs scorched brown (16.1 / 21.0); cyan vs crimson (75.4); both Bone (11.4) | C: Bangers vs Archivo | C: a cape vs a duster; an 8-unit bat on an open chest vs a 4.4-unit bat inside lapels; the armour vs the swung coat | C: static vs ash on the wind | C: broadcast vs a veteran with Alfred. The report close no longer echoes KNIGHTMARE's (§5) | **5** |
+| ANCIENT GRACE – VENGEANCE | C: tank grey vs warm black (7.0 / 18.3); cyan vs red (75.6); Bone vs amber (31.6) | C: Bangers / Bangers vs Anton / Special Elite | C: wide-set ears, two-tail hem, a big black bat on grey vs standard ears, a zigzag, a dark dash; a tilted leap vs a front-on stand | C: specks flickering in place and a roll bar, a white glow low vs diagonal rain, red glow from below | C: a broadcast with a Lexicon vs Bruce's journal with none. The one line, "The time has come.", is Bruce's inner voice: it stays on the Signature click | **5** |
+| ANCIENT GRACE – PALE MOONLIGHT | C: tank grey vs smog brown (8.0 / 12.4); cyan vs gold (47.3); Bone vs steel (22.6). The yellow waiting ink, 12.2 from its gold, is gone | C: no family shared | C: no oval, no brass belt; two tails vs scallops; a leap vs three-quarter under an oval | C: flicker in place vs falling flakes; white vs brown smog | **~**: both are news media at night. The medium differs (TV vs print) and the Lexicons share no word, but the frame is a cousin. The jury keeps it: inherent to the source, no fix (§1) | **4** |
+| ANCIENT GRACE – WATCHFUL PROTECTOR | C: hue 166° vs 263° (8.3 / 10.0); cyan vs blue (28.7, plain, same family); Bone vs mercury (20.3). The alarm is 12.9 from its *working* mercury: decide on screen | C: Bangers vs Syncopate / Big Shoulders Stencil | C: wide-set vs standard ears; two tails vs a straight hem; a black bat on grey vs a lit relief on black; a tilted leap vs a front-on stand | C: flicker vs a still skyline; both lit low, white vs mercury | C: a TV studio vs an ops briefing. "Control room", LIVE and STANDBY lean toward radio procedure; kept to those three, and OK TO AIR? rather than GO AHEAD? | **5** |
+| ANCIENT GRACE – KNIGHTMARE | C: tank grey vs scorched brown (16.1 / 21.0); cyan vs crimson (75.4); both Bone (13.1) | C: Bangers vs Archivo | C: a cape vs a duster; an 8-unit bat on an open chest vs a 4.4-unit bat inside lapels; the armour vs the swung coat | C: static vs ash on the wind | C: broadcast vs a veteran with Alfred. The report close no longer echoes KNIGHTMARE's (§5) | **5** |
 
 **Against the other Wave 2 Themes, as revised by the jury**
 
 | Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
 |---|---|---|---|---|---|---|
-| ANCIENT GRACE – *Year One* | C (was ~): tank grey vs olive-khaki (6.4 / 11.1); cyan vs magenta (61.8); Bone vs Bone, 6.0 after the tint. The shared yellow is gone (phosphor green vs canary, 12.0) | C: Bangers vs Permanent Marker / Neucha | C (narrow): wide-set vs standard ears; two tails vs four ragged points. Both chests are a black bat on grey, told apart by value (a mid-grey suit vs the only light one) and size (8 vs 6 units). The two emblems must be traced and compared (§8) | C: specks flickering vs smoke rising; a white glow vs olive smog | C: TV vs a cop's notebook (both Miller). *Year One* keeps the captions; this Theme keeps the screen | **5** |
-| ANCIENT GRACE – *Absolute Batman* | C: tank grey vs violet (18.1 / 21.5); cyan vs lemon (47.9); Bone vs lavender (24.8) | C (was ~): Bangers is this Theme's alone; *Absolute* stamps in Bungee (§9.3) | C (narrow): wide-set ears vs *Absolute*'s, now standard; two tails vs six blades; a bat vs an axe block. Suits 13.9 apart (neutral grey vs teal) | C: static vs a bat colony | C: a broadcast vs a work shift | **5** |
-| ANCIENT GRACE – *Arkham Asylum* | C: tank grey vs plum-black (13.7 / 21.7); cyan vs claret (70.0); Bone vs Bone (9.9) | C: Bangers vs IM Fell English SC | C: wide-set vs tall ears; tails vs a bleeding hem; a visible bat vs a hidden one. Its flying descent moved to a trailing cape, so the canopy over the head is this Theme's alone (§3.7) | C (was ~): one `noise` painter, but specks that live one tick and flicker vs hairlines that stay and fade over 2–3 seconds, with still panes; white and low vs cold from the right (§3.9) | C: a broadcast vs a house | **5** |
+| ANCIENT GRACE – *Year One* | C (was ~): tank grey vs olive-khaki (6.4 / 11.1); cyan vs magenta (61.8); Bone vs Bone, 9.7 after the tint. The shared yellow is gone (phosphor green vs canary, 12.0) | C: Bangers vs Permanent Marker / Neucha | C (narrow): wide-set vs standard ears; two tails vs four ragged points. Both chests are a black bat on grey, told apart by value (a mid-grey suit vs the only light one) and size (8 vs 6 units). The two emblems must be traced and compared (§8) | C: specks flickering vs smoke rising; a white glow vs olive smog | C: TV vs a cop's notebook (both Miller). *Year One* keeps the captions; this Theme keeps the screen | **5** |
+| ANCIENT GRACE – *Absolute Batman* | C: tank grey vs violet (18.1 / 21.5); cyan vs lemon (47.9); Bone vs lavender (25.0) | C (was ~): Bangers is this Theme's alone; *Absolute* stamps in Bungee (§9.3) | C (narrow): wide-set ears vs *Absolute*'s, now standard; two tails vs six blades; a bat vs an axe block. Suits 13.9 apart (neutral grey vs teal) | C: static vs a bat colony | C: a broadcast vs a work shift | **5** |
+| ANCIENT GRACE – *Arkham Asylum* | C: tank grey vs plum-black (13.7 / 21.7); cyan vs claret (70.0); Bone vs Bone (12.7) | C: Bangers vs IM Fell English SC | C: wide-set vs tall ears; tails vs a bleeding hem; a visible bat vs a hidden one. Its flying descent moved to a trailing cape, so the canopy over the head is this Theme's alone (§3.7) | C (was ~): one `noise` painter, but specks that live one tick and flicker vs hairlines that stay and fade over 2–3 seconds, with still panes; white and low vs cold from the right (§3.9) | C: a broadcast vs a house | **5** |
 
 Every pair now scores 4 or 5; the only 4 is PALE MOONLIGHT, on Voice, which the jury accepted as inherent.
 
