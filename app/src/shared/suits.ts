@@ -758,10 +758,11 @@ const YEAR_ONE_SEATED = yearOneMap([SUIT, SUIT, SUIT], [])
 const YEAR_ONE_REACHING = yearOneMap(['...SSSSSSSSSSSSg', SUIT])
 
 /**
- * Year One's own bat on the grey, 2.5 units wide, from y 7 to 8: a unit of suit below the collar
+ * Year One's own bat on the grey, 2.73 units wide so it stands a full unit tall (the Wave's floor),
+ * from y 7 to 8: a unit of suit below the collar
  * (the Wave rule), resting on the canary belt.
  */
-const FIRST_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 2.5 }
+const FIRST_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 2.73 }
 
 /**
  * The hanging cape from its left shoulder round its right half and middle, its hem's points uneven;
@@ -792,8 +793,8 @@ const FIRST_CAPE = {
   openRight: 'M12.6 5 L16 5.2 L18.4 11.0 L17.0 10.1 L16.2 11.4 L14.6 9.8 L13.6 11.3 L12.6 10.5 Z',
   /** Closed around him, asleep: the hem's uneven points at his feet. */
   wrapped:
-    'M2.6 6.4 L13.4 6.4 L14.3 10.6 L12.6 9.5 L11.4 10.9 L9.8 9.7 L8.6 10.8 L7.2 9.6 L5.8 10.9 ' +
-    'L4.4 9.4 L3.1 10.7 L1.7 9.7 Z',
+    'M2.6 6.4 L13.4 6.4 L14.3 10.8 L13.0 9.2 L12.1 10.3 L10.4 9.5 L9.0 10.9 L7.8 9.3 L6.2 10.6 ' +
+    'L5.1 9.6 L3.7 10.9 L2.8 9.2 L1.7 10.1 Z',
 }
 
 /**
@@ -815,13 +816,26 @@ const CLOUD: readonly BatAt[] = [
   [-1.6, -0.1, 3, 'down'],
   [0.6, 1, 3.2, 'up'],
   [-2.6, 2.2, 2.8, 'down'],
-  [2.2, 0.2, 2.6, 'up'],
+  [3.4, 0.5, 2.8, 'up'],
   [3.6, 1.4, 2.6, 'down'],
   [0, 2.6, 2.4, 'up'],
 ]
-/** Two stragglers broken off the cloud, inside the box so their rims aren't cut. */
+/**
+ * Two stragglers broken off the cloud, a little in from where year-one.md puts them so they stay
+ * inside his box.
+ */
 const STRAGGLER_HIGH: BatAt = [-4.8, -0.3, 2, 'down']
 const STRAGGLER_LOW: BatAt = [-3.2, 4.6, 2.2, 'up']
+/** The cloud a beat before it closes: the same bats, spread wider round it. */
+const CLOSING: readonly BatAt[] = [
+  [-4.4, 0.9, 3, 'up'],
+  [-2, -0.4, 2.8, 'down'],
+  [0.9, 0.9, 3, 'up'],
+  [-3.1, 2.7, 2.6, 'down'],
+  [3.4, 0.5, 2.6, 'up'],
+  [4.2, 1.9, 2.4, 'down'],
+  [-0.2, 3.2, 2.2, 'up'],
+]
 
 /** A pose in the first suit, Year One's bat on his chest. */
 const yearOnePose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
@@ -881,7 +895,7 @@ const THE_SWARM: Script = [
     look: -GAZE,
     lookY: -0.2,
   },
-  { pose: inSwarm(CLOUD), ...UP_LEFT },
+  { pose: inSwarm(CLOSING), ...UP_LEFT },
   { pose: inSwarm([...CLOUD, STRAGGLER_HIGH]), ...UP_LEFT },
   { pose: inSwarm([...CLOUD, STRAGGLER_HIGH, STRAGGLER_LOW]), ...UP_LEFT },
 ]
@@ -904,7 +918,7 @@ export const BECOME_A_BAT_SUIT: Suit = {
     sleeping: [seated(YEAR_ONE_SEATED, FIRST_CAPE.wrapped)],
     // Two frames on the flying cadence: the hem lifts on the air.
     flying: [yearOneFlying(FIRST_CAPE.trailA), yearOneFlying(FIRST_CAPE.trailB)],
-    // The cape flung open from his outstretched arms, legs apart.
+    // The cape flung open from his outstretched arms.
     alarmed: [
       yearOnePose(YEAR_ONE_ARMS_OUT, [
         BACK,
