@@ -286,7 +286,7 @@ Bat-Clawd's viewBox is 28 units wide, so at the header's 60px one unit is about 
 **Fixes:**
 - **DKR:** at most 8 units wide (17px), leaving 1 unit of grey at each side; top at y ≥ 6; either 1 unit of grey above the belt, or a belt lighter than the bat (a suit-coloured belt with an Ash buckle). Whether 8 units fit depends on the traced proportions; at 2.6:1 the bat can be only about 6.5 wide. Trace first.
 - **Absolute:** the block at y 6–8. It then sits on the olive belt at 3.1:1, which is fine. Make the belt at least 1.5:1 against the suit.
-- **Year One:** the bat 6 units wide at y 7.2 (y 6.0–8.4 at about 2.5:1; the bat is not traced yet), which touches only the canary belt (high contrast). For the jaw, a 1-unit cowl-black collar under it, or a lighter suit. Decide on screen.
+- **Year One:** the bat 6 units wide at y 7.2 (y 6.0–8.4 at about 2.5:1; the bat is not traced yet). *Correction after §9:* that bat does not touch only the canary belt. The drafted belt row has cowl-black gaps under it, and the black hips row starts 0.1 unit below it, so it would merge into a dark apron. Year One's revised dossier (§7) draws it 5 units wide at y 6.0–8.0, resting on a full unit of solid canary belt. For the jaw, a 1-unit cowl-black collar under it, or a lighter suit. Decide on screen.
 - **Arkham:** no fix to the chest; it can't be seen at rest, by design. That matters for question 7: the anatomical bat is seen only on the disc and in the header, where its scallops are 3–5px and read.
 
 **Silhouette at real size:**
