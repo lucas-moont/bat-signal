@@ -166,7 +166,7 @@ Every variable a shipped Theme sets, in the order of `the-dark-knight-2008.css`,
 | `--waiting-rule` | `color-mix(in srgb, var(--ink-soft) 55%, var(--surface))` | P | |
 | `--report-rule` | `var(--line)` | P | Not red: VENGEANCE's report rule is |
 | `--clawd` | `#d77757` | Claude Code's `clawd_body` | Mascot body |
-| `--bone` | `#e2e3c8` | P: newsprint white at the ground's hue (h 111°, C* 14); 6.9 from KNIGHTMARE's Bone, 7.5 from DKR's, 18.1 from Arkham's (all three run in Bone) | Text, running work |
+| `--bone` | `#e2e3c8` | P: newsprint white at the ground's hue (h 111°, C* 14); 6.9 from KNIGHTMARE's Bone, 9.7 from DKR's, 17.4 from Arkham's (all three run in Bone) | Text, running work |
 | `--ash` | `#a29f86` | P: the khaki grey lifted | Secondary text |
 | `--bone-dim` | `#c9c9ae` | P | Log lines |
 | `--ash-dim` / `--chevron` | `var(--ash)` | P, aliased as KNIGHTMARE does | |
@@ -229,13 +229,13 @@ No exceptions, in either alarm option.
 
 ### ΔE00 against every other Theme
 
-Computed by us with CIEDE2000 (our implementation passes Sharma, Wu and Dalal's test pairs and reproduces the juries' figures, for example `#ff405f`–`#e3121b` = 14.6). The Wave 2 Themes are taken as the Wave 2 jury moved them: DKR's tank-grey ground (`#131a17` / `#1d2622`) and phosphor waiting ink (`#bde3a1`); *Absolute* unchanged; *Arkham*'s plum ground (`#1a0f15` / `#2b1822`) with Bone as working ink (`#ece9f3`).
+Computed by us with CIEDE2000 (our implementation passes Sharma, Wu and Dalal's test pairs and reproduces the juries' figures, for example `#ff405f`–`#e3121b` = 14.6). The Wave 2 Themes are taken as the Wave 2 jury moved them: DKR's tank-grey ground (`#131a17` / `#1d2622`) and phosphor waiting ink (`#bde3a1`); *Absolute* unchanged; *Arkham*'s plum ground (`#1a0f15` / `#2b1822`) with Bone as working ink (`#f3e5e8`); DKR's Bone is its final `#e9f2ee`.
 
 | Year One (A2) | VENGEANCE | PALE MOONLIGHT | WATCHFUL PROTECTOR | KNIGHTMARE | ANCIENT GRACE (DKR) | BLUE COLLAR (*Absolute*) | SERIOUS HOUSE (*Arkham*) |
 |---|---|---|---|---|---|---|---|
 | Surface / raised | 9.3 / 20.2 | 8.6 / 12.3 | 14.6 / 21.7 | 15.8 / 20.2 | **6.4 / 11.1** | 25.8 / 34.5 | 17.3 / 27.7 |
 | Alarm `#ff4dd2` | 35.9 | 65.2 | 37.7 | 23.2 | 61.8 | 80.0 | **11.9** |
-| Running white `#e2e3c8` vs their working ink | 25.4 (amber) | 30.2 (steel) | 21.9 (mercury) | **6.9** (Bone) | **7.5** (Bone) | 34.5 (lavender) | 18.1 (Bone) |
+| Running white `#e2e3c8` vs their working ink | 25.4 (amber) | 30.2 (steel) | 21.9 (mercury) | **6.9** (Bone) | 9.7 (Bone) | 34.5 (lavender) | 17.4 (Bone) |
 | Canary `#e6e08a` vs their waiting ink | 48.3 | 26.4 | 23.1 | 17.3 | 12.0 (phosphor) | 47.2 | 11.4 |
 
 Against Clawd orange: alarm 34.6, canary 38.3, running white 34.8. Absolute's lemon *alarm* is 8.3 from the canary *waiting* ink; the jury settled that the way Wave 1 settled the ambers: the stamp word carries the tier and the picker previews each alarm (jury §3.11). Every working and waiting ink is at least 6.9 from every other Theme's, which clears the Wave 2 rule (~5).
@@ -398,7 +398,7 @@ Scored by the jury's rules (jury-wave-1 §1). A Theme stays only with C on at le
 | KNIGHTMARE | C: khaki vs scorched brown; magenta vs crimson (23.2); running white vs Bone 6.9 | C | C: cape vs duster | C: smoke rising vs ash sideways | ~: two weary men at night (inherent, jury §1) | **4** |
 | ANCIENT GRACE (DKR) | C: khaki vs tank grey (6.4 / 11.1); magenta vs cyan; no shared yellow (canary vs phosphor 12.0) | C: Permanent Marker / Neucha vs Bangers | C: chalk suit vs mid-grey, a 6-unit bat vs up to 8 (shapes to compare, §8), four points vs two tails; the leap is DKR's alone now | C: smoke vs static | C: a notebook vs TV | **5** |
 | BLUE COLLAR (*Absolute*) | C: khaki vs violet; magenta vs lemon; khaki white vs lavender | C: Permanent Marker / Neucha vs Bungee | ~: standard ears in both now; four points vs blades and a bat vs a block, both black on a grey-ish suit (chalk vs teal, 37.8) | C: smoke vs bats | C: the work-shift lines are gone; a cop's notebook vs a shift | **4** |
-| SERIOUS HOUSE (*Arkham*) | C: khaki vs plum (17.3 / 27.7); magenta vs claret (11.9); khaki white vs Bone (18.1) | C: Neucha vs IM Fell English SC (the hand is Year One's) | C: standard vs tall ears; visible vs hidden chest | C: smoke vs scratches that fade | C: a notebook vs a house | **5** |
+| SERIOUS HOUSE (*Arkham*) | C: khaki vs plum (17.3 / 27.7); magenta vs claret (11.9); khaki white vs Bone (17.4) | C: Neucha vs IM Fell English SC (the hand is Year One's) | C: standard vs tall ears; visible vs hidden chest | C: smoke vs scratches that fade | C: a notebook vs a house | **5** |
 
 With A3 as the alarm instead, the palette axis still scores C everywhere (ground and working ink differ), but against KNIGHTMARE the alarms would sit 6.1 apart, and against VENGEANCE 8.5–10.4: the alarm itself would stop telling them apart.
 
