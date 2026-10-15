@@ -4,7 +4,7 @@ Research note, 2026-10-15. Scope: trace the chest bat of the first suit in *Batm
 
 *Built in #122: BAT_1987 ships as traced here (`app/src/shared/emblems.ts`). The Theme shipped with the trade paperback's red as its alarm and a grey suit with a collar, so on the lit disc the rings are red, not the magenta below, and the chest bat is 2.73 units wide (a full unit tall), not 5. BAT_1986 is not shipped; it waits for #120.*
 
-*Built in #120: BAT_1986 ships as traced here, round, on the disc and in the masthead. On the chest it is stretched to about 2.2:1 (6.6 × 3 units), picked on screen as the Book Two chest's shape (§4). That chest still reads apart from Year One's: a 6.6-unit bat on a mid-grey suit against a 2.73-unit one on the only light suit, a round blot stretched against a flat bar with horns.*
+*Built in #120, then reworked: §4's open question is answered in [`dkr-rework.md`](dkr-rework.md) §2–3. The Book Two cover shows the first suit, and no chest wears the round Book Three bat. ANCIENT GRACE wears the second suit's wide bat, traced from the animated film (`BAT_1986_CHEST`, 2.3:1), on the chest, the disc and the masthead. BAT_1986 stays in `emblems.ts` as this note's trace and is no longer worn. Against Year One's it still reads apart: a 6.9-unit bat on a mid-grey suit against a 2.73-unit one on the only light suit, mid-height wingtips and a long tail against upright edges and horns.*
 
 Provenance key used below: **Read** = seen by us on a reproduction of a page or cover, named with its URL. **Measured** = taken off that image with a script, in pixels. **Inferred** = our reading of what those facts imply.
 
