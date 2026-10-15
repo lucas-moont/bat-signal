@@ -5,10 +5,10 @@ import { diffNotices } from '../src/shared/notices'
 import { DEFAULT_SETTINGS } from '../src/shared/settings'
 import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/shared/types'
 import { attentionCopy, caseHeader } from '../src/shared/view'
+import { THEME_IDS, THEMES } from '../src/shared/themes'
 import {
   BECOME_A_BAT_WORDS,
   KNIGHTMARE_WORDS,
-  PALE_MOONLIGHT_WORDS,
   STANDARD_TERMS,
   STANDARD_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
@@ -175,12 +175,11 @@ describe("each Theme's Voice", () => {
     voice.settings.kicker,
   ]
   const standard = new Set(lines(STANDARD_WORDS))
-  const themes = { PALE_MOONLIGHT_WORDS, WATCHFUL_PROTECTOR_WORDS, KNIGHTMARE_WORDS, BECOME_A_BAT_WORDS }
 
   it('repeats no line of another Theme', () => {
     const said = new Map<string, string>()
-    for (const [theme, words] of Object.entries(themes))
-      for (const line of lines(words)) {
+    for (const theme of THEME_IDS)
+      for (const line of lines(THEMES[theme].words)) {
         if (line === undefined || standard.has(line)) continue
         expect(said.get(line) ?? theme, `"${line}" in ${theme}`).toBe(theme)
         said.set(line, theme)
