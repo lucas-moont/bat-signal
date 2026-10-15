@@ -371,4 +371,19 @@ What Wave 2 takes from the Wave 3 candidates, so their dossiers start from it:
 
 ## 9. The maintainer's decisions
 
-_Pending._
+Answered on 2026-10-14. They override the recommendations above where they differ.
+
+1. **DKR and Year One split the green-grey.** DKR moves toward the tank grey (h ~166) and takes a pale phosphor green as its waiting ink. Year One moves toward the olive-khaki (h ~110) and keeps Gordon's canary.
+2. **Absolute keeps the violet and the lavender.** Arkham moves to a plum-black (`#1a0f15` / `#2b1822`) with Bone as its working ink. Whether claret on plum reads as the Joker's palette is checked on screen.
+3. **Bangers is DKR's,** for its display and its stamps. Absolute's stamps move to Bungee, or Luckiest Guy if PERMISSION doesn't fit.
+4. **The upright hand is Year One's** (Neucha). Arkham's stamps move to IM Fell English SC at about 10.5px if PERMISSION fits, or to a scrawl hand.
+5. **The grey suit, the big black chest bat and the armour go home to DKR,** with the armour as its alarmed Pose. Year One keeps its own black bat on the only light suit. Absolute keeps its block on its sampled teal. The three suits sit at least 10 ΔE00 apart.
+6. **The tall ears are Arkham's,** with the tips drawn as a front layer and no viewBox change. Absolute goes back to standard ears.
+7. **ADR 0001 is amended narrowly:** when a work shows no bat symbol of its own, its Theme may draw the bat the work shows, from life, credited as our drawing. That is Arkham's emblem.
+8. **Absolute's lemon alarm stays,** judged on screen in the picker, on a stamp and as a lit disc, beside PALE MOONLIGHT's gold.
+9. **Every §4 Lexicon fix is adopted.** DKR's Case → Channel stays; Year One's SEE ME is decided on screen.
+10. **Bats appear in both:** Absolute's colony as its Atmosphere and Year One's swarm as its Signature, sharing one bat drawing. No later Theme uses bats in either slot.
+11. **Display names:** **ANCIENT GRACE** for *The Dark Knight Returns* (the maintainer's choice, replacing TRIUMPHANT), **BLUE COLLAR** for *Absolute Batman*, **BECOME A BAT** for *Year One* (its wording checked on a page before it ships), **SERIOUS HOUSE** for *Arkham Asylum*.
+12. **The engine stays small:** two new Atmosphere painters (`noise` for DKR and Arkham, `smoke` for Year One), a bat option on the ash painter, `--font-headline` and `--font-dateline`, and no viewBox change.
+
+Everything flagged "decide on screen" in §7 stays that way: it is decided in each Theme's build, from a labelled comparison image.
