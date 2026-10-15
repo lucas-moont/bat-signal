@@ -5,6 +5,7 @@ import type {
   AshAtmosphere,
   Atmosphere,
   LitWindowsAtmosphere,
+  NoiseAtmosphere,
   RainAtmosphere,
   SmokeAtmosphere,
   SnowAtmosphere,
@@ -46,6 +47,8 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return ash(atmosphere, random)
     case 'smoke':
       return smoke(atmosphere, random)
+    case 'noise':
+      return noise(atmosphere, random)
   }
 }
 
@@ -469,6 +472,85 @@ function smoke(
           ctx.arc(x, y, radius * ring, 0, 2 * Math.PI)
           ctx.fill()
         }
+      }
+    },
+  }
+}
+
+interface Mark {
+  x: number
+  y: number
+  /** Ticks since it appeared where it is, fractional when a tick comes late. */
+  age: number
+}
+
+/** A band's soft edge: the boxes it is painted as, about one middle, each a share of its height. */
+const BAND_LAYERS = [1, 0.6, 0.3]
+
+/**
+ * Noise: marks at a few strengths, each strength filled as one path a tick. A mark stays put for its
+ * life, then appears somewhere else on the canvas: it flickers in place and never falls. The marks
+ * were born a tick apart, so a share of them moves each tick. A band, if it has one, rolls down
+ * over them and comes in again from above the top once it has rolled off the bottom.
+ */
+function noise(
+  { color: variable, size, density, alphas, life, band }: NoiseAtmosphere,
+  random: () => number,
+): Painter {
+  /** The marks at each strength, none until it has a size. */
+  let layers: Mark[][] = alphas.map((): Mark[] => [])
+  let width = 0
+  let height = 0
+  /** The band's top. */
+  let bandY = 0
+  let color = ''
+
+  /** Somewhere new on the canvas, on whole pixels. */
+  const place = (m: Mark) => {
+    m.x = Math.floor(random() * width)
+    m.y = Math.floor(random() * height)
+  }
+
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      bandY = 0
+      layers = alphas.map((): Mark[] => [])
+      for (let i = 0; i < howMany(width, height, density); i++) {
+        const m = { x: 0, y: 0, age: i % life }
+        place(m)
+        layers[Math.floor(random() * alphas.length)]!.push(m)
+      }
+    },
+    paint(ctx, dt) {
+      if (!width || !height) return
+      const step = Math.min(dt, MAX_DT) / STEP
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = color
+      alphas.forEach((alpha, level) => {
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        for (const m of layers[level]!) {
+          m.age += step
+          if (m.age >= life) {
+            m.age %= life
+            place(m)
+          }
+          ctx.rect(m.x, m.y, size, size)
+        }
+        ctx.fill()
+      })
+      if (!band) return
+      bandY += band.fall * step
+      if (bandY > height) bandY -= height + band.height
+      const middle = bandY + band.height / 2
+      ctx.globalAlpha = band.alpha / BAND_LAYERS.length
+      for (const share of BAND_LAYERS) {
+        const h = band.height * share
+        ctx.fillRect(0, middle - h / 2, width, h)
       }
     },
   }
