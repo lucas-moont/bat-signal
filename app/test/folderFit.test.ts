@@ -58,7 +58,7 @@ describe('the line count', () => {
   // Worked example: three 10px words in a 25px room, with a space 5px wide, take two lines.
   it('breaks at spaces, greedily', () => {
     expect(lines('aa bb cc', 25, (s) => s.length * 5)).toBe(2)
-    expect(lines('aa bb cc', 25, (s) => s.length * 5)).toBe(2)
-    expect(lines('aa bb cc', 25, (s) => s.length * 5)).toBe(1)
+    expect(lines('aa\u00a0bb cc', 25, (s) => s.length * 5)).toBe(2)
+    expect(lines('aa\u00a0bb\u00a0cc', 25, (s) => s.length * 5)).toBe(1)
   })
 })
