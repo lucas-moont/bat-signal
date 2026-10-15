@@ -2,31 +2,29 @@
 
 Research note, 2026-10-14. Scope: one Bat-Signal Theme after *Batman: The Dark Knight Returns* (Frank Miller, with Klaus Janson and Lynn Varley, DC, 1986), for Wave 2 (#118, LUC-79). It covers palette, type, Voice, Lexicon, Bat-Clawd, the emblem, the Signal and the Atmosphere. It is written against the shipped token tables in [`wave-2-brief.md`](wave-2-brief.md) §3 and the CSS on `main` at v1.2.0, not against the Wave 1 dossiers. The terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
+Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
+
 The Wave 1 jury found DKR boxed in ([`jury-wave-1.md`](jury-wave-1.md) §3, §9): PALE MOONLIGHT holds the gold oval and the newsroom, WATCHFUL PROTECTOR the night blue, and lightning flashes cry wolf. This dossier's job is to find it a space of its own.
 
 ## 1. TL;DR
 
 - **The Theme in one sentence:** the panel is a television left on in a dark room in 1986. Talking heads argue, the channels click past, static hums between them, and when something needs you the screen lights the colour of the lightning bolt the old man leaps across.
-- **Display name:** **TRIUMPHANT** (recommended). **Credit:** "Frank Miller's The Dark Knight Returns (1986)". *The Dark Knight Triumphant* is the title of the second book, the one where the old man beats the Mutant leader in the mud ([Wikipedia](https://en.wikipedia.org/wiki/The_Dark_Knight_Returns)). It is a book title, not dialogue, so it does not spend the Theme's one short line. Alternatives in §5.
-- **The space of its own:** broadcast, not print. PALE MOONLIGHT is a newspaper: editions, the desk, the wire, "— 30 —". This Theme is a TV: channels, live feeds, the anchor handing over, the station going off air, static, the 16-screen grid. Every Lexicon word and Voice line below is a TV word, never a press word.
-- **Alarm color: Lightning cyan `#3fdcff`** (Palette A, recommended). It is the hue of the bolt's edge on the #1 cover (LCh hue 217–237°), pushed to full chroma, as KNIGHTMARE pushed Superman's shield. It sits 28.7 ΔE00 from WATCHFUL PROTECTOR's Blue Flame, 59.2 from Clawd orange and 47–76 from the other alarms (§3). **Palette B, Arcade magenta `#ff3fa4`,** is the fallback if the cyan reads too close to WATCHFUL PROTECTOR on screen; its source is weaker.
-- **Ground:** Varley's green-grey, from her own hand-painted colour art for Book Two, page 20 (ink `#191b16`, tank grey `#3b403d`). LCh hue 135–140°, against WATCHFUL PROTECTOR's 262–265°. No night blue.
-- **Working ink: Bone.** Waiting ink: Robin yellow, pale (`#e3dc86`), after Carrie Kelley.
-- **Type:** **Bangers** (OFL), comic cover lettering, for the display and the stamps. Barlow Semi Condensed and JetBrains Mono stay.
-- **Lexicon (broadcast):** Channel · Your cue · OK TO AIR? · BREAKING · OVER TO YOU · LATEST · FROZEN, with ON AIR / OFF AIR for a case opening and closing, and LIVE / STANDBY for working and idle (§6).
-- **Bat-Clawd takes back DKR's own pieces:** the grey suit and the big black chest bat at rest, and **the armour as the alarmed Pose** (KNIGHTMARE shipped without it; Snyder borrowed it from Miller). **Signature pose: the lightning leap** (recommended): a mid-air leap held like the #1 cover, with a still bolt in Bone behind him, never a flash. Option B: the horse.
-- **Atmosphere:** a new kind, **static**: sparse TV snow re-drawn each tick and a slow roll bar, lit from the screen. It needs an engine PR (§9).
+- **Display name:** **ANCIENT GRACE** (the maintainer's choice, jury §9.11, replacing TRIUMPHANT). **Credit (`film` field):** "Frank Miller's The Dark Knight Returns (1986)"; `words.ts` adds "after", so the picker reads "after Frank Miller's The Dark Knight Returns (1986)", never "after after". The phrase is Bruce's narration in Book One, remembering the bat he met as a boy when he fell into the cave: "Gliding with ancient grace…" (as quoted by [TV Tropes](https://tvtropes.org/pmwiki/pmwiki.php/Quotes/BatmanTheDarkKnightReturns) and [Street Tech](https://www.streettech.com/bcp/BCPgraf/Media/batmanDNR.htm); the page itself was not seen, §12). It fits the Theme twice: the bat is the creature Bruce becomes, and *ancient* is the old man who returns. Like PALE MOONLIGHT, the name is one allusion and the panel keeps one short line ("The time has come.", §5).
+- **The space of its own:** broadcast, not print. PALE MOONLIGHT is a newspaper: editions, the desk, the wire, "— 30 —". This Theme is a TV: channels, live feeds, the anchor's cue, the station going off air, static, the 16-screen grid. Every Lexicon word and Voice line below is a TV word, never a press word.
+- **Alarm color: Lightning cyan `#3fdcff`.** It is the hue of the bolt's edge on the #1 cover (LCh hue 217–237°), pushed to full chroma, as KNIGHTMARE pushed Superman's shield. It sits 28.7 ΔE00 from WATCHFUL PROTECTOR's Blue Flame, 59.2 from Clawd orange, and 47–76 from every other alarm, Wave 2 included (§3). Its distance from WATCHFUL PROTECTOR's working mercury (12.9) is decided on screen in the picker. The old Palette B (arcade magenta) is withdrawn: it was 8.0 from *Year One*'s alarm and 5.4 from *Arkham Asylum*'s (jury §3.10).
+- **Ground: Varley's tank grey,** from her own hand-painted colour art for Book Two, page 20 (tank grey `#3b403d`, h 152–158°). After the jury it moves to that end of the green-grey family, h ~166° (`#131a17` / `#1d2622`), and leaves the olive end to *Year One* (jury §3.1, §9.1): 6.4 / 11.1 ΔE00 from *Year One*'s moved ground and 8.3 / 10.0 from WATCHFUL PROTECTOR's.
+- **Working ink: Bone** (`#e9f2ee`, tinted to the ground). **Waiting ink: pale phosphor green `#bde3a1`**, a CRT's glow; Carrie Kelley's yellow goes to *Year One*'s canary.
+- **Type:** **Bangers** (OFL), comic cover lettering, for the display and the stamps (jury §9.3). Empty-state and sheet titles go to Barlow 600 through the new `--font-headline` token, because Bangers has no lowercase. Barlow Semi Condensed and JetBrains Mono stay.
+- **Lexicon (broadcast):** Channel · Your cue · OK TO AIR? · DEAD AIR · YOU'RE ON · LATEST · FROZEN, with ON AIR / OFF AIR for a case opening and closing, and LIVE / STANDBY for working and idle (§6; jury §4 and §9.9). Every stamp is narrower than PERMISSION in Bangers.
+- **Bat-Clawd takes back DKR's own pieces** (jury §9.5): a neutral grey suit (`#666864`) with **a big black chest bat, at most 8 units wide, between y 6 and the belt**, a suit-grey belt so the bat never merges with it, a cape with two long tails ending at y 11.5, and **the armour as the alarmed Pose**. **Signature pose: the lightning leap**, held like the #1 cover, with a still bolt in Bone behind him, never a flash. Option B: the horse.
+- **Atmosphere: TV static** on the shared **`noise` painter** (with *Arkham Asylum*'s scratches, jury §6 and §9.12): specks that live one tick, and a slow roll bar. Lit from the screen, low and centred.
 
-**Open questions for the maintainer:**
+**Open questions for the maintainer** (after the jury; the rest is decided in §9 of [`jury-wave-2.md`](jury-wave-2.md)):
 
-1. **Alarm: Palette A, lightning cyan, or B, arcade magenta?** Decide in the picker beside WATCHFUL PROTECTOR: A's alarm is 28.7 ΔE00 from Blue Flame, its fill 18.5 from WATCHFUL PROTECTOR's fill and 12.9 from its mercury working ink. *Recommended: A.*
-2. **Case → Channel, or keep Case?** *Recommended: Channel.*
-3. **Permission: OK TO AIR?, GO AHEAD? (radio procedure, near WATCHFUL PROTECTOR's ops register) or the standard word?** *Recommended: OK TO AIR?*
-4. **Waiting: OVER TO YOU** fits the margin room but is 4px wider than PERMISSION; the fallback YOUR TURN sits next to WATCHFUL PROTECTOR's YOUR MOVE. *Recommended: OVER TO YOU, if the width test passes.*
-5. **Signature: the lightning leap** (held mid-air like a freeze-frame) **or the horse** (needs a prototype for size)? *Recommended: the leap.*
-6. **Soft tier: pale Robin yellow** (12.2 from PALE MOONLIGHT's gold alarm) **or pale lightning cyan** (tiers differ by chroma only)? *Recommended: yellow.*
-7. **Display name: TRIUMPHANT, A GOOD DEATH or BOLT FROM THE BLUE?** *Recommended: TRIUMPHANT.*
-8. **The armour as the alarmed Pose, the grey suit and the big chest bat come home to DKR** (KNIGHTMARE shipped without them). Confirm, and tell *Absolute Batman* to keep its bulk out of armour plates. *Recommended: yes.*
+1. **Signature: the lightning leap** (held mid-air like a freeze-frame) **or the horse** (needs a prototype for size)? *Recommended: the leap.* Decide on screen at 54px, with the bolt.
+2. **Permission: OK TO AIR?** (kept by the jury) **or GO AHEAD?** (radio procedure, near WATCHFUL PROTECTOR's ops register)? *Recommended: OK TO AIR?*
+
+**Decide on screen** (from labelled comparison images, as the jury lists them): the cyan alarm and the lit lens beside WATCHFUL PROTECTOR's; the phosphor-green waiting ink; the leap and its bolt at 54px; the static as "a set left on", not a broken one; Bangers at 12px (its small `Z` in FROZEN); LATEST against NEW REPLY.
 
 ## 2. Visual identity and sources
 
@@ -84,54 +82,52 @@ We found **no evidence that any later edition was recoloured**, and none that it
 
 ### The Alarm color
 
-Off the table: red (VENGEANCE, and KNIGHTMARE's crimson; the heartbeat `#ea2b17` is VENGEANCE's red), gold or yellow (PALE MOONLIGHT; Varley's own yellow samples as ochre), blue (WATCHFUL PROTECTOR), and anything near Clawd orange (the Mutant visor).
+Off the table: red (VENGEANCE, and KNIGHTMARE's crimson; the heartbeat `#ea2b17` is VENGEANCE's red), gold or yellow (PALE MOONLIGHT; Varley's own yellow samples as ochre), blue (WATCHFUL PROTECTOR), anything near Clawd orange (the Mutant visor), and, after the Wave 2 jury, the pinks (*Year One*'s magenta, *Arkham Asylum*'s claret) and the lemon (*Absolute Batman*).
 
-**Palette A, Lightning cyan (recommended).** Miller's own idea for the book is the bolt: "striking like lightning as a force for justice". The bolt's edge on the cover is a pale cyan at hue 217–237°; the alarm is that hue at full chroma, `#3fdcff` (hue 225°). It is not a flash: it is a colour that lights only when something needs you, like every Theme's alarm. The jury's ban was on lightning *flashes* (a flash with no news cries wolf), not on the colour.
+**Lightning cyan.** Miller's own idea for the book is the bolt: "striking like lightning as a force for justice". The bolt's edge on the cover is a pale cyan at hue 217–237°; the alarm is that hue at full chroma, `#3fdcff` (hue 225°). It is not a flash: it is a colour that lights only when something needs you, like every Theme's alarm. The Wave 1 jury's ban was on lightning *flashes* (a flash with no news cries wolf), not on the colour.
 
-**Palette B, Arcade magenta (fallback).** The neon of the Mutants' arcade and their visors on TV, `#ff3fa4`. Far from every shipped alarm except KNIGHTMARE's crimson (16.1, the same distance KNIGHTMARE keeps from VENGEANCE). Its source is weak: two later-printing screenshots and no line from the creators.
+**Withdrawn: Palette B, arcade magenta `#ff3fa4`.** It was the first draft's fallback, from the Mutants' arcade neon. The jury measured it 8.0 from *Year One*'s alarm and 5.4 from *Arkham Asylum*'s, so it is no longer available (jury §3.10).
 
-**Measured** (ΔE00, computed by us; the script is in the session scratchpad, `scripts-dkr/palette.py`):
+**Measured** (ΔE00, computed by us; scripts in the session scratchpad, `scripts-dkr/palette.py` and `palette2.py`; the Wave 2 values are the jury's revised ones, §2 and §9):
 
-| | VENGEANCE `#e3121b` | PALE MOONLIGHT `#f0c24b` | WATCHFUL PROTECTOR `#3d8bff` | KNIGHTMARE `#ff405f` | Clawd `#d77757` |
-|---|---|---|---|---|---|
-| **A alarm `#3fdcff`** | 75.6 | 47.3 | **28.7** | 75.4 | 59.2 |
-| A fill `#12a9d6` (vs each `--signal`) | 65.4 | 48.5 | **18.5** | 66.3 | 51.1 |
-| **B alarm `#ff3fa4`** | 29.1 | 60.9 | 40.4 | **16.1** | 29.1 |
-| B fill `#c0166e` (vs each `--signal`) | 25.6 | 51.4 | 41.9 | **15.9** | 31.4 |
+| | VENGEANCE `#e3121b` | PALE MOONLIGHT `#f0c24b` | WATCHFUL PROTECTOR `#3d8bff` | KNIGHTMARE `#ff405f` | *Year One* `#ff4dd2` | *Absolute* `#ecf05a` | *Arkham* `#ec5c94` | Clawd `#d77757` |
+|---|---|---|---|---|---|---|---|---|
+| **Alarm `#3fdcff`** | 75.6 | 47.3 | **28.7** | 75.4 | 61.8 | 47.9 | 70.0 | 59.2 |
+| Fill `#12a9d6` (vs each `--signal`) | 65.4 | 48.5 | **18.5** | 66.3 | 54.6 | 53.6 | 65.6 | 51.1 |
 
-Against other inks: A's `#3fdcff` is 20.4 from WATCHFUL PROTECTOR's `--ink-hot` `#5aa9ff`, **12.9 from its working mercury `#7cc6c4`** and 17.2 from PALE MOONLIGHT's working steel `#8fb0d3`. B's `#ff3fa4` is 14.8 from KNIGHTMARE's `--ink-hot` `#ff5c72`.
+Against other Themes' inks: `#3fdcff` is 20.4 from WATCHFUL PROTECTOR's `--ink-hot` `#5aa9ff`, **12.9 from its working mercury `#7cc6c4`**, 17.2 from PALE MOONLIGHT's working steel `#8fb0d3`, 31.4 from *Absolute*'s working lavender, and 42.0 from *Year One*'s canary.
 
-**The honest risk of A** is WATCHFUL PROTECTOR. Its alarm is 28.7 away, far more than the 5–8 the jury accepted between the three red alarms, and the grounds differ in hue by 120°. But WATCHFUL PROTECTOR's *working* ink, mercury, is 12.9 from A's alarm: the same "one colour, two meanings across Themes" the jury met with 2022's amber and PALE MOONLIGHT's gold (§4.5), and settled by having the picker preview each Theme's alarm on a stamp. Decide it in the picker, with WATCHFUL PROTECTOR's folder next to this one (open question 1, §1).
+**The one risk** is WATCHFUL PROTECTOR. Its alarm is 28.7 away, far more than the 5–8 the Wave 1 jury accepted between the three red alarms, and the grounds differ in hue (166° against 263°). But WATCHFUL PROTECTOR's *working* mercury is 12.9 from this alarm: the "one colour, two meanings across Themes" case Wave 1 §10.5 settled by having the picker preview each Theme's alarm on a stamp. The Wave 2 jury keeps it that way (§3.10): **decide on screen**, with WATCHFUL PROTECTOR's folder next to this one, on a stamp and as a lit disc.
 
 ### What `--signal` paints in this Theme
 
 As in every shipped Theme since #72: only "needs you". The wordmark, focus, toggles, selection, the tab underline and progress go to `--accent` (Bone). Card hover borders take `--line`. The emblem in the header is Ash. The lightning-cyan fill lights the disc lens, the count chip (dark ink on it), the alarm stamps, the aura and the armour's power glow in the alarmed Pose. Nothing cyan at rest: the Signature's bolt is Bone, not cyan (§7).
 
-### Token map (Palette A)
+### Token map
 
-The 101 variables every shipped Theme sets (the intersection of the four stylesheets on `main`; `themes.test.ts` asserts them). **S-A / S-C / S-T** as above; **P** = proposed by us.
+The 101 variables every shipped Theme sets, plus the new `--font-headline` (the intersection of the four stylesheets on `main`; `themes.test.ts` asserts them). **S-A / S-C / S-T** as above; **P** = proposed by us.
 
 | Token | Value | Origin | Role |
 |---|---|---|---|
-| `--abyss` | `#0a0c09` | P: S-A ink black `#191b16`, darkened at its hue | Page |
-| `--smoke` | `#0e110d` | P | Top gradients, notice foot |
-| `--surface` | `#151a14` | P: S-A, between ink and tank shadow | Cards, notice top |
-| `--raised` | `#20271f` | P: S-A tank shadow `#2b2f2c`, darkened | Card hover |
+| `--abyss` | `#090c0b` | P: near-black at the tank grey's hue (h 166°) | Page |
+| `--smoke` | `#0d110f` | P | Top gradients, notice foot |
+| `--surface` | `#131a17` | Jury §2: toward the S-A tank grey, h 166° | Cards, notice top |
+| `--raised` | `#1d2622` | Jury §2: the S-A tank shadow `#2b2f2c`, darkened, h 165° | Card hover |
 | `--line` | `#3b403d` | **S-A: tank grey**, as sampled | Rules, borders, card hover border |
-| `--surface-deep` | `#0c0f0b` | P | |
-| `--frame` | `#1a2019` | P | |
-| `--header-fade` | `#0c0f0b` | P | |
-| `--sheet-top` | `#1c221b` | P | |
+| `--surface-deep` | `#0b0f0d` | P | |
+| `--frame` | `#161d1a` | P | |
+| `--header-fade` | `#0b0f0d` | P | |
+| `--sheet-top` | `#18201c` | P | |
 | `--shadow` | `#000000` | P | |
-| `--blood` | `#4f4b22` | P: Robin yellow in shadow | Disc hover border, waiting rule. Not the alarm |
-| `--signal` | `#12a9d6` | P: A at lower lightness | Lit fill, count chip. Alarm only |
+| `--blood` | `#3e4c36` | P: the phosphor green in shadow | Disc hover border, waiting rule. Not the alarm |
+| `--signal` | `#12a9d6` | P: the alarm at lower lightness | Lit fill, count chip. Alarm only |
 | `--signal-glow` | `color-mix(in srgb, var(--signal-hot) 40%, transparent)` | P | Alarm halo |
 | `--signal-hot` | `#3fdcff` | P: **S-C bolt edge hue (217–237°) at full chroma** | Small lit pixels, lens ring |
-| `--on-signal` | `var(--abyss)` | P | Dark ink on the cyan chip (7.17:1) |
-| `--ink-hot` | `#3fdcff` | P: same as `--signal-hot`, no lift needed | OK TO AIR? and BREAKING stamps, hot pen |
-| `--ink-soft` | `#e3dc86` | P: Carrie Kelley's yellow (S-T `#fce147`), paled and kept off PALE MOONLIGHT's gold | OVER TO YOU and LATEST stamps, soft pen |
+| `--on-signal` | `var(--abyss)` | P | Dark ink on the cyan chip (7.18:1) |
+| `--ink-hot` | `#3fdcff` | P: same as `--signal-hot`, no lift needed | OK TO AIR? and DEAD AIR stamps, hot pen |
+| `--ink-soft` | `#bde3a1` | P (jury §2): pale phosphor green, a CRT's glow; no sample | YOU'RE ON and LATEST stamps, soft pen |
 | `--ink-live` | `var(--bone)` | P | Working |
-| `--ink` | `#c3cbc1` | P | Secondary body text |
+| `--ink` | `#c2cbc6` | P | Secondary body text |
 | `--accent` | `var(--bone)` | P | Wordmark, focus, toggles |
 | `--accent-hot` | `var(--bone)` | P | |
 | `--accent-deep` | `var(--line)` | P | |
@@ -150,19 +146,19 @@ The 101 variables every shipped Theme sets (the intersection of the four stylesh
 | `--waiting-rule` | `var(--blood)` | P | |
 | `--report-rule` | `var(--line)` | P | |
 | `--clawd` | `#d77757` | Claude Code's `clawd_body`, unchanged | |
-| `--bone` | `#eef1e8` | P: the white of the TV boxes, a hair green to sit on the ground | Text, working |
-| `--ash` | `#949d92` | P: S-A greys lifted | Secondary text |
+| `--bone` | `#e9f2ee` | P: the white of the TV boxes, tinted to the ground's hue (6.0 from *Year One*'s Bone) | Text, working |
+| `--ash` | `#939c97` | P: S-A greys lifted | Secondary text |
 | `--bone-dim` | `var(--ink)` | P | |
 | `--ash-dim` | `var(--ash)` | P | |
 | `--chevron` | `var(--ash)` | P | |
 | `--clawd-eye` | `var(--bone)` | P | |
 | `--clawd-eye-dim` | `color-mix(in srgb, var(--clawd-eye) 18%, transparent)` | P | |
-| `--cowl` | `#0d100e` | P: S-A ink | Cowl, cape |
+| `--cowl` | `#0d100e` | P: S-A ink | Cowl, gloves |
 | `--cowl-edge` | `color-mix(in srgb, #e8e1d9 22%, transparent)` | P: the neutral rim the Costume Rule asks for | |
 | `--cowl-shine` | `var(--raised)` | P | |
-| `--suit` | `#5d6661` | P: the second suit's grey (S-T `#3c4b4f`), lifted so the black bat reads on it (3.38:1) | |
+| `--suit` | `#666864` | Jury §2: a neutral grey, 13.9 from *Absolute*'s revised teal `#3f6b6e` and 20.1 from *Year One*'s light grey; the black bat reads on it at 3.56:1 | Suit, and the belt |
 | `--gloves` | `#0d100e` | P | |
-| `--belt` | `#2b312d` | P | |
+| `--belt` | `var(--suit)` | Jury §5: a suit-grey belt, so the chest bat never merges with it | Only the buckle shows |
 | `--buckle` | `var(--ash)` | P | |
 | `--cape` | `#050605` | P | |
 | `--cape-rim` | `var(--cowl-edge)` | P | |
@@ -172,9 +168,9 @@ The 101 variables every shipped Theme sets (the intersection of the four stylesh
 | `--aura-glow` | `color-mix(in srgb, var(--signal-hot) 55%, transparent)` | P | |
 | `--emblem` | `var(--ash)` | P | Header bat, flat |
 | `--disc-bat` | `var(--raised)` | P | Unlit bat in the glass |
-| `--glass-shine` | `#1f261e` | P | |
+| `--glass-shine` | `#1c2420` | P | |
 | `--glass` | `var(--abyss)` | P | |
-| `--disc-rim-inner` | `#060805` | P | |
+| `--disc-rim-inner` | `#050807` | P | |
 | `--disc-rim-outer` | `var(--line)` | P | |
 | `--lens-core` | `#f8feff` | **S-C: bolt core** | Lit lens centre |
 | `--lens-rim` | `var(--signal)` | P | |
@@ -183,8 +179,8 @@ The 101 variables every shipped Theme sets (the intersection of the four stylesh
 | `--disc-lens` | scanlines over `radial-gradient(circle at 50% 45%, var(--lens-core), var(--signal-hot) 55%, var(--signal))` | P (§8) | |
 | `--notice-top` | `var(--surface)` | P | |
 | `--notice-foot` | `var(--smoke)` | P | |
-| `--notice-hover-top` | `#232b22` | P | The lightest ground; every text token is checked on it |
-| `--notice-hover-foot` | `#141913` | P | |
+| `--notice-hover-top` | `#202924` | P | The lightest ground; every text token is checked on it |
+| `--notice-hover-foot` | `#111714` | P | |
 | `--haze` | `color-mix(in srgb, var(--bone) 5%, transparent)` | P: the TV's glow, neutral, never cyan | |
 | `--haze-edge` | `color-mix(in srgb, var(--bone) 2%, transparent)` | P | |
 | `--haze-inset` | `auto -10% -40% -10%` | P: low and centred, a set in front of the viewer (§9) | |
@@ -201,158 +197,168 @@ The 101 variables every shipped Theme sets (the intersection of the four stylesh
 | `--heading-case` | `uppercase` | P | |
 | `--font-case-title` | `var(--font-body)` | P | |
 | `--case-title-weight` | `600` | P | |
+| `--font-headline` (new, jury §6) | `var(--font-body)`, at 600 | Jury §2: Bangers has no lowercase, and an all-clear title in slanted comic caps shouts | Empty-state and sheet titles |
 | `--folder-name-size` | `14px` | P | |
 | `--folder-name-tracking` | `0.5px` | P | |
 | `--wordmark-size` | `20px` | P: Bangers is condensed; check at header size | |
 | `--wordmark-tracking` | `1.5px` | P | |
 | `--wordmark-glow` | `color-mix(in srgb, var(--bone) 18%, transparent)` | P | |
-| `--pen-hot`, `--pen-soft` | the shared wavy stroke in `#3fdcff` and `#e3dc86` | P | |
+| `--pen-hot`, `--pen-soft` | the shared wavy stroke in `#3fdcff` and `#bde3a1` | P | |
 | `--stamp-tilt`, `--stamp-tilt-slight` | `0deg`, `0deg` | P: Bangers is already slanted; the box sits straight like a caption on a screen | |
 | `--stamp-border` | `1px` | P | |
 | `--stamp-size` | `12px` | P: Bangers is condensed (widths §6) | |
 | `--stamp-weight` | `400` | P | |
 | `--stamp-mask` | `none` | P: clean, like a TV caption box | |
 
-Theme-only variables (read by its own painter and outfit, not shared): `--armor` `#3d4540` and `--armor-edge` `#7d877f` (§7), `--tv` `#2a3229` (the TV set's screen when off), `--static` `var(--bone)` (§9).
-
-**Palette B** changes only the alarm family: `--signal-hot` `#ff3fa4`, `--signal` `#c0166e`, `--ink-hot` `#ff5cb0`, `--on-signal` `var(--bone)` (5.13:1), `--lens-core` `#ffe9f4`. Everything else stays.
+Theme-only variables (read by its own painter and outfit, not shared): `--armor` `#5b635e` and `--armor-edge` `#9aa49e` (§7), `--tv` `#26302b` (the TV set's screen when off), `--static` `var(--bone)` (§9).
 
 ### WCAG contrast (computed; WCAG 2 relative luminance)
 
-`themeContrast.test.ts` checks every text colour on **eleven** grounds, not three; the lightest is `--notice-hover-top`. The table gives abyss, surface, raised and the worst of the eleven.
+`themeContrast.test.ts` checks every text colour on **eleven** grounds, not three; the lightest is `--notice-hover-top` (`#202924`). The table gives abyss, surface, raised and the worst of the eleven, for the palette as revised after the jury.
 
 | Ink | on `--abyss` | on `--surface` | on `--raised` | Worst of 11 (`--notice-hover-top`) | 4.5:1? |
 |---|---|---|---|---|---|
-| `--bone` `#eef1e8` (also accent, ink-live, in-progress) | 17.19 | 15.45 | 13.40 | 12.76 | Pass |
-| `--ink` `#c3cbc1` (also bone-dim) | 11.81 | 10.62 | 9.21 | 8.77 | Pass |
-| `--ash` `#949d92` (also ash-dim, chevron, stamp-quiet) | 7.01 | 6.30 | 5.47 | 5.21 | Pass |
-| A `--ink-hot` / `--signal-hot` / `--stamp-hot` `#3fdcff` | 12.06 | 10.84 | 9.40 | 8.95 | Pass |
-| A `--ink-soft` / `--stamp-soft` / `--brick` `#e3dc86` | 13.88 | 12.48 | 10.83 | 10.31 | Pass |
-| B `--ink-hot` `#ff5cb0` | 6.93 | 6.23 | 5.40 | 5.15 | Pass |
-| B `--signal-hot` `#ff3fa4` | 6.08 | 5.46 | 4.74 | **4.51** | Pass, barely |
-| `--on-signal` on `--signal` | A: `#0a0c09` on `#12a9d6` **7.17** | B: `#eef1e8` on `#c0166e` **5.13** | | | Pass |
-| `--clawd` `#d77757` (mascot, not text) | 6.23 | | 4.86 | | n/a |
+| `--bone` `#e9f2ee` (also accent, ink-live, in-progress) | 17.21 | 15.49 | 13.60 | 13.10 | Pass |
+| `--ink` `#c2cbc6` (also bone-dim) | 11.83 | 10.65 | 9.35 | 9.01 | Pass |
+| `--ash` `#939c97` (also ash-dim, chevron, stamp-quiet) | 6.96 | 6.27 | 5.50 | 5.30 | Pass |
+| `--ink-hot` / `--signal-hot` / `--stamp-hot` `#3fdcff` | 12.06 | 10.85 | 9.53 | 9.18 | Pass |
+| `--ink-soft` / `--stamp-soft` / `--brick` `#bde3a1` | 13.72 | 12.35 | 10.84 | 10.45 | Pass |
+| `--on-signal` `#090c0b` on `--signal` `#12a9d6` | | | | **7.18** | Pass |
+| `--clawd` `#d77757` (mascot, not text) | 6.24 | | 4.93 | | n/a |
 
-No exceptions are needed. In Bat-Clawd: the black chest bat on the grey suit is 3.38:1 (above WCAG's 3:1 for graphics); the cowl against the orange jaw is 6.07:1.
+No exceptions are needed. In Bat-Clawd: the black chest bat on the grey suit is 3.56:1 (above WCAG's 3:1 for graphics); the cowl against the orange jaw is 6.07:1; the suit on the page 3.49:1.
 
-**Tier separation.** Hot cyan and soft yellow are 42.0 ΔE00 apart. A pale-cyan soft ink (`#a9dff0`, the bolt's glow) was tried first: it is only 9.6 from the hot cyan, with a luminance ratio of 1.12, so the tiers would differ by chroma alone. The yellow is Carrie Kelley's, the kid who does the legwork while the old man is called. It is 12.2 from PALE MOONLIGHT's gold *alarm*; that is a cross-Theme "two meanings" again, smaller than 2022's amber (5.2), which the jury kept.
+**Tier separation.** Hot cyan and soft phosphor green are 36.0 ΔE00 apart; the green is 24.6 from Ash and 19.6 from Bone, so the three tiers (needs you now, waiting, quiet) read apart. The first draft's pale Robin yellow (`#e3dc86`) is withdrawn: it was 0.9 from *Year One*'s canary, which the jury gave to *Year One* (§3.1, §9.1). A pale-cyan soft ink (`#a9dff0`) was also tried and rejected: 9.6 from the hot cyan, with a luminance ratio of 1.12. **Why phosphor green:** it is the glow of a green-phosphor screen and of the static's afterglow, it belongs to the TV frame and to no Theme's alarm, and it sits at hue 130° on a ground at 166°, close enough to belong and far enough to read. It has no sample in the book: it is proposed (§12). **Decide on screen**, including beside Clawd orange (46.3 ΔE00 apart).
 
-### The ground, against the shipped Themes
+**Waiting inks across the app** (ΔE00 from `#bde3a1`; the new Wave rule asks for ~5 or more): VENGEANCE `#d4574c` 55.9, PALE MOONLIGHT `#c98a3e` 34.5, WATCHFUL PROTECTOR `#e9a04b` 32.9, KNIGHTMARE `#e1ae66` 26.6, *Year One* `#e6e08a` 12.0, *Absolute* `#d79bbd` 50.2, *Arkham* `#d6c49a` 16.7. Against working inks: WATCHFUL PROTECTOR's mercury 22.4, *Year One*'s Bone 17.2.
 
-| Ground | LCh hue | vs VENGEANCE | vs PALE MOONLIGHT | vs WATCHFUL PROTECTOR | vs KNIGHTMARE |
-|---|---|---|---|---|---|
-| abyss `#0a0c09` | 135° | 2.5 | 2.5 | 3.0 | 4.3 |
-| surface `#151a14` | 140° | 7.0 | 7.4 | 10.0 | 15.6 |
-| raised `#20271f` | 140° | 18.1 | 11.5 | 12.5 | 20.4 |
-| working: Bone `#eef1e8` vs each working ink | 123° | 29.6 (amber) | 25.0 (steel) | 22.0 (mercury) | 10.2 (bone) |
+### The ground, against the other Themes
 
-Every near-black is close to every other in ΔE; that is why the jury judges the ground family as well as the number. WATCHFUL PROTECTOR's surface and raised sit at hue 262–265°; this Theme's at 140°. The difference is a green-grey against a blue-grey, as Varley's tank is against Nolan's night. **Not asylum green:** chroma 1.4–6.7, a grey, not the saturated green the jury gave the Arkham games (§10).
+Moved after the jury (§3.1, §9.1) from h 140° to h ~166°, the hue of Varley's tank grey (`#3b403d`, h 158°, and its shadow `#2b2f2c`, h 152°). Surface and raised are the jury's values; the rest is re-derived at the same hue.
+
+| | surface `#131a17` (h 166°) | raised `#1d2622` (h 165°) | working Bone `#e9f2ee` vs their working ink |
+|---|---|---|---|
+| VENGEANCE | 7.0 | 18.3 | 30.2 (amber) |
+| PALE MOONLIGHT | 8.0 | 12.4 | 23.5 (steel) |
+| WATCHFUL PROTECTOR (h 263–265°) | 8.3 | 10.0 | 22.1 (mercury) |
+| KNIGHTMARE | 16.1 | 21.0 | 11.4 (Bone `#f7e8c8`) |
+| *Year One*, revised (`#191b0b` / `#292c11`, h ~110°) | **6.4** | **11.1** | **6.0** (Bone `#ecebdc`) |
+| *Absolute*, revised (`#17132a` / `#221c3c`) | 18.1 | 21.5 | 24.8 (lavender) |
+| *Arkham*, revised (`#1a0f15` / `#2b1822`) | 13.7 | 21.7 | 9.9 (Bone `#ece9f3`) |
+
+Every surface is at least ~6 and every raised tone at least ~10 from every other Theme's, as the new Wave rule asks (jury §3). Bone was tinted from `#eef1e8` to `#e9f2ee` (h 166°) so that it is 6.0 from *Year One*'s Bone, not 4.6: both run in Bone, and the rule wants working inks ~5 apart. Every abyss in the app is within 1–6 of every other, as near-blacks are. **Not asylum green:** chroma 1–5, a grey; the jury leaves the Arkham games a saturated green with chroma 15 or more (§8).
 
 ## 4. Type
 
-John Costanza's hand lettering and the cover's title lettering are not reproduced; no commercial comic face is used. All faces below are OFL-1.1, on Google Fonts and Fontsource (`"license":"OFL-1.1"` from the [Fontsource API](https://api.fontsource.org/v1/fonts/bangers)).
+John Costanza's hand lettering and the cover's title lettering are not reproduced; no commercial comic face is used. All faces below are OFL-1.1, on Google Fonts and Fontsource (`"license":"OFL-1.1"` from the [Fontsource API](https://api.fontsource.org/v1/fonts/bangers)). The jury gave Bangers to this Theme alone, for its display and its stamps; *Absolute Batman*'s stamps move to Bungee (jury §3.3, §9.3).
 
 | Role | Proposal | Licence / package | How close, and limits |
 |---|---|---|---|
-| Display (wordmark, headlines, intro) | **Bangers** 400 (new) | OFL-1.1, `@fontsource/bangers`, Vernon Adams | "designed in the style of mid-20th century superhero comics cover lettering" ([description](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/DESCRIPTION.en_us.html)). Slanted, condensed brush capitals: the register of the cover's yellow title and of the book's sound effects (KLIK, BUDDABUDDA), not a copy of either. Caps only |
-| Stamps | **Bangers** 400 at 12px, straight box, no wear | same | One family for display and stamps, as KNIGHTMARE does with Archivo. A stamp reads like a word set over a TV picture. Check on screen at 1x: its `Z` is drawn small, so FROZEN must be judged |
+| Display (wordmark, intro) | **Bangers** 400 (new) | OFL-1.1, `@fontsource/bangers`, Vernon Adams | "designed in the style of mid-20th century superhero comics cover lettering" ([description](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/DESCRIPTION.en_us.html)). Slanted, condensed brush capitals: the register of the cover's yellow title and of the book's sound effects (KLIK, BUDDABUDDA), not a copy of either. Caps only |
+| Headlines (empty-state and sheet titles) | **Barlow Semi Condensed 600**, through the new `--font-headline` token | already bundled | Jury §2 and §6: Bangers has no lowercase, and "OUR PANEL AGREES…" in slanted comic caps shouts an all-clear. The token defaults to `--font-display`, so no shipped Theme changes |
+| Stamps | **Bangers** 400 at 12px, straight box, no wear | same | One family for display and stamps, as KNIGHTMARE does with Archivo. A stamp reads like a word set over a TV picture. **Decide on screen** at 1x: its `Z` is drawn small, so FROZEN must be judged |
 | Labels under 19px | Barlow Semi Condensed (shared) | already bundled | KNIGHTMARE found a display face too wide for short labels; Bangers is narrow, but Barlow is the safe default |
 | Body, report body | Barlow Semi Condensed (shared) | already bundled | The bulletin is plain working text, as in KNIGHTMARE |
 | Mono | JetBrains Mono (shared) | already bundled | The Machine Voice Rule holds |
 
-**Fallback for the stamps:** Saira Condensed 600 (OFL), not taken by any Theme. It is a condensed grotesque, the register of Anton and Big Shoulders, so it would score "~" on Type against VENGEANCE and WATCHFUL PROTECTOR; use it only if Bangers fails at 12px. Oswald and Teko have the same problem. Shantell Sans (OFL, a marker hand) was considered for a caption-box feel and rejected: it reads as handwriting, not lettering.
+**No fallback stamp face.** The first draft named Saira Condensed; the jury notes that every condensed grotesque (Saira Condensed, Oswald, Teko) scores "~" against Anton and Big Shoulders, so Bangers is this Theme's whole Type axis (§3.3). If Bangers fails at 12px on screen, the stamp size moves (11px still fits every word, §6) before the face does. Shantell Sans (a marker hand) was rejected for this Theme and is *Absolute*'s report face.
 
 ## 5. Voice
 
-**Frame: a TV broadcast, late at night.** The panel is the set. The user is the anchor, the cases are channels, and the Voice is the studio's: the anchor, the pundits who disagree, the station signing off. Short, dry, a little satirical, as the book is about its talking heads. It never speaks like a newspaper (no editions, no desk, no wire, no "Story") and never like an ops room (no clearance, no sitrep). Gordon belongs to *Year One* and stays out. No real or fictional station, anchor or host is named.
+**Frame: a TV broadcast, late at night.** The panel is the set. The user is the anchor, the cases are channels, and the Voice is the studio's: the anchor, the pundits who disagree, the station signing off. Short, dry, a little satirical, as the book is about its talking heads. It never speaks like a newspaper (no editions, no desk, no wire, no "Story"), never like an ops room (no clearance, no sitrep), and never like a TV *serial* narrator ("Meanwhile…", "same Bat-time"), which the jury keeps for an Adam West Theme (§8). Gordon belongs to *Year One* and stays out. No real or fictional station, anchor or host is named. No line repeats another Theme's sentence (the new Wave rule, jury §3.13).
 
 **How broadcast differs from PALE MOONLIGHT's newsroom, concretely:**
 
-| | PALE MOONLIGHT (print) | TRIUMPHANT (broadcast) |
+| | PALE MOONLIGHT (print) | ANCIENT GRACE (broadcast) |
 |---|---|---|
 | Time | the edition: "Late edition", "— 30 —" | live: "LIVE · 02:14", "Stay tuned" |
 | Unit | a Story on your desk | a Channel, on air or off |
-| Handing over | Approval, Question | OK TO AIR?, OVER TO YOU |
+| Handing over | Approval, Question | OK TO AIR?, YOU'RE ON |
 | People | an editor, a reporter | an anchor, a panel of pundits |
 | Texture | paper, a typewriter in the report | a screen: static, the roll bar, rounded TV frames |
 
 **Sample lines** (all ours; `words.ts` field in brackets):
 
 1. Intro tagline: **"Live, from Gotham."** [`tagline`]
-2. Empty state: **"Our panel agrees: nothing needs you."** The hint stays "Nothing needs you right now." [`empty.quiet.title`] The pundits finally agree, which is the joke.
+2. Empty state: **"Our panel agrees: a quiet night."** The hint stays "Nothing needs you right now." [`empty.quiet.title`] The pundits finally agree, which is the joke. (The first draft ended in "nothing needs you", which the hint then said again; jury §3.13.) Set in Barlow 600 through `--font-headline`.
 3. No cases: "No channels on the air." With the Lexicon off: "No cases on the air." [`empty.noCases.title`, through the Terms]
 4. Night Report name: **"Bulletin"** [`report.name`]
 5. Dateline: **"LIVE · 02:14"**: time only, no place (WATCHFUL PROTECTOR's is "GOTHAM · 02:14") [`report.dateline`]
 6. Section heads: "Your segment" for what waits on the user, "Around the dial" for the rest [`report.signature`, `report.caseNotes`]
-7. Close: "Stay tuned. Some of it still needs you." or, with nothing waiting, "That's the bulletin. Good night, Gotham." [`report.end`]
+7. Close: **"Stay tuned. You're still on."** while something waits, or **"That's the bulletin. Good night, Gotham."** with nothing waiting [`report.end`]. The first draft's "Some of it still needs you." was KNIGHTMARE's sentence and is gone (jury §2, §3.13). "You're still on" picks up the YOU'RE ON stamp; neither close appears in any shipped `words.ts` line or Wave 2 dossier (checked by search).
 8. Quiet disc tooltip: "Nothing on tonight." Lit: "We interrupt this program." Each followed by the standard tooltip [`signal.openTip`]
-9. Settings kicker: "Control room" [`settings.kicker`]; Atmosphere toggle: "Static", hint "TV static behind the channels" (the term from the Terms, so "behind the cases" with the Lexicon off) [`settings.atmosphere`]
-10. The Signature caption, once per session: **"The time has come."** Four words from Book One, the voice in Bruce's head the night he returns (reproduced in [TCJ](https://www.tcj.com/the-dark-knight-returns-art-makes-sense-if-you-force-it-too/)). It is the Theme's one short line.
+9. Settings kicker: "Control room" [`settings.kicker`]; Atmosphere toggle: "Static", hint "TV static behind the channels" (the term from the Terms, so "behind the cases" with the Lexicon off) [`settings.atmosphere`]. The jury notes that "Control room", LIVE and STANDBY lean toward radio procedure; keep it to these three.
+10. The Signature caption, once per session: **"The time has come."** Four words from Book One, the voice in Bruce's head the night he returns (reproduced in [TCJ](https://www.tcj.com/the-dark-knight-returns-art-makes-sense-if-you-force-it-too/)). It is the Theme's one short line; the name is its one allusion, as with PALE MOONLIGHT ("pale moonlight" in the name, "I'm Batman." in the panel).
 
-*Dark* and *quiet* mean only "nothing needs you" (jury §4.3); no line above uses them for a stalled channel.
+*Dark* and *quiet* mean only "nothing needs you" (Wave 1 jury §4.3); no line above uses them for a stalled channel.
 
-**Display name options:**
+**Display name: ANCIENT GRACE** (the maintainer's choice, jury §9.11).
 
-| Name | What it alludes to | Cost |
-|---|---|---|
-| **TRIUMPHANT** (recommended) | Book Two's title, *The Dark Knight Triumphant* | A title, not dialogue: the one line stays free for "The time has come." Unique in the picker; no "Dark Knight" (Nolan) and no "Returns" (Burton's sequel) |
-| A GOOD DEATH | Book One's best-known caption, "This would be a good death…" | Spends the line budget; morbid next to a stalled or closed case |
-| BOLT FROM THE BLUE | Miller on the cover's lightning | Not from the comic itself; "blue" points at WATCHFUL PROTECTOR |
-
-Credit string for `themes.test.ts`: `{ name: 'TRIUMPHANT', film: "Frank Miller's The Dark Knight Returns (1986)" }`. Proposed Theme id `the-dark-knight-returns-1986`, demo flag `triumphant`.
+- **Where it comes from:** Bruce's narration in Book One, when he remembers falling into the cave as a boy and meeting the great bat: "…something sucks the stale air… and HISSES. Gliding with ancient grace… unwilling to retreat as his brothers did…" (quoted on [Street Tech](https://www.streettech.com/bcp/BCPgraf/Media/batmanDNR.htm) and listed on [TV Tropes](https://tvtropes.org/pmwiki/pmwiki.php/Quotes/BatmanTheDarkKnightReturns), which was not reachable). Both are fan pages; we have not seen the printed page, so the wording and page are under §12.
+- **Why it fits:** it names the bat Bruce becomes, and *ancient* is the old man who returns. It is a two-word fragment, used as an allusion, never set in the book's lettering, as PALE MOONLIGHT uses two words of the Joker's line.
+- **Unique:** no other Theme name shares a word with it.
+- **Credit string** for `themes.test.ts`: `{ name: 'ANCIENT GRACE', film: "Frank Miller's The Dark Knight Returns (1986)" }`. The `film` field holds the work without "after"; `words.ts` adds "after" itself, so the picker reads "after Frank Miller's The Dark Knight Returns (1986)" (jury §3.15, which found this credit already right). Proposed Theme id `the-dark-knight-returns-1986`, demo flag `grace`.
+- TRIUMPHANT, A GOOD DEATH and BOLT FROM THE BLUE, the first draft's options, are withdrawn.
 
 ## 6. Lexicon
 
-Frame: a TV station's control room. The test is the jury's (§5): a tired developer glancing at a stamp must get the standard meaning, at the right severity.
+Frame: a TV station's control room. The test is the jury's (Wave 1 §5): a tired developer glancing at a stamp must get the standard meaning, at the right severity. The Wave 2 jury's fixes are adopted (§4, §9.9).
 
-| Standard | Themed | Misread at a glance? | Fallback |
+| Standard | Themed | Misread at a glance? | Note |
 |---|---|---|---|
-| Case | **Channel** (plural **Channels**) | A Slack channel, a Go channel, a release channel: all "a stream you follow", which is right. "Channel #b47c0d" reads like a channel number | Keep **Case** (KNIGHTMARE's precedent: fewer renames) |
-| Needs you | **Your cue** ("1 cue for you", "3 cues for you") | Heard as "your queue", which still means "things waiting for you" | On you is WATCHFUL PROTECTOR's; keep standard |
-| Permission | **OK TO AIR?** | "Air" is TV slang, but "OK …?" carries it: something asks for an OK before it runs. A question, so it reads as blocking | **GO AHEAD?** (clearer, but radio procedure, near WATCHFUL PROTECTOR's ops register) |
-| Error | **BREAKING** | Two readings: "something is breaking" (right) and "breaking news" (new, urgent). Both read as at least as severe as Error. The risk is confusing it with LATEST; colour helps (hot cyan against soft yellow) | **BROKEN** |
-| Waiting | **OVER TO YOU** | The anchor's handover: your turn to speak. Not "on hold" | **YOUR TURN** (but it sits next to WATCHFUL PROTECTOR's YOUR MOVE) |
-| New reply | **LATEST** | A developer may read "latest version"; on a card under a reply line it reads as "the latest reply" | **JUST IN** is PALE MOONLIGHT's; keep standard NEW REPLY |
-| Stalled | **FROZEN** | A frozen feed, a hung process: exactly "stalled". It does not use *dark* or *quiet*. "Feature freeze" is a possible but unlikely reading | **DEAD AIR** (vivid, but "dead" may read as an error) |
-| Case opened / closed | **ON AIR** / **OFF AIR** | Clear. OFF AIR means ended, which is what closed means | standard |
-| Working / Idle / Shell (live state) | **LIVE** / **STANDBY** / Shell | LIVE is "running now", in Bone, never cyan. STANDBY is "ready, nothing running": the right reading for Idle. (The jury rejected ON HOLD for *Waiting*, where parked was the wrong meaning; for Idle it is the right one) | standard |
+| Case | **Channel** (plural **Channels**) | A Slack channel, a Go channel, a release channel: all "a stream you follow", which is right. "Channel #b47c0d" reads like a channel number | Kept by the maintainer (§9.9). The jury notes it bars Channel from a later Adam West Lexicon |
+| Needs you | **Your cue** ("1 cue for you", "3 cues for you") | Heard as "your queue", which still means "things waiting for you" | Kept by the jury |
+| Permission | **OK TO AIR?** | "Air" is TV slang, but "OK …?" carries it: something asks for an OK before it runs. A question, so it reads as blocking | Kept by the jury. GO AHEAD? is the alternative (open question 2) |
+| Error | **DEAD AIR** | A broadcast failure: the picture or sound has died. "Dead" reads as failed, at the right severity | Jury §4: replaces BREAKING, which read as "breaking news" (new, not failed) or a "breaking change" |
+| Waiting | **YOU'RE ON** | The cue to speak: the camera is on you, it is your turn. Not "on hold" | Jury §4: replaces OVER TO YOU, 4px wider than PERMISSION. It completes **Your cue** |
+| New reply | **LATEST** | "Latest version", the npm tag; on a card under a reply line it reads as "the latest reply" | Kept; fall back to NEW REPLY if it misreads on screen |
+| Stalled | **FROZEN** | A frozen picture, a hung process: exactly "stalled". It does not use *dark* or *quiet* | Jury §3.12: FROZEN is this Theme's; *Arkham Asylum* takes the standard Stalled |
+| Case opened / closed | **ON AIR** / **OFF AIR** | Clear. OFF AIR means ended, which is what closed means | Kept |
+| Working / Idle / Shell (live state) | **LIVE** / **STANDBY** / Shell | LIVE is "running now", in Bone, never cyan. STANDBY is "ready, nothing running": the right reading for Idle | Kept |
 
-**Widths** (our measurement with Pillow on Bangers at the proposed 12px; the test's own measurement in `stampWidth.test.ts` is what counts). Room in the Night Report margin is 101px at 0.12em and 87px at 0.04em in the narrowest panel; PERMISSION in Bangers is 77.3 / 67.7.
+**DEAD AIR against OFF AIR and FROZEN.** All three say that nothing is coming through, at three severities: DEAD AIR (an error, hot cyan), FROZEN (stalled, Ash), OFF AIR (closed, Ash). The tier colour and the box tell them apart, and only DEAD AIR is an alarm. Check the three side by side on screen.
 
-| Word | 0.12em | 0.04em | |
-|---|---|---|---|
-| OK TO AIR? | 74.0 | 64.4 | fits |
-| BREAKING | 65.7 | 58.0 | fits |
-| OVER TO YOU | 81.3 | 70.7 | fits the room, but **4px wider than PERMISSION** |
-| LATEST | 50.3 | 44.6 | fits |
-| FROZEN | 53.7 | 47.9 | fits |
-| YOUR CUE | 63.9 | 56.2 | fits |
-| LIVE / STANDBY / SHELL | 35.4 / 60.3 / 43.9 | 31.6 / 53.6 / 39.1 | fit |
-| ON AIR / OFF AIR | 50.3 / 54.5 | 44.6 / 47.8 | fit |
+**Widths** (re-measured with Pillow on Bangers at the proposed 12px; the test's own measurement in `stampWidth.test.ts` is what counts). Room in the Night Report margin is 101px at 0.12em and 87px at 0.04em in the narrowest panel. **Every word is narrower than PERMISSION** (77.3 / 67.7), as the Wave rule asks.
+
+| Word | 0.12em | 0.04em |
+|---|---|---|
+| OK TO AIR? | 74.0 | 64.4 |
+| DEAD AIR | 61.7 | 54.0 |
+| YOU'RE ON (straight or curly apostrophe; Bangers has both) | 69.1 | 60.5 |
+| LATEST | 50.3 | 44.6 |
+| FROZEN | 53.7 | 47.9 |
+| YOUR CUE | 63.9 | 56.2 |
+| LIVE / STANDBY / SHELL | 35.4 / 60.3 / 43.9 | 31.6 / 53.6 / 39.1 |
+| ON AIR / OFF AIR | 50.3 / 54.5 | 44.6 / 47.8 |
 
 Windows notifications and the tray keep the standard words, as `CONTEXT.md` requires.
 
 ## 7. Bat-Clawd
 
-The body, eyes, arms and legs keep their pixels. Clawd's orange jaw and white eyes stay in every Pose, including the Signature (so the Signature is not a full silhouette, whatever the cover does). The grid is 16×11 units; one unit is about 2px at 54px.
+The body, eyes, arms and legs keep their pixels. Clawd's orange jaw and white eyes stay in every Pose, including the Signature (so the Signature is not a full silhouette, whatever the cover does). The viewBox is 28 units wide (`[-6, -1, 28, 13]`), so one unit is about 2.1px at the header's 60px and 1.9px at 54px; nothing under 1 unit counts. On the outfit map the jaw row ends at y = 5, the chest runs y 5–8, the belt row is y 8–8.5, and the legs start at y 9.
 
 ### The suit: the second suit, and the old man's bulk
 
-The Theme takes back what Snyder borrowed and KNIGHTMARE shipped without (`suits.ts` has no armour, and KNIGHTMARE's chest bat is 4.4 units on a charcoal suit inside a duster). These are Miller's. KNIGHTMARE keeps the desert, the duster, the goggles and the Knightmare.
+The maintainer gave the grey suit, the big black chest bat and the armour back to this Theme (jury §9.5). They are Miller's; Snyder borrowed them, and KNIGHTMARE shipped without them (`suits.ts` has no armour, and KNIGHTMARE's chest bat is 4.4 units on a charcoal suit inside a duster). KNIGHTMARE keeps the desert, the duster, the goggles and the Knightmare. *Year One* keeps its own smaller black bat on the only light suit; *Absolute* keeps its block on its teal.
 
-- **Cowl:** black (`--cowl`), with short ears **set wide**, at the head's outer corners (x = 3 and x = 12, one unit each) instead of x = 4 and 11: a broad, boxy old head, not a pointed one. The brow row heavy (`...cccchhcccc...`, shine in the middle). A faint neutral rim (`--cowl-edge`) per the Costume Rule.
-- **Suit:** the second suit's grey (`--suit` `#5d6661`).
-- **The big black bat:** the chest emblem layer at `cx 8, cy 6.6`, **9 units wide**, rows 6–8: nearly the whole chest, twice KNIGHTMARE's 4.4. One orange-free row of grey shows above it under the cowl, so it never reads as the cowl dripping (the jury's §6 fix for Snyder). No oval, ever.
-- **Belt:** a 1-unit band at y = 8.5 in `--belt` with an Ash buckle (`...bbbbkkbbbb...`), grey on grey: no yellow, so nothing reads as PALE MOONLIGHT's brass.
-- **Cape:** black, heavy, to the ankles, with **two long tails**: one deep point at each outer corner reaching a unit below the feet (y = 12), the hem straight between them. Not VENGEANCE's zigzag, not PALE MOONLIGHT's scallops, not WATCHFUL PROTECTOR's plain straight hem, not KNIGHTMARE's duster. Standing: `M3 5 L13 5 L14.6 12 L12.6 11 L3.4 11 L1.4 12 Z`.
+- **Cowl:** black (`--cowl`), with short ears **set wide**, at the head's outer corners (x = 3 and x = 12, one unit each) instead of x = 4 and 11: a broad, boxy old head, not a pointed one (a 1-unit shift, 2px: it counts, jury §5). The brow row heavy (`...cccchhcccc...`, shine in the middle). A faint neutral rim (`--cowl-edge`) per the Costume Rule.
+- **Suit:** a neutral grey, `--suit` `#666864` (jury §2): 13.9 ΔE00 from *Absolute*'s revised teal `#3f6b6e` and 20.1 from *Year One*'s light grey, so the three grey suits sit at least 10 apart (§9.5). 3.49:1 on the page; 1.79:1 against the orange jaw, which hue carries, as on every shipped suit.
+- **The big black bat, fitted at real size** (the jury's §5 finding: a 9-unit bat at 2.6:1 is 3.5 units tall, does not fit between the jaw and the belt, merges with the dark belt at 1.51:1, and joins the cape at its wingtips):
+  - **Width at most 8 units and height at most 3:** `width = min(8, 3 × the traced aspect)`. At the estimated 2.6:1 that is **7.8 × 3 units**, centred at `cx 8, cy 7.5`, so **y 6–9** and **x 4.1–11.9**. At 60px that is about 16×6px; at 54px about 15×6px. Still the biggest chest mark in the app (KNIGHTMARE's 4.4, *Year One*'s 6).
+  - **One unit of grey above it:** the jaw ends at y 5 and the bat starts at y 6, so it never reads as the cowl dripping.
+  - **One unit of grey beside it:** the body is x 3–13 and the wingtips stop at 4.1 and 11.9, so the bat never joins the black cape at the sides.
+  - **No dark belt under it:** the belt row is suit grey (`--belt: var(--suit)`), the jury's own option, so the bat runs over it onto grey and never merges into a dark apron. The bat is 3.56:1 on the suit. The tail ends at y 9, between the two middle legs' gap (x 7–8), where the half row above the legs is suit grey.
+  - **Option, decide on screen:** a visible Ash belt (`#939c97`, 2.0:1 on the suit), moved down to y 8.5–9 as PALE MOONLIGHT's is. The bat on it is 7.11:1, above the Wave rule's 3:1, so they may touch; but the bat then shrinks to 2.5 units tall (6.5 wide), the jury's own figure. Recommended: the suit-grey belt and the bigger bat.
+  - Draw it only once traced (§8); if the traced bat is wider than 2.7:1, the 8-unit cap governs and it is less than 3 units tall.
+- **Cape:** black (`--cape` `#050605`), heavy, to the ankles, with **two long tails**: one deep point at each outer corner, the hem straight between them. **The tails end at y = 11.5**, half a unit below the feet, not at y = 12, the viewBox's bottom edge, where their rim was cut (jury §5). Standing: `M3 5 L13 5 L14.6 11.5 L12.6 10.8 L3.4 10.8 L1.4 11.5 Z`. Not VENGEANCE's zigzag, not PALE MOONLIGHT's scallops, not WATCHFUL PROTECTOR's plain straight hem, not KNIGHTMARE's duster, not *Year One*'s four ragged points or *Absolute*'s blades. Suit against cape is 3.6:1, so the body reads in front of it.
 
 ### Poses
 
 | Mood | Pose | Source | On the grid |
 |---|---|---|---|
-| sleeping | **Retired, in front of the TV** | Book One opens with Bruce retired, flipping channels (the KLIK grid) | The shared seated pose, cape wrapped (with the two tails), eyes shut. Beside him on the overlay layer, a small 1986 TV set: a 4×3.5-unit box at x = 13–17, y = 6.5–10, bezel in `--line`, screen in `--tv`, a 1-unit V antenna on top. The screen shows two or three Bone specks at 20%: the static of a set left on. Every part is at least 1 unit |
-| flying | **The drop** | Book One: he comes down from above with the cape spread over him (TCJ reproduction) | Arms raised, gloves at the cape's edges; the cape spread **above** his head like a canopy, from x = −3 to 19, peaking at y = −3, its two tails hanging at the sides. Legs straight below. Two frames: the canopy's edge a unit higher, then lower. Every other Theme's flying cape spreads sideways or trails behind; this one is overhead |
-| alarmed | **The armour** (homage pose) | Book Four's "exoframe" against Superman ([Wikipedia](https://en.wikipedia.org/wiki/The_Dark_Knight_Returns)) | Outfit map in two new legend letters: `A` armour plate (`--armor` `#3d4540`) and `e` its edge (`--armor-edge` `#7d877f`). Pauldrons 2×1.5 units at x = 1 and x = 13 (a unit past the body each side), the chest bat raised on the plate, the cowl's ears cut to a 1-unit stub, eyes still white 2×1. The cape behind, thrown back. **Aura in lightning cyan**, as the armour powers up. The wider shoulders make an outline nobody else has: PALE MOONLIGHT raises wings, WATCHFUL PROTECTOR flings the cape open, KNIGHTMARE swings the coat |
+| sleeping | **Retired, in front of the TV** | Book One opens with Bruce retired, flipping channels (the KLIK grid) | The shared seated pose, cape wrapped (its two tails ending at y 11.5), eyes shut. Beside him on the overlay layer, a small 1986 TV set: a 4×3.5-unit box at x = 13–17, y = 6.5–10, bezel 1 unit wide in `--line` (`#3b403d`, 1.86:1 on the page), screen in `--tv` (`#26302b`), a 1-unit V antenna on top. The screen shows two or three Bone specks at 20%: the static of a set left on. Every part is at least 1 unit; the bezel's edge, not its fill, is what reads, so check it at 54px |
+| flying | **The drop** | Book One: he comes down from above with the cape spread over him (TCJ reproduction; page not identified, §12) | Arms raised, gloves at the cape's edges; the cape spread **above** his head like a canopy, from x = −3 to 19, peaking at y = −1 (the viewBox's top, so the overlay draws past it as WATCHFUL PROTECTOR's ring does), its two tails hanging at the sides to y 8. Legs straight below. Two frames: the canopy's edge a unit higher, then lower. **The collision with *Arkham Asylum*** (its descent also put the cape over the head) **is settled on Arkham's side:** the jury moved Arkham to a trailing cape, since its descent had no page behind it and this one does (§3.7, §9). *Year One*'s flying leap, which was this Theme's Signature figure without the tilt, also moved to a trailing cape. This is now the only flying Pose with the cape overhead; every other one spreads sideways or trails behind |
+| alarmed | **The armour** (homage pose; jury §9.5) | Book Four's "exoframe" against Superman ([Wikipedia](https://en.wikipedia.org/wiki/The_Dark_Knight_Returns)) | Outfit map in two new legend letters: `A` armour plate (`--armor` `#5b635e`) and `e` its edge (`--armor-edge` `#9aa49e`). **At real size:** the plates are 3.17:1 on the page and the edge 7.65:1, so the armour reads by its outline, as the jury found for the first draft's edge; the black chest bat is 3.24:1 on the plate (the first draft's darker plate, `#3d4540`, left it at 2.03:1). Pauldrons 2×1.5 units at x = 2–4 and 12–14, y 4.5–6, each a full unit past the body; a 1-unit edge row along the plates' tops. The cowl's ears cut to a 1-unit stub; eyes still white 2×1. The cape behind, thrown back, tails at y 11.5. **Aura in lightning cyan**, as the armour powers up: the only cyan on the mascot, and only while something needs the user. The wider shoulders make an outline the shipped alarmed Poses don't: PALE MOONLIGHT raises wings, WATCHFUL PROTECTOR flings the cape open, KNIGHTMARE swings the coat. *Absolute*'s resting shoulders are also a unit wider; the jury checked this and needs no change (different Mood, different colour, §3.5) |
 | perch | **Signature pose**, below | | |
 
 ### Signature pose: the lightning leap (recommended)
@@ -361,41 +367,48 @@ The Book One cover, as a pose. The cover is already a frozen leap; the perch hol
 
 Reveal, on the 8 fps clock (a step = two ticks, a quarter second):
 
-1. **On the ledge:** standing profile-right, the cape bunched, the body a unit lower (`translateY(2px)` at the header's scale).
-2. **Launch:** the whole figure rotated −15° and raised 2 units; legs drawn tucked (the four leg pixels at y = 9 only, knees up); the right glove forward as a fist at (14, 5); the cape streaming back and up in one heavy sheet to (−4, 1), its two tails apart.
+1. **On the ledge:** standing profile-right, the cape bunched, the body a unit lower (`transform: translateY(2px)` at the header's scale).
+2. **Launch:** the whole figure rotated −15° and raised 2 units (one step `transform`, which steps already take); legs drawn tucked (the four leg pixels at y = 9 only, knees up); the right glove forward as a fist at (14, 5); the cape streaming back and up in one heavy sheet to (−4, 1), its two tails apart.
 3. **The bolt:** a jagged path behind him on the overlay layer, from (12, −6) down through (9.5, −1), (11.5, −0.5), (7.5, 5), (9.5, 5.5) to (5, 14), stroked 1 unit wide in **Bone at 60%**. It is drawn once, whole, and stays: no flicker, no flash, no change of the panel's light.
 4. **Held:** the same, the bolt at 40%. This is the final step `watchOn` holds on the perch. His glances: ahead (`look: GAZE`) and down to the street (`lookY: 0.4`).
 
 Under reduced motion: step 4 only. The intro and a click play the same reveal; a click adds the caption "The time has come." once per session.
 
-**Why its outline differs from the four taken:** VENGEANCE stands symmetric and front-on; PALE MOONLIGHT stands three-quarter looking up; WATCHFUL PROTECTOR crouches with a ring; KNIGHTMARE stands with the coat blown to one side. This is the only Signature off the ground, tilted, with a diagonal line through it. **The bolt must be checked on screen** at 54px: it is a static Bone line, not the Alarm color and not a flash, but it is long, and it must not read as a crack in the window.
+**Why its outline differs from the four taken** (as shipped, corrected by the jury, §3.8): VENGEANCE stands front-on with a shadow at its feet; WATCHFUL PROTECTOR's *Sonar* **stands** front-on with the cape hanging square (it shipped standing; the ring plays only in the reveal, so the first draft's "crouch with a ring" was wrong); PALE MOONLIGHT stands three-quarter under an oval; KNIGHTMARE stands with the coat blown to the right. This figure is tilted −15°, tucked, with a long diagonal line through it. *Absolute*'s lift also leaves the ground, but upright and wider at the floor than the top, so the first draft's claim to be "the only Signature off the ground" is dropped; the outlines still differ (§3.8).
 
-**Option B: the horse.** Batman rearing on horseback at the head of the Sons of the Batman, Book Four. Bat-Clawd sits astride (his legs hidden); the horse on the overlay layer: body 10×4 units under him (y = 8–12), neck and head rising to the left to (−3, 2), forelegs raised (−1 to 2, y 6–9), hind legs down to y = 15. Two gallop frames, then he rears and holds. Its outline is unique in the Wave and the most "fan" image, but it is about 20×16 units, half again Bat-Clawd's box; at 54px the horse's legs are 1-unit lines and the header may not have the room. **Recommendation: the leap.** Prototype the horse only if the maintainer wants it, perhaps as the flying Pose instead of the drop.
+**The bolt at real size:** 20 units tall (y −6 to 14), about 40px, taller than the 54px header's box. The overlay already draws unclipped (WATCHFUL PROTECTOR's ring reaches radius 16), so no engine change; **decide on screen** that the header's clip holds it and that it doesn't read as a crack in the window.
 
-**Option C, rejected: the old man in the rain.** It is the book's mood, but rain is VENGEANCE's Atmosphere, and a hunched standing figure is close to VENGEANCE's and KNIGHTMARE's outlines.
+**Option B: the horse.** Batman rearing on horseback at the head of the Sons of the Batman, Book Four. Bat-Clawd sits astride (his legs hidden); the horse on the overlay layer: body 10×4 units under him (y = 8–12), neck and head rising to the left to (−3, 2), forelegs raised (−1 to 2, y 6–9), hind legs down to y = 15. Two gallop frames, then he rears and holds. Its outline is unique in the app and the most "fan" image, but it is about 20×16 units, half again Bat-Clawd's box; at 54px the horse's legs are 1-unit lines and the header may not have the room. **Recommendation: the leap.** Prototype the horse only if the maintainer wants it.
+
+**Option C, rejected: the old man in the rain.** It is the book's mood, but rain is VENGEANCE's Atmosphere, and a standing figure joins the two front-on stands already taken.
 
 ## 8. Emblem
 
-**Shape (the second suit's bat, drawn by us):** a wide black bat with no oval, about 2.6:1, read from the reproductions in §2 (proportions **unverified**, §12). Short ears on a flat, broad head; the wings reaching out nearly level, their upper edge rising slightly to the tips; the lower edge in three scallops per side, separated by points; a short pointed tail. It must differ from KNIGHTMARE's `BAT_2016` at 54px, which descends from it: DKR's is flatter and wider, with level wings, where the BvS bat sweeps its wing horns up and drops to a deep V. Drawn as a left half on the 120×48 grid and mirrored at x = 60, finish `none`, like the others. The tray and toast icons stay single (jury §2).
+**Shape (the second suit's bat, drawn by us):** a wide black bat with no oval, about 2.6:1, read from the reproductions in §2 (proportions **unverified**, §12). Short ears on a flat, broad head; the wings reaching out nearly level, their upper edge rising slightly to the tips; the lower edge in three scallops per side, separated by points; a short pointed tail. It must differ from KNIGHTMARE's `BAT_2016` at 54px, which descends from it: this one is flatter and wider, with level wings, where the BvS bat sweeps its wing horns up and drops to a deep V. Drawn as a left half on the 120×48 grid and mirrored at x = 60, finish `none`, like the others. The tray and toast icons stay single (Wave 1 jury §2).
+
+**Trace before drawing, and compare with *Year One*'s** (jury §3.14). *Year One*'s 1987 bat has the same written description ("wide and level-winged, small head, two short ears, scalloped underneath, no oval"). Trace this one from a clean image of the second suit and *Year One*'s from its source, and compare the two at 64px on the disc before either is drawn into `emblems.ts`. If they read alike, this Theme's tells are its flat, broad head and its three scallops a side; the trace decides.
 
 **The 64px Signal disc: a TV screen.**
 
-- **Unlit:** dark glass (`--glass` → `--glass-shine`), the bat a shade in it (`--disc-bat`). Faint horizontal scanlines here (a 1px line every 3px at 6% Bone) would need an engine change: `Signal.css` paints the unlit face with a fixed radial gradient and has no overlay slot. Either add a `--glass-overlay` variable there (an engine item, §9), or leave the unlit face plain. Recommended: plain, and see on screen whether the lit scanlines are enough.
-- **Lit:** the screen comes on: `--lens-core` (the bolt's white) at the centre → lightning cyan → `--signal` at the rim, the black bat across it, `--signal-glow` around. The scanlines ride over the lit lens for free: `--disc-lens` is a list of backgrounds, and KNIGHTMARE already layers `--lens-breaks` (its broken glass) on top of its gradient there; this Theme puts a scanline SVG in `--lens-breaks` the same way. The count sits in a cyan chip in dark ink.
+- **Unlit:** dark glass (`--glass` → `--glass-shine`), the bat a shade in it (`--disc-bat`). Plain, as the jury recommends (§6): scanlines on the unlit face would need a `--glass-overlay` variable in `Signal.css`, which is optional and skipped unless the lit scanlines are not enough on screen.
+- **Lit:** the screen comes on: `--lens-core` (the bolt's white) at the centre → lightning cyan → `--signal` at the rim, the black bat across it, `--signal-glow` around, and **horizontal scanlines over it** (a 1px line every 3px at about 10% abyss), carried in `--lens-breaks` and layered into the `--disc-lens` list, as KNIGHTMARE layers its broken glass. No engine change. The count sits in a cyan chip in dark ink.
+- **Against WATCHFUL PROTECTOR's lens** (jury §2): a white core into cyan is the same kind of lens as its white-hot core into blue, so **the scanlines must carry the difference. Decide on screen**, side by side. If they don't, the alternative is a flatter lit screen: a lighter cyan field with the white only as a small glare off-centre, like light on a CRT's glass, instead of a centred hot core.
 - No flash on lighting: the existing 0.4s background transition only.
 
 ## 9. Atmosphere
 
-**Static, between channels** (recommended). A new kind, `static`.
+**Static, between channels**, on the shared **`noise` painter** (jury §6, §9.12). The first draft asked for a `static` kind of its own; the jury merged it with *Arkham Asylum*'s scratches into one painter, and the maintainer approved that engine. This Theme uses it like this:
 
-- **What moves:** sparse TV snow. About 0.5 specks per 1000 px² (about 70 in a 320×440 panel), 1px, in `--static` (Bone) at alphas 0.04–0.10, **re-placed every tick** on the shared 8 fps clock from a precomputed table (frame-indexed, like the snow), not random per frame. They do not fall; they flicker in place, which is what makes them static and not snow or ash.
-- **The roll bar:** one soft horizontal band 24px tall, Bone at 3%, drifting down 3px a tick (one pass of a 440px panel in about 18 seconds), as an old set's picture rolls.
-- **The light:** the TV's own glow, low and centred (`--haze-inset` `auto -10% -40% -10%`), neutral Bone at 5%, never cyan. VENGEANCE's light comes from below in red, PALE MOONLIGHT's from below in smog, WATCHFUL PROTECTOR's from below in mercury, KNIGHTMARE's from above in sand; this one is a cold white glow in front of the viewer.
-- **Gating:** as every Theme since #81: it moves only while the pointer is over the window and for a few seconds after news, `still: 'calm'` like KNIGHTMARE's ash, and shows nothing under reduced motion.
+- **The mark: a speck,** 1px, in `--static` (Bone) at alphas 0.04–0.10, about 0.5 per 1000 px² (about 70 in a 320×440 panel).
+- **Its life: one tick.** Every speck is re-placed every tick on the shared 8 fps clock from a frame-indexed table (as snow and ash are), so they flicker in place and never fall. That is what makes them static, not snow or ash. *Arkham*'s scratches use the same painter with hairlines that live 16–24 ticks and fade, so the two no longer score "~" on Atmosphere (jury §3.9).
+- **The drifting band: the roll bar,** one soft horizontal band 24px tall, Bone at 3%, moving down 3px a tick (one pass of a 440px panel in about 18 seconds), as an old set's picture rolls. The painter's optional band exists for this.
+- **No still layer.** (The painter's optional still layer is *Arkham*'s panes.)
+- **The light:** the TV's own glow, low and centred (`--haze-inset` `auto -10% -40% -10%`), neutral Bone at 5%, never cyan. VENGEANCE's light comes from below in red, PALE MOONLIGHT's from below in smog, WATCHFUL PROTECTOR's from below in mercury, KNIGHTMARE's from above in sand, *Arkham*'s cold from the right; this one is a white glow in front of the viewer.
+- **Gating:** as every Theme since #81: it moves only while the pointer is over the window and for a few seconds after news, `still: 'calm'`, and nothing under reduced motion.
 
-**The engine PR needs:** a `StaticAtmosphere` type in `atmospheres.ts` (`color`, `density`, `alphas`, `bar: { height, alpha, step }`) and its painter in `renderer/src/painters.ts`. Optional: a `--glass-overlay` variable on the unlit disc face in `Signal.css`, if the maintainer wants scanlines on the dark disc (§8). Everything else in this dossier (the armour, the TV set, the bolt, the lit lens's scanlines, the stamp shape) uses layers, legend letters and variables the engine already has.
+**What this Theme asks of the engine PR:** only the shared `noise` kind, its painter, and its options (speck, a one-tick life, the band), built by whichever of this Theme and *Arkham* comes first. Optional: `--glass-overlay` on the unlit disc (§8), not recommended. Everything else (the armour, the TV set, the bolt, the lit lens's scanlines, the stamp shape, `--font-headline` from the shared type-token PR) uses layers, legend letters and variables the engine already has or the jury's shared PRs add.
 
-**One risk:** static is the picture of "no signal". It shows only while the user looks and after news, and it is dim; the Voice calls it "between channels", and the disc tooltip at rest says "Nothing on tonight". Check on screen that it reads as a set left on, not a broken one.
+**One risk, decide on screen:** static is the picture of "no signal". It shows only while the user looks and after news, and it is dim; the Voice calls it "between channels", and the disc tooltip at rest says "Nothing on tonight". Check that it reads as a set left on, not a broken one.
 
 **Rejected alternatives:**
 - **A wall of 16 small screens** (the grid as a still scene, one screen changing channel every few seconds): the strongest image of the book's grid, but mechanically it is WATCHFUL PROTECTOR's lit windows (a still grid where one cell switches each second), so it would score "=" on Atmosphere against it. The grid can live elsewhere: a Night Report divider, or the picker preview.
@@ -404,30 +417,36 @@ Under reduced motion: step 4 only. The intro and a click play the same reveal; a
 
 ## 10. Distinctiveness
 
-Scored by the jury's rules (§1): C = clearly different, ~ = close, = = same; a Theme stays only with C on at least three axes against every other.
+Scored by the jury's rules (Wave 1 §1): C = clearly different, ~ = close, = = same; a Theme stays only with C on at least three axes against every other. The scores are the Wave 2 jury's (§1), updated for its fixes; ΔE00 values are ours, for the revised palette.
+
+**Against the shipped Themes**
 
 | Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
 |---|---|---|---|---|---|---|
-| TRIUMPHANT – VENGEANCE | C: green-grey vs pure black; cyan vs red (75.6); Bone vs amber | C: Bangers / Bangers vs Anton / Special Elite | C: wide-set ears, two-tail cape, 9-unit black bat on grey vs red-edged cowl, jagged hem, dash bat; a leap vs a front-on stand | C: flickering static and a roll bar, white glow in front vs diagonal rain, red glow below | C: a broadcast with a Lexicon vs Bruce's journal with none. One line, "The time has come.", is Bruce's inner voice: keep it to the Signature click | **5** |
-| TRIUMPHANT – PALE MOONLIGHT | C: green-grey vs smog brown; cyan vs gold (47.3); Bone vs steel. The soft yellow is 12.2 from PALE MOONLIGHT's gold | C: no family shared | C: no oval, no brass belt, big black bat; two tails vs scallops; leap vs three-quarter look-up | C: specks that flicker in place vs flakes that fall; glow in front vs smog below | **~**: both are news media at night. The frame differs (broadcast vs print), the Lexicon shares no word, the register is satire of TV vs a wry editor. Honest score: close | **4** |
-| TRIUMPHANT – WATCHFUL PROTECTOR | C (narrow): ground hue 140° vs 263°; Bone vs mercury; but **both alarms are blue-family** (28.7) | C: Bangers vs Syncopate / Big Shoulders Stencil | C: wide ears, two tails, big flat bat vs thin ears, straight hem, a relief bar; leap vs crouch and ring | C: flicker and roll vs a still skyline; white glow in front vs mercury below | C: TV studio vs ops briefing. Watch the overlap words: GO AHEAD? and STANDBY lean towards radio procedure; OK TO AIR? is preferred for that reason | **5** |
-| TRIUMPHANT – KNIGHTMARE | C: green-grey vs scorched brown (15.6–20.4); cyan vs crimson (75.4); Bone working in both | C: Bangers vs Archivo | C: a cape vs no cape; 9-unit bat vs 4.4 inside a duster; armour vs swung coat; leap vs standing | C: static vs ash on the wind | C: broadcast vs a veteran with Alfred | **5** |
+| ANCIENT GRACE – VENGEANCE | C: tank grey vs warm black (7.0 / 18.3); cyan vs red (75.6); Bone vs amber (30.2) | C: Bangers / Bangers vs Anton / Special Elite | C: wide-set ears, two-tail hem, a big black bat on grey vs standard ears, a zigzag, a dark dash; a tilted leap vs a front-on stand | C: specks flickering in place and a roll bar, a white glow low vs diagonal rain, red glow from below | C: a broadcast with a Lexicon vs Bruce's journal with none. The one line, "The time has come.", is Bruce's inner voice: it stays on the Signature click | **5** |
+| ANCIENT GRACE – PALE MOONLIGHT | C: tank grey vs smog brown (8.0 / 12.4); cyan vs gold (47.3); Bone vs steel (23.5). The yellow waiting ink, 12.2 from its gold, is gone | C: no family shared | C: no oval, no brass belt; two tails vs scallops; a leap vs three-quarter under an oval | C: flicker in place vs falling flakes; white vs brown smog | **~**: both are news media at night. The medium differs (TV vs print) and the Lexicons share no word, but the frame is a cousin. The jury keeps it: inherent to the source, no fix (§1) | **4** |
+| ANCIENT GRACE – WATCHFUL PROTECTOR | C: hue 166° vs 263° (8.3 / 10.0); cyan vs blue (28.7, plain, same family); Bone vs mercury (22.1). The alarm is 12.9 from its *working* mercury: decide on screen | C: Bangers vs Syncopate / Big Shoulders Stencil | C: wide-set vs standard ears; two tails vs a straight hem; a black bat on grey vs a lit relief on black; a tilted leap vs a front-on stand | C: flicker vs a still skyline; both lit low, white vs mercury | C: a TV studio vs an ops briefing. "Control room", LIVE and STANDBY lean toward radio procedure; kept to those three, and OK TO AIR? rather than GO AHEAD? | **5** |
+| ANCIENT GRACE – KNIGHTMARE | C: tank grey vs scorched brown (16.1 / 21.0); cyan vs crimson (75.4); both Bone (11.4) | C: Bangers vs Archivo | C: a cape vs a duster; an 8-unit bat on an open chest vs a 4.4-unit bat inside lapels; the armour vs the swung coat | C: static vs ash on the wind | C: broadcast vs a veteran with Alfred. The report close no longer echoes KNIGHTMARE's (§5) | **5** |
 
-**First guesses against the other Wave 2 Themes** (their dossiers are being written now):
+**Against the other Wave 2 Themes, as revised by the jury**
 
-- ***Absolute Batman*:** the big risk is bulk. Both are huge, physical Batmen. Here the bulk shows only in the armour (alarmed) and the wide-set ears; Absolute should own the giant body every day, the axe and Frank Martin's colour. If Absolute also wants armour plates or a 9-unit chest emblem, the maintainer decides. Palette risk is low unless Absolute takes a cyan or a green-grey.
-- ***Year One*:** same writer, so the Voice risk is Miller's hard-boiled captions. This Theme takes the TV and leaves captions to *Year One* (with Gordon's half, per the brief); its one caption line is only on the Signature click. Richmond Lewis's flat colour against Varley's painted colour; low palette risk.
-- ***Arkham Asylum*:** both are "painted" books. This Theme uses the painted quality only in its sources and in the lit lens's gradient; texture, collage and photographs are Arkham Asylum's. Type risk: if Arkham Asylum picks a lettering face, it must not be a comic-cover face like Bangers; Gaspar Saladino's distorted hand is a different register. Ground: this Theme's green-grey has chroma under 7, so it does not claim asylum green.
+| Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
+|---|---|---|---|---|---|---|
+| ANCIENT GRACE – *Year One* | C (was ~): tank grey vs olive-khaki (6.4 / 11.1); cyan vs magenta (61.8); Bone vs Bone, 6.0 after the tint. The shared yellow is gone (phosphor green vs canary, 12.0) | C: Bangers vs Permanent Marker / Neucha | C (narrow): wide-set vs standard ears; two tails vs four ragged points. Both chests are a black bat on grey, told apart by value (a mid-grey suit vs the only light one) and size (8 vs 6 units). The two emblems must be traced and compared (§8) | C: specks flickering vs smoke rising; a white glow vs olive smog | C: TV vs a cop's notebook (both Miller). *Year One* keeps the captions; this Theme keeps the screen | **5** |
+| ANCIENT GRACE – *Absolute Batman* | C: tank grey vs violet (18.1 / 21.5); cyan vs lemon (47.9); Bone vs lavender (24.8) | C (was ~): Bangers is this Theme's alone; *Absolute* stamps in Bungee (§9.3) | C (narrow): wide-set ears vs *Absolute*'s, now standard; two tails vs six blades; a bat vs an axe block. Suits 13.9 apart (neutral grey vs teal) | C: static vs a bat colony | C: a broadcast vs a work shift | **5** |
+| ANCIENT GRACE – *Arkham Asylum* | C: tank grey vs plum-black (13.7 / 21.7); cyan vs claret (70.0); Bone vs Bone (9.9) | C: Bangers vs IM Fell English SC | C: wide-set vs tall ears; tails vs a bleeding hem; a visible bat vs a hidden one. Its flying descent moved to a trailing cape, so the canopy over the head is this Theme's alone (§3.7) | C (was ~): one `noise` painter, but specks that live one tick and flicker vs hairlines that stay and fade over 2–3 seconds, with still panes; white and low vs cold from the right (§3.9) | C: a broadcast vs a house | **5** |
+
+Every pair now scores 4 or 5; the only 4 is PALE MOONLIGHT, on Voice, which the jury accepted as inherent.
 
 ## 11. Legal note
 
-- **Trademark (DC):** Batman, the bat symbols, "Gotham", and the title *The Dark Knight Returns*. The credit names the work nominatively; the display name is a book's subtitle word, not its logo. The emblem is redrawn by us as a vector after the second suit's bat, credited as a DC trademark in the README and NOTICE, as for the other Themes.
+- **Trademark (DC):** Batman, the bat symbols, "Gotham", and the title *The Dark Knight Returns*. The credit names the work nominatively. The display name, ANCIENT GRACE, is a two-word fragment of Bruce's narration used as an allusion, never set in the book's lettering, as PALE MOONLIGHT uses two words of the Joker's line; with "The time has come." it is the whole of the book's words in this Theme. The emblem is redrawn by us as a vector after the second suit's bat, credited as a DC trademark in the README and NOTICE, as for the other Themes.
 - **Copyright to avoid:**
   - The cover art: no tracing of the silhouette, the bolt or the composition. The Signature pose is Bat-Clawd's own figure on his own grid, and the bolt is our own path.
   - Varley's paintings and every panel: sampled for colour in a scratch folder, never shipped, never reproduced.
   - The title lettering and Costanza's lettering: Bangers is a different, open face.
-  - Character art and likenesses (Carrie Kelley, the Mutants, the Joker, Superman): not drawn. Carrie appears only as a colour.
-  - Dialogue: one four-word line, "The time has come.", is the ceiling. The book's other famous lines ("This would be a good death…") are not used.
+  - Character art and likenesses (Carrie Kelley, the Mutants, the Joker, Superman): not drawn.
+  - Dialogue: one four-word line, "The time has come.", is the ceiling, plus the two words of the name. The book's other famous lines ("This would be a good death…") are not used.
 - **Not named:** Lola Chong, the TV station, the talk show, the Mutants or the Sons of the Batman in any UI text. The Voice says "our panel", not a show's name.
 - **No weapons:** the horse option carries no rifle; the armour has no weapon.
 - **Style, free to use:** TV broadcast language ("live", "on air", "stay tuned"), static, scanlines, a 4×4 grid, a lightning-coloured light, comic cover lettering as a genre.
@@ -436,19 +455,21 @@ Scored by the jury's rules (§1): C = clearly different, ~ = close, = = same; a 
 
 ## 12. Unverified items
 
-- **Every printed hex.** No 1986 printed interior page was sampled. S-A is a photo of paint before printing (board tone and camera cast); S-C is a 256px cover scan of an unstated printing; S-T is a later edition, unidentified. The alarm `#3fdcff`, the soft `#e3dc86` and the B magenta are **proposed** from those hues, not sampled values.
+- **The display name's source.** ANCIENT GRACE is the maintainer's choice (jury §9.11). Its origin, Bruce's Book One narration about the bat in the cave ("Gliding with ancient grace…"), was found only on two fan pages ([Street Tech](https://www.streettech.com/bcp/BCPgraf/Media/batmanDNR.htm), and [TV Tropes](https://tvtropes.org/pmwiki/pmwiki.php/Quotes/BatmanTheDarkKnightReturns), whose page returned 403 and was read only through search results). The exact wording and the page number need checking against a copy of the book before it ships, as the jury asks of *Year One*'s name.
+- **Every printed hex.** No 1986 printed interior page was sampled. S-A is a photo of paint before printing (board tone and camera cast); S-C is a 256px cover scan of an unstated printing; S-T is a later edition, unidentified. The alarm `#3fdcff` is **proposed** from the cover's bolt hue, not a sampled value.
+- **The phosphor-green waiting ink `#bde3a1`** has no sample in the book: it is the jury's proposal (§2), a CRT's glow, chosen for the TV frame and for distance. The surface and raised tones are the jury's values, re-derived toward the sampled tank grey's hue, not sampled themselves.
 - **Which edition the TCJ screenshots show**, and whether any edition after 1986 was recoloured (no evidence either way; the 2026 Deluxe is "remastered", colour unspecified).
 - **Caption-box colours:** pale teal-grey on Batman's boxes in S-A against flat process cyan on Superman's in S-T. Whether the 1986 print used flat tints for captions is not confirmed.
 - **Gouache or watercolour:** the sources split; the one listing of the original art says "mixed media".
 - **No primary source on the TV device:** the readings of the talking heads and the colour code are Thurston's and Jameson's criticism. No Miller, Janson or Varley interview on them was found.
-- **The two suits** (first with the oval, second with the big black bat): described by a fan wiki about the animated film; matched to the comic by our reading of reproductions only. **The emblem's proportions** (about 2.6:1, three scallops a side): from memory and small reproductions, to be traced from a clean image of the second suit before drawing.
+- **The two suits** (first with the oval, second with the big black bat): described by a fan wiki about the animated film; matched to the comic by our reading of reproductions only. **The emblem's proportions** (about 2.6:1, three scallops a side): from memory and small reproductions, to be traced from a clean image of the second suit, and compared with *Year One*'s bat at 64px, before drawing (jury §3.14). The chest bat's size in §7 follows from the traced aspect.
 - **The armour's look** (pauldrons, a cape or not, ear stubs) and **the drop** as a Book One image: from reproductions and memory; check against the pages.
 - **The horse splash** (Book Four, Batman leading the Sons of the Batman): seen in a TCJ reproduction; page not identified.
 - **"The time has come."**: read in TCJ's reproduction of a Book One page; page number not identified.
 - **The KLIK channel-flipping grid** and **the rounded TV frames with tail-less white boxes**: our reading of TCJ's reproductions, not a cited description. The KLIK page's book is inferred.
 - **Miller's "bolt out of the blue" quotes:** read in Heritage's own magazine, interview date not stated.
-- **Stamp widths:** measured with Pillow at 12px, not by the app's `fontMetrics` fixture. OVER TO YOU is 4px wider than PERMISSION.
-- **On screen, not yet seen:** Bangers at the header and at 12px stamps (its small `Z`); the cyan alarm in the picker beside WATCHFUL PROTECTOR; the soft yellow beside Clawd orange; the 9-unit chest bat; the bolt at 54px; the TV set beside the sleeping pose; the static at 8 fps.
+- **Stamp widths:** measured with Pillow at 12px, not by the app's `fontMetrics` fixture. Every word is narrower than PERMISSION there; `stampWidth.test.ts` decides.
+- **Decide on screen** (the jury's list, §7; options stay open until a labelled comparison image): the cyan alarm and the lit lens beside WATCHFUL PROTECTOR's; the phosphor-green waiting ink, also beside Clawd orange; the leap (or the horse) and the bolt at 54px, inside the header's clip; the static as "a set left on"; Bangers at 12px (its small `Z` in FROZEN); LATEST against NEW REPLY; DEAD AIR, FROZEN and OFF AIR side by side; the suit-grey belt against the Ash-belt option; the TV set's bezel beside the sleeping pose.
 
 ## 13. Sources
 
@@ -468,5 +489,6 @@ Scored by the jury's rules (§1): C = clearly different, ~ = close, = = same; a 
 - Editions: [mycomicscollection collecting guide](https://mycomicscollection.com/en/blog/dark-knight-returns-collecting-guide/); [Smash Pages, 17 Feb 2026](https://smashpages.net/2026/02/17/dc-comics-will-mark-40th-anniversary-of-the-dark-knight-returns-with-yearlong-celebration/); [My Absolute Collection, 2017](http://myabsolutecollection.blogspot.com/2017/03/batman-dark-knight-returns-collectors.html).
 - Fan wiki (gap filler only): [DC Movies Wiki, Batsuit (The Dark Knight Returns)](https://dcmovies.fandom.com/wiki/Batsuit_(The_Dark_Knight_Returns)).
 - Not read, for a later pass: Klaus Janson at [SKTCHD](https://sktchd.com/interview/the-moment-with-klaus-janson/) and [Comics Beat](https://www.comicsbeat.com/graphic-novel-club-klaus-janson-dark-knight-returns).
-- Fonts: [Bangers description](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/DESCRIPTION.en_us.html), [METADATA](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/METADATA.pb), [Fontsource API](https://api.fontsource.org/v1/fonts/bangers); Oswald, Teko, Saira Condensed and Shantell Sans from the same repository (all OFL).
-- In this repo: [`wave-2-brief.md`](wave-2-brief.md), [`jury-wave-1.md`](jury-wave-1.md), [`burton-1989.md`](burton-1989.md), [`knightmare-palette.md`](knightmare-palette.md), [`snyder.md`](snyder.md); `app/src/renderer/src/styles/themes/*.css`, `app/src/shared/suits.ts`, `atmospheres.ts`, `emblems.ts`, `words.ts`; `app/test/themes.test.ts`, `themeContrast.test.ts`, `stampWidth.test.ts`; `CONTEXT.md`, `DESIGN.md`, `docs/adr/0001-many-themes-and-the-homage-line.md`.
+- Fonts: [Bangers description](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/DESCRIPTION.en_us.html), [METADATA](https://raw.githubusercontent.com/google/fonts/main/ofl/bangers/METADATA.pb), [Fontsource API](https://api.fontsource.org/v1/fonts/bangers); Oswald, Teko and Saira Condensed from the same repository (all OFL), considered and set aside (§4).
+- The display name's origin (fan pages, §12): [Street Tech, *The Dark Knight Returns* text](https://www.streettech.com/bcp/BCPgraf/Media/batmanDNR.htm); [TV Tropes, quotes](https://tvtropes.org/pmwiki/pmwiki.php/Quotes/BatmanTheDarkKnightReturns).
+- In this repo: [`wave-2-brief.md`](wave-2-brief.md), [`jury-wave-1.md`](jury-wave-1.md), [`jury-wave-2.md`](jury-wave-2.md) (and §9, the maintainer's decisions), [`year-one.md`](year-one.md), [`absolute-batman.md`](absolute-batman.md), [`arkham-asylum.md`](arkham-asylum.md), [`burton-1989.md`](burton-1989.md), [`knightmare-palette.md`](knightmare-palette.md), [`snyder.md`](snyder.md); `app/src/renderer/src/styles/themes/*.css`, `app/src/shared/suits.ts`, `atmospheres.ts`, `emblems.ts`, `words.ts`; `app/test/themes.test.ts`, `themeContrast.test.ts`, `stampWidth.test.ts`; `CONTEXT.md`, `DESIGN.md`, `docs/adr/0001-many-themes-and-the-homage-line.md`.
