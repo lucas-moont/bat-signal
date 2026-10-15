@@ -711,3 +711,64 @@ export const BECOME_A_BAT_WORDS: Words = {
     noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. One honest thing today.' },
   },
 }
+
+/**
+ * ANCIENT GRACE's words, after Frank Miller's The Dark Knight Returns (dark-knight-returns.md,
+ * sections 5 and 6): a television left on in a dark room in 1986. Its Lexicon is a control room's,
+ * channels on the air and your cue; its Voice is the studio's, dry and a little satirical about its
+ * talking heads. Broadcast, never print (PALE MOONLIGHT's) or an ops room (WATCHFUL PROTECTOR's).
+ */
+export const ANCIENT_GRACE_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    case: { one: 'Channel', many: 'Channels' },
+    needsYou: { label: 'Your cue', count: (n) => `${n} cue${n === 1 ? '' : 's'} for you` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'OK to air?',
+      error: 'Dead air',
+      waiting: "You're on",
+      reply: 'Latest',
+      stalled: 'Frozen',
+      'session-opened': 'On air',
+      'session-closed': 'Off air',
+    },
+    live: { busy: 'Live', idle: 'Standby', shell: 'Shell' },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    theme: { name: 'ANCIENT GRACE', film: "Frank Miller's The Dark Knight Returns (1986)" },
+    tagline: 'Live, from Gotham.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      // The pundits finally agree, which is the joke.
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Our panel agrees: a quiet night.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} on the air.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Bulletin',
+      // Live, not an edition: the time only, no place.
+      dateline: (now) => `LIVE · ${formats().time.format(now)}`,
+      signature: 'Your segment',
+      nil: (t) => `Nothing for your segment. Every ${lower(t.case.one)} stays on the air without you.`,
+      caseNotes: () => 'Around the dial',
+      // "You're still on" picks up the YOU'RE ON stamp; the station signs off only when nothing waits.
+      end: (waiting) =>
+        waiting ? "Stay tuned. You're still on." : "That's the bulletin. Good night, Gotham.",
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) =>
+        (lit ? 'We interrupt this program. ' : 'Nothing on tonight. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Control room',
+      atmosphere: { label: 'Static', hint: (t) => `TV static behind the ${lower(t.case.many)}` },
+    },
+  },
+}

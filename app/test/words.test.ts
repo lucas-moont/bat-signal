@@ -7,6 +7,7 @@ import type { AttentionItem, SessionSnapshot, StoreSnapshot } from '../src/share
 import { attentionCopy, caseHeader } from '../src/shared/view'
 import { THEME_IDS, THEMES } from '../src/shared/themes'
 import {
+  ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
@@ -162,6 +163,61 @@ describe("BECOME A BAT's Voice", () => {
       title: "Quiet so far. I don't trust it.",
       hint: 'Nothing needs you right now.',
     })
+  })
+})
+
+describe("ANCIENT GRACE's words", () => {
+  const { terms, voice } = ANCIENT_GRACE_WORDS
+
+  // A TV station's control room (dark-knight-returns.md, section 6): cases are channels, what needs
+  // you is your cue, and every stamp is a broadcast word a tired reader still gets at a glance.
+  it('speak a broadcast Lexicon', () => {
+    expect(terms.case).toEqual({ one: 'Channel', many: 'Channels' })
+    expect(terms.needsYou.label).toBe('Your cue')
+    expect([terms.needsYou.count(1), terms.needsYou.count(3)]).toEqual(['1 cue for you', '3 cues for you'])
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'OK to air?',
+      error: 'Dead air',
+      waiting: "You're on",
+      reply: 'Latest',
+      stalled: 'Frozen',
+      'session-opened': 'On air',
+      'session-closed': 'Off air',
+    })
+    expect(terms.live).toEqual({ busy: 'Live', idle: 'Standby', shell: 'Shell' })
+  })
+
+  // Live, not an edition: the time only, no place (WATCHFUL PROTECTOR's says Gotham).
+  it('dates its Bulletin live, in the 24-hour clock', () => {
+    expect(voice.report.name).toBe('Bulletin')
+    expect(voice.report.dateline(new Date(2026, 9, 14, 2, 14))).toBe('LIVE · 02:14')
+  })
+
+  // "You're still on" picks up the YOU'RE ON stamp; the sign-off only when nothing waits.
+  it('signs off only when nothing waits', () => {
+    expect(voice.report.end(2)).toBe("Stay tuned. You're still on.")
+    expect(voice.report.end(0)).toBe("That's the bulletin. Good night, Gotham.")
+  })
+
+  // The pundits finally agree, which is the joke; the hint stays plain.
+  it('lets its panel agree on an all-clear', () => {
+    expect(voice.empty.quiet).toEqual({
+      title: 'Our panel agrees: a quiet night.',
+      hint: 'Nothing needs you right now.',
+    })
+    expect(voice.empty.noCases.title(terms)).toBe('No channels on the air.')
+  })
+
+  it('interrupts the program only when the disc is lit', () => {
+    expect(voice.signal.openTip(false)).toMatch(/^Nothing on tonight\. /)
+    expect(voice.signal.openTip(true)).toMatch(/^We interrupt this program\. /)
+  })
+
+  it('names its static and its control room', () => {
+    expect(voice.settings.kicker).toBe('Control room')
+    expect(voice.settings.atmosphere.label).toBe('Static')
+    expect(voice.settings.atmosphere.hint(terms)).toBe('TV static behind the channels')
   })
 })
 
