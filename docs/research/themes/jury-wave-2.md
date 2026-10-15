@@ -328,7 +328,7 @@ What the engine PRs need, with the asks shared between Themes. The Wave keeps tw
 - **Disc:** nothing is required. DKR's scanlines go in `--lens-breaks`, Arkham's grain in the `--disc-lens` list, Year One's hard stops and Absolute's flat field are variables. DKR's `--glass-overlay` (scanlines on the *unlit* disc) is dropped: §9.12 does not include it. If the lit scanlines are not enough on screen, DKR's own fallback, a flatter lit screen, needs no engine change.
 - **Bat-Clawd:** nothing new. The overlay already draws outside the box: WATCHFUL PROTECTOR's ring reaches radius 16 around (8, 3), which covers DKR's bolt (y −6 to 14), DKR's canopy (y −3), the TV set (x 17), Absolute's tethers (y 13) and Arkham's mirror (x 21.5). Signature steps already take a `transform` (DKR's −15° tilt, Absolute's lift). The rest needs no new part type:
   - DKR's armour: two legend letters in its own suit.
-  - Year One's trunks and pouches, and Absolute's pouches: map rows.
+  - Year One's trunks and solid canary belt, and Absolute's pouches: map rows.
   - Arkham's ear tips: a front path.
   - Arkham's bleeding hem: rects.
 
@@ -390,7 +390,7 @@ What Wave 2 takes from the Wave 3 candidates, so their dossiers start from it:
 - **Adam West.**
   - His medium is the TV serial: the narrator, "Meanwhile…", and "same Bat-time, same Bat-channel". DKR keeps TV *news* (an anchor, a panel, "live") and must not drift into the serial narrator. Its "Channel" already leans that way, so West's Lexicon can't use Channel.
   - Bangers, the face of "POW!", is DKR's. That is one more reason Absolute should take Bungee rather than Luckiest Guy, which leaves Luckiest Guy free for West.
-  - The yellow oval is PALE MOONLIGHT's; a yellow belt is also Year One's canary pouches.
+  - The yellow oval is PALE MOONLIGHT's; a yellow belt is also Year One's (its solid canary belt).
   - The pinks are Year One's and Arkham's alarms and Absolute's waiting mauve.
 - **Lego Batman.**
   - Bungee, the natural blocky face for bricks, is Absolute's.
