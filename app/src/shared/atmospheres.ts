@@ -124,7 +124,10 @@ export interface NoiseAtmosphere extends Scene {
   density: number
   /** The strengths (alphas) a mark may have, one picked for each. */
   alphas: readonly number[]
-  /** How long a mark stays put, in seconds: a tick of the clock for static, which flickers in place. */
+  /**
+   * How long a mark stays put, in seconds, counted in whole ticks of the clock (one at least): a
+   * tick for static, which flickers in place.
+   */
   life: number
   /** The band: its height, its strength at its middle, and how far it rolls down a tick, in px. */
   band?: { height: number; alpha: number; fall: number }

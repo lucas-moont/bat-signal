@@ -480,7 +480,7 @@ function smoke(
 interface Mark {
   x: number
   y: number
-  /** Ticks since it appeared where it is, fractional when a tick comes late. */
+  /** Whole ticks since it appeared where it is. */
   age: number
 }
 
@@ -497,8 +497,8 @@ function noise(
   { color: variable, mark: { size }, density, alphas, life, band }: NoiseAtmosphere,
   random: () => number,
 ): Painter {
-  /** A mark's life in ticks of the clock. */
-  const lifeTicks = life / STEP
+  /** A mark's life in whole ticks of the clock, one at least. */
+  const lifeTicks = Math.max(1, Math.round(life / STEP))
   /** The marks at each strength, none until it has a size. */
   let layers: Mark[][] = alphas.map((): Mark[] => [])
   let width = 0
@@ -530,13 +530,16 @@ function noise(
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
+      // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
+      // freeze whole on every early one.
+      const ticks = Math.round(step)
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
       alphas.forEach((alpha, level) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
         for (const m of layers[level]!) {
-          m.age += step
+          m.age += ticks
           if (m.age >= lifeTicks) {
             m.age %= lifeTicks
             place(m)

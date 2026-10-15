@@ -563,6 +563,28 @@ describe('the noise', () => {
     }
   })
 
+  // The page's clock is a timer, a hair early or late each tick: static still flickers every tick,
+  // and a longer life still lasts its whole ticks.
+  it('counts whole ticks on a clock that runs a hair early or late', () => {
+    const jittered = (life: number) => {
+      const painter = noise({ ...NOISE, life: life / FPS })
+      const first = recorder()
+      painter.paint(first.ctx, 0)
+      const frames = [spots(first)]
+      for (let i = 0; i < 12; i++) {
+        const r = recorder()
+        painter.paint(r.ctx, (i % 2 ? 1.002 : 0.998) / FPS)
+        frames.push(spots(r))
+      }
+      return frames
+    }
+    const statics = jittered(1)
+    for (let i = 1; i < statics.length; i++) expect(statics[i]![0]).not.toBe(statics[i - 1]![0])
+    const longer = jittered(3)
+    const moves = longer.flatMap((frame, i) => (i > 0 && frame[0] !== longer[i - 1]![0] ? [i] : []))
+    for (let j = 1; j < moves.length; j++) expect(moves[j]! - moves[j - 1]!).toBe(3)
+  })
+
   it('stands still while no time passes', () => {
     const painter = noise()
     const [a, b] = [recorder(), recorder()]
