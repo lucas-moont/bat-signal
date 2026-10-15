@@ -131,6 +131,7 @@
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   /* The report is plain working text: neither a log nor a typewriter. */
   --font-report: var(--font-body);
+  --font-headline: var(--font-display);
   --font-stamp: var(--font-display);
   /* Short words under 19px (the strip's name, the counts, a folder's name) in Barlow: Archivo's width
      pushed the watch strip's name onto two lines beside its count. */
