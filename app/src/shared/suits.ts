@@ -977,14 +977,21 @@ const GRACE_SEATED = graceMap([SUIT, SUIT, SUIT, SUIT], [])
 const GRACE_LEAPING = graceMap(['...SSSSSSSSSSSSg', SUIT, SUIT], [...BELOW_WAIST.slice(0, 3)])
 /**
  * The armour: plates over his chest and on his shoulders, a unit past his body each side, a lit
- * edge along their tops; his cowl, jaw and eyes as ever.
+ * edge along their tops (it is what reads at his size: the plates are near the suit's grey); his
+ * cowl, jaw and eyes as ever.
  */
-const GRACE_ARMOUR = map(
-  ['..AAAAAAAAAAAA..', '...AAAAAAAAAA...', '...AAAAAAAAAA...'],
-  BELOW_WAIST,
-  GRACE_LEGEND,
-  [...GRACE_HEAD.slice(0, 9), '..eec######cee..'],
-)
+const GRACE_ARMOUR: OutfitMap = {
+  top: 0,
+  rows: [
+    ...GRACE_HEAD.slice(0, 9),
+    '..eec######cee..',
+    '..eeeeeeeeeeee..',
+    '..AAAAAAAAAAAA..',
+    ...twice(['...AAAAAAAAAA...', '...AAAAAAAAAA...']),
+    ...BELOW_WAIST,
+  ],
+  legend: GRACE_LEGEND,
+}
 
 /**
  * The second suit's bat on the grey, round as BAT_1986 is: 3.2 units wide and 3 tall, from y 6 to 9,
@@ -1072,12 +1079,14 @@ const armoured = pose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }], [], {
 const BOLT =
   'M11.5 -6 L12.5 -6 L10.2 -1.3 L12.3 -0.8 L8.4 5.1 L10.3 5.6 L5.5 14 L4.5 14 L8.6 5.9 L6.7 5.4 ' +
   'L10.6 -0.2 L8.7 -0.7 Z'
-const leaping = (bolt?: number) =>
-  gracePose(GRACE_LEAPING, [
+/** Launched: raised two units and tilted, on the pose so the perch's watch, which keeps it, holds it. */
+const leaping = (bolt?: number): Pose => ({
+  ...gracePose(GRACE_LEAPING, [
     ...(bolt ? [{ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt } as const] : []),
     { kind: 'cape', d: TAILS.streaming },
-  ])
-const LAUNCH = 'translateY(-4px) rotate(-15deg)'
+  ]),
+  transform: 'translateY(-4px) rotate(-15deg)',
+})
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge, then launched,
@@ -1090,9 +1099,9 @@ const THE_LEAP: Script = [
     look: GAZE,
     transform: 'translateY(2px)',
   },
-  { pose: leaping(), look: GAZE, transform: LAUNCH },
-  { pose: leaping(0.6), look: GAZE, transform: LAUNCH },
-  { pose: leaping(0.4), look: GAZE, transform: LAUNCH },
+  { pose: leaping(), look: GAZE },
+  { pose: leaping(0.6), look: GAZE },
+  { pose: leaping(0.4), look: GAZE },
 ]
 
 export const ANCIENT_GRACE_SUIT: Suit = {

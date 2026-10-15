@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   scriptAt,
   stillStep,
@@ -74,5 +75,13 @@ describe("BECOME A BAT's watch", () => {
       const here = swarm(step.pose)
       expect(here?.kind === 'path' && held?.kind === 'path' && here.d.startsWith(held.d)).toBe(true)
     }
+  })
+})
+
+// The watch keeps his Signature pose's final pose, not its step: a tilt on the step alone would leave
+// him standing upright on the perch, the leap gone.
+describe("ANCIENT GRACE's watch", () => {
+  it('holds the leap tilted in every step', () => {
+    for (const step of ANCIENT_GRACE_SUIT.watch) expect(step.pose.transform).toMatch(/rotate\(-15deg\)/)
   })
 })
