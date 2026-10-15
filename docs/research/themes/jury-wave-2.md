@@ -79,7 +79,7 @@ A Theme stays only if it scores C against every other Theme on at least 3 axes. 
 
 **After the §3 changes:**
 - DKR – Year One: Palette becomes C (grounds 6.4 / 11.1, no shared yellow). That makes **5**.
-- Absolute – Arkham: Palette becomes C (plum vs violet, 9.5 / 11.0; Bone vs lavender, 18.1). Silhouette stays C, now through the ears. That makes **5**.
+- Absolute – Arkham: Palette becomes C (plum vs violet, 9.5 / 11.0; Bone vs lavender, 19.6). Silhouette stays C, now through the ears. That makes **5**.
 - DKR – Absolute and Year One – Arkham: Type becomes C. That makes **5** each.
 - DKR – Arkham: Atmosphere becomes C once Arkham's scratches stay and fade instead of re-cutting every tick. That makes **5**.
 - Year One – VENGEANCE: Silhouette becomes C once the hem has four deep points. That makes **5**.
@@ -117,7 +117,7 @@ Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to w
 4. **Year One's A3** (`#f2605e`) is 6.1 from KNIGHTMARE's alarm and `--ink-hot`, 5.0 fill to fill, and 10.4 from Clawd. It breaks the ~10 alarm rule against KNIGHTMARE. Year One's dossier says so itself. A3 stays a comparison picture, not an available alarm. A2 stays.
 5. **Cross-role pairs:** Absolute's lemon against Year One's canary (8.3, §3.11) and DKR's cyan against WATCHFUL PROTECTOR's mercury (12.9, §3.10) are unchanged and already settled. One new near pair: Arkham's waiting paper `#d6c49a` is 8.9 from KNIGHTMARE's working Bone. It is above 5, and the stamp word carries the tier, as in §3.11. No fix.
 6. **DKR's fallback alarm:** none to measure. Palette B is withdrawn in the dossier.
-7. **Stale quotes in the dossiers.** DKR, Year One and Arkham run in Bone, and each tinted its own after this note. Each then measured the others against the Bones this note proposed (`#eef1e8`, `#ecebdc`, `#ece9f3`). The final pairs: DKR – Year One **9.7** (quoted 6.0 and 7.5), DKR – Arkham **12.7** (quoted 9.9 and 11.7), Year One – Arkham **17.4** (quoted 18.1 and 12.4), Absolute's lavender – Arkham's Bone **19.6** (quoted 18.1 in Absolute's dossier, and in §1 and §2 above). The suits have the same problem. DKR and Absolute quote Year One's S2 grey (20.1, 25.3); the recommended chalk S1 is 33.7 and 37.8. Absolute quotes Arkham's draft suit (31.6); the final `#55425e` is 30.4. No verdict changes: the closest working inks are still 6.9 apart. The dossiers' wording needs the corrected numbers; the palettes don't change.
+7. **Stale quotes in the dossiers.** DKR, Year One and Arkham run in Bone, and each tinted its own after this note. Each then measured the others against the Bones this note proposed (`#eef1e8`, `#ecebdc`, `#ece9f3`). The final pairs: DKR – Year One **9.7** (quoted 6.0 and 7.5), DKR – Arkham **12.7** (quoted 9.9 and 11.7), Year One – Arkham **17.4** (quoted 18.1 and 12.4), Absolute's lavender – Arkham's Bone **19.6** (quoted 18.1 in Absolute's dossier, and in §1 and §2 above). The suits have the same problem. DKR and Absolute quote Year One's S2 grey (20.1, 25.3); the recommended chalk S1 is 33.7 and 37.8. Absolute quotes Arkham's draft suit (31.6); the final `#55425e` is 30.4. No verdict changes: the closest working inks are still 6.9 apart. The dossiers, and §1 and §2 here, now quote the corrected numbers; the palettes don't change.
 
 **Contrast:** every text token of the four Themes passes 4.5:1 on its abyss, surface and raised tone, and on its lightest hover ground. The tightest are Year One's A3 (4.52 on raised), Arkham's `--signal-hot` (4.92 on its hover tone, 5.19 on raised) and Year One's A2 (4.95 on raised). Ink on the alarm fill: DKR 7.18, Absolute 12.33, Year One 5.46 (A3, Bone on the red: 4.83), Arkham 6.02.
 
@@ -161,7 +161,7 @@ Inside each Theme, the alarm sits far from its own inks. Alarm to waiting / to w
   - **Alarm:** keep A2 `#ff4dd2`. A1 (`#ff4fa3`) is no longer available: it is 4.1 from Arkham's alarm.
 - **Arkham (SERIOUS HOUSE): keep, with changes.** The strongest Voice in the Wave (rounds, doors, keys) and the most respectful handling of its subject. It has the thinnest palette, though: every family in the book is already someone's, and its violet is a 40° shift made to dodge WATCHFUL PROTECTOR.
   - **Ground:** off violet, to a plum-black (`#1a0f15` / `#2b1822`, h 344–346): 9.5 / 11.0 from Absolute's, and at least 7.1 / 9.2 from every other Theme's. Decide on screen whether claret on plum reads as the Joker's palette (question 2).
-  - **Working ink:** Bone, the dossier's own fallback. That is 18.1 from Absolute's lavender, and it ends the 9.4 against PALE MOONLIGHT's steel.
+  - **Working ink:** Bone, the dossier's own fallback. That is 19.6 from Absolute's lavender, and it ends the 9.4 against PALE MOONLIGHT's steel.
   - **Stamps** off the upright hand (§3.4): IM Fell English SC at about 10.5px, if PERMISSION fits the narrow margin, or a scrawl hand.
   - **Keeps the tall ears** (§3.6). Draw the tips as a front layer inside the viewBox, the dossier's option (b), not by raising every Theme's viewBox.
   - **Flying:** the descent goes; it has no source, and DKR's drop already puts a cape over the head. A trailing cape with the bleeding hem.
