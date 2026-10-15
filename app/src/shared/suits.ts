@@ -766,8 +766,10 @@ const YEAR_ONE_STANDING = yearOneMap([SUIT, SUIT])
 /** His arms out, gloved, holding the cape open. */
 const YEAR_ONE_ARMS_OUT = yearOneMap(['.gSSSSSSSSSSSSg.', SUIT])
 const YEAR_ONE_SEATED = yearOneMap([SUIT, SUIT, SUIT], [])
+/** His right arm thrown ahead, gloved. */
+const REACHING = '...SSSSSSSSSSSSg'
 /** One arm reaching ahead as he flies to the right. */
-const YEAR_ONE_REACHING = yearOneMap(['...SSSSSSSSSSSSg', SUIT])
+const YEAR_ONE_REACHING = yearOneMap([REACHING, SUIT])
 
 /**
  * Year One's own bat on the grey, 2.73 units wide so it stands a full unit tall (the Wave's floor),
@@ -961,13 +963,7 @@ export const BECOME_A_BAT_SUIT: Suit = {
 /** Outfit G's legend: V's, with the armour's plates and their lit edge. */
 const GRACE_LEGEND = { ...LEGEND, A: 'var(--armor)', e: 'var(--armor-edge)' }
 /** The cowl with its short ears set wide, at the head's outer corners, and a heavy brow. */
-const GRACE_HEAD = twice([
-  '...c........c...',
-  '...cccchhcccc...',
-  '...cccccccccc...',
-  '...cccccccccc...',
-  '...cc######cc...',
-])
+const GRACE_HEAD = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4)]
 /** The cowl's outline with the wide-set ears, behind the face, so only its outer edge shows. */
 const GRACE_COWL_EDGE: Layer = {
   kind: 'path',
@@ -979,24 +975,19 @@ const graceMap = (chest: readonly string[], rows: readonly string[] = BELOW_WAIS
 const GRACE_STANDING = graceMap([SUIT, SUIT, SUIT])
 const GRACE_SEATED = graceMap([SUIT, SUIT, SUIT, SUIT], [])
 /** The right fist thrown ahead, the legs tucked under him: only their first half-row shows. */
-const GRACE_LEAPING = graceMap(['...SSSSSSSSSSSSg', SUIT, SUIT], [...BELOW_WAIST.slice(0, 3)])
+const GRACE_LEAPING = graceMap([REACHING, SUIT, SUIT], BELOW_WAIST.slice(0, 3))
 /**
  * The armour: plates over his chest and on his shoulders, a unit past his body each side, a lit
  * edge along their tops (it is what reads at his size: the plates are near the suit's grey); his
  * cowl, jaw and eyes as ever.
  */
-const GRACE_ARMOUR: OutfitMap = {
-  top: 0,
-  rows: [
-    ...GRACE_HEAD.slice(0, 9),
-    '..eec######cee..',
-    '..eeeeeeeeeeee..',
-    '..AAAAAAAAAAAA..',
-    ...twice(['...AAAAAAAAAA...', '...AAAAAAAAAA...']),
-    ...BELOW_WAIST,
-  ],
-  legend: GRACE_LEGEND,
-}
+const PLATES = '...AAAAAAAAAA...'
+const GRACE_ARMOUR = map([PLATES, PLATES], BELOW_WAIST, GRACE_LEGEND, [
+  ...GRACE_HEAD.slice(0, 9),
+  '..eec######cee..',
+  '..eeeeeeeeeeee..',
+  '..AAAAAAAAAAAA..',
+])
 
 /**
  * The second suit's big bat on the grey: BAT_1986 stretched to about 2.2:1, the shape the chest
@@ -1006,12 +997,13 @@ const GRACE_ARMOUR: OutfitMap = {
  */
 const SECOND_SUIT_BAT: Layer = { kind: 'emblem', cx: 8, cy: 7.5, width: 6.6, height: 3 }
 
-/** The heavy cape: straight between two long tails, one at each outer corner, ending at y 11.5. */
+/** The heavy cape's hem: straight between two long tails, one at each outer corner, ending at y 11.5. */
+const TAIL_HEM = 'L14.6 11.5 L12.6 10.8 L3.4 10.8 L1.4 11.5 Z'
 const TAILS = {
   /** Hanging behind him from the shoulders. */
-  hanging: 'M3 5 L13 5 L14.6 11.5 L12.6 10.8 L3.4 10.8 L1.4 11.5 Z',
+  hanging: `M3 5 L13 5 ${TAIL_HEM}`,
   /** Closed around him, asleep, its tails at his feet. */
-  wrapped: 'M2.6 6.4 L13.4 6.4 L14.6 11.5 L12.6 10.8 L3.4 10.8 L1.4 11.5 Z',
+  wrapped: `M2.6 6.4 L13.4 6.4 ${TAIL_HEM}`,
   /** The drop: spread over his head like a canopy, its tails hanging at his sides (two frames). */
   canopyA: 'M3 5 L-1.4 4.6 L-3 8 L-3.4 2.4 Q8 -3 19.4 2.4 L19 8 L17.4 4.6 L13 5 Z',
   canopyB: 'M3 5 L-1.4 5.2 L-3 8.4 L-3.4 3.2 Q8 -2 19.4 3.2 L19 8.4 L17.4 5.2 L13 5 Z',
@@ -1051,10 +1043,7 @@ const drop = (canopy: string) =>
   )
 
 /** The armour (alarmed), Book Four's exoframe: the cape thrown back behind it. */
-const armoured = pose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }], [], {
-  chest: [SECOND_SUIT_BAT],
-  edge: GRACE_COWL_EDGE,
-})
+const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 
 /**
  * The bolt behind the leap: a jagged path a unit wide, from above his head down past his feet, in
