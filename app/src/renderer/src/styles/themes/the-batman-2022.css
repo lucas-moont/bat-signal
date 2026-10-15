@@ -148,6 +148,8 @@
   /* The night report's body, and the stamps' face: both the typewriter in VENGEANCE. */
   --font-report: var(--font-type);
   --font-headline: var(--font-display);
+  --font-dateline: var(--font-report);
+  --dateline-weight: 400;
   --font-stamp: var(--font-type);
   /* Short display words under 19px (the counts, the strip's name, a picker folder's name), where a
      display face built for large sizes may not hold. VENGEANCE: its display face. */

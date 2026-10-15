@@ -43,6 +43,8 @@
   color: var(--bone);
 }
 .report__date {
+  font-family: var(--font-dateline);
+  font-weight: var(--dateline-weight);
   font-size: 11px;
   letter-spacing: 0.06em;
   color: var(--ash);

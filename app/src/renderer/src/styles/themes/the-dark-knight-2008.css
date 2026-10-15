@@ -129,6 +129,8 @@
   /* The Night Report is a printed log, not a typed page. */
   --font-report: var(--font-mono);
   --font-headline: var(--font-display);
+  --font-dateline: var(--font-report);
+  --dateline-weight: 400;
   --font-stamp: var(--font-type);
   /* Short words under 19px (the counts, a folder's name) in Barlow: Syncopate is for large caps, and
      the disc's count is a Barlow numeral (nolan.md, section 8). */
