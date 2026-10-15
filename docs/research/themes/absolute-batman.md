@@ -2,25 +2,26 @@
 
 Research note, 2026-10-14. Scope: one Bat-Signal Theme after *Absolute Batman* (DC All In, from October 2024), written by Scott Snyder, drawn by Nick Dragotta, coloured by Frank Martin and lettered by Clayton Cowles (#1–18). It covers palette, type, Voice, Lexicon, Bat-Clawd, the emblem, the Signal and the Atmosphere, measured against the four Themes as shipped in v1.2.0 ([`wave-2-brief.md`](wave-2-brief.md) §3), not against a projection. Terms are those of [`CONTEXT.md`](../../../CONTEXT.md). Wave 2 is issue #118, Linear LUC-79.
 
+Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
+
 ## 1. TL;DR
 
-- **The Theme in one sentence:** heavy black ink on a violet night, a huge working man's Batman in a cold grey suit with a block of a bat across his chest, and one loud flat colour, the comic's sound-effect lemon, kept for "something needs you".
-- **Display name:** **BLUE COLLAR**. **Credit:** "after *Absolute Batman* (2024), by Scott Snyder, Nick Dragotta and Frank Martin". It alludes to the book's premise in Snyder's own words: this Bruce "comes up blue-collar, grows up in Crime Alley" ([Newsarama, 2024](https://www.gamesradar.com/comics/dc-comics/absolute-batman-scott-snyder-interview-2024/)). Two alternatives are in §11 (*THE ZOO*, *NO FORTUNE*). Not "ABSOLUTE" or "ALL IN": those are DC's imprint names, not allusions.
+- **The Theme in one sentence:** heavy black ink on a violet night, a huge working man's Batman in a cold teal suit with a block of a bat across his chest, and one loud flat colour, the comic's sound-effect lemon, kept for "something needs you".
+- **Display name: BLUE COLLAR** (approved, jury-wave-2 §9.11). The picker's credit field reads "Scott Snyder and Nick Dragotta's Absolute Batman (2024)"; `words.ts` adds the "after", so the field never starts with it (jury-wave-2 §3.15). It alludes to the book's premise in Snyder's own words: this Bruce "comes up blue-collar, grows up in Crime Alley" ([Newsarama, 2024](https://www.gamesradar.com/comics/dc-comics/absolute-batman-scott-snyder-interview-2024/)).
 - **Martin's colour, measured:** across 23 cover and interior images of issues #1–#6, a page is 0–53% near-black ink, and most of the rest is one or two flat colour families per scene: aquarium cyan, a red field, a violet-slate night, an olive basement, a sepia flashback (§3). There is no interview in which Martin describes this; it is our measurement, and a reviewer's line: "each setting has a prominent color" ([AIPT, #2 review](https://aiptcomics.com/2024/11/13/absolute-batman-2-review/)). The Theme takes the ink and the violet night as its ground and **one** flat colour as its alarm.
-- **Alarm color: SFX lemon `#ecf05a`**, after the lemon field of the #2 cover (`#fcea49`) and the sound effects inside #2 (`#f5e477`), pushed 10° toward green. **This crosses a Wave line on purpose** (brief §4–§5): a yellow alarm sits near PALE MOONLIGHT's gold. It stays 15.8 ΔE00 from PALE MOONLIGHT's `#f0c24b` (plain, hue 106° against 85°), it is never an oval, and it is flat, not lit metal. The #1 cover's logo yellow (`#fdc946`) is ruled out: it is 2.5 ΔE00 from PALE MOONLIGHT, the same colour. Red, orange and cyan were measured and fail against VENGEANCE, Clawd orange and WATCHFUL PROTECTOR (§3).
-- **Ground:** ink black with a violet cast (`#0a0812`) and indigo surfaces (`#17132a`, `#221c3c`), from the #2 night city and the second-printing trade dress. **Working ink:** lavender (`#b8b0e0`), not a fourth cool steel or teal (jury §4.6). **Waiting ink:** flashback mauve (`#d79bbd`).
-- **Type:** **Bungee** (display, blocky signage caps), **Bangers** (stamps, comic sound effects), **Shantell Sans** (Night Report, hand-lettered shift notes). All OFL-1.1 on Fontsource; none is taken.
-- **Voice and Lexicon:** the night shift of a city engineer (power plants, sewers, permits): plain, physical, hopeful, punching up. Not Alfred, who is KNIGHTMARE's, and not an ops log, which is WATCHFUL PROTECTOR's. Case stays Case; Needs you → **Your turn**; stamps **PERMIT?**, **BROKEN**, **ASKING**, NEW REPLY (kept), **JAMMED**.
-- **Bat-Clawd:** a cold grey suit, tall ears, shoulders a unit wider than the others, an 8×2 block bat across the chest, an olive belt with pouches, and a black cape whose hem ends in three long blades a side. **Signature pose (recommended): "On its wings"**, after the #3 cover: the cape's tethers plant like stilts and lift him off the floor. No other Signature leaves the ground. **Alarmed:** the axe drawn from his chest and the shoulder spikes out.
-- **Atmosphere:** a new kind, **colony**: a few faint lavender bats flap across a flat violet dusk band at the top of the panel, under the masthead. **The engine PR** needs that painter and kind, and a `--font-headline` token so the caps-only Bungee sets only the wordmark and intro (§9, §4); the Poses need nothing new (§7).
-- **Main risk:** *The Dark Knight Returns*. Snyder describes this Bruce as "a Dark Knight Returns-sized Bruce, but young and fast" ([Newsarama](https://www.gamesradar.com/comics/dc-comics/absolute-batman-scott-snyder-interview-2024/)), and both books dress him in a grey suit with a big black chest bat (§10).
+- **Alarm color: SFX lemon `#ecf05a`** (kept, jury-wave-2 §9.8), after the lemon field of the #2 cover (`#fcea49`) and the sound effects inside #2 (`#f5e477`), pushed 10° toward green. It crosses a Wave line on purpose: a yellow alarm near PALE MOONLIGHT's gold, 15.8 ΔE00 from its `#f0c24b`, never an oval, flat. It is **judged on screen** in the picker, on a stamp and as a lit disc beside PALE MOONLIGHT's gold. The #1 cover's logo yellow (`#fdc946`, 2.5 from PALE MOONLIGHT) and the red, orange and cyan fields stay ruled out (§3).
+- **Ground and inks** (kept, jury-wave-2 §9.2): ink black with a violet cast (`#0a0812`) and indigo surfaces (`#17132a`, `#221c3c`), from the #2 night city and the second-printing trade dress. **Working ink:** lavender (`#b8b0e0`). **Waiting ink:** flashback mauve (`#d79bbd`). Arkham moves to a plum-black, so the violet is this Theme's alone.
+- **Type:** **Bungee** for the display *and* the stamps (jury-wave-2 §9.3: Bangers is DKR's). PERMISSION fits every room at **9.5px** with a 1.5px border, measured; Luckiest Guy is the fallback if 9.5px Bungee is too small on screen (§4). The empty-state and sheet titles go to Barlow through the shared `--font-headline` token, because Bungee has no lowercase. **Shantell Sans** for the Night Report, decided on screen, with Barlow as the fallback. All OFL-1.1.
+- **Voice and Lexicon:** the night shift of a city engineer (power plants, sewers, permits): plain, physical, hopeful, punching up. Not Alfred (KNIGHTMARE's), not an ops log (WATCHFUL PROTECTOR's). Case and **Needs you** stay standard; stamps **PERMIT?**, **BLOWN** (a blown fuse), **ASKING**, NEW REPLY (kept), **JAMMED** (jury-wave-2 §9.9). No Voice line repeats another Theme's sentence.
+- **Bat-Clawd:** a cold teal suit (`#3f6b6e`, at least 10.7 ΔE00 from every other grey suit), **standard ears** (the tall ones are Arkham's, jury-wave-2 §9.6), shoulders a unit wider than the others, an 8×2 block across the chest at y 6–8 with a full unit of suit under the cowl, a one-unit olive belt the block can rest on (1.63:1 on the suit, 5.62:1 against the block), and a black cape whose hem ends in three long blades a side. **Signature pose (recommended): "On its wings"**, after the #3 cover: the cape's tethers plant like stilts and lift him off the floor. **Alarmed:** the axe drawn from his chest, raised top left, and the shoulder spikes out.
+- **Atmosphere:** the **colony**, a few faint lavender bats flapping across a flat violet dusk band under the masthead, now a **bat option on the existing ash painter** (jury-wave-2 §6, §9.10, §9.12), drawn with the same two-frame bat that Year One's swarm Signature uses. No new kind.
+- **Engine needs:** the bat sprite option on the ash painter (shared with Year One) and the shared `--font-headline` token. Nothing in the suit, the disc or the viewBox.
 
-**Questions for the maintainer:**
-1. **The grey suit and the big chest bat:** shared with DKR, which the brief gives them to (§5). Keep both in BLUE COLLAR as a cold teal-grey suit with a *block* bat, and ask DKR to tell its suit apart by colour and bat shape? *Recommended: yes; decide before the DKR dossier is final.*
-2. **A yellow alarm beside PALE MOONLIGHT's gold:** accept lemon `#ecf05a` (15.8 ΔE00, never an oval, flat) after seeing both on a stamp in the picker, or fall back to the red field? *Recommended: lemon.*
-3. **Signature pose:** A "On its wings" (recommended), B "The axe", or C "About to burst" (§7), picked from a labelled comparison image.
-4. **Display name:** BLUE COLLAR (recommended), THE ZOO or NO FORTUNE (§11).
-5. **The colony Atmosphere** needs a new kind and painter in the engine PR (§9). Accept it, or ask for an existing kind?
+**Still decided on screen** (each from a labelled comparison image, in the Theme's build):
+1. The lemon alarm beside PALE MOONLIGHT's gold, on a stamp and as a lit disc; and the lit disc's field, `--signal-hot` (L* 92, the brightest lit disc in the app) or `--signal` (L* 82, near PALE MOONLIGHT's core) beside the mascot (§8).
+2. The Signature: A "On its wings" (recommended), B "The axe" or C "About to burst" (§7).
+3. Bungee as a stamp face at 9.5px, against KNIGHTMARE's Archivo stamps (both heavy capitals in a box); Luckiest Guy if it fails (§4).
+4. Shantell Sans as the Night Report body at 12.5px, or Barlow (§4).
 
 ## 2. Visual identity and sources
 
@@ -111,7 +112,7 @@ Measured on each whole image (scaled to 400px; "near-black" = every channel unde
 
 **Why lemon.** In this book the loudest thing on a page is the sound effect. Martin colours the lettered noise of #2 (the gunfire, the Batmobile) in lemon over black and olive, and the #2 cover puts the whole fight on a lemon field. An alarm that looks like a sound effect says "noise, now". It is the hottest colour that fits the palette, as the Alarm color rule asks, and it is the only candidate that clears every shipped Theme and Clawd.
 
-**Crossing the line (brief §4).** This is a yellow alarm, and yellow is PALE MOONLIGHT's. The case for it: (1) the brief bars a **gold or yellow oval**; this alarm is never an oval: it fills a block bat, stamps and a flat disc; (2) it is 15.8 ΔE00 from PALE MOONLIGHT's alarm ink and 25.7 from its fill, a plain difference: lemon-green at hue 106° against brass-gold at 85°, flat against lit metal; (3) the two grounds are far apart (indigo against smog brown, §10). **The maintainer decides on screen**, with the picker preview showing both alarms on a stamp (jury §10.5). If lemon is refused, the fallback is the red field `#dd363e` lifted to text (`#ff4f5a`), accepted only under the jury's red fallback and leaning on the indigo ground to separate it from VENGEANCE.
+**Crossing the line (brief §4).** This is a yellow alarm, and yellow is PALE MOONLIGHT's. The case for it: (1) the brief bars a **gold or yellow oval**; this alarm is never an oval: it fills a block bat, stamps and a flat disc; (2) it is 15.8 ΔE00 from PALE MOONLIGHT's alarm ink and 25.7 from its fill, a plain difference: lemon-green at hue 106° against brass-gold at 85°, flat against lit metal; (3) the two grounds are far apart (indigo against smog brown, §10). **Decided:** lemon stays (jury-wave-2 §9.8), judged on screen in the picker, on a stamp and as a lit disc beside PALE MOONLIGHT's gold. The red field (`#dd363e`, 6.4 from VENGEANCE) is no longer the fallback the Theme plans for: it would put BLUE COLLAR back among the reds.
 
 **Its ladder:**
 - `--signal-hot` and `--ink-hot` `#ecf05a`: stamps, lit pixels, the lens, the count box.
@@ -121,7 +122,7 @@ Measured on each whole image (scaled to 400px; "near-black" = every channel unde
 
 ### Token map
 
-Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus this Theme's own (`--dusk`, `--colony`, for the Atmosphere).
+Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus this Theme's own (`--dusk`, `--colony`, for the Atmosphere) and the shared `--font-headline` the engine PR adds (jury-wave-2 §6).
 
 | Token | Value | Provenance | Role |
 |---|---|---|---|
@@ -140,11 +141,11 @@ Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus
 | `--signal-glow` | `color-mix(in srgb, var(--signal-hot) 40%, transparent)` | P | Halo, alarm only |
 | `--signal-hot` | `#ecf05a` | P: `#fcea49`, `#f5e477` (S, #2), 10° to green | Alarm: small lit marks, lens, count box |
 | `--on-signal` | `var(--abyss)` | P | Ink on lemon |
-| `--ink-hot` | `#ecf05a` | P: as `--signal-hot`, 13.2:1 on raised | PERMIT? and BROKEN stamps, hot pen |
+| `--ink-hot` | `#ecf05a` | P: as `--signal-hot`, 13.2:1 on raised | PERMIT? and BLOWN stamps, hot pen |
 | `--ink-soft` | `#d79bbd` | P: flashback mauve `#975b77`, `#9d7b91` (S, #3 interior), lifted | ASKING and NEW REPLY stamps, soft pen |
 | `--ink-live` | `#b8b0e0` | P: flashback violet `#5b5b7e` (S, #3 interior), lifted | Working |
 | `--ink` | `#cdc8dc` | P | Body text |
-| `--accent` | `var(--bone)` | P (jury §7) | Focus, toggles, tab underline |
+| `--accent` | `var(--bone)` | P (jury-wave-1 §7) | Focus, toggles, tab underline |
 | `--accent-hot` | `var(--bone)` | P | |
 | `--accent-deep` | `var(--line)` | P | |
 | `--accent-glow` | `color-mix(in srgb, var(--bone) 12%, transparent)` | P | |
@@ -172,14 +173,14 @@ Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus
 | `--cowl` | `#0b0a10` | P: the ink | Cowl, gloves, cape |
 | `--cowl-edge` | `color-mix(in srgb, var(--ink-live) 28%, transparent)` | P: a lavender rim, away from the alarm (Costume Rule) | |
 | `--cowl-shine` | `var(--raised)` | P | |
-| `--suit` | `#4a6468` | P: suit `#3c5458`, `#48676a` (S, #1 Cover A), lifted to read on indigo (3.14:1 on abyss) | Suit |
+| `--suit` | `#3f6b6e` | P: suit `#3c5458`, `#48676a` (S, #1 Cover A), with more chroma (jury-wave-2 §2): 3.35:1 on abyss; 10.7 ΔE00 from DKR's drafted `#5d6661` (13.9 from its proposed neutral `#666864`), 25.3 from Year One's, 31.6 from Arkham's | Suit |
 | `--gloves` | `#0b0a10` | P | |
-| `--belt` | `#4f6340` | S: #1 Cover A belt | Olive belt |
-| `--buckle` | `#7f8c55` | P: the belt, lifted | Pouches |
+| `--belt` | `#7f8c55` | P: the lit cluster of the #1 Cover A belt (`#627b58`, S), lifted: 1.63:1 on the suit, 5.62:1 against the chest block | Olive belt, one unit tall |
+| `--buckle` | `#4f6340` | S: #1 Cover A belt, its median | Pouches, darker than the band |
 | `--cape` | `var(--cowl)` | P | |
 | `--cape-rim` | `var(--cowl-edge)` | P | |
 | `--thread` | `var(--cowl-edge)` | P | |
-| `--chest` | `#070405` | S: the ink | The block bat on his chest (3.22:1 on the suit, 6.48:1 on orange) |
+| `--chest` | `#070405` | S: the ink | The block bat on his chest (3.44:1 on the suit, 5.62:1 on the belt it rests on) |
 | `--aura-core` | `color-mix(in srgb, var(--signal-hot) 90%, transparent)` | P | Alarmed only |
 | `--aura-glow` | `color-mix(in srgb, var(--signal-hot) 55%, transparent)` | P | Alarmed only |
 | `--emblem` | `var(--ink)` | P | Masthead bat |
@@ -198,16 +199,17 @@ Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus
 | `--notice-hover-foot` | `#130f22` | P | |
 | `--haze` | `color-mix(in srgb, var(--dusk) 22%, transparent)` | P | The dusk band, from above (the haze owns the band; the painter draws only bats) |
 | `--haze-edge` | `color-mix(in srgb, var(--dusk) 6%, transparent)` | P | |
-| `--haze-inset` | `-35% -20% auto -20%` | P | From above |
+| `--haze-inset` | `-15% -10% auto -10%` | P: a tighter band than KNIGHTMARE's `-35% -20% auto -20%` (jury-wave-2 §3.9) | From above |
 | `--grain-opacity` | `0.03` | P: flat colour, little grain | |
 | `--searchlight` | `var(--bone)` | P | |
 | `--font-display` | `'Bungee', 'Arial Black', sans-serif` | §4 | |
 | `--display-weight` | `400` | Bungee has one weight | |
 | `--font-body` | `'Barlow Semi Condensed', 'Segoe UI', sans-serif` | shared | |
-| `--font-type` | `var(--font-stamp)` | P | Case numbers, log speakers |
+| `--font-type` | `var(--font-display)` | P | Case numbers, log speakers |
 | `--font-mono` | `'JetBrains Mono', 'Cascadia Mono', monospace` | shared | |
 | `--font-report` | `'Shantell Sans', 'Segoe UI', sans-serif` | §4 | |
-| `--font-stamp` | `'Bangers', 'Impact', sans-serif` | §4 | |
+| `--font-stamp` | `var(--font-display)` | jury-wave-2 §9.3: one family for display and stamps, as KNIGHTMARE does with Archivo | |
+| `--font-headline` (shared, new) | `var(--font-body)` | jury-wave-2 §6; default `var(--font-display)` in every other Theme | Empty-state and sheet titles: Bungee has no lowercase |
 | `--font-label` | `var(--font-body)` | P: Bungee is too wide under 19px | |
 | `--heading-case` | `none` | P | |
 | `--font-case-title` | `var(--font-body)` | P: session titles are long; Bungee is caps-only signage | |
@@ -219,11 +221,11 @@ Every variable a shipped Theme sets (the 101 shared by all four CSS files), plus
 | `--wordmark-glow` | `transparent` | P: ink does not glow | |
 | `--pen-hot` | SVG stroke in `#ecf05a`, width 2 | P: a heavier, straighter pen (Dragotta's line) | |
 | `--pen-soft` | SVG stroke in `#d79bbd`, width 1.5 | P | |
-| `--stamp-tilt` | `-2deg` | P: Bangers already leans; check on screen that the tilt does not double the lean, and drop to `0deg` if it does | |
-| `--stamp-tilt-slight` | `-1deg` | P | |
-| `--stamp-border` | `2px` | P: the heaviest border in the Wave, Dragotta's line | |
-| `--stamp-size` | `11px` | P | |
-| `--stamp-weight` | `400` | Bangers has one weight | |
+| `--stamp-tilt` | `0deg` | P: straight, like a site sign; KNIGHTMARE's Archivo leans a degree under grit | |
+| `--stamp-tilt-slight` | `0deg` | P | |
+| `--stamp-border` | `1.5px` | P: 2px leaves PERMISSION 1px over the narrowest margin | |
+| `--stamp-size` | `9.5px` | P: the largest size at which PERMISSION fits every room in Bungee (§4) | |
+| `--stamp-weight` | `400` | Bungee has one weight | |
 | `--stamp-mask` | `none` | P: flat colour, no wear | |
 | `--lens-breaks` | not set | KNIGHTMARE's own | |
 | `--disc-lens` | `linear-gradient(var(--signal-hot), var(--signal-hot))` | P: one flat field, no gradient (Martin's flat colour) | |
@@ -249,7 +251,7 @@ As in PALE MOONLIGHT and KNIGHTMARE: the wordmark is Bone; focus, toggles, slide
 | `--ink-live` `#b8b0e0` | 9.77 | 8.88 | 7.95 | 7.95 | Pass |
 | `--on-signal` (abyss) on `--signal` | | | | 12.33 | Pass |
 | `--clawd` `#d77757` | 6.31 | 5.73 | 5.13 | | n/a (mascot) |
-| `--suit` `#4a6468` | 3.14 | 2.85 | 2.55 | | n/a (mascot; reads at 3:1 on the page) |
+| `--suit` `#3f6b6e` | 3.35 | 3.04 | 2.72 | | n/a (mascot; reads at 3:1 on the page) |
 | `--blood` `#6b3a58` | 2.24 | 2.04 | 1.82 | | Never text |
 
 No exceptions. Tiers inside the Theme: alarm lemon to waiting mauve 56.5 ΔE00, waiting mauve to working lavender 14.9, alarm to working 54.8. Lemon next to Clawd orange: 46.2 ΔE00 (2.58:1 in luminance), so the orange mascot is the only warm pixel at rest and the alarm cannot be mistaken for him.
@@ -273,17 +275,26 @@ The book's masthead is two pieces: "ABSOLUTE" in a wide, rounded, squared sans, 
 
 | Role | Proposal | Licence / package | Why, and limits |
 |---|---|---|---|
-| Display (wordmark, headlines, intro) | **Bungee** 400 | OFL-1.1, `@fontsource/bungee` | Blocky signage capitals, built on squares: Dragotta's "blocky like our Bruce", "geometric, graphic, and bold". Not the masthead's letters (no tight vertical block), but the same weight and stance. Caps only, one weight. Different register from Anton (condensed poster), Limelight (deco), Syncopate (wide modern) and Archivo 800 (a grotesque) |
-| Stamps | **Bangers** 400 | OFL-1.1, `@fontsource/bangers` | Condensed, leaning comic-book capitals: the open face closest to a comic's lettered sound effects, which is what this Theme's alarm is. It is a generic comic SFX face, not Cowles' hand. Its width solves the margin (below) |
+| Display (wordmark, intro) and stamps | **Bungee** 400 | OFL-1.1, `@fontsource/bungee` | Blocky signage capitals, built on squares: Dragotta's "blocky like our Bruce", "geometric, graphic, and bold". Not the masthead's letters (no tight vertical block), but the same weight and stance. Caps only, one weight. One family for the display and the stamps (jury-wave-2 §9.3), as KNIGHTMARE does with Archivo: PERMIT?, BLOWN and JAMMED read as signs on a work site. Different register from Anton (condensed poster), Limelight (deco), Syncopate (wide modern) and Archivo 800 (a grotesque). **Bangers, the first draft's stamp face, is DKR's** |
+| Headlines (empty-state and sheet titles) | Barlow Semi Condensed, through the shared `--font-headline` | OFL, bundled | Bungee has no lowercase (below) |
 | Night Report body | **Shantell Sans** 400–500 | OFL-1.1, `@fontsource/shantell-sans` (variable) | A designed handwriting face: the shift notes written on a clipboard. Close in spirit to comic lettering, but mixed case, because a report in all caps is hard to read |
 | Body, labels | Barlow Semi Condensed (kept) | OFL, bundled | |
 | Mono | JetBrains Mono (kept) | OFL, bundled | The Machine Voice Rule holds |
 
-**Bungee and Bangers are caps-only** (measured: their lowercase glyphs are the capitals). For the stamps that is what we want. For Bungee it is not: `--font-display` also sets the empty-state title and the sheet titles (`Cards.css` `.empty__title`, `Sheets.css` `.sheet__title`, 20px), so "The grid's holding. Nothing needs you." would shout in capitals, the wrong register for an all-clear. **Proposal:** Bungee sets only the wordmark and the intro; the engine PR adds a `--font-headline` token (default `var(--font-display)` in the other four Themes, so nothing changes for them), and this Theme points it at Barlow 600. PALE MOONLIGHT already routes short display words to another face through `--font-label`. Fallback, if no new token: accept capital headlines (comic lettering is all caps), or take Russo One, which has lowercase, at the cost of a "~" on Type against KNIGHTMARE.
+**Bungee is caps-only** (measured: its lowercase glyphs are the capitals). For the stamps that is what we want. For headlines it is not: `--font-display` also sets the empty-state title and the sheet titles (`Cards.css` `.empty__title`, `Sheets.css` `.sheet__title`, 20px), and an all-clear in shouting capitals is the wrong register. **Decided** (jury-wave-2 §6, §9.12): the engine adds the shared `--font-headline` token, default `var(--font-display)` so no shipped Theme changes; DKR, BLUE COLLAR and Year One point it at a face with lowercase. Here it is Barlow Semi Condensed.
 
-**Stamp widths, measured** (PIL, Bangers at 11px with 0.12em tracking; the narrow panel at 0.04em; the margin's room is 114px less the entry padding, the stamp's padding and two 2px borders, so 85px, and 71px in the narrowest panel): PERMISSION 57.1px (48.3 narrow). PERMIT? 39.9, BROKEN 37, ASKING 35, NEW REPLY 50, JAMMED 38, YOUR TURN 51.6, WORKING 44. Every word is shorter than PERMISSION in the same face and fits both rooms. `stampWidth.test.ts` is the judge.
+**Stamp widths in Bungee, measured** (PIL on the Google Fonts TTF; script `scratchpad/scripts-absolute/stamprooms.py`). The rooms are those `stampWidth.test.ts` reads from the CSS: the Night Report margin, 101px for the boxed stamp at 0.12em; the narrowest panel's margin, 87px at 0.04em; the watch strip, 72px unboxed at the stamp size less 1.5px; the notice card, 272px. A boxed stamp adds 12px of padding and two borders. PERMISSION has to fit too, because with the Lexicon off the stamps say the standard words in this face.
 
-**Alternatives considered.** Display: **Russo One** (OFL), a rounded squared sans close to the masthead's "ABSOLUTE" line; but it is a heavy sans of normal width like KNIGHTMARE's Archivo, so the jury would likely score Type "~". **Bowlby One SC** (OFL), heavy and wide; its PERMISSION overflows the margin at 11px. Stamps: **Luckiest Guy** (Apache-2.0), rounder and friendlier, which suits the book less. Report: **Comic Neue** (OFL) reads as Comic Sans on a grim book; **Barlow** stays the fallback.
+| Bungee | PERMISSION (margin / narrow / strip, px) | Verdict |
+|---|---|---|
+| 11px, 2px border | 105 / 97 / 77 | Fails all three |
+| 10.5px, 2px border | 101 / 93 / 73 | Fails the narrow margin and the strip |
+| 10px, 1.5px border | 96 / 88 / 69 | Fails the narrow margin by 1px |
+| **9.5px, 1.5px border** | **92 / 85 / 65** | **Fits every room** |
+
+At 9.5px with a 1.5px border every word fits: NEEDS YOU 81 / 74 / 56, NEW REPLY 82 / 75 / 56, WORKING 72 / 66 / 48, PERMIT? 69 / 64 / 45, ASKING 62 / 57 / 39, JAMMED 65 / 60 / 42, BLOWN 56 / 52 / 35. So **Bungee at 9.5px** is the proposal, the smallest stamp in the app (KNIGHTMARE's is 10.5px). Its capitals are wide and heavy, so 9.5px Bungee is about as tall as 11px of a lighter face, but that is **decided on screen** at 1x. If it is too small there, the fallback is **Luckiest Guy** (Apache-2.0, `@fontsource/luckiest-guy`, with a NOTICE line as for Syncopate): PERMISSION fits at 11px with a 2px border (89 / 81 / 63). The jury prefers Bungee because it leaves Luckiest Guy free for a later Adam West Theme (jury-wave-2 §8). `stampWidth.test.ts` is the judge.
+
+**Alternatives considered.** Display: **Russo One** (OFL), a rounded squared sans close to the masthead's "ABSOLUTE" line; but it is a heavy sans of normal width like KNIGHTMARE's Archivo, so the jury would likely score Type "~". **Bowlby One SC** (OFL), heavy and wide; its PERMISSION overflows the margin at 11px. Stamps: **Bangers** (OFL), the first draft's choice, is DKR's display and stamp face (jury-wave-2 §3.3). **Luckiest Guy** (Apache-2.0) is the fallback above. Report: **Comic Neue** (OFL) reads as Comic Sans on a grim book. Shantell Sans is a hand, and Year One owns the upright hand (Neucha, jury-wave-2 §9.4); a report body may be shared, but the picker shows it. Shantell Sans at 12.5px is **decided on screen**, and **Barlow** is the fallback.
 
 ## 5. Voice
 
@@ -291,33 +302,33 @@ The book's masthead is two pieces: "ABSOLUTE" in a wide, rounded, squared sans, 
 
 **How it stays off the other Voices:**
 - Not VENGEANCE's journal: that Bruce writes alone and bleak. This one talks like a worker on a shift: tools, pipes, the grid, clocking in and out. Bleak words are out.
-- Not KNIGHTMARE: Alfred is KNIGHTMARE's (jury §2, §10.1). Absolute's Alfred narrates the comic, but the Theme leaves him out entirely.
+- Not KNIGHTMARE: Alfred is KNIGHTMARE's (jury-wave-1 §2, §10.1). Absolute's Alfred narrates the comic, but the Theme leaves him out entirely.
 - Not WATCHFUL PROTECTOR: no ops, no field reports, no MI6. A shift and a work site, not a mission. No "log" in the report's name (WATCHFUL PROTECTOR's Sitrep is a military log).
 
 Sample lines (all P, ours; none quotes the comic):
 
-- Empty state title: **"The grid's holding. Nothing needs you."** The hint stays standard.
+- Empty state title: **"The grid's holding."** The standard hint under it already says "Nothing needs you right now.", so the title doesn't repeat it (jury-wave-2 §3.13).
 - Empty Cases: "No cases running. Clock out."
 - Intro tagline: **"Built, not bought."**
 - Night Report name: **"Shift notes"**; dateline **"NIGHT SHIFT · 02:14"**.
 - Report heading for what waits: "Needs your hands"; for running work: "On the clock".
-- Report close: "Shift's over. Go home." when nothing waits; "Shift's not over. Some of it needs you." when something does.
-- Quiet Signal tooltip: "The grid's holding." (*Quiet* and *holding* mean all clear only; jury §4.3.)
+- Report close: **"Tools down. Go home."** when nothing waits; **"Tools stay out. There's work on your bench."** when something does. The first draft's "Shift's not over. Some of it needs you." echoed KNIGHTMARE's shipped close and is gone (jury-wave-2 §3.13). Neither line repeats another Theme's sentence.
+- Quiet Signal tooltip: "The grid's holding." (*Quiet* and *holding* mean all clear only; jury-wave-1 §4.3.)
 - Settings kicker: "Toolbox" (KNIGHTMARE's is "The workshop", so not that).
 - Atmosphere switch: "Bats", hint "Bats over Gotham behind the cases".
 - Signature caption, once per session: **"Made it myself."** (P: the book's do-it-yourself suit in four words; not a line from the comic).
-- Picker credit: "after *Absolute Batman* (2024), by Scott Snyder, Nick Dragotta and Frank Martin".
+- Picker credit: the `film` field is **"Scott Snyder and Nick Dragotta's Absolute Batman (2024)"**, which the picker shows as "after Scott Snyder and Nick Dragotta's Absolute Batman (2024)". The field never starts with "after" (jury-wave-2 §3.15). Frank Martin is credited with the others in the README and NOTICE.
 
 ## 6. Lexicon
 
-Frame: a work site. Case keeps its name: `CONTEXT.md` lists "job" among the words to avoid for a Case, and a developer reads "job" as a CI job. The test is jury §5: would a tired developer get the standard meaning at a glance, at the right severity?
+Frame: a work site. Case keeps its name: `CONTEXT.md` lists "job" among the words to avoid for a Case, and a developer reads "job" as a CI job. The test is jury-wave-1 §5: would a tired developer get the standard meaning at a glance, at the right severity?
 
 | Standard | Themed | Verdict |
 |---|---|---|
 | Case | **Case** (kept) | "Job", "Shift" and "Ticket" all misread (a CI job, a time block, an issue tracker) |
-| Needs you | **Your turn**; count "3 for you" | Clear: it is your turn to act. Close in register to WATCHFUL PROTECTOR's "On you" and its YOUR MOVE stamp; a cross-Theme collision, the lower rank (jury §4) |
-| Permission | **PERMIT?** | The question mark matters. Bare PERMIT reads as a permit already granted, the trap that killed SIGN-OFF (jury §5). With it, it asks: may this run? Same device as KNIGHTMARE's ORDERS? |
-| Error | **BROKEN** | Plain, at least as severe as "error". BUSTED was rejected: it reads as "caught" |
+| Needs you | **Needs you** (standard) | The first draft's "Your turn" sat in KNIGHTMARE's "Your call" slot with the same sense; dropped (jury-wave-2 §4, §9.9) |
+| Permission | **PERMIT?** | The question mark matters. Bare PERMIT reads as a permit already granted, the trap that killed SIGN-OFF (jury-wave-1 §5). With it, it asks: may this run? Same device as KNIGHTMARE's ORDERS? |
+| Error | **BLOWN** | A blown fuse, in a power-plant engineer's world: failed, at least as severe as "error". BROKEN went to Arkham, which has no in-frame alternative (jury-wave-2 §3.12). BUSTED was rejected: it reads as "caught" |
 | Waiting | **ASKING** | Claude is asking you something. Clearer than "waiting", which can read as "waiting on itself" |
 | New reply | NEW REPLY (kept) | WORD BACK reads as MS Word or a backup; CALLED BACK as a callback |
 | Stalled | **JAMMED** | A machine that will not move: stuck, not finished, not quiet. Unique in the Wave (STUCK, NO WORD, NO CONTACT taken) |
@@ -332,11 +343,11 @@ Bat-Clawd's body, eyes, jaw and Moods keep their pixels (`BatClawd.tsx`, `BODY_B
 
 | Piece | Drawing (grid units) | Survives at 54px? | Source |
 |---|---|---|---|
-| Cowl | Ink `--cowl` down to the eyes, as every suit; **ears 1 wide and 2 tall**, reaching y = −1 (VENGEANCE's are 1 tall) | Yes: the tallest ears in the Wave | #1 Cover A, #1 second printing |
+| Cowl | Ink `--cowl` down to the eyes, as every suit, with the **standard ears** (`HEAD` in `suits.ts`). The first draft's 2-unit ears reached the viewBox's top edge and matched Arkham's; the tall ears are Arkham's (jury-wave-2 §3.6, §9.6). Absolute's size reads through the shoulders, the block and the blades instead | Yes | #1 Cover A |
 | Shoulders | A 1-unit pad outside the body each side, x = 2 and 13, y = 5–6.5, in `--suit` | Yes: he reads two units wider than any other Bat-Clawd | "Hulking" (Dragotta); #1 Cover A |
-| Chest | **The block bat**, 8 wide and 2 tall, x = 4–12, y = 5.5–7.5, in `--chest` ink. Half a row of suit under the cowl (which ends at y = 5), so the bat does not read as the cowl dripping (jury §6) | Yes: the largest chest symbol in the Wave, 17×4px at 54px | Dragotta: it "would have made it cover his whole upper torso" |
-| Belt | Olive band, 1 unit, y = 8–9, with two 1×1 pouches in `--buckle` | Yes | #1 Cover A, #1 second printing |
-| Suit | Cold teal-grey `--suit`, gloves and boots in ink | Yes (3.14:1 on the page) | #1 Cover A |
+| Chest | **The block bat**, 8 wide and 2 tall, x = 4–12, **y = 6–8**, in `--chest` ink (3.44:1 on the suit). A **full unit of suit** (y 5–6) between it and the cowl and jaw, which end at y = 5: at the first draft's half unit, ink on ink at 1.04:1, it read as the cowl dripping (jury-wave-2 §5). One unit of suit at each side (x 3–4, 12–13) | Yes: the largest chest symbol in the Wave, 17×4px at 54px | Dragotta: it "would have made it cover his whole upper torso" |
+| Belt | Olive band, **one full unit** (two half-rows, y = 8–9), in `--belt` `#7f8c55`, with two 1×1 pouches in `--buckle` `#4f6340`. **1.63:1 on the suit** (the first draft's `#4f6340` band was 1.04:1 and vanished). The block rests directly on it at **5.62:1**, above the Wave's 3:1 floor for a chest symbol touching the belt (jury-wave-2 §3, Wave rules) | Yes | #1 Cover A (the belt's lit cluster `#627b58`) |
+| Suit | Cold teal `--suit` `#3f6b6e` (h 204°, C* 16), gloves and boots in ink. **10.7 ΔE00 from DKR's drafted suit** `#5d6661` and 13.9 from the neutral `#666864` the jury proposes for it; 25.3 from Year One's light grey; 31.6 from Arkham's plum-grey (jury-wave-2 §9.5: at least 10 apart). 3.35:1 on the page. The jaw sits on it at 1.88:1 in luminance, carried by hue (orange against teal) | Yes | #1 Cover A, more chroma |
 | Cape | Ink, rimmed in lavender at 28%. The hem ends in **three long blades a side**, each 1 unit wide at its base, the outer one with a 1-unit hook | Yes, if each blade keeps a 1-unit base; draw two or three, never many thin ones | ComicBook.com (tethers, hooks); #3, #4 Cover A |
 | Forearm bands | The black stripes on his forearms | **No**: the arm is one unit; dropped | #1, #4 Cover A |
 | Shoulder spikes | Two per side, 1-unit base, 1.5 long, only when alarmed | Yes | "Show up situationally" to "ramp up the scare factor" (Sktchd) |
@@ -350,11 +361,11 @@ Bat-Clawd's body, eyes, jaw and Moods keep their pixels (`BatClawd.tsx`, `BODY_B
 | alarmed | **The axe**: the block bat gone from his chest (the suit shows where it was), the axe held up over his **left** shoulder, shoulder spikes out | #1 interior (the plate comes off as the axe's head); #1 second printing main cover; Sktchd (spikes) | Axe head 3×2 in ink with a 1-unit lemon edge on its blade, at x = 0–3, y = −1.5–0.5; handle 1 unit wide down to his hand at (3, 4). Spikes from (2.5, 5) and (13.5, 5). Lemon aura. **Top left on purpose:** VENGEANCE's alarmed flare (12.75, −1) and PALE MOONLIGHT's Signal oval (19, −1.5) both sit top right; no Pose in the Wave raises anything top left |
 | perch | **Signature pose**, below | | |
 
-**Signature pose: three options.** The taken outlines, as built (`suits.ts`): VENGEANCE a symmetric front-on stand; PALE MOONLIGHT three-quarter, looking up, the Signal up and to the right; WATCHFUL PROTECTOR a front-on stand with a ring (the brief says crouch; it shipped standing because no source showed a crouch); KNIGHTMARE standing, the coat blown out to the right. All four are standing figures. **The #1 cover pose** (feet planted, head down, cape held tight in front) is a symmetric front-on stand: VENGEANCE's outline, so it is out.
+**Signature pose: three options.** The taken outlines, as built (`suits.ts`): VENGEANCE a symmetric front-on stand; PALE MOONLIGHT three-quarter, looking up, the Signal up and to the right; WATCHFUL PROTECTOR a front-on stand with a ring (the brief says crouch; it shipped standing because no source showed a crouch); KNIGHTMARE standing, the coat blown out to the right. All four are standing figures; two are front-on stands (jury-wave-2 §3.8). **The #1 cover pose** (feet planted, head down, cape held tight in front) is a symmetric front-on stand: VENGEANCE's outline, so it is out.
 
 | Option | What it is | Source | Outline at 54px | Verdict |
 |---|---|---|---|---|
-| **A. "On its wings"** | The cape splits into four tethers, two a side, 1 unit wide, angled down and out from the shoulders to hooked tips on the floor at about x = −4, −1, 17 and 20, y = 13. Through the step's `transform`, he is lifted two units off the floor, legs hanging | #3 Cover A (held high on the tethers, hooks on the street); Dragotta: bats "can walk with their wings"; the cape "serves as stilts" (Sktchd) | An arch: a dark mass up top on four thin legs, 24 units wide at the floor against the body's 10. **No other Signature leaves the ground or is wider at the bottom than the top** | **Recommended** |
+| **A. "On its wings"** | The cape splits into four tethers, two a side, 1 unit wide, angled down and out from the shoulders to hooked tips on the floor at about x = −4, −1, 17 and 20, y = 13. Through the step's `transform`, he is lifted two units off the floor, legs hanging | #3 Cover A (held high on the tethers, hooks on the street); Dragotta: bats "can walk with their wings"; the cape "serves as stilts" (Sktchd) | An arch: a dark mass up top on four thin legs, 24 units wide at the floor against the body's 10. DKR's leap also leaves the ground, but as a figure tilted −15° on a long diagonal; this one is upright and wider at the floor than at the top (jury-wave-2 §3.8) | **Recommended; decided on screen** |
 | B. "The axe" | Standing, the axe held low at his right side, its head on the floor beside his foot, chest bare | #1 second printing main cover | A front-on stand with a 3×2 block at the lower right | Close to VENGEANCE's stand; the block is 6px. Better as the alarmed Pose, where it is now |
 | C. "About to burst" | Hunched forward, fists down, spikes bursting out of the shoulders and the cape all round him | #4 Cover A (Dragotta's cover); Dragotta: the emblem "looks like it's about to burst" | A spiked star | Unique, but spikes are the alarmed Pose's scare factor; using them at rest dulls the alarm |
 
@@ -366,7 +377,7 @@ Bat-Clawd's body, eyes, jaw and Moods keep their pixels (`BatClawd.tsx`, `BODY_B
 
 **On the perch:** `watchOn` with two glances along the street; the beat, once a cycle, lifts one tether and plants it a unit further (a step taken on its wings). Aura `'alarmed'`: lemon never shows at rest, nor while the Signature plays.
 
-**The engine:** layers already draw outside the sprite box and steps already take a `transform`; tethers, hooks, blades and the axe are paths. Check that the overlay reaches y = 13 below the grid (the Sonar ring reached past the frame at radius 16). No new suit part type is needed.
+**The engine:** layers already draw outside the sprite box and steps already take a `transform`; tethers, hooks, blades and the axe are paths. The overlay already draws unclipped (the Sonar ring reaches radius 16), so the tethers to y = 13 need no engine change; check the header's bottom clip (jury-wave-2 §5, §6). The belt's full unit is two map rows. No new suit part type is needed, and the viewBox stays `[-6, -1, 28, 13]`.
 
 ## 8. Emblem
 
@@ -381,48 +392,56 @@ Bat-Clawd's body, eyes, jaw and Moods keep their pixels (`BatClawd.tsx`, `BODY_B
 
 **The 64px Signal disc:**
 - **Unlit:** indigo-black glass (`--glass`), the block bat in `--line`, inside a 4px ink rim (`--disc-rim-inner` `#070405`): Dragotta's heavy line round the panel.
-- **Lit:** one flat lemon field (`--disc-lens` as a flat fill, no gradient, no glints), the block bat in ink across it, the ink rim kept. The count is a Bangers numeral in ink on a `--signal-hot` box (`--on-signal` is the abyss). This is the only flat lens in the Wave: VENGEANCE, PALE MOONLIGHT and WATCHFUL PROTECTOR glow from a core, KNIGHTMARE is cracked.
-- **Tray and toast icons** stay single, from the default emblem (jury §2).
+- **Lit:** one flat lemon field (`--disc-lens` as a flat fill, no gradient, no glints), the block bat in ink across it, the ink rim kept. The count is a Bungee numeral in ink on a `--signal-hot` box (`--on-signal` is the abyss). The flat lit disc is this Theme's (jury-wave-2 §8): VENGEANCE, PALE MOONLIGHT and WATCHFUL PROTECTOR glow from a core, KNIGHTMARE is cracked.
+- **The field's lightness, decided on screen beside the mascot** (jury-wave-2 §2): **A**, `--signal-hot` `#ecf05a`, L* 92, the brightest lit disc in the app (PALE MOONLIGHT's gold core is L* 81); **B**, `--signal` `#cbd43c`, L* 82, as bright as PALE MOONLIGHT's core, with `--signal-hot` kept for the count box. B is the safer default for a disc in the corner of the eye.
+- **Tray and toast icons** stay single, from the default emblem (jury-wave-1 §2).
 
 ## 9. Atmosphere
 
 **A colony of bats over a dusk band.** Bats are the book's own motif: the #1 flashback opens at the zoo's bat house ("Welcome to the Chiroptera habitat", a sign in the art, not quoted further), the #2 interior has a bat spread across a red page, and Dragotta built the cape from bat anatomy (§2).
 
 - **The band:** the `--haze` token, a flat band from above in `--dusk` (trade-dress indigo `#3e4176`) at 22%, fading to 6%. It is mood only: composited on the abyss it comes to about `#151528`, the surface's own tone (1.11:1), so it cannot carry anything drawn on it. Static.
-- **What moves:** 5 to 7 bats in the default panel. **Black silhouettes do not work here:** black bats on the band would sit at about 1.1:1 and vanish. Martin's black-on-a-flat-field needs a bright field, and a bright band in a dark corner panel breaks "every Theme is dark" (ADR 0001). So the bats are drawn **lighter than the ground**, the way snow and ash are: `--colony` (lavender `--ink-live`) at 20%, 25% and 30% alpha for three depths, which measures 1.5, 1.7 and 1.9:1 on the band and the surface (computed; PALE MOONLIGHT's near snow is 2.2:1, KNIGHTMARE's middle ash 1.3:1). Each bat is a two-frame sprite (wings up, wings down), 8 to 14px across, crossing left to right or right to left on a shallow wavy path, 3 to 6px a tick, flapping every tick. At most three at once; a new one enters every few seconds.
+- **What moves:** 5 to 7 bats in the default panel, as a **bat option on the existing ash painter** (jury-wave-2 §6, §9.10, §9.12): the painter draws a two-frame bat sprite in place of a flake. **Black silhouettes do not work here:** black bats on the band would sit at about 1.1:1 and vanish. Martin's black-on-a-flat-field needs a bright field, and a bright band in a dark corner panel breaks "every Theme is dark" (ADR 0001). So the bats are drawn **lighter than the ground**, the way snow and ash are: `--colony` (lavender `--ink-live`) at 20%, 25% and 30% alpha for three depths, which measures 1.5, 1.7 and 1.9:1 on the band and the surface (computed; PALE MOONLIGHT's near snow is 2.2:1, KNIGHTMARE's middle ash 1.3:1). Each bat is the shared two-frame sprite (wings up, wings down), 8 to 14px across, crossing left to right or right to left 3 to 6px a tick, flapping every tick. They fly **arcs that rise and dip**, not the ash's straight shallow slant, so they move differently from KNIGHTMARE's ash on the same painter (jury-wave-2 §3.9). At most three at once; a new one enters every few seconds.
 - **Where:** the bats fly in the band's lower part, under the masthead, not behind it: they never cross behind Bat-Clawd or the wordmark, and they stay above the first card.
-- **Light:** from above, flat violet; no glow from below.
+- **Light:** from above, flat violet; no glow from below. The haze sits tighter than KNIGHTMARE's (`--haze-inset` `-15% -10% auto -10%` against its `-35% -20% auto -20%`). KNIGHTMARE's ash is also lit from above and crosses sideways, so this axis scores "~" against it and still passes (jury-wave-2 §1).
 - **Gating:** like every Theme, it moves only while the pointer is over the window and for a few seconds after news, on the shared 8 fps clock; under reduced motion or with animations off, nothing shows (`still` unset). Nothing on the Signal window.
 
-**What the engine needs (the engine PR):** a new Atmosphere kind, `colony`, and its painter in `painters.ts`: `{ kind: 'colony', color, density, depths: { alpha, span, speed }[], top, height }`, where `top` and `height` keep the flight path under the masthead; a two-frame bat path drawn per tick; paths precomputed from the frame index (not random per frame), as snow and ash are. The band is the existing haze, so the painter draws bats only. The same PR adds the `--font-headline` token (§4).
+**What the engine needs (the engine PR): no new kind.** The ash painter (`AshAtmosphere` in `atmospheres.ts`) gains a sprite option: a bat in place of a flake, an arc (a rise and a dip over its crossing) in place of the straight fall, and a `top` and `height` that keep the flight under the masthead. Paths stay precomputed from the frame index, as now. The two-frame bat path lives in shared code and is the **same drawing Year One's swarm Signature uses** on the overlay layer (jury-wave-2 §3.9, §9.10), so the two Themes share one bat; whichever engine PR comes first builds it. The band is the existing haze. The shared `--font-headline` token comes in the same round (§4). Bats appear in no later Theme, in either slot (jury-wave-2 §9.10).
 
 **Rejected:** a blocky skyline "speckled with light" is Dragotta's own Gotham, and it is WATCHFUL PROTECTOR's lit-windows scene (Dragotta even names Chicago, the Nolan shoot). Horizontal speed lines (Dragotta's "speed with speed lines") were considered: they read as streaks next to VENGEANCE's rain and as motion that means urgency.
 
 ## 10. Distinctiveness
 
-Scored by the jury's rules (§1): C = clearly different, ~ = close, = = same; three C's or more against every Theme.
+Scored by the jury's rules (jury-wave-1 §1): C = clearly different, ~ = close, = = same; three C's or more against every Theme. Rescored after the jury-wave-2 changes; the jury's own matrix is in `jury-wave-2.md` §1.
 
 | Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
 |---|---|---|---|---|---|---|
-| BLUE COLLAR – VENGEANCE | C: indigo vs warm black; lemon vs red (63.6); lavender vs amber | C: Bungee / Bangers vs Anton / Special Elite | C: 2-unit ears, an 8×2 block bat, wide shoulders vs short ears and a dash; blades vs a jagged hem | C: flapping bats vs falling streaks; a flat violet band from above vs a red glow from below | C (narrow): both are Bruce; a hopeful worker on shift vs a bleak detective's journal; Lexicon from a work site vs none | **5** |
-| BLUE COLLAR – PALE MOONLIGHT | C: indigo vs smog brown; lavender vs steel (13.8); **alarm ~: both yellow family, 15.8 apart** | C: no family shared | C: no oval, no scallops, no belt in brass | C: bats vs snow; violet band above vs brown smog below | C: shift vs newsroom | **5** |
-| BLUE COLLAR – WATCHFUL PROTECTOR | C: violet vs blue-steel surfaces (11.6–13.8); lemon vs blue; lavender vs mercury (28.0) | C: blocky signage vs wide modern; comic SFX vs stencil | C: tall ears, block bat, blades vs a bar and a straight hem | C: bats vs a static skyline | C: a work shift vs an ops briefing (no log, no ops) | **5** |
-| BLUE COLLAR – KNIGHTMARE | C: indigo vs scorched brown; lemon vs crimson (65.0); lavender vs bone (34.1) | C: Bungee vs Archivo; Bangers vs Archivo | C: a cape with blades vs a duster, goggles and scarf; block bat vs the BvS bat | C: bats vs ash; both light from above, but band vs haze | C: young and hopeful, no Alfred vs a weary veteran with Alfred | **5** |
+| BLUE COLLAR – VENGEANCE | C: indigo vs warm black; lemon vs red (63.6); lavender vs amber | C: Bungee / Bungee vs Anton / Special Elite | C: the same ears now, but an 8×2 block vs a dash, and blades vs a jagged hem | C: flapping bats vs falling streaks; a flat violet band from above vs a red glow from below | C (narrow): both are Bruce; a hopeful worker on shift vs a bleak detective's journal; Lexicon from a work site vs none | **5** |
+| BLUE COLLAR – PALE MOONLIGHT | C: indigo vs smog brown; lavender vs steel (13.8); **alarm ~: both yellow family, 15.8 apart** | C: no family shared | C: a block vs an oval; blades vs scallops; an olive belt vs brass | C: bats vs snow; violet band above vs brown smog below | C: shift vs newsroom | **5** |
+| BLUE COLLAR – WATCHFUL PROTECTOR | C: violet vs blue-steel surfaces (11.6–13.8); lemon vs blue; lavender vs mercury (28.0) | C: blocky signage vs wide modern; signage caps vs stencil | C: a block vs a bar; blades vs a straight hem | C: bats vs a static skyline | C: a work shift vs an ops briefing (no log, no ops) | **5** |
+| BLUE COLLAR – KNIGHTMARE | C: indigo vs scorched brown; lemon vs crimson (65.0); lavender vs bone (34.1) | C: Bungee vs Archivo. Both now use one heavy family for display and stamps in a box; Bungee is square signage, Archivo a grotesque, and the stamps are straight and clean against a degree's lean under grit. **Decided on screen** | C: a cape with blades vs a duster, goggles and scarf; a block vs the BvS bat | ~: bats vs ash, but both cross sideways and both are lit from above (jury-wave-2 §1); the arcs and the tighter band help | C: young and hopeful, no Alfred vs a weary veteran with Alfred; the closes no longer echo | **4** |
 
-**Against KNIGHTMARE, in particular:** no amber, no desert, no duster, goggles, scarf or falling ash. Both are huge, physical Batmen by a Snyder, but Bat-Clawd's body is the same size in every Theme, so the size shows only in the shoulders, the ears and the chest block.
+**Against KNIGHTMARE, in particular:** no amber, no desert, no duster, goggles, scarf or falling ash. Both are huge, physical Batmen by a Snyder, but Bat-Clawd's body is the same size in every Theme, so the size shows only in the shoulders, the chest block and the blades.
 
-**First guess against the other Wave 2 Themes:**
-- ***The Dark Knight Returns*: high risk on silhouette.** Snyder calls this Bruce "Dark Knight Returns-sized", and both books dress him in a grey suit with a big black chest bat. The brief (§5) gives the grey suit and the big chest bat to DKR. What keeps them apart, if both ship: Absolute's suit is a **cold teal-grey** (`#4a6468`, hue 212°) and its bat is a **block** with ears and horns, not a bat shape; Absolute adds the tall ears, the blades and the olive belt; DKR has Varley's painted colour and the TV. Question 1 (§1) asks the maintainer to settle it now.
-- ***Year One*: medium.** Richmond Lewis's flat colour includes dusky purples, and Year One's best-known image is a bat crashing through Bruce's window. Year One should keep the single bat as a moment (a Signature or an intro); BLUE COLLAR keeps the colony as weather. Its alarm and ground should stay off violet and lemon.
-- ***Arkham Asylum*: low.** McKean's painted collage shares nothing here. The olive belt is the only green.
+**Against the other Wave 2 Themes** (after the jury-wave-2 §9 decisions):
+
+| Pair | Palette | Type | Silhouette | Atmosphere | Voice | C |
+|---|---|---|---|---|---|---|
+| BLUE COLLAR – ANCIENT GRACE (DKR) | C: violet vs tank grey; lemon vs cyan (47.9); lavender vs Bone | C: Bungee vs Bangers | C (narrow): a block vs a big bat, blades vs two tails; the suits are teal vs neutral grey, at least 10.7 apart | C: bats vs static | C: a work shift vs a broadcast | **5** |
+| BLUE COLLAR – BECOME A BAT (Year One) | C: violet vs olive; lemon vs magenta (80.0); lavender vs Bone | C: Bungee vs Permanent Marker / Neucha | ~: the same ears now; blades vs four feathered points, a block vs a bat, both black on a lighter suit | C: bats as weather vs smoke (Year One's bats are its Signature, another axis) | C: Year One leaves the work-shift words to this Theme | **4** |
+| BLUE COLLAR – SERIOUS HOUSE (Arkham) | C: violet vs plum-black; lemon vs claret (69.0); lavender vs Bone (18.1) | C | C: standard vs tall ears; blades vs a bleed; a visible block vs a hidden bat | C: bats vs scratches | C: a work shift vs a house | **5** |
+
+- **DKR** takes back the grey suit, the big black bat and the armour (jury-wave-2 §9.5). BLUE COLLAR keeps its block, which is an axe and not a bat, on its sampled teal. Snyder's "Dark Knight Returns-sized Bruce" stays a shared source fact, not a shared drawing. DKR's alarmed armour (pauldrons a unit past the body) is close to these resting shoulder pads; different Moods and colours, no change (jury-wave-2 §3.5).
+- **Year One** shares the bat drawing (its swarm Signature, this Theme's weather), never on screen together. Lemon is 8.3 from Year One's canary *waiting* ink: the stamp word carries the tier, and the picker previews each alarm (jury-wave-2 §3.11).
+- **Arkham** moved to plum with Bone as its working ink, so the violet and the lavender are this Theme's alone.
 
 ## 11. Legal note
 
 - **Trademark (DC):** the Absolute bat symbol, "Batman", "Gotham" and the *Absolute Batman* masthead. Credit the emblem as "the bat symbol is a trademark of DC, used here as fan art", as for the other Themes, and add it to the README and NOTICE.
 - **Do not use:** the "ABSOLUTE BATMAN" masthead lettering and its bat-winged plate; any cover or interior art, traced or not (the poses are our own drawings after descriptions); Clayton Cowles' lettering and sound effects; the zoo sign's text; dialogue; Dragotta's character designs beyond the suit's general traits listed in §7; the names Party Animals, Black Mask, Ark M or Roman Sionis in the UI.
 - **Free to use:** a big Batman in a grey suit, black ink and flat colour, a lemon sound-effect colour, bats, a working man's Voice, our own words ("Built, not bought.", "Made it myself.", "JAMMED").
-- **Display name:** BLUE COLLAR is an ordinary English phrase alluding to the premise, not a title or a quote. **Alternatives:** *THE ZOO*, the first arc's title and the bat house, but also where Thomas Wayne is killed in a mass shooting, which is a heavy name for a picker; *NO FORTUNE*, plain but flat. One caveat for BLUE COLLAR: in the picker it sits beside WATCHFUL PROTECTOR, the blue Theme, and "blue" might be read as its colour.
-- **Fonts:** Bungee, Bangers and Shantell Sans are OFL-1.1; bundle their licence texts with the Fontsource ones.
+- **Display name:** BLUE COLLAR (approved, jury-wave-2 §9.11) is an ordinary English phrase alluding to the premise, not a title or a quote. The `film` field is "Scott Snyder and Nick Dragotta's Absolute Batman (2024)", without "after".
+- **Fonts:** Bungee and Shantell Sans are OFL-1.1; bundle their licence texts with the Fontsource ones. Luckiest Guy (Apache-2.0) only if Bungee fails on screen, with a NOTICE line.
 
 ## 12. Unverified items
 
@@ -435,6 +454,8 @@ Scored by the jury's rules (§1): C = clearly different, ~ = close, = = same; th
 - **The axe's look in the hand** (head size against the handle): from the second-printing cover only.
 - **The flying Pose on a tether:** the cape's tethers as grappling hooks are sourced; a picture of Batman swinging on one was not found in the preview pages read.
 - **Bungee at 16px in the header**: 107px before tracking, measured in PIL. Check it beside the counts at 1x and under 360px.
+- **Bungee stamps at 9.5px**: measured to fit in PIL on the TTF; `stampWidth.test.ts` measures the Fontsource WOFF, which may differ by a pixel. The narrowest margin has 2px to spare.
+- **The shared bat sprite**: drawn once for this Theme's colony and Year One's swarm; not drawn yet.
 - **The plot facts** (Thomas at the zoo, Martha a social worker, Crime Alley, Ark M, the Party Animals) are from Wikipedia and reviews, a fan-maintained and secondary layer.
 
 ## 13. Sources
