@@ -1,5 +1,5 @@
 // A small bat in flight, one drawing shared by the Themes that show bats (jury-wave-2.md, section 6):
-// BECOME A BAT's swarm flies it, on Bat-Clawd's grid; BLUE COLLAR's colony will. Ours, drawn plain
+// BECOME A BAT's swarm will fly it, on Bat-Clawd's grid, and BLUE COLLAR's colony. Ours, drawn plain
 // so it reads at a few pixels: two short ears, a body, and scalloped wings in two frames of a beat.
 
 /** Which frame of the wingbeat: the tips raised above the body, or swept below it. */
@@ -58,11 +58,13 @@ const OUTLINES: Record<Wings, Outline> = { up: mirrored(HALVES.up), down: mirror
 const BOX_WIDTH = 12
 
 /** A number for a path: two decimals at most, and no "-0". */
-const n = (value: number) => String(Number(value.toFixed(2)) || 0)
+const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
 
 /** The path of a bat in flight `width` wide, its body at (cx, cy), in its frame of the wingbeat. */
 export function flyingBat(wings: Wings, cx: number, cy: number, width: number): string {
   const scale = width / BOX_WIDTH
-  const points = OUTLINES[wings].map(([x, y]) => `${n(cx + x * scale)} ${n(cy + y * scale)}`)
+  const points = OUTLINES[wings].map(
+    ([x, y]) => `${pathNumber(cx + x * scale)} ${pathNumber(cy + y * scale)}`,
+  )
   return `M${points.join(' L')} Z`
 }
