@@ -147,10 +147,12 @@ function Frame({
  */
 export function BatClawdStill({ size }: { size: number }) {
   const suit = useSuit()
-  const { pose, look, lookY } = stillStep(suit)
+  const { pose, look, lookY, transform } = stillStep(suit)
+  // Its nudge (a leap's tilt) too, as the perch holds it.
+  const nudge = [transform, pose.transform].filter(Boolean).join(' ')
   return (
     <span className="clawd" style={{ width: size, height: size * FRAME_ASPECT }} aria-hidden="true">
-      <span className="clawd__mover">
+      <span className="clawd__mover" style={nudge ? { transform: nudge } : undefined}>
         <Frame suit={suit} pose={pose} gaze={{ x: look, y: lookY ?? 0 }} className="clawd__frame" />
       </span>
     </span>

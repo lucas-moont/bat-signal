@@ -62,6 +62,12 @@ describe('the Theme picker', () => {
     expect(html).toContain('after Tim Burton&#x27;s Batman (1989)')
   })
 
+  // A folder's Bat-Clawd is his Signature pose's final step, its nudge included: ANCIENT GRACE holds
+  // the leap tilted there, as on the perch, not standing level in mid-air.
+  it("holds a Signature pose's final nudge in its folder", () => {
+    expect(draw()).toMatch(/class="clawd__mover" style="transform:[^"]*rotate\(-15deg\)/)
+  })
+
   // Each folder wears its own Theme, so it shows that Theme's colors, stamp word and suit.
   it('dresses each folder in its own Theme, with its stamp and a still Bat-Clawd', () => {
     const html = draw()
