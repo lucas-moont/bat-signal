@@ -120,7 +120,7 @@ export const THEMES: Record<ThemeId, Theme> = {
   /** Frank Miller's The Dark Knight Returns (1986), ANCIENT GRACE: a TV left on, icy night, Lightning Cyan. */
   'the-dark-knight-returns-1986': {
     flag: 'grace',
-    ground: '#080b14',
+    ground: '#000f12',
     words: ANCIENT_GRACE_WORDS,
     emblem: emblem(BAT_1986_CHEST, 'none'),
     suit: ANCIENT_GRACE_SUIT,
