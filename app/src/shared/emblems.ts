@@ -78,6 +78,22 @@ export const BAT_1986 =
   'L69.6 43.9 C77.9 40.9 84.4 31.5 84.4 21.4 C84.4 11.2 79.1 3.4 71.4 1 C72.4 1.8 72.9 3.4 73 5.9 ' +
   'C73.4 10 68.1 13.8 64.5 13.9 L62.4 4.9 L61.4 8.1 L60 8.1 Z'
 
+/**
+ * ANCIENT GRACE's chest bat, after the second suit in Batman: The Dark Knight Returns (2012-13),
+ * traced front-on from Part 2 and matching the comic's ink where it shows (dkr-rework.md, section
+ * 3): about 2.3:1, wide, the horns at each wing's upper outer corner its highest points, a top edge
+ * climbing to them from two short ears, convex outer edges to sharp wingtips at mid-height, and
+ * underneath a middle point and one shallow scallop a side, then a long run to a pointed tail, the
+ * lowest point. Mirrored at x = 60.
+ */
+export const BAT_1986_CHEST =
+  'M60 5.5 L55.9 5.5 L54.4 2 L52.7 4.7 L45.6 4.7 L38.1 3.7 L30.7 2 L23.2 0 L19.5 3 L14.5 8 ' +
+  'L9.5 14.7 L6.5 20.1 L4.5 25.4 L9.5 25.4 L14.5 26.4 L19.5 29.1 L24.4 33.1 L28.4 38.8 L31.9 35.8 ' +
+  'L36.9 34.1 L40.6 33.8 L45.6 34.6 L50.5 37.1 L55.5 41.3 L60 47.6 L64.5 41.3 L69.5 37.1 L74.4 34.6 ' +
+  'L79.4 33.8 L83.1 34.1 L88.1 35.8 L91.6 38.8 L95.6 33.1 L100.5 29.1 L105.5 26.4 L110.5 25.4 ' +
+  'L115.5 25.4 L113.5 20.1 L110.5 14.7 L105.5 8 L100.5 3 L96.8 0 L89.3 2 L81.9 3.7 L74.4 4.7 ' +
+  'L67.3 4.7 L65.6 2 L64.1 5.5 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 
