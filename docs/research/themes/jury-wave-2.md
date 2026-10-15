@@ -417,6 +417,7 @@ Answered on 2026-10-14. They override the recommendations above where they diffe
 7. **ADR 0001 is amended narrowly:** when a work shows no bat symbol of its own, its Theme may draw the bat the work shows, from life, credited as our drawing. That is Arkham's emblem.
 8. **Absolute's lemon alarm stays,** judged on screen in the picker, on a stamp and as a lit disc, beside PALE MOONLIGHT's gold.
 9. **Every §4 Lexicon fix is adopted.** DKR's Case → Channel stays; Year One's SEE ME is decided on screen.
+   - Follow-up, decided by the maintainer on 2026-10-14 after this note: Arkham's Needs you word is picked on screen at its build. "At the door" measures 100–106px in IM Fell English SC and fails every stamp room; the options are Doorstep, Your door, or Caveat Brush stamps that keep "At the door".
 10. **Bats appear in both:** Absolute's colony as its Atmosphere and Year One's swarm as its Signature, sharing one bat drawing. No later Theme uses bats in either slot.
 11. **Display names:** **ANCIENT GRACE** for *The Dark Knight Returns* (the maintainer's choice, replacing TRIUMPHANT), **BLUE COLLAR** for *Absolute Batman*, **BECOME A BAT** for *Year One* (its wording checked on a page before it ships), **SERIOUS HOUSE** for *Arkham Asylum*.
 12. **The engine stays small:** two new Atmosphere painters (`noise` for DKR and Arkham, `smoke` for Year One), a bat option on the ash painter, `--font-headline` and `--font-dateline`, and no viewBox change.
