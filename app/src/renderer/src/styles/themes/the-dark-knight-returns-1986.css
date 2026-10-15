@@ -94,6 +94,8 @@
   /* The armour's plates and their lit edge (the alarmed Pose). */
   --armour: #5b635e;
   --armour-edge: #9aa49e;
+  /* The blue light around the leap's white bolt (picked on screen over the cover's paler edge blue). */
+  --bolt-glow: #5fa6e6;
   --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
   --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
@@ -169,4 +171,13 @@
       transparent 1px 3px
     ),
     radial-gradient(circle at 50% 45% in srgb, var(--lens-core), var(--signal-hot) 55%, var(--signal));
+}
+
+/* The leap's bolt: white, the bolt's own core, with a blue light round it as the cover paints it
+   (the maintainer's ask on screen): a near glow, and a wide halo laid twice so it lights the air. */
+:root[data-theme='the-dark-knight-returns-1986'] .clawd__bolt,
+[data-theme='the-dark-knight-returns-1986'] .clawd__bolt {
+  fill: var(--lens-core);
+  filter: drop-shadow(0 0 0.6px var(--bolt-glow)) drop-shadow(0 0 2.6px var(--bolt-glow))
+    drop-shadow(0 0 2.6px var(--bolt-glow));
 }

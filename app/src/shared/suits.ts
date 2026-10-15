@@ -1085,9 +1085,9 @@ const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 
 /**
  * The bolt behind the leap, top right to bottom left as on the Book One cover: from above his fist
- * down through the gap between his legs, a jagged path a unit wide in the screen's white, never a
- * flash. Drawn turned back by his tilt about its pivot (8, 5.5), so it stands 14 degrees off
- * vertical once he leans into the leap.
+ * down through the gap between his legs, a jagged path a unit wide, white with a blue light around
+ * it, never a flash. Drawn turned back by his tilt about its pivot (8, 5.5), so it stands 14 degrees
+ * off vertical once he leans into the leap.
  */
 const BOLT =
   'M9.1 -6.5 L10.1 -6.7 L9.8 -2.2 L11.1 -2 L9.5 4.7 L10.5 4.9 L9.4 13.9 L8.4 14.1 L9.3 5.9 ' +
@@ -1126,7 +1126,8 @@ const LEAP_LIMBS: Layer[] = [
 /** Leaping, the bolt behind him at a strength, or not yet there. */
 const leaping = (bolt?: number) => {
   const behind: Layer[] = [{ kind: 'cape', d: TAILS.wedge }]
-  if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt })
+  // White, lit blue around it: the Theme's stylesheet paints the bolt's class.
+  if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, className: 'clawd__bolt', opacity: bolt })
   return gracePose(GRACE_LEAPING, behind, LEAP_LIMBS)
 }
 /**
@@ -1149,8 +1150,8 @@ const THE_LEAP: Script = [
     transform: 'translateY(2px)',
   },
   { pose: leaping(), look: GAZE, transform: LAUNCH },
-  { pose: leaping(0.6), look: GAZE, transform: LAUNCH },
-  { pose: leaping(0.4), look: GAZE, transform: LAUNCH },
+  { pose: leaping(1), look: GAZE, transform: LAUNCH },
+  { pose: leaping(0.85), look: GAZE, transform: LAUNCH },
 ]
 
 export const ANCIENT_GRACE_SUIT: Suit = {
@@ -1163,6 +1164,6 @@ export const ANCIENT_GRACE_SUIT: Suit = {
   // On the perch he holds the leap, looks ahead, then down to the street.
   watch: watchOn(THE_LEAP, [{ look: GAZE }, { look: 0, lookY: 0.4 }]),
   signature: THE_LEAP,
-  // Lightning Cyan is the Alarm color and never shows at rest: the bolt is the screen's white.
+  // Lightning Cyan is the Alarm color and never shows at rest: the bolt is white, lit blue.
   aura: 'alarmed',
 }
