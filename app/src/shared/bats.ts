@@ -5,12 +5,15 @@
 /** Which frame of the wingbeat: the tips raised above the body, or swept below it. */
 export type Wings = 'up' | 'down'
 
+/** A drawing's points, in order round its edge. */
+type Outline = readonly (readonly [number, number])[]
+
 /**
  * Each frame's left half on a 12x6 box centered on the body, from the top of the head round the
  * wing to the tail, mirrored for the right: a short ear, the shoulder, the wing's leading edge to
  * its tip, then the scallops of its trailing edge back to the body.
  */
-const HALVES: Record<Wings, readonly (readonly [number, number])[]> = {
+const HALVES: Record<Wings, Outline> = {
   up: [
     [0, -1],
     [-0.6, -1.6],
@@ -39,6 +42,18 @@ const HALVES: Record<Wings, readonly (readonly [number, number])[]> = {
   ],
 }
 
+/** A whole outline from its left half: the half, then the same mirrored back up the right. */
+const mirrored = (half: Outline): Outline => [
+  ...half,
+  ...half
+    .slice(1, -1)
+    .reverse()
+    .map(([x, y]) => [-x, y] as const),
+]
+
+/** Each frame's whole outline. */
+const OUTLINES: Record<Wings, Outline> = { up: mirrored(HALVES.up), down: mirrored(HALVES.down) }
+
 /** The drawing's box: 12 wide, centered on the body. */
 const BOX_WIDTH = 12
 
@@ -48,14 +63,6 @@ const n = (value: number) => String(Number(value.toFixed(2)) || 0)
 /** The path of a bat in flight `width` wide, its body at (cx, cy), in its frame of the wingbeat. */
 export function flyingBat(wings: Wings, cx: number, cy: number, width: number): string {
   const scale = width / BOX_WIDTH
-  const half = HALVES[wings]
-  const outline = [
-    ...half,
-    ...half
-      .slice(1, -1)
-      .reverse()
-      .map(([x, y]) => [-x, y] as const),
-  ]
-  const points = outline.map(([x, y]) => `${n(cx + x * scale)} ${n(cy + y * scale)}`)
+  const points = OUTLINES[wings].map(([x, y]) => `${n(cx + x * scale)} ${n(cy + y * scale)}`)
   return `M${points.join(' L')} Z`
 }
