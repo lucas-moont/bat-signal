@@ -55,6 +55,15 @@ describe('the Themes', () => {
     })
   })
 
+  // The credit names the work without "after", which the picker adds (jury-wave-2.md, section
+  // 3.15), short enough for its folder.
+  it("names BECOME A BAT after Frank Miller's Year One", () => {
+    expect(THEMES['batman-year-one-1987'].words.voice.theme).toEqual({
+      name: 'BECOME A BAT',
+      film: "Frank Miller's Year One",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -121,6 +130,7 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'moonlight']))).toBe('batman-1989')
     expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
     expect(themeFromFlags(new Set(['demo', 'knightmare']))).toBe('batman-v-superman-2016')
+    expect(themeFromFlags(new Set(['demo', 'yearone']))).toBe('batman-year-one-1987')
   })
 
   it('names no Theme without a Theme flag', () => {

@@ -670,7 +670,8 @@ export const BECOME_A_BAT_WORDS: Words = {
   },
   voice: {
     ...STANDARD_VOICE,
-    theme: { name: 'BECOME A BAT', film: "Frank Miller and David Mazzucchelli's Batman: Year One (1987)" },
+    // Short enough for its picker folder (picked on screen): the full credit ran to a third line.
+    theme: { name: 'BECOME A BAT', film: "Frank Miller's Year One" },
     // True of both men on January 4.
     tagline: 'New in town.',
     empty: {
