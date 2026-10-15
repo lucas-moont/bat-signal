@@ -105,7 +105,7 @@ At the source's own hue it is KNIGHTMARE's crimson:
 | **A1. Claret (kept, jury §3.10)** | `#ec5c94` (h 359°) | 12.9 | 11.9 | 25.8 | 24.2 | 4.92 |
 | A2. Source wine, lifted (out) | `#e64a5e` (h 21°) | **4.1** | | 13.4 | 15.6 | under 4.5 on the hover tone |
 
-A1 moves about 25° from the sampled wine (h 19–30°) toward claret. That is a design choice to keep clear of KNIGHTMARE, **not a sample**. The pink-red family now holds KNIGHTMARE, this Theme and Year One, each 11.9–23.2 apart with grounds 12–28 apart; the jury judged that enough, to be checked side by side in the picker.
+A1 moves about 25° from the sampled wine (h 19–30°) toward claret. That is a design choice to keep clear of KNIGHTMARE, **not a sample**. The pink-red family now holds KNIGHTMARE, this Theme and Year One, their alarms 11.9–23.2 apart. Their grounds are 7.9–17.3 apart on the surface and 13.0–27.7 on the raised tone, and the tight pair is KNIGHTMARE and this Theme: alarms 12.9 apart on grounds only 7.9 / 13.0 apart. So the ground is no big help there. What tells those two apart is the alarm's hue (KNIGHTMARE's crimson at h 21°, this claret at h 359°) and the raised tone behind it (scorched brown against plum). The jury judged that enough, to be checked side by side in the picker.
 
 Its ladder:
 
