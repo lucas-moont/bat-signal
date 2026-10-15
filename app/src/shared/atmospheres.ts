@@ -95,7 +95,10 @@ export interface SmokeAtmosphere extends Scene {
   puffs: number
   /** A puff's width as it leaves the street, and as it is gone, in px. */
   size: readonly [number, number]
-  /** Its strength (alpha) as it leaves the street; it fades to nothing. */
+  /**
+   * Its strength (alpha) as it leaves the street, about that at its heart and softer toward its
+   * edge (its discs overlap there, so their alphas compound rather than add); it fades to nothing.
+   */
   alpha: number
   /** How far it rises a tick, in px. */
   rise: number
