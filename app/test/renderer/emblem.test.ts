@@ -129,20 +129,15 @@ describe("VENGEANCE's emblem", () => {
 })
 
 // Bat-Clawd's chest wears the Theme's own emblem, placed on his grid: centred where asked, as wide
-// as asked, and as tall as its shape makes it, or as tall as asked (ANCIENT GRACE's round bat,
-// stretched to the second suit's chest).
+// as asked, and as tall as its shape makes it.
 describe('a bat on his chest', () => {
   const bat = emblem(WINGS, 'none')
   /** Where the transform puts the bat's box: its left, top, width and height. */
   const placed = (transform: string) => {
     const [tx = NaN, ty = NaN] = /translate\(([-\d.e]+) ([-\d.e]+)\)/.exec(transform)!.slice(1).map(Number)
-    const [kx = NaN, ky = kx] = /scale\(([-\d.e]+)(?: ([-\d.e]+))?\)/
-      .exec(transform)!
-      .slice(1)
-      .filter((v) => v !== undefined)
-      .map(Number)
+    const k = Number(/scale\(([-\d.e]+)\)/.exec(transform)![1])
     const { x, y, width, height } = bat.bat
-    return { x: tx + x * kx, y: ty + y * ky, w: width * kx, h: height * ky }
+    return { x: tx + x * k, y: ty + y * k, w: width * k, h: height * k }
   }
 
   it('keeps its shape, centred and as wide as asked', () => {
@@ -151,13 +146,5 @@ describe('a bat on his chest', () => {
     expect(box.h).toBeCloseTo((7 * bat.bat.height) / bat.bat.width)
     expect(box.x + box.w / 2).toBeCloseTo(8)
     expect(box.y + box.h / 2).toBeCloseTo(7)
-  })
-
-  it('stretches to a height of its own when asked', () => {
-    const box = placed(batAt(bat, 8, 7.5, 6.6, 3))
-    expect(box.w).toBeCloseTo(6.6)
-    expect(box.h).toBeCloseTo(3)
-    expect(box.x + box.w / 2).toBeCloseTo(8)
-    expect(box.y + box.h / 2).toBeCloseTo(7.5)
   })
 })

@@ -98,7 +98,7 @@ function layerShape(layer: Layer, key: number, emblem: Emblem, offBody: string) 
           key={key}
           className="clawd__emblem"
           d={emblem.path}
-          transform={batAt(emblem, layer.cx, layer.cy, layer.width, layer.height)}
+          transform={batAt(emblem, layer.cx, layer.cy, layer.width)}
           shapeRendering="geometricPrecision"
         />
       )

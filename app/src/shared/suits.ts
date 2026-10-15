@@ -33,11 +33,8 @@ export type Layer =
     }
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
-  /**
-   * The Theme's emblem across his chest, centred on (cx, cy), `width` units wide and as tall as its
-   * shape makes it, or `height` units tall, stretched (a round bat on a wide chest).
-   */
-  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number }
+  /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
+  | { kind: 'emblem'; cx: number; cy: number; width: number }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
