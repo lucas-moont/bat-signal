@@ -1052,11 +1052,12 @@ const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
 const BOLT =
   'M11.5 -6 L12.5 -6 L10.2 -1.3 L12.3 -0.8 L8.4 5.1 L10.3 5.6 L5.5 14 L4.5 14 L8.6 5.9 L6.7 5.4 ' +
   'L10.6 -0.2 L8.7 -0.7 Z'
-const leaping = (bolt?: number) =>
-  gracePose(GRACE_LEAPING, [
-    ...(bolt ? [{ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt } as const] : []),
-    { kind: 'cape', d: TAILS.streaming },
-  ])
+/** Leaping, the bolt behind him at a strength, or not yet there. */
+const leaping = (bolt?: number) => {
+  const behind: Layer[] = [{ kind: 'cape', d: TAILS.streaming }]
+  if (bolt !== undefined) behind.unshift({ kind: 'path', d: BOLT, fill: 'var(--bone)', opacity: bolt })
+  return gracePose(GRACE_LEAPING, behind)
+}
 /** Launched: raised two units and tilted. */
 const LAUNCH = 'translateY(-4px) rotate(-15deg)'
 
