@@ -1,0 +1,167 @@
+/*
+ * BECOME A BAT, after Frank Miller and David Mazzucchelli's Batman: Year One: its palette and faces
+ * (docs/research/themes/year-one.md, section 3). Gordon's notebook from his first year in a crooked
+ * city: an olive-khaki Gotham of grime and smoke, his canary caption paper for what waits on you,
+ * khaki newsprint white for what runs, and the flat red of the collected edition's cover kept for
+ * the one thing that needs you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: the khaki greys of both of Richmond Lewis's colourings, darkened; --ink-soft: Gordon's
+ *   canary caption boxes; --bone: newsprint white at the ground's hue.
+ * - --signal: Trade Paperback Red, sampled from the trade paperback's cover; --signal-hot, the same red
+ *   lifted at its hue until it reads as text (the maintainer's pick on screen over the 1987 newsprint
+ *   magenta, knowing it sits 6.1 ΔE00 from KNIGHTMARE's crimson; year-one.md, section 3).
+ */
+:root[data-theme='batman-year-one-1987'],
+[data-theme='batman-year-one-1987'] {
+  --abyss: #0d0e06;
+  --smoke: #12140a;
+  --surface: #191b0b;
+  --raised: #292c11;
+  --line: #48491f;
+  --surface-deep: #111309;
+  --frame: #1f220d;
+  --header-fade: #111309;
+  --sheet-top: #1f220d;
+  --shadow: #000000;
+
+  /* The Alarm color, Trade Paperback Red, and its dark body, which marks only the lit lens's rim. */
+  --blood: #5a1618;
+  --signal: #b32c33;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #f2605e;
+  --on-signal: var(--bone);
+  --ink-hot: #f2605e;
+  --ink-soft: #e6e08a;
+  /* Khaki newsprint white marks what runs: the stamp word carries the tier. */
+  --ink-live: var(--bone);
+  --ink: #cdcdb3;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is red. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 14%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--bone);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: SIGN HERE and GONE WRONG in the red lifted for text, SEE ME and MEMO in
+     Gordon's canary. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--bone);
+  --in-progress-glow: color-mix(in srgb, var(--bone) 40%, transparent);
+
+  /* Quit's hover stays a shadow: red is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: color-mix(in srgb, var(--ink-soft) 55%, var(--surface));
+  --report-rule: var(--line);
+  /* The report's headings in Gordon's canary caption boxes, lettered in the dark. */
+  --caption-paper: var(--ink-soft);
+  --caption-ink: var(--abyss);
+  --caption-rule: none;
+
+  --clawd: #d77757;
+
+  --bone: #e2e3c8;
+  --ash: #a29f86;
+  --bone-dim: #c9c9ae;
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in the first suit (year-one.md, section 7): the 1987 covers' grey, a cowl-black collar
+     under his orange jaw so it reads (picked on screen over a chalk suit), a neutral near-black cowl,
+     cape, gloves, boots and trunks, a full unit of solid canary capsule belt, and Year One's own
+     small black bat on the chest. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #141412;
+  --cowl-edge: color-mix(in srgb, var(--bone) 24%, transparent);
+  --cowl-shine: #34352f;
+  --suit: #9a9e9a;
+  --gloves: var(--cowl);
+  --belt: #c2b86a;
+  --buckle: var(--belt);
+  --cape: #10110e;
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: var(--abyss);
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: flat, in the suit's grey. */
+  --emblem: var(--suit);
+
+  /* The Signal disc. Unlit: olive glass, the bat a shade in it. Lit: flat colour, not a glow, three
+     hard-edged rings as a newsprint plate prints them, the bat in the dark across them. */
+  --disc-bat: var(--raised);
+  --glass-shine: var(--surface);
+  --glass: var(--abyss);
+  --disc-rim-inner: #080904;
+  --disc-rim-outer: var(--line);
+  --lens-core: #ffd0c8;
+  --lens-rim: var(--blood);
+  --lens-bat: var(--abyss);
+  --lens-bat-edge: transparent;
+  --notice-top: #17190a;
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #252810;
+  --notice-hover-foot: #14160a;
+
+  /* A smog lit from the street below (the #404 cover's olive, sampled), the film grain, and smoke
+     rising off the street. */
+  --smog: #575d4b;
+  --haze: color-mix(in srgb, var(--smog) 12%, transparent);
+  --haze-edge: color-mix(in srgb, var(--smog) 4%, transparent);
+  --haze-inset: auto -20% -35% -20%;
+  --grain-opacity: 0.045;
+  --searchlight: var(--bone);
+  --smoke-puff: #62664a;
+
+  /* Permanent Marker, a blunt felt pen, sets the wordmark only (it has no lowercase); Neucha,
+     Gordon's upright printed hand, sets the headlines, the stamps, the caption boxes and the report;
+     the dates are typeset in Barlow's bold, as the book's scene breaks are. */
+  --font-display: 'Permanent Marker', 'Segoe Print', cursive;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: 'Neucha', 'Segoe Print', cursive;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-type);
+  --font-headline: var(--font-type);
+  --headline-weight: 400;
+  --font-dateline: var(--font-body);
+  --dateline-weight: 700;
+  --font-stamp: var(--font-type);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 15px;
+  --folder-name-tracking: 0.5px;
+  --wordmark-size: 19px;
+  --wordmark-tracking: 1px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23f2605e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23e6e08a' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* A caption is lettered straight, in a thin box. */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1px;
+  --stamp-size: 12px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+
+  /* Lit: three hard-stop rings, no blending. */
+  --disc-lens: radial-gradient(
+    circle at 50% 50% in srgb,
+    var(--lens-core) 0 34%,
+    var(--signal-hot) 34% 68%,
+    var(--signal) 68% 100%
+  );
+}
