@@ -496,6 +496,18 @@ describe('the colony', () => {
     for (let i = 1; i < beats.length; i++) expect(beats[i]).not.toBe(beats[i - 1])
   })
 
+  // The page's clock is a timer: its ticks come a hair early or late, and a beat must not hold.
+  it('beats its wings every tick on a clock that runs a little early or late', () => {
+    const painter = colony()
+    painter.paint(recorder().ctx, 0)
+    const beats = [0.97, 1.03, 0.98, 1.04, 0.96, 1.02, 0.99, 1.01, 0.97, 1.03].map((ticks) => {
+      const r = recorder()
+      painter.paint(r.ctx, ticks / FPS)
+      return read(r.fills[0]!.shapes[0]!).wings
+    })
+    for (let i = 1; i < beats.length; i++) expect(beats[i]).not.toBe(beats[i - 1])
+  })
+
   // An arc that rises and dips, not ash's straight slant (jury-wave-2.md, section 3.9).
   it('flies each crossing on an arc that rises and dips', () => {
     const bats = firstBat(400)

@@ -376,8 +376,11 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
   let height = 0
   /** Where the motes are blown: the whole canvas, or the bats' band. */
   let [top, bottom] = [0, 0]
-  /** Ticks of the clock since it began. */
-  let ticks = 0
+  /**
+   * Whole ticks of the clock since it began, each counted to the nearest: a tick that comes a hair
+   * early or late still turns the wings, so a beat never holds or skips.
+   */
+  let beats = 0
   let colors = { ash: '', dust: '' }
 
   /** A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat. */
@@ -385,7 +388,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     if (!bats) return ctx.rect(x, y, size, size)
     const along = (x + size) / (width + size)
     const outline = batOutline(
-      onClock(BEAT, ticks, i),
+      onClock(BEAT, beats, i),
       x + size / 2,
       y - bats.arc * Math.sin(2 * Math.PI * along),
       size,
@@ -402,7 +405,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     resize(w, h) {
       ;[width, height] = [w, h]
       ;[top, bottom] = bats?.band ?? [0, h]
-      ticks = 0
+      beats = 0
       layers = drifts(
         scatter(
           {
@@ -419,7 +422,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
-      ticks += step
+      beats += Math.round(step)
       ctx.clearRect(0, 0, width, height)
       for (const { depth, dust: isDust, motes } of layers) {
         const { alpha, size, wind, fall } = depth
