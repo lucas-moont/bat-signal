@@ -1020,8 +1020,13 @@ const TAIL_HEM = 'L16.6 11.5 L14.6 10.8 L1.4 10.8 L-0.6 11.5 Z'
 const TAILS = {
   /** Hanging behind him from his shoulders. */
   hanging: `M1 4.5 L15 4.5 ${TAIL_HEM}`,
-  /** Closed around him, asleep, his shoulders above it, its tails at his feet. */
-  wrapped: `M0.6 6.4 L15.4 6.4 ${TAIL_HEM}`,
+  /**
+   * Closed around him, asleep: over his shoulders up beside the cowl, as the comic and the films drape
+   * it, a collar dipping under his jaw, its tails at his feet.
+   */
+  wrapped:
+    'M3 3.4 L3 5.2 L13 5.2 L13 3.4 L15 4 L15.4 6.4 L16.6 11.5 L14.6 10.8 L1.4 10.8 L-0.6 11.5 L0.6 6.4 ' +
+    'L1 4 Z',
   /** The drop: spread over his head like a canopy, its tails hanging at his sides (two frames). */
   canopyA: 'M1 4.5 L-1.4 4.6 L-3 8 L-3 2.4 Q8 -4.4 19 2.4 L19 8 L17.4 4.6 L15 4.5 Z',
   canopyB: 'M1 4.5 L-1.4 5.2 L-3 8.4 L-3 3.2 Q8 -3.2 19 3.2 L19 8.4 L17.4 5.2 L15 4.5 Z',
