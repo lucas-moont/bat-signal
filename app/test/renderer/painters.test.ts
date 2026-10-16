@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
 import { painterFor, type Painter } from '../../src/renderer/src/painters'
+import { batOutline, type Wings } from '../../src/shared/bats'
 import {
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
@@ -19,20 +20,25 @@ type Box = { x: number; y: number; w: number; h: number; color: string; alpha: n
 
 type Disc = { x: number; y: number; r: number }
 
+/** A shape drawn in straight lines: its points in order round its edge. */
+type Shape = (readonly [number, number])[]
+
 /**
  * A canvas context that records what it is asked to draw, in which color and strength: one list of
- * segments per stroke() (the rain), one list of squares and of discs per fill() (the snow, the
- * smoke), and each box filled or outlined on its own (the lit windows), and how often it is cleared.
+ * segments per stroke() (the rain), one list of squares, of discs and of shapes per fill() (the snow,
+ * the smoke, the bats), and each box filled or outlined on its own (the lit windows), and how often
+ * it is cleared.
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
-  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[] }[] = []
+  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[]; shapes: Shape[] }[] = []
   const boxes: Box[] = []
   const outlines: Box[] = []
   const cleared = { times: 0 }
   let segments: Segment[] = []
   let rects: Square[] = []
   let discs: Disc[] = []
+  let shapes: Shape[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
@@ -43,13 +49,21 @@ function recorder() {
       boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
     strokeRect: (x: number, y: number, w: number, h: number) =>
       outlines.push({ x, y, w, h, color: ctx.strokeStyle, alpha: ctx.globalAlpha }),
-    beginPath: () => ([segments, rects, discs] = [[], [], []]),
-    moveTo: (x: number, y: number) => (from = { x, y }),
-    lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
+    beginPath: () => ([segments, rects, discs, shapes] = [[], [], [], []]),
+    moveTo: (x: number, y: number) => {
+      from = { x, y }
+      shapes.push([[x, y]])
+    },
+    lineTo: (x: number, y: number) => {
+      segments.push({ x0: from.x, y0: from.y, x1: x, y1: y })
+      shapes.at(-1)?.push([x, y])
+      from = { x, y }
+    },
+    closePath: () => {},
     stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
     arc: (x: number, y: number, r: number) => discs.push({ x, y, r }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs }),
+    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs, shapes }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
@@ -89,6 +103,17 @@ const ASH: AshAtmosphere = {
   ],
 }
 
+/** A colony: two bats at most, in two depths, on 6px arcs in a band from 60 to 100px down. */
+const COLONY: AshAtmosphere = {
+  kind: 'ash',
+  color: '--colony',
+  depths: [
+    { alpha: 0.2, size: 8, wind: 3 },
+    { alpha: 0.3, size: 12, wind: 5 },
+  ],
+  bats: { count: 2, band: [60, 100], arc: 6, rest: [1, 3] },
+}
+
 /** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
 const SMOKE: SmokeAtmosphere = {
   kind: 'smoke',
@@ -116,7 +141,7 @@ const NOISE: NoiseAtmosphere = {
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, SMOKE, NOISE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -125,7 +150,7 @@ describe('a painter given its colors before its size', () => {
       expect(() => painter.paint(ctx, 0)).not.toThrow()
       const drawn = [
         ...strokes.flatMap((s) => s.segments),
-        ...fills.flatMap((f) => [...f.rects, ...f.discs]),
+        ...fills.flatMap((f) => [...f.rects, ...f.discs, ...f.shapes]),
         ...boxes,
       ]
       expect(drawn).toHaveLength(0)
@@ -396,6 +421,122 @@ describe('the ash', () => {
       expect(r.y).toBeGreaterThan(-10)
       expect(r.y).toBeLessThan(440 + 10)
     }
+  })
+})
+
+// BLUE COLLAR's colony (absolute-batman.md, section 9): the ash painter flies bats in place of its
+// motes, the drawing BECOME A BAT's swarm flies, a few at a time on arcs across a band of the panel.
+describe('the colony', () => {
+  const colorOf = (variable: string) => ({ '--colony': '#b8b0e0' })[variable] ?? ''
+
+  const colony = (atmosphere: AshAtmosphere = COLONY, seed?: number) => {
+    const painter = painterFor(atmosphere, seeded(seed))
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+  /** The bats in each frame: as it appears, then after each of `n` ticks of the clock. */
+  const batsOver = (n: number, painter = colony(), dt = 1 / FPS) =>
+    fillsOver(painter, n, dt).map((fills) => fills.flatMap((f) => f.shapes))
+
+  /** A drawn bat's width, the middle of its body and which way its wings beat. */
+  const read = (shape: Shape) => {
+    const xs = shape.map(([x]) => x)
+    const [left, right] = [Math.min(...xs), Math.max(...xs)]
+    const width = right - left
+    const cx = (left + right) / 2
+    // Its first point is the top of its head, a twelfth of its width above its body.
+    const cy = shape[0]![1] + width / 12
+    const matches = (wings: Wings) =>
+      batOutline(wings, cx, cy, width).every(
+        ([x, y], i) => Math.hypot(x - shape[i]![0], y - shape[i]![1]) < 1e-6,
+      )
+    return { width, cx, cy, wings: matches('up') ? 'up' : matches('down') ? 'down' : null }
+  }
+
+  it('flies bats, the shared drawing, in place of motes', () => {
+    const frames = batsOver(200)
+    const all = frames.flat()
+    expect(all.length).toBeGreaterThan(0)
+    for (const shape of all) expect(read(shape).wings).not.toBeNull()
+    for (const fills of fillsOver(colony(), 50)) for (const f of fills) expect(f.rects).toHaveLength(0)
+  })
+
+  it('never has more in flight than its count', () => {
+    for (const bats of batsOver(800)) expect(bats.length).toBeLessThanOrEqual(COLONY.bats!.count)
+  })
+
+  it('fills each depth in its strength, its bats as wide as its size', () => {
+    for (const fills of fillsOver(colony(), 400))
+      for (const f of fills) {
+        const depth = COLONY.depths.find((d) => d.alpha === f.alpha)
+        expect(depth).toBeDefined()
+        expect(f.color).toBe('#b8b0e0')
+        for (const shape of f.shapes) expect(read(shape).width).toBeCloseTo(depth!.size)
+      }
+  })
+
+  // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark.
+  it('keeps every bat inside its band', () => {
+    const [top, bottom] = COLONY.bats!.band
+    for (const bats of batsOver(800))
+      for (const shape of bats)
+        for (const [, y] of shape) {
+          expect(y).toBeGreaterThanOrEqual(top)
+          expect(y).toBeLessThanOrEqual(bottom)
+        }
+  })
+
+  it('beats its wings every tick', () => {
+    const one: AshAtmosphere = { ...COLONY, bats: { ...COLONY.bats!, count: 1 } }
+    const frames = batsOver(400, colony(one)).filter((bats) => bats.length === 1)
+    const beats = frames.map((bats) => read(bats[0]!).wings)
+    expect(beats.length).toBeGreaterThan(20)
+    for (let i = 1; i < 20; i++) expect(beats[i]).not.toBe(beats[i - 1])
+  })
+
+  // An arc that rises and dips, not ash's straight slant (jury-wave-2.md, section 3.9).
+  it('flies each crossing on an arc that rises above its line and dips below it', () => {
+    const one: AshAtmosphere = { ...COLONY, depths: [COLONY.depths[0]!], bats: { ...COLONY.bats!, count: 1 } }
+    const frames = batsOver(800, colony(one))
+    // The frames of one whole crossing: from a bat coming in to it being gone.
+    const start = frames.findIndex((bats, i) => i > 0 && bats.length === 1 && frames[i - 1]!.length === 0)
+    const end = frames.findIndex((bats, i) => i > start && bats.length === 0)
+    const ys = frames.slice(start, end).map((bats) => read(bats[0]!).cy)
+    const line = (ys[0]! + ys.at(-1)!) / 2
+    expect(Math.max(...ys) - line).toBeGreaterThan(0.8 * COLONY.bats!.arc)
+    expect(line - Math.min(...ys)).toBeGreaterThan(0.8 * COLONY.bats!.arc)
+  })
+
+  it('crosses the panel both ways, and rests between crossings', () => {
+    const one: AshAtmosphere = { ...COLONY, bats: { ...COLONY.bats!, count: 1 } }
+    const frames = batsOver(2000, colony(one))
+    const ways = new Set<number>()
+    frames.forEach((bats, i) => {
+      const before = frames[i - 1]
+      if (i > 0 && bats.length === 1 && before?.length === 1)
+        ways.add(Math.sign(read(bats[0]!).cx - read(before[0]!).cx))
+    })
+    expect([...ways].sort()).toEqual([-1, 1])
+    // Rests of at least a second: a run of empty frames at least FPS long.
+    let run = 0
+    let longest = 0
+    for (const bats of frames) longest = Math.max(longest, (run = bats.length === 0 ? run + 1 : 0))
+    expect(longest).toBeGreaterThanOrEqual(FPS)
+  })
+
+  it('flies as far as the time between ticks, up to two ticks', () => {
+    const one: AshAtmosphere = { ...COLONY, depths: [COLONY.depths[0]!], bats: { ...COLONY.bats!, count: 1 } }
+    const flown = (dt: number) => {
+      // Seeded alike, so each run's bat is the same bat, in the same place.
+      const [first, next] = batsOver(1, colony(one, 3), dt)
+      if (!first![0] || !next![0]) return null
+      return Math.abs(read(next![0]).cx - read(first![0]).cx)
+    }
+    const once = flown(1 / FPS)
+    expect(once).not.toBeNull()
+    expect(flown(2 / FPS)).toBeCloseTo(2 * once!)
+    expect(flown(5)).toBeCloseTo(flown(2 / FPS)!)
   })
 })
 

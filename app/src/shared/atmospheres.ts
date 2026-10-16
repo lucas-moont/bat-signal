@@ -65,11 +65,21 @@ export interface LitWindowsAtmosphere extends Scene {
   still: true
 }
 
+/** A depth of what the wind blows, from the farthest to the nearest. */
+interface Depth {
+  /** Its strength. */
+  alpha: number
+  /** The size of what it blows: a mote's side, a bat's width, in px. */
+  size: number
+  /** How far the wind carries it a tick, in px. */
+  wind: number
+}
+
 /**
  * Ash blown on a desert wind: flakes cross the panel at a shallow slant, left to right, in depths
  * that differ in strength, size and speed, a share of them dust.
  */
-export interface AshAtmosphere extends Scene {
+export interface Motes extends Scene {
   kind: 'ash'
   /** The variable the ash is filled in. */
   color: string
@@ -77,12 +87,36 @@ export interface AshAtmosphere extends Scene {
   dust: { color: string; share: number }
   /** Flakes per 1000 square pixels. */
   density: number
-  /**
-   * Each depth from the farthest to the nearest: its alpha, its flakes' size, and how far the wind
-   * carries them and they fall in a tick, in px.
-   */
-  depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
+  /** Each depth, from the farthest to the nearest, and how far its flakes fall a tick, in px. */
+  depths: readonly (Depth & { fall: number })[]
+  bats?: never
 }
+
+/**
+ * Bats on the wind in place of the ash (BLUE COLLAR's colony): a few at a time, each crossing a
+ * band of the panel one way or the other on an arc that rises and dips, flapping every tick, then
+ * resting before it crosses again. The drawing BECOME A BAT's swarm flies (shared/bats.ts).
+ */
+export interface Colony extends Scene {
+  kind: 'ash'
+  /** The variable the bats are filled in. */
+  color: string
+  /** Each depth, from the farthest to the nearest. */
+  depths: readonly Depth[]
+  bats: {
+    /** How many fly: the most in flight at once. */
+    count: number
+    /** The band they fly in: its top and bottom, in px from the panel's top. */
+    band: readonly [number, number]
+    /** How far a bat rises above its line and dips below it over a crossing, in px. */
+    arc: number
+    /** The shortest and the longest a bat rests between crossings, in seconds. */
+    rest: readonly [number, number]
+  }
+}
+
+/** What the wind blows across the panel: ash, a share of it dust; or bats. */
+export type AshAtmosphere = Motes | Colony
 
 /**
  * Smoke off the street: soft round puffs rise from the bottom edge, a few at a time, each swelling

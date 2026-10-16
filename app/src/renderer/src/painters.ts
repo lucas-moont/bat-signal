@@ -2,14 +2,16 @@
 // behind the panel, a step at a time on the shared 8 fps clock. Free of the DOM, so node tests
 // drive them on a recording canvas.
 import type {
-  AshAtmosphere,
   Atmosphere,
+  Colony,
   LitWindowsAtmosphere,
+  Motes,
   NoiseAtmosphere,
   RainAtmosphere,
   SmokeAtmosphere,
   SnowAtmosphere,
 } from '@shared/atmospheres'
+import { batOutline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -44,7 +46,7 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
     case 'lit-windows':
       return litWindows(atmosphere, random)
     case 'ash':
-      return ash(atmosphere, random)
+      return atmosphere.bats ? colony(atmosphere, random) : ash(atmosphere, random)
     case 'smoke':
       return smoke(atmosphere, random)
     case 'noise':
@@ -344,7 +346,7 @@ const GUST = 0.2
 
 /** A depth's ash or its dust: the motes of one color, filled as one path a tick. */
 interface Drift {
-  depth: AshAtmosphere['depths'][number]
+  depth: Motes['depths'][number]
   dust: boolean
   motes: Mote[]
 }
@@ -354,7 +356,7 @@ interface Drift {
  * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
  * along it, whichever way the wind blows.
  */
-function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: () => number): Painter {
+function ash({ color: variable, dust, density, depths }: Motes, random: () => number): Painter {
   const drifts = (lists: Mote[][] = []): Drift[] =>
     depths.flatMap((depth, d) =>
       [false, true].map((isDust, c) => ({ depth, dust: isDust, motes: lists[2 * d + c] ?? [] })),
@@ -403,6 +405,105 @@ function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: 
         }
         ctx.fill()
       }
+    },
+  }
+}
+
+interface Bat {
+  /** Its depth, an index into the colony's. */
+  depth: number
+  /** Which way it crosses: 1 left to right, -1 right to left. */
+  way: number
+  /** How far along its crossing it is, in px from where it came in. */
+  flown: number
+  /** The height of its line across the band, in px. */
+  line: number
+  /** Ticks left of its rest before it crosses again; none while it flies. */
+  resting: number
+  /** Which frame of the wingbeat it starts on, so the bats don't beat in step. */
+  phase: number
+}
+
+/** The frames of a wingbeat, a tick each. */
+const BEAT: readonly Wings[] = ['up', 'down']
+
+/**
+ * The colony: a few bats, each crossing its band one way or the other on an arc, a rise then a dip
+ * of its line, flapping every tick; gone past the far edge, it rests, then sets off again from
+ * either side, on a new line, in a new depth. Each depth's bats are filled as one path a tick.
+ */
+function colony({ color: variable, depths, bats: flight }: Colony, random: () => number): Painter {
+  const { count, band, arc, rest } = flight
+  let bats: Bat[] = []
+  let width = 0
+  let height = 0
+  /** Ticks of the clock since the colony began. */
+  let ticks = 0
+  let color = ''
+
+  /** A rest of its own length, in ticks. */
+  const restTicks = () => (rest[0] + random() * (rest[1] - rest[0])) / STEP
+  /** A bat on the edge it sets off from: its line far enough inside the band for its arc and wings. */
+  const setOff = (bat: Bat): Bat => {
+    const depth = Math.floor(random() * depths.length)
+    const reach = arc + depths[depth]!.size / 4
+    const [top, bottom] = [band[0] + reach, band[1] - reach]
+    return {
+      ...bat,
+      depth,
+      way: random() < 0.5 ? 1 : -1,
+      flown: 0,
+      line: top < bottom ? top + random() * (bottom - top) : (band[0] + band[1]) / 2,
+      resting: 0,
+    }
+  }
+  /** How far a crossing is, wings and all: in from past one edge, out past the other. */
+  const crossing = (bat: Bat) => width + depths[bat.depth]!.size
+
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      ticks = 0
+      // Each somewhere in its round of a crossing and a rest, so they never come in together.
+      bats = Array.from({ length: count }, () => {
+        const bat = setOff({ depth: 0, way: 1, flown: 0, line: 0, resting: 0, phase: 0 })
+        const flying = crossing(bat) / depths[bat.depth]!.wind
+        const round = random() * (flying + rest[1] / STEP)
+        return round < flying
+          ? { ...bat, flown: round * depths[bat.depth]!.wind, phase: Math.floor(random() * BEAT.length) }
+          : { ...bat, resting: round - flying, phase: Math.floor(random() * BEAT.length) }
+      })
+    },
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      ticks += step
+      // Every bat moves on, then each depth's are drawn: one that sets off in a new depth moves once.
+      bats = bats.map((bat) => {
+        if (bat.resting > 0) return bat.resting > step ? { ...bat, resting: bat.resting - step } : setOff(bat)
+        const flown = bat.flown + depths[bat.depth]!.wind * step
+        return flown > crossing(bat) ? { ...bat, resting: restTicks() } : { ...bat, flown }
+      })
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = color
+      depths.forEach(({ alpha, size }, d) => {
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        for (const bat of bats) {
+          if (bat.depth !== d || bat.resting > 0 || bat.flown === 0) continue
+          const along = bat.flown / crossing(bat)
+          const x = bat.way > 0 ? bat.flown - size / 2 : width + size / 2 - bat.flown
+          const y = bat.line - arc * Math.sin(2 * Math.PI * along)
+          const wings = BEAT[(Math.floor(ticks) + bat.phase) % BEAT.length]!
+          const [first, ...others] = batOutline(wings, x, y, size)
+          ctx.moveTo(...first!)
+          for (const point of others) ctx.lineTo(...point)
+          ctx.closePath()
+        }
+        ctx.fill()
+      })
     },
   }
 }
