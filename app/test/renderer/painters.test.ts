@@ -476,6 +476,18 @@ describe('the colony', () => {
     }
   })
 
+  // A window shorter than the band: the bats keep to what of it is on the canvas.
+  it('keeps its band on the canvas', () => {
+    const painter = painterFor(COLONY, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 80)
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 0)
+    const bats = fills.flatMap((f) => f.shapes)
+    expect(bats).toHaveLength(Math.round(((320 * 10) / 1000) * COLONY.density))
+    for (const shape of bats) expect(read(shape).cy).toBeLessThanOrEqual(80 + arc)
+  })
+
   // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark.
   it('keeps every bat to its band, its arc and its wings', () => {
     for (const fills of ticks(600))

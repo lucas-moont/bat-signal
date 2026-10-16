@@ -404,7 +404,9 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      ;[top, bottom] = bats?.band ?? [0, h]
+      // The bats' band, as much of it as is on the canvas.
+      bottom = Math.min(bats?.band[1] ?? h, h)
+      top = Math.min(bats?.band[0] ?? 0, bottom)
       beats = 0
       layers = drifts(
         scatter(
