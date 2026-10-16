@@ -2,6 +2,7 @@
 // one source (shared/emblems.ts). A disc like the Bat-Signal's own: dark glass at rest, lit red
 // with the bat in shadow when something needs you. resvg (WebAssembly) renders each size, and
 // the sizes Windows picks from per DPI are packed into one .ico (PNG entries, Vista and later).
+// Linux's tray takes one PNG per state instead, and scales it to the bar's own size.
 // A toast takes one PNG: the lit disc, since a toast is news.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -11,6 +12,10 @@ import { initWasm, Resvg } from '@resvg/resvg-wasm'
 const APP = join(import.meta.dirname, '..')
 const OUT = join(APP, 'resources', 'icons')
 const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
+/** Linux trays (StatusNotifierItem) draw the icon at the bar's size, rarely past 32px at 200%. */
+const LINUX_TRAY_SIZE = 64
+/** The app's icon on Linux (launchers, the AppImage, the .deb): the disc at rest, as Windows' .ico has it. */
+const LINUX_APP_SIZE = 256
 /** Windows draws a toast's image at up to 48px, at up to 200% scale. */
 const TOAST_SIZE = 96
 /** The README's picture of the tray icon, at rest and lit, drawn (not a screenshot of a taskbar). */
@@ -96,7 +101,13 @@ async function main(): Promise<void> {
     }))
     writeFileSync(join(OUT, `${name}.ico`), ico(images))
     console.log(`  ${name}.ico`)
+    const linux = new Resvg(svg, { fitTo: { mode: 'width', value: LINUX_TRAY_SIZE } }).render()
+    writeFileSync(join(OUT, `${name}.png`), linux.asPng())
+    console.log(`  ${name}.png`)
   }
+  const app = new Resvg(iconSvg(wings, false), { fitTo: { mode: 'width', value: LINUX_APP_SIZE } }).render()
+  writeFileSync(join(OUT, 'app.png'), app.asPng())
+  console.log('  app.png')
   const toast = new Resvg(iconSvg(wings, true), { fitTo: { mode: 'width', value: TOAST_SIZE } }).render()
   writeFileSync(join(OUT, 'toast.png'), toast.asPng())
   console.log('  toast.png')
