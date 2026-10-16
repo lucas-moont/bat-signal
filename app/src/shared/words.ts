@@ -776,3 +776,55 @@ export const ANCIENT_GRACE_WORDS: Words = {
     },
   },
 }
+
+/**
+ * BLUE COLLAR's words, after Scott Snyder and Nick Dragotta's Absolute Batman (absolute-batman.md,
+ * sections 5 and 6): the night shift of a city engineer who keeps the grid and the sewers running,
+ * plain, physical and hopeful. A work site's words: a permit asked for, a fuse blown, a machine
+ * jammed. Case and Needs you stay.
+ */
+export const BLUE_COLLAR_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Permit?',
+      error: 'Blown',
+      waiting: 'Asking',
+      stalled: 'Jammed',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // Short enough for its picker folder: with their first names, or with "and", the credit ran to a
+    // third line. A no-break space keeps the book's title whole.
+    theme: { name: 'BLUE COLLAR', film: "Snyder & Dragotta's Absolute\u00a0Batman" },
+    tagline: 'Built, not bought.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: "The grid's holding." },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} running. Clock out.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Shift notes',
+      dateline: datelineOf('NIGHT SHIFT'),
+      signature: 'Needs your hands',
+      nil: () => 'Nothing needs your hands. The grid runs without you tonight.',
+      caseNotes: () => 'On the clock',
+      end: (waiting) => (waiting ? "Tools stay out. There's work on your bench." : 'Tools down. Go home.'),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : "The grid's holding. ") + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Toolbox',
+      atmosphere: { label: 'Bats', hint: (t) => `Bats over Gotham behind the ${lower(t.case.many)}` },
+    },
+  },
+}
