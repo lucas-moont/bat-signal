@@ -1116,9 +1116,11 @@ const LEAP_LIMBS: Layer[] = [
   {
     kind: 'rects',
     px: [
-      [1, 2, 1, 1.5],
-      [15, 5, 1, 1],
-      [16, 6, 1, 1],
+      // Down to his shoulder's top at y 4, and step to step by an edge, never a corner, so no cape
+      // shows through a gap in either arm.
+      [1, 2, 1, 2],
+      [15, 5, 1, 1.5],
+      [16, 6, 1, 1.2],
     ],
     fill: 'var(--suit)',
   },
