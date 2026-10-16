@@ -450,8 +450,8 @@ describe('the colony', () => {
     const [left, right] = [Math.min(...xs), Math.max(...xs)]
     const width = right - left
     const cx = (left + right) / 2
-    // Its first point is the top of its head, a twelfth of its width above its body.
-    const cy = shape[0]![1] + width / 12
+    // Its first point is where the drawing puts it, either frame, about a body at (0, 0).
+    const cy = shape[0]![1] - batOutline('up', 0, 0, width)[0]![1]
     const matches = (wings: Wings) =>
       batOutline(wings, cx, cy, width).every(
         ([x, y], i) => Math.hypot(x - shape[i]![0], y - shape[i]![1]) < 1e-6,
