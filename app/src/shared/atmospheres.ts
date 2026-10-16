@@ -81,7 +81,8 @@ export interface AshAtmosphere extends Scene {
   density: number
   /**
    * Each depth from the farthest to the nearest: its alpha, its flakes' size (a bat's width), and
-   * how far the wind carries them and they fall in a tick, in px (against the wind, from the right).
+   * how far the wind carries them and they fall in a tick, in px (a wind under 0 blows from the
+   * right).
    */
   depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
   /**
