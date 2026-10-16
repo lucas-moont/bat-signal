@@ -1,6 +1,7 @@
 // A small bat in flight, one drawing shared by the Themes that show bats (jury-wave-2.md, section 6):
-// BECOME A BAT's swarm flies it, on Bat-Clawd's grid, and BLUE COLLAR's colony on the panel's canvas. Ours, drawn plain
-// so it reads at a few pixels: two short ears, a body, and scalloped wings in two frames of a beat.
+// BECOME A BAT's swarm flies it, on Bat-Clawd's grid, and BLUE COLLAR's colony on the panel's
+// canvas. Ours, drawn plain so it reads at a few pixels: two short ears, a body, and scalloped wings
+// in two frames of a beat.
 
 /** Which frame of the wingbeat: the tips raised above the body, or swept below it. */
 export type Wings = 'up' | 'down'
