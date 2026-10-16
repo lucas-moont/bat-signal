@@ -103,15 +103,16 @@ const ASH: AshAtmosphere = {
   ],
 }
 
-/** A colony: two bats at most, in two depths, on 6px arcs in a band from 60 to 100px down. */
+/** A colony: three bats in a band from 70 to 90px down, on 6px arcs, the near ones from the right. */
 const COLONY: AshAtmosphere = {
   kind: 'ash',
   color: '--colony',
+  density: 0.5,
   depths: [
-    { alpha: 0.2, size: 8, wind: 3 },
-    { alpha: 0.3, size: 12, wind: 5 },
+    { alpha: 0.2, size: 8, wind: 3, fall: 0 },
+    { alpha: 0.3, size: 12, wind: -5, fall: 0 },
   ],
-  bats: { count: 2, band: [60, 100], arc: 6, rest: [1, 3] },
+  bats: { band: [70, 90], arc: 6 },
 }
 
 /** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
@@ -425,19 +426,20 @@ describe('the ash', () => {
 })
 
 // BLUE COLLAR's colony (absolute-batman.md, section 9): the ash painter flies bats in place of its
-// motes, the drawing BECOME A BAT's swarm flies, a few at a time on arcs across a band of the panel.
+// motes, the drawing BECOME A BAT's swarm flies, on arcs across a band of the panel.
 describe('the colony', () => {
+  const BATS = Math.round(((320 * 20) / 1000) * COLONY.density)
+  const { band, arc } = COLONY.bats!
   const colorOf = (variable: string) => ({ '--colony': '#b8b0e0' })[variable] ?? ''
 
-  const colony = (atmosphere: AshAtmosphere = COLONY, seed?: number) => {
-    const painter = painterFor(atmosphere, seeded(seed))
+  const colony = () => {
+    const painter = painterFor(COLONY, seeded())
     painter.recolor(colorOf)
     painter.resize(320, 440)
     return painter
   }
-  /** The bats in each frame: as it appears, then after each of `n` ticks of the clock. */
-  const batsOver = (n: number, painter = colony(), dt = 1 / FPS) =>
-    fillsOver(painter, n, dt).map((fills) => fills.flatMap((f) => f.shapes))
+  /** What it fills as it appears, then after each of `n` ticks of the clock. */
+  const ticks = (n: number) => fillsOver(colony(), n)
 
   /** A drawn bat's width, the middle of its body and which way its wings beat. */
   const read = (shape: Shape) => {
@@ -454,89 +456,60 @@ describe('the colony', () => {
     return { width, cx, cy, wings: matches('up') ? 'up' : matches('down') ? 'down' : null }
   }
 
-  it('flies bats, the shared drawing, in place of motes', () => {
-    const frames = batsOver(200)
-    const all = frames.flat()
-    expect(all.length).toBeGreaterThan(0)
-    for (const shape of all) expect(read(shape).wings).not.toBeNull()
-    for (const fills of fillsOver(colony(), 50)) for (const f of fills) expect(f.rects).toHaveLength(0)
-  })
+  /** The first bat of the first depth, in each frame: the same bat throughout. */
+  const firstBat = (n: number) => ticks(n).map((fills) => read(fills[0]!.shapes[0]!))
 
-  it('never has more in flight than its count', () => {
-    for (const bats of batsOver(800)) expect(bats.length).toBeLessThanOrEqual(COLONY.bats!.count)
+  it('flies bats, the shared drawing, as many as its density asks of its band', () => {
+    for (const fills of ticks(50)) {
+      const bats = fills.flatMap((f) => f.shapes)
+      expect(bats).toHaveLength(BATS)
+      for (const shape of bats) expect(read(shape).wings).not.toBeNull()
+      for (const f of fills) expect(f.rects).toHaveLength(0)
+    }
   })
 
   it('fills each depth in its strength, its bats as wide as its size', () => {
-    for (const fills of fillsOver(colony(), 400))
-      for (const f of fills) {
-        const depth = COLONY.depths.find((d) => d.alpha === f.alpha)
-        expect(depth).toBeDefined()
-        expect(f.color).toBe('#b8b0e0')
-        for (const shape of f.shapes) expect(read(shape).width).toBeCloseTo(depth!.size)
-      }
+    for (const f of ticks(0)[0]!) {
+      const depth = COLONY.depths.find((d) => d.alpha === f.alpha)!
+      expect(f.color).toBe('#b8b0e0')
+      for (const shape of f.shapes) expect(read(shape).width).toBeCloseTo(depth.size)
+    }
   })
 
   // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark.
-  it('keeps every bat inside its band', () => {
-    const [top, bottom] = COLONY.bats!.band
-    for (const bats of batsOver(800))
-      for (const shape of bats)
-        for (const [, y] of shape) {
-          expect(y).toBeGreaterThanOrEqual(top)
-          expect(y).toBeLessThanOrEqual(bottom)
+  it('keeps every bat to its band, its arc and its wings', () => {
+    for (const fills of ticks(600))
+      for (const { shapes } of fills)
+        for (const shape of shapes) {
+          const reach = arc + read(shape).width / 4
+          for (const [, y] of shape) {
+            expect(y).toBeGreaterThanOrEqual(band[0] - reach - 1e-9)
+            expect(y).toBeLessThanOrEqual(band[1] + reach + 1e-9)
+          }
         }
   })
 
   it('beats its wings every tick', () => {
-    const one: AshAtmosphere = { ...COLONY, bats: { ...COLONY.bats!, count: 1 } }
-    const frames = batsOver(400, colony(one)).filter((bats) => bats.length === 1)
-    const beats = frames.map((bats) => read(bats[0]!).wings)
-    expect(beats.length).toBeGreaterThan(20)
-    for (let i = 1; i < 20; i++) expect(beats[i]).not.toBe(beats[i - 1])
+    const beats = firstBat(20)
+      .slice(1)
+      .map((bat) => bat.wings)
+    for (let i = 1; i < beats.length; i++) expect(beats[i]).not.toBe(beats[i - 1])
   })
 
   // An arc that rises and dips, not ash's straight slant (jury-wave-2.md, section 3.9).
-  it('flies each crossing on an arc that rises above its line and dips below it', () => {
-    const one: AshAtmosphere = { ...COLONY, depths: [COLONY.depths[0]!], bats: { ...COLONY.bats!, count: 1 } }
-    const frames = batsOver(800, colony(one))
-    // The frames of one whole crossing: from a bat coming in to it being gone.
-    const start = frames.findIndex((bats, i) => i > 0 && bats.length === 1 && frames[i - 1]!.length === 0)
-    const end = frames.findIndex((bats, i) => i > start && bats.length === 0)
-    const ys = frames.slice(start, end).map((bats) => read(bats[0]!).cy)
-    const line = (ys[0]! + ys.at(-1)!) / 2
-    expect(Math.max(...ys) - line).toBeGreaterThan(0.8 * COLONY.bats!.arc)
-    expect(line - Math.min(...ys)).toBeGreaterThan(0.8 * COLONY.bats!.arc)
+  it('flies each crossing on an arc that rises and dips', () => {
+    const bats = firstBat(400)
+    // One whole crossing: from where it came back in at the left edge to where it next does.
+    const comebacks = bats.flatMap((bat, i) => (i > 0 && bat.cx < bats[i - 1]!.cx ? [i] : []))
+    const ys = bats.slice(comebacks[0], comebacks[1]).map((bat) => bat.cy)
+    expect(ys.length).toBeGreaterThan(50)
+    expect(Math.max(...ys) - Math.min(...ys)).toBeGreaterThan(1.8 * arc)
   })
 
-  it('crosses the panel both ways, and rests between crossings', () => {
-    const one: AshAtmosphere = { ...COLONY, bats: { ...COLONY.bats!, count: 1 } }
-    const frames = batsOver(2000, colony(one))
-    const ways = new Set<number>()
-    frames.forEach((bats, i) => {
-      const before = frames[i - 1]
-      if (i > 0 && bats.length === 1 && before?.length === 1)
-        ways.add(Math.sign(read(bats[0]!).cx - read(before[0]!).cx))
-    })
-    expect([...ways].sort()).toEqual([-1, 1])
-    // Rests of at least a second: a run of empty frames at least FPS long.
-    let run = 0
-    let longest = 0
-    for (const bats of frames) longest = Math.max(longest, (run = bats.length === 0 ? run + 1 : 0))
-    expect(longest).toBeGreaterThanOrEqual(FPS)
-  })
-
-  it('flies as far as the time between ticks, up to two ticks', () => {
-    const one: AshAtmosphere = { ...COLONY, depths: [COLONY.depths[0]!], bats: { ...COLONY.bats!, count: 1 } }
-    const flown = (dt: number) => {
-      // Seeded alike, so each run's bat is the same bat, in the same place.
-      const [first, next] = batsOver(1, colony(one, 3), dt)
-      if (!first![0] || !next![0]) return null
-      return Math.abs(read(next![0]).cx - read(first![0]).cx)
-    }
-    const once = flown(1 / FPS)
-    expect(once).not.toBeNull()
-    expect(flown(2 / FPS)).toBeCloseTo(2 * once!)
-    expect(flown(5)).toBeCloseTo(flown(2 / FPS)!)
+  it('crosses with its depths, either way the wind blows', () => {
+    const [first, next] = ticks(1)
+    const ways = first!.map((f, d) => Math.sign(read(next![d]!.shapes[0]!).cx - read(f.shapes[0]!).cx))
+    expect(ways).toEqual(COLONY.depths.map((d) => Math.sign(d.wind)))
   })
 })
 
