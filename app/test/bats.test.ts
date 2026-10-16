@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flock, flyingBat, type Wings } from '../src/shared/bats'
+import { batOutline, flock, flyingBat, type Wings } from '../src/shared/bats'
 
 /** The points of a path drawn in straight lines, as [x, y] pairs. */
 const pointsOf = (d: string) =>
@@ -39,6 +39,19 @@ describe('a flying bat', () => {
     }
     expect(tipY('up')).toBeLessThan(0)
     expect(tipY('down')).toBeGreaterThan(0)
+  })
+})
+
+// A canvas draws the bat from its points: the same bat as the path, unrounded.
+describe.each<Wings>(['up', 'down'])('a bat outline, wings %s', (wings) => {
+  it("is the flying bat's path, point for point", () => {
+    const outline = batOutline(wings, 7.3, -2.1, 9)
+    const path = pointsOf(flyingBat(wings, 7.3, -2.1, 9))
+    expect(outline).toHaveLength(path.length)
+    outline.forEach(([x, y], i) => {
+      expect(x).toBeCloseTo(path[i]![0], 2)
+      expect(y).toBeCloseTo(path[i]![1], 2)
+    })
   })
 })
 
