@@ -146,12 +146,12 @@ interface Flake {
 const SWAY = [0, 1, 0, -1]
 
 /** The frame of a cycle a tick each, `ticks` in, from a phase. */
-function onClock<T>(frames: readonly T[], ticks: number, phase: number): T {
+function frameAt<T>(frames: readonly T[], ticks: number, phase: number): T {
   return frames[(Math.floor(ticks) + phase) % frames.length]!
 }
 
 /** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
-const swayAt = (amount: number, ticks: number, phase: number) => amount * onClock(SWAY, ticks, phase)
+const swayAt = (amount: number, ticks: number, phase: number) => amount * frameAt(SWAY, ticks, phase)
 
 /**
  * Snow: flakes in depths, each depth filled as one path a tick. They fall a few pixels a tick,
@@ -364,11 +364,11 @@ const BEAT: readonly Wings[] = ['up', 'down']
  * each drawn on its arc, flapping every tick, neighbours a beat apart.
  */
 function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, random: () => number): Painter {
-  /** Ash, and dust if it has any. */
-  const kinds = dust ? [false, true] : [false]
+  /** Whether each of a depth's drifts is dust: ash, and dust if it has any. */
+  const dustiness = dust ? [false, true] : [false]
   const drifts = (lists: Mote[][] = []): Drift[] =>
     depths.flatMap((depth, d) =>
-      kinds.map((isDust, c) => ({ depth, dust: isDust, motes: lists[kinds.length * d + c] ?? [] })),
+      dustiness.map((isDust, c) => ({ depth, dust: isDust, motes: lists[dustiness.length * d + c] ?? [] })),
     )
   /** None until it has a size. */
   let layers = drifts()
@@ -393,14 +393,17 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     ]),
   )
 
-  /** A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat. */
-  const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, i: number) => {
+  /**
+   * A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat,
+   * from its phase (its place in its depth, so neighbours beat a frame apart).
+   */
+  const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, phase: number) => {
     if (!bats) return ctx.rect(x, y, size, size)
     // Out past the panel's side: not drawn till it comes back.
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
-    const outline = outlines.get(size)![onClock(BEAT, beats, i)]
+    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
     ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
     for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
     ctx.closePath()
@@ -420,12 +423,13 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
         scatter(
           {
             count: howMany(width + 2 * away, bottom - top, density),
-            lists: kinds.length * depths.length,
+            lists: dustiness.length * depths.length,
             width: width + 2 * away,
             height: bottom - top,
           },
           random,
-          () => kinds.length * Math.floor(random() * depths.length) + (dust && random() < dust.share ? 1 : 0),
+          () =>
+            dustiness.length * Math.floor(random() * depths.length) + (dust && random() < dust.share ? 1 : 0),
           (x, y) => ({ x: x - away, y: top + y, gust: 1 - GUST + random() * 2 * GUST }),
         ),
       )
@@ -441,7 +445,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
         ctx.globalAlpha = alpha
         ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()
-        motes.forEach((m, i) => {
+        motes.forEach((m, phase) => {
           m.x += wind * m.gust * step
           m.y += fall * m.gust * step
           // Gone past an edge: back in at the opposite one, somewhere new along it.
@@ -452,7 +456,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
             m.y += m.y > bottom ? -(bottom - top + rise) : bottom - top + rise
             m.x = random() * width
           }
-          draw(ctx, m, size, i)
+          draw(ctx, m, size, phase)
         })
         ctx.fill()
       }
