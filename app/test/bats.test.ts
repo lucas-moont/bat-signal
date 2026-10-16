@@ -7,7 +7,7 @@ const pointsOf = (d: string) =>
 
 const span = (values: number[]) => [Math.min(...values), Math.max(...values)] as const
 
-// One bat drawing, shared: BECOME A BAT's swarm flies it, and BLUE COLLAR's colony will (jury-wave-2.md, section 6).
+// One bat drawing, shared: BECOME A BAT's swarm flies it, and so does BLUE COLLAR's colony (jury-wave-2.md, section 6).
 describe.each<Wings>(['up', 'down'])('a flying bat, wings %s', (wings) => {
   it('spans the width it is given, centered where it is put', () => {
     const [left, right] = span(pointsOf(flyingBat(wings, 3, -1, 2.4)).map(([x]) => x))
