@@ -14,8 +14,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # The same checks on both systems Bat-Signal runs on.
   check:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: app
@@ -36,6 +41,9 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      # The Linux app folder, packed as the AppImage packs it.
+      - if: runner.os == 'Linux'
+        run: npx electron-builder --linux --dir
 
   # The installer, built and run as a user gets it: install, start, update, uninstall. Beside
   # check, not after it: they share nothing.
