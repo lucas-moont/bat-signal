@@ -77,7 +77,7 @@ export interface AshAtmosphere extends Scene {
   color: string
   /** The dust among the ash, if any: its variable, and its share of the flakes. */
   dust?: { color: string; share: number }
-  /** Flakes per 1000 square pixels, of the band when it flies bats. */
+  /** Flakes per 1000 square pixels: of the band and as far past its ends as they fly, for bats. */
   density: number
   /**
    * Each depth from the farthest to the nearest: its alpha, its flakes' size (a bat's width), and
@@ -86,10 +86,11 @@ export interface AshAtmosphere extends Scene {
   depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
   /**
    * Bats in place of the flakes: the band their lines lie in, its top and bottom in px from the
-   * panel's top, and how far a bat rises above its line and dips below it as it crosses, in px (its
-   * wings reach a quarter of its width further).
+   * panel's top; how far a bat rises above its line and dips below it as it crosses, in px (its
+   * wings reach a quarter of its width further); and how far it flies on past the panel's edge
+   * before it comes back, in px, so only a few of the colony are in the panel at once.
    */
-  bats?: { band: readonly [number, number]; arc: number }
+  bats?: { band: readonly [number, number]; arc: number; away: number }
 }
 
 /**

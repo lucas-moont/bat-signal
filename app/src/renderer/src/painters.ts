@@ -376,6 +376,8 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
   let height = 0
   /** Where the motes are blown: the whole canvas, or the bats' band. */
   let [top, bottom] = [0, 0]
+  /** How far past the canvas's sides they go before coming back: the bats' way out, none for ash. */
+  const away = bats?.away ?? 0
   /**
    * Whole ticks of the clock since it began, each counted to the nearest: a tick that comes a hair
    * early or late still turns the wings, so a beat never holds or skips.
@@ -386,6 +388,8 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
   /** A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat. */
   const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, i: number) => {
     if (!bats) return ctx.rect(x, y, size, size)
+    // Out past the panel's side: not drawn till it comes back.
+    if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const outline = batOutline(
       onClock(BEAT, beats, i),
@@ -411,14 +415,14 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
       layers = drifts(
         scatter(
           {
-            count: howMany(width, bottom - top, density),
+            count: howMany(width + 2 * away, bottom - top, density),
             lists: kinds.length * depths.length,
-            width,
+            width: width + 2 * away,
             height: bottom - top,
           },
           random,
           () => kinds.length * Math.floor(random() * depths.length) + (dust && random() < dust.share ? 1 : 0),
-          (x, y) => ({ x, y: top + y, gust: 1 - GUST + random() * 2 * GUST }),
+          (x, y) => ({ x: x - away, y: top + y, gust: 1 - GUST + random() * 2 * GUST }),
         ),
       )
     },
@@ -437,8 +441,8 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
           m.x += wind * m.gust * step
           m.y += fall * m.gust * step
           // Gone past an edge: back in at the opposite one, somewhere new along it.
-          if (m.x > width || m.x < -size) {
-            m.x += m.x > width ? -(width + size) : width + size
+          if (m.x > width + away || m.x < -size - away) {
+            m.x += m.x > width + away ? -(width + 2 * away + size) : width + 2 * away + size
             m.y = top + random() * (bottom - top)
           } else if (m.y > bottom || m.y < top - rise) {
             m.y += m.y > bottom ? -(bottom - top + rise) : bottom - top + rise

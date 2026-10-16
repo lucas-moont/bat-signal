@@ -103,7 +103,10 @@ const ASH: AshAtmosphere = {
   ],
 }
 
-/** A colony: three bats in a band from 70 to 90px down, on 6px arcs, the near ones from the right. */
+/**
+ * A colony: three bats in a band from 70 to 90px down, on 6px arcs, the near ones from the right,
+ * each back in the panel as soon as it has left it.
+ */
 const COLONY: AshAtmosphere = {
   kind: 'ash',
   color: '--colony',
@@ -112,7 +115,7 @@ const COLONY: AshAtmosphere = {
     { alpha: 0.2, size: 8, wind: 3, fall: 0 },
     { alpha: 0.3, size: 12, wind: -5, fall: 0 },
   ],
-  bats: { band: [70, 90], arc: 6 },
+  bats: { band: [70, 90], arc: 6, away: 0 },
 }
 
 /** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
@@ -532,6 +535,25 @@ describe('the colony', () => {
     const ys = bats.slice(comebacks[0], comebacks[1]).map((bat) => bat.cy)
     expect(ys.length).toBeGreaterThan(50)
     expect(Math.max(...ys) - Math.min(...ys)).toBeGreaterThan(1.8 * arc)
+  })
+
+  // At most a few at once, a new one coming in every so often (absolute-batman.md, section 9).
+  it('flies its bats out past the edges before they come back, so fewer are in the panel at once', () => {
+    const far: AshAtmosphere = { ...COLONY, density: 1, bats: { ...COLONY.bats!, away: 320 } }
+    const colonySize = Math.round(((3 * 320 * 20) / 1000) * far.density)
+    const painter = painterFor(far, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const inPanel = fillsOver(painter, 400).map(
+      (fills) =>
+        fills.flatMap((f) => f.shapes).filter((shape) => shape.some(([x]) => x >= 0 && x <= 320)).length,
+    )
+    // Only the bats on the canvas are drawn.
+    for (const fills of fillsOver(painter, 50))
+      for (const shape of fills.flatMap((f) => f.shapes))
+        expect(shape.some(([x]) => x >= 0 && x <= 320)).toBe(true)
+    expect(Math.max(...inPanel)).toBeLessThan(colonySize)
+    expect(Math.min(...inPanel)).toBeLessThan(Math.max(...inPanel))
   })
 
   it('crosses with its depths, either way the wind blows', () => {
