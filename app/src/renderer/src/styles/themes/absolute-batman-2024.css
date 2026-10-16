@@ -1,0 +1,163 @@
+/*
+ * BLUE COLLAR, after Scott Snyder and Nick Dragotta's Absolute Batman: its palette and faces
+ * (docs/research/themes/absolute-batman.md, section 3). A black-ink book on a violet night: Frank
+ * Martin's flat colour, one loud colour per scene, so the panel takes the ink and the night as its
+ * ground and the comic's sound-effect lemon as the one thing that needs you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: Dragotta's ink with the night's violet cast; --surface and --raised: the #2 night city
+ *   darkened; --line: the second printing's trade-dress indigo darkened.
+ * - --signal-hot: SFX Lemon, the #2 cover's lemon field and its sound effects, pushed toward green so
+ *   it stays clear of PALE MOONLIGHT's gold; --signal, the same darker for fills.
+ * - --ink-live: the #3 flashback's violet, lifted; --ink-soft: its mauve, lifted.
+ */
+:root[data-theme='absolute-batman-2024'],
+[data-theme='absolute-batman-2024'] {
+  --abyss: #0a0812;
+  --smoke: #0f0c1b;
+  --surface: #17132a;
+  --raised: #221c3c;
+  --line: #3a3262;
+  --surface-deep: #0d0a17;
+  --frame: #1c1733;
+  --header-fade: #0d0a17;
+  --sheet-top: #1d1834;
+  --shadow: #000000;
+
+  /* The Alarm color, SFX Lemon: nothing light is ever written on it, only the ink. */
+  --blood: #6b3a58;
+  --signal: #cbd43c;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #ecf05a;
+  --on-signal: var(--abyss);
+  --ink-hot: var(--signal-hot);
+  --ink-soft: #d79bbd;
+  --ink-live: #b8b0e0;
+  --ink: #cdc8dc;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is lemon. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: PERMIT? and BLOWN in lemon, ASKING and NEW REPLY in mauve, JAMMED in Ash. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 40%, transparent);
+
+  /* Quit's hover stays a shadow: lemon is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: var(--blood);
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+
+  --clawd: #d77757;
+
+  --bone: #f1eef6;
+  --ash: #9d96b2;
+  --bone-dim: var(--ink);
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in the working suit (absolute-batman.md, section 7): the #1 cover's cold teal, ink
+     cowl, gloves and cape, an olive belt the chest block rests on, and the block itself in ink. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #0b0a10;
+  --cowl-edge: color-mix(in srgb, var(--ink-live) 28%, transparent);
+  --cowl-shine: var(--raised);
+  --suit: #3f6b6e;
+  --gloves: var(--cowl);
+  --belt: #7f8c55;
+  --buckle: #4f6340;
+  --cape: var(--cowl);
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: #070405;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: the block, in the body ink on the dark header. */
+  --emblem: var(--ink);
+
+  /* The Signal disc. Unlit: indigo glass, the block a shade in it, inside Dragotta's heavy ink rim.
+     Lit: one flat lemon field, no glow from a core, the block in ink across it. */
+  --disc-bat: var(--line);
+  --glass-shine: #2a2348;
+  --glass: var(--abyss);
+  --disc-rim-inner: #070405;
+  --disc-rim-outer: var(--line);
+  --lens-core: var(--signal-hot);
+  --lens-rim: #070405;
+  --lens-bat: #070405;
+  --lens-bat-edge: transparent;
+  --notice-top: var(--surface);
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #211b3a;
+  --notice-hover-foot: #130f22;
+
+  /* A flat violet dusk band from above (the second printing's trade-dress indigo), little grain, and
+     a colony of bats crossing it in the working lavender. */
+  --dusk: #3e4176;
+  --haze: color-mix(in srgb, var(--dusk) 22%, transparent);
+  --haze-edge: color-mix(in srgb, var(--dusk) 6%, transparent);
+  --haze-inset: -15% -10% auto -10%;
+  --grain-opacity: 0.03;
+  --searchlight: var(--bone);
+  --colony: var(--ink-live);
+
+  /* Bungee, blocky signage capitals, sets the wordmark and the stamps (it has no lowercase); Barlow
+     Semi Condensed sets the headlines and the rest; Shantell Sans, a designed hand, the shift notes. */
+  --font-display: 'Bungee', 'Arial Black', sans-serif;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-display);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: 'Shantell Sans', 'Segoe UI', sans-serif;
+  --font-headline: var(--font-body);
+  --headline-weight: 600;
+  --font-dateline: var(--font-body);
+  --dateline-weight: 700;
+  --font-stamp: var(--font-display);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.3px;
+  --wordmark-size: 16px;
+  --wordmark-tracking: 1px;
+  --wordmark-glow: transparent;
+
+  /* A heavier, straighter pen: Dragotta's line. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.2L28 2.8' fill='none' stroke='%23ecf05a' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.2L28 2.8' fill='none' stroke='%23d79bbd' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+
+  /* Straight, like a sign on a work site; the smallest stamp in the app, so PERMISSION fits every
+     room in Bungee's wide capitals. */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1.5px;
+  --stamp-size: 9.5px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+
+  /* Lit: one flat field, Martin's flat colour. */
+  --disc-lens: linear-gradient(in srgb, var(--signal-hot), var(--signal-hot));
+}
+
+/* Lit, the field prints flat: none of the lens's inner shading over it, only its glow around. */
+:root[data-theme='absolute-batman-2024'] .disc--lit .disc__face,
+[data-theme='absolute-batman-2024'] .disc--lit .disc__face {
+  box-shadow: 0 0 18px var(--signal-glow);
+}
