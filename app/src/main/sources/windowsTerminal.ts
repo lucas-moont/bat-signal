@@ -3,7 +3,13 @@
 // in ../terminal; this file only asks Windows and acts.
 import { clipboard } from 'electron'
 import type { TerminalOutcome } from '../../shared/types'
-import { findWindowOwner, pickWindowTab, type ProcessInfo, type TerminalWindow } from '../terminal'
+import {
+  findWindowOwner,
+  pickWindowTab,
+  resumeCommand,
+  type ProcessInfo,
+  type TerminalWindow,
+} from '../terminal'
 import { powershell } from '../powershell'
 
 /**
@@ -137,7 +143,7 @@ export async function goToTerminal(session: {
   sessionId: string
 }): Promise<TerminalOutcome> {
   const copy = (): TerminalOutcome => {
-    clipboard.writeText(`claude --resume ${session.sessionId}`)
+    clipboard.writeText(resumeCommand(session.sessionId))
     return 'copied'
   }
   try {

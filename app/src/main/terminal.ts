@@ -1,4 +1,8 @@
 // Going to a session's terminal: find the window that hosts it and, in Windows Terminal, its tab.
+// On Linux, the compositor's window list stands in for Windows' (see pickSessionWindow).
+
+/** What goes on the clipboard when no window can be found: the command that reopens the session. */
+export const resumeCommand = (sessionId: string): string => `claude --resume ${sessionId}`
 
 export interface ProcessInfo {
   pid: number
@@ -58,4 +62,41 @@ export function pickWindowTab(
     if (tab !== undefined) return { handle: w.handle, pid: w.pid, tab }
   }
   return undefined
+}
+
+/** A window as a Linux compositor lists it: its id there, the process that owns it, and its title. */
+export interface DesktopWindow {
+  id: string
+  pid: number
+  title: string
+  /** 0 for the window in focus, then 1, 2… in the order they last had it. */
+  focusOrder: number
+}
+
+/**
+ * The window that holds the session. First the windows of its nearest ancestor that owns any: one
+ * terminal process often hosts every terminal window, so the one titled with the session's name
+ * wins, else the one used last. Failing any ancestor (tmux, or ssh, sits between), a window titled
+ * with its name anywhere.
+ */
+export function pickSessionWindow(
+  windows: DesktopWindow[],
+  ancestors: Omit<ProcessInfo, 'hasWindow'>[],
+  pid: number,
+  name: string | undefined,
+): DesktopWindow | undefined {
+  const owners = new Set(windows.map((w) => w.pid))
+  const owner = findWindowOwner(
+    ancestors.map((p) => ({ ...p, hasWindow: owners.has(p.pid) })),
+    pid,
+  )
+  const titled = (list: DesktopWindow[]) => {
+    const index = pickTab(
+      list.map((w) => w.title),
+      name,
+    )
+    return index === undefined ? undefined : list[index]
+  }
+  const owned = windows.filter((w) => w.pid === owner).sort((a, b) => a.focusOrder - b.focusOrder)
+  return titled(owned) ?? owned[0] ?? titled(windows)
 }

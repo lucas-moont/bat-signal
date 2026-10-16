@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import type { ProcessProbe } from './sessionRegistry'
+import { pidExists, type ProcessProbe } from './sessionRegistry'
 import { POWERSHELL } from '../windowsTools'
 
 const execFileAsync = promisify(execFile)
@@ -22,16 +22,6 @@ interface CachedStart {
  */
 export function createWindowsProbe(): ProcessProbe {
   const cache = new Map<number, CachedStart>()
-
-  const pidExists = (pid: number): boolean => {
-    try {
-      process.kill(pid, 0)
-      return true
-    } catch (err) {
-      // EPERM: the process exists but belongs to someone else.
-      return (err as NodeJS.ErrnoException).code === 'EPERM'
-    }
-  }
 
   async function lookup(pids: number[]): Promise<Map<number, string>> {
     // One try/catch per pid: a single protected process (StartTime: access denied)
