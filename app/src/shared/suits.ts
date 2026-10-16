@@ -958,11 +958,9 @@ export const BECOME_A_BAT_SUIT: Suit = {
 // --- ANCIENT GRACE: the second suit, after Frank Miller's The Dark Knight Returns
 // (dark-knight-returns.md, section 7). The old man's bulk: a neutral grey suit with the second suit's
 // big black bat on the chest, a suit-grey belt so the bat never merges with it, a black cowl whose
-// short ears are set wide on a broad, boxy head, and a heavy black cape with two long tails; the
-// armour he wore against Superman only when something needs the user. ---
+// short ears are set wide on a broad, boxy head, and a heavy black cape with two long tails, worn
+// over his shoulders when something needs the user. ---
 
-/** Outfit G's legend: V's, with the armour's plates and their lit edge. */
-const GRACE_LEGEND = { ...LEGEND, A: 'var(--armour)', e: 'var(--armour-edge)' }
 /** The cowl's crown, down to his eyes: short ears set wide, at the head's outer corners, a heavy brow. */
 const GRACE_CROWN = [...twice(['...c........c...', '...cccchhcccc...']), ...HEAD.slice(4, 7)]
 /** The cowl's outline with the wide-set ears, behind the face, so only its outer edge shows. */
@@ -982,7 +980,7 @@ const WIDE = '.SSSSSSSSSSSSSS.'
 const BARREL = [WIDE, WIDE, WIDE, WIDE, WIDE]
 /** The belt between the gloves hanging beside him, then the suit's last half-row and his legs. */
 const HANGING_BELOW = ['.g.bbbbkkbbbb.g.', ...BELOW_WAIST.slice(1)]
-const graceMap = (rows: readonly string[]) => map([], rows, GRACE_LEGEND, BULKY_HEAD)
+const graceMap = (rows: readonly string[]) => map([], rows, LEGEND, BULKY_HEAD)
 /** Standing: the barrel, his gloves hanging beside it, the waist back to x 3–13 at the belt. */
 const GRACE_STANDING = graceMap([
   ...BARREL.slice(0, 3),
@@ -994,20 +992,8 @@ const GRACE_STANDING = graceMap([
 /** His arms raised or away: the barrel, then the waist. */
 const GRACE_ARMS_AWAY = graceMap([...BARREL, SUIT, ...BELOW_WAIST])
 const GRACE_SEATED = graceMap([...BARREL, WIDE, SUIT, SUIT])
-/** In the air: the barrel and the waist, his legs drawn tucked beside the map. */
+/** In the air: the barrel and the waist, his legs drawn up out of sight under it. */
 const GRACE_LEAPING = graceMap([...BARREL, SUIT, ...BELOW_WAIST.slice(0, 2)])
-/**
- * The armour: plates over his chest and pauldrons a unit past his shoulders (x 0–16), a lit edge
- * along their tops (it is what reads at his size: the plates are near the suit's grey), rising
- * beside the cowl to his jaw as his shoulders do; his jaw and eyes as ever.
- */
-const PLATES = '.gAAAAAAAAAAAAg.'
-const GRACE_ARMOUR = map(
-  [],
-  ['eeeeeeeeeeeeeeee', 'AAAAAAAAAAAAAAAA', PLATES, PLATES, PLATES, '.g.AAAAAAAAAA.g.', ...HANGING_BELOW],
-  GRACE_LEGEND,
-  [...GRACE_CROWN, '.eeccccccccccee.', 'eAAcc######ccAAe', 'eAAcc######ccAAe'],
-)
 
 /**
  * The second suit's bat across his barrel chest, wide as the films draw it (BAT_1986, 2.3:1):
@@ -1020,8 +1006,13 @@ const TAIL_HEM = 'L16.6 11.5 L14.6 10.8 L1.4 10.8 L-0.6 11.5 Z'
 const TAILS = {
   /** Hanging behind him from his shoulders. */
   hanging: `M1 4.5 L15 4.5 ${TAIL_HEM}`,
-  /** Closed around him, asleep, his shoulders above it, its tails at his feet. */
-  wrapped: `M0.6 6.4 L15.4 6.4 ${TAIL_HEM}`,
+  /**
+   * Closed around him, asleep: over his shoulders up beside the cowl, as the comic and the films drape
+   * it, a collar dipping under his jaw, its tails at his feet.
+   */
+  wrapped:
+    'M3 3.4 L3 5.2 L13 5.2 L13 3.4 L15 4 L15.4 6.4 L16.6 11.5 L14.6 10.8 L1.4 10.8 L-0.6 11.5 L0.6 6.4 ' +
+    'L1 4 Z',
   /** The drop: spread over his head like a canopy, its tails hanging at his sides (two frames). */
   canopyA: 'M1 4.5 L-1.4 4.6 L-3 8 L-3 2.4 Q8 -4.4 19 2.4 L19 8 L17.4 4.6 L15 4.5 Z',
   canopyB: 'M1 4.5 L-1.4 5.2 L-3 8.4 L-3 3.2 Q8 -3.2 19 3.2 L19 8.4 L17.4 5.2 L15 4.5 Z',
@@ -1071,8 +1062,17 @@ const drop = (canopy: string) =>
     ],
   )
 
-/** The armour (alarmed), Book Four's exoframe: the cape thrown back behind it. */
-const armoured = gracePose(GRACE_ARMOUR, [{ kind: 'cape', d: TAILS.hanging }])
+/**
+ * Alarmed: the suit, the cape over his shoulders as the films drape it, from beside the cowl down his
+ * sides to its tails, open in front over his chest and its bat (one half, mirrored); its back hangs
+ * behind him.
+ */
+const OVER_SHOULDERS = 'M3 3.4 L3 5.2 L3.4 5.8 L3.4 10.8 L1.4 10.8 L-0.6 11.5 L0.6 6.4 L0.8 3.6 Z'
+const caped = gracePose(
+  GRACE_STANDING,
+  [{ kind: 'cape', d: TAILS.hanging }],
+  [{ kind: 'path', d: OVER_SHOULDERS, className: 'clawd__cape', mirrored: true }],
+)
 
 /** How far the leap leans him forward, in degrees, clockwise as CSS turns. */
 const TILT = 12
@@ -1102,36 +1102,30 @@ const BOLT = turned(
     'L11.2 -0.4 L10 -0.8 Z',
   -TILT,
 )
+/** His fists in the leap: one above his trailing shoulder, one ahead and below his leading one. */
+const LEAP_FISTS: Px[] = [
+  [0.5, 0.4, 1.5, 1.6],
+  [16.4, 7, 1.3, 1.3],
+]
 /**
- * In the leap, after the Book One cover (dkr-rework.md, section 5): his near arm raised, the forearm
- * across above his brow with its fins up and the fist ahead; his far arm reaching down and forward;
- * his legs tucked, the front knee forward and its boot trailing, a gap between them.
+ * In the leap, one arm from each shoulder, short: his trailing arm straight up beside the cowl, its
+ * fist above his shoulder; his leading arm reaching down and forward. The fists are black on a dark
+ * ground, so they wear the cape's rim, drawn first so only its outer half shows past them.
  */
 const LEAP_LIMBS: Layer[] = [
   {
     kind: 'rects',
     px: [
-      [10, 1, 4, 1],
-      [15, 6.5, 1, 1],
-      [16, 7.5, 1, 1],
-      [4, 8.5, 1, 1.5],
-      [9, 8.5, 4, 1],
-      [11, 9.5, 1.5, 1],
+      // Down to his shoulder's top at y 4, and step to step by an edge, never a corner, so no cape
+      // shows through a gap in either arm.
+      [1, 2, 1, 2],
+      [15, 5, 1, 1.5],
+      [16, 6, 1, 1.2],
     ],
     fill: 'var(--suit)',
   },
-  {
-    kind: 'rects',
-    px: [
-      [14, 0.5, 1.5, 2],
-      [11, 0, 0.5, 1],
-      [12.5, 0, 0.5, 1],
-      [16.5, 8.5, 1, 1.5],
-      [3.6, 10, 1, 1.5],
-      [9, 10.5, 2.5, 1],
-    ],
-    fill: 'var(--gloves)',
-  },
+  { kind: 'rects', px: LEAP_FISTS, className: 'clawd__cape-rim' },
+  { kind: 'rects', px: LEAP_FISTS, fill: 'var(--gloves)' },
 ]
 /** Leaping, the bolt behind him at a strength, or not yet there. */
 const leaping = (bolt?: number) => {
@@ -1156,9 +1150,9 @@ const LAUNCH = `translateY(-4px) rotate(${TILT}deg)`
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge facing right, then
- * launched, leaning forward and tucked, the cape a wedge trailing up and back; then the bolt appears
- * behind him all at once, never drawn stroke by stroke or flashed, and stays, dimming a step later
- * as he holds the leap like a freeze-frame on a screen.
+ * launched, leaning forward, an arm up and an arm ahead, the cape a wedge trailing up and back;
+ * then the bolt appears behind him all at once, never drawn stroke by stroke or flashed, and stays,
+ * dimming a step later as he holds the leap like a freeze-frame on a screen.
  */
 const THE_LEAP: Script = [
   {
@@ -1176,7 +1170,7 @@ export const ANCIENT_GRACE_SUIT: Suit = {
   poses: {
     sleeping: [seated(GRACE_SEATED, TAILS.wrapped, GRACE_COWL_EDGE)],
     flying: [drop(TAILS.canopyA), drop(TAILS.canopyB)],
-    alarmed: [armoured],
+    alarmed: [caped],
   },
   // On the perch he holds the leap, looks ahead, then down to the street.
   watch: watchOn(THE_LEAP, [{ look: GAZE }, { look: 0, lookY: 0.4 }]),
