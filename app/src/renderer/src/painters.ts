@@ -385,20 +385,24 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
   let beats = 0
   let colors = { ash: '', dust: '' }
 
+  /** Each depth's bat in each frame of the wingbeat, at (0, 0): drawn once, moved into place. */
+  const outlines = new Map(
+    depths.map(({ size }) => [
+      size,
+      { up: batOutline('up', 0, 0, size), down: batOutline('down', 0, 0, size) },
+    ]),
+  )
+
   /** A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat. */
   const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, i: number) => {
     if (!bats) return ctx.rect(x, y, size, size)
     // Out past the panel's side: not drawn till it comes back.
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
-    const outline = batOutline(
-      onClock(BEAT, beats, i),
-      x + size / 2,
-      y - bats.arc * Math.sin(2 * Math.PI * along),
-      size,
-    )
-    ctx.moveTo(outline[0]![0], outline[0]![1])
-    for (let p = 1; p < outline.length; p++) ctx.lineTo(outline[p]![0], outline[p]![1])
+    const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
+    const outline = outlines.get(size)![onClock(BEAT, beats, i)]
+    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
+    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
     ctx.closePath()
   }
 
