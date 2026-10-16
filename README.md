@@ -6,7 +6,7 @@
   <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and its Terminal button lights up">
 </p>
 
-**Status:** v1.0 for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md).
+**Status:** v1.0 for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md). Linux runs from source for now, at its best on Hyprland: see [Linux](#linux).
 
 Bat-Signal rests in a corner of your screen as a small signal disc. When something happens, the disc lights up and a notice card rises from it; click it to open the full panel right on that case. It:
 
@@ -90,6 +90,37 @@ If **Smart App Control** is on (Windows 11, under Windows Security → App & bro
 ### Uninstall
 
 From Windows Settings → Apps. Uninstalling also removes Bat-Signal from the apps that start with Windows, and keeps your settings in `%APPDATA%\Bat-Signal` for the next install.
+
+### Linux
+
+There is no Linux release yet: build the AppImage from this repository (Node.js 24.2+), then install the plugin as above.
+
+```bash
+cd app
+npm ci
+npm run dist:linux
+```
+
+That makes `app/release/Bat-Signal-<version>.AppImage`. Run it from anywhere; it keeps its settings in `~/.config/Bat-Signal`.
+
+How much of Bat-Signal works depends on the desktop, because on Wayland only the compositor may place a window or bring another one forward:
+
+| | Hyprland 0.55+ | Other Wayland desktops | X11 |
+|---|---|---|---|
+| The disc in its corner, the panel and the strip hanging from it | Yes | The compositor places them | Yes |
+| Above other windows, on every workspace | Yes (floating and pinned) | Depends on the compositor | Yes |
+| Terminal button | Brings the terminal's window forward | Copies `claude --resume <id>` | Copies `claude --resume <id>` |
+| No sound while something is full screen | Yes | No | No |
+
+The tray icon needs a bar with a system tray (StatusNotifierItem: Waybar, KDE, GNOME with the AppIndicator extension), and notifications need a notification daemon (mako, dunst, the desktop's own).
+
+**The shortcut on Wayland.** A Wayland app cannot listen for keys while another app has the focus, so bind one in your desktop to launch Bat-Signal with `--toggle`, which does what the shortcut does. In Hyprland's `hyprland.lua`:
+
+```lua
+hl.bind("CTRL + ALT + B", hl.dsp.exec_cmd("~/Applications/Bat-Signal.AppImage --toggle"))
+```
+
+**Start at sign-in** (Settings → Comfort) writes `~/.config/autostart/com.lucasmoont.bat-signal.desktop`. GNOME, KDE and uwsm run it as your session starts; a Hyprland started without uwsm doesn't, so start Bat-Signal with `--hidden` from its autostart instead.
 
 ## Using it
 

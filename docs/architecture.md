@@ -1,6 +1,6 @@
 # Architecture
 
-Bat-Signal is a Windows Electron app that watches your Claude Code sessions from a corner of the screen. It reads what Claude Code already writes under `~/.claude/` and, when the plugin is installed, what Claude Code's hooks report the moment they fire. It turns both into one snapshot: the live sessions ("cases" in the UI), what each is doing, and what needs you. It never acts on a session. The plugin's hooks post each event to a local HTTP server from a background command that discards the reply, so whatever answers can't decide anything for Claude Code (`plugin/bat-signal/hooks/hooks.json`).
+Bat-Signal is an Electron app for Windows and Linux that watches your Claude Code sessions from a corner of the screen. It reads what Claude Code already writes under `~/.claude/` and, when the plugin is installed, what Claude Code's hooks report the moment they fire. It turns both into one snapshot: the live sessions ("cases" in the UI), what each is doing, and what needs you. It never acts on a session. The plugin's hooks post each event to a local HTTP server from a background command that discards the reply, so whatever answers can't decide anything for Claude Code (`plugin/bat-signal/hooks/hooks.json`).
 
 ```mermaid
 flowchart LR
@@ -39,7 +39,7 @@ flowchart LR
 
 **Files (always on).** Three classes in `app/src/main/sources/` read Claude Code's own files:
 
-- `sessionRegistry.ts` watches `~/.claude/sessions/` (a file watcher plus a 5-second poll) and reads only the `<pid>.json` files. It never opens the `*.key` files beside them, which hold secrets. An entry counts as live only if its process is running and started when the file says it did, because Windows reuses pids and a crashed session leaves its file behind. Start times come from `windowsProbe.ts`, which runs one `powershell.exe` per batch of pids and caches the answers. Each entry carries the session's `busy`, `idle` or `shell` status.
+- `sessionRegistry.ts` watches `~/.claude/sessions/` (a file watcher plus a 5-second poll) and reads only the `<pid>.json` files. It never opens the `*.key` files beside them, which hold secrets. An entry counts as live only if its process is running and started when the file says it did, because the system reuses pids and a crashed session leaves its file behind. On Windows, start times come from `windowsProbe.ts`, which runs one `powershell.exe` per batch of pids and caches the answers; on Linux, from each pid's `/proc/<pid>/stat` (`linuxProbe.ts`, `procfs.ts`), whose start time is what Claude Code writes there. Each entry carries the session's `busy`, `idle` or `shell` status.
 - `transcriptLocator.ts` finds `~/.claude/projects/<folder>/<sessionId>.jsonl`. The folder is the cwd with every non-alphanumeric character turned into `-`. If that misses, it scans every project folder, at most once every 30 seconds per session (`DEEP_SCAN_EVERY_MS` in `store.ts`). It also lists subagent transcripts in `<sessionId>/subagents/`.
 - `transcriptTailer.ts` reads only what was appended since the last read, in 1 MB chunks, and only complete lines. If the file shrank or was replaced, it says `restarted` and the store rebuilds that session from the start.
 
@@ -103,6 +103,20 @@ Channels (keys of `IPC` in `app/src/shared/ipc.ts`, each sent as `bat-signal:<na
 - Asked by pages (`invoke`): `getSnapshot`, `getSettings`, `getStatus`, `getMode`, `goToTerminal`, `noticeOut`.
 - Sent by pages: `markSeen`, `setSettings`, `setMode`, `reopen`, `hide`, `interactive`, `moveSignal`, `watchHeight`, `warmTerminal`, `recordShortcut`, `setStartWithWindows`, `refreshStatus`.
 
+## The platform layer
+
+What the main process asks of the system goes through `platform.ts`, one answer per system (Strategy): which processes still run (the probe), the way to a session's terminal, whether the desktop wants quiet, starting at sign-in, and where windows land. Windows' answers are the PowerShell host, `reg.exe` and Electron's login items; Linux's are `/proc`, an XDG autostart entry (`autostart.ts`, pure, and `linuxStartup.ts`) and, on Hyprland, Hyprland's socket.
+
+Where windows land is a `Desktop` (`desktop.ts`), which `BatSignalWindows` asks instead of calling `setBounds`, `show` and `hide` itself. `electronDesktop` is Electron's own placement, right on Windows and X11. Wayland lets no app place its windows or hear when they move, so on Hyprland 0.55 and later (it speaks Lua there, which `speaksLua` checks once Electron is ready) the windows go through `HyprlandDesktop` (`hyprlandDesktop.ts`, with the socket and the pure request builders in `hyprland.ts`):
+
+- Before each show, a named window rule says where the window opens (`openingRule`): floating and pinned, with no border, shadow or animation of Hyprland's, on its screen at its place and size, and as opaque as the Opacity setting says, over the user's own rules. Sent again before every show, it updates the rule of that name, so a window never opens in the middle and then jumps. The rules know the two windows by the titles they open with (`TITLES`).
+- Once a window is on screen, it is moved and resized with dispatchers, and given the keyboard when it should have it.
+- Hyprland reports no move made by hand, so while the panel shows, its place is read back every 250 ms; a change counts as the user's move, as Electron's `moved` would on Windows.
+- Chromium sizes a Wayland window past what it was asked for (its shadow, a minimum size, a fixed size), so on Hyprland it is given none of them, and the rules and dispatchers alone size the windows.
+- The work area takes away what Hyprland's bars reserve, which Electron doesn't know on Wayland.
+
+On any other Wayland desktop the windows open where the compositor puts them.
+
 ## Going to the terminal
 
 The terminal button calls `goToTerminal` (`app/src/main/sources/windowsTerminal.ts`). It runs two scripts in the shared PowerShell host:
@@ -114,9 +128,11 @@ The terminal button calls `goToTerminal` (`app/src/main/sources/windowsTerminal.
 
 `powershell.ts` keeps one `powershell.exe -Command -` open for the app's lifetime. Starting PowerShell costs about 270 ms, and Windows' process queries are slow until warm, so a fresh process per click took about 3 seconds. Scripts run one at a time, each sent as one base64 line with a unique end marker. A script that takes longer than 10 seconds kills the host, and the next request starts a fresh one. The host is warmed ahead of time when the pointer reaches a terminal button (`warmTerminal`) and when sound is on (`warmQuiet`), since the quiet check shares it. `windowsProbe.ts` deliberately uses its own `powershell.exe`, so a slow pid lookup can't hold up the quiet check.
 
+On Linux (`app/src/main/sources/linuxTerminal.ts`), only the compositor knows which window a process owns, so this works on Hyprland. Bat-Signal walks up the session's ancestors in `/proc` and asks Hyprland for its windows; `pickSessionWindow` (`terminal.ts`, pure) takes, among the windows of the nearest ancestor that owns any, the one titled with the session's name (one terminal process often hosts every window), else the one used last, and failing any ancestor (tmux or ssh in between), a window titled with the name anywhere. Hyprland focuses it, switching workspace if it must. Anywhere else, or when nothing is found, `claude --resume <sessionId>` goes on the clipboard.
+
 ## Packaging and release
 
-`electron-vite` builds `app/src/` into `app/out/`, and `electron-builder` (the `build` key in `app/package.json`) packs it into an unsigned NSIS installer. See "Building the installer" and "Releasing" in [CONTRIBUTING.md](../CONTRIBUTING.md) for the commands, the installer check CI runs, and how a version tag becomes a GitHub release.
+`electron-vite` builds `app/src/` into `app/out/`, and `electron-builder` (the `build` key in `app/package.json`) packs it into an unsigned NSIS installer on Windows (`npm run dist`), or an AppImage on Linux (`npm run dist:linux`). See "Building the installer" and "Releasing" in [CONTRIBUTING.md](../CONTRIBUTING.md) for the commands, the installer check CI runs, and how a version tag becomes a GitHub release.
 
 ## Where to start reading
 

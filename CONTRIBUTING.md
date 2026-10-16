@@ -4,7 +4,7 @@ Thanks for your interest. The project is small, and so are the rules.
 
 ## Running locally
 
-Requirements: Windows 10/11, Node.js 24.2+ (the privacy check runs TypeScript directly and uses `import.meta.main`) and Claude Code installed.
+Requirements: Windows 10/11 or Linux, Node.js 24.2+ (the privacy check runs TypeScript directly and uses `import.meta.main`) and Claude Code installed.
 
 ```bash
 cd app
@@ -33,6 +33,20 @@ In development, Start with Windows registers this checkout's `electron.exe` with
 Windows shows toasts only from an app it knows by a Start menu shortcut. In development, Electron adds one (`Electron`, for this checkout's `electron.exe`) with the first toast, and Windows drops that first one: the next ones show, under Electron's icon in their header. The installer adds Bat-Signal's own shortcut ahead of time, so the installed app's toasts say Bat-Signal from the first one.
 
 The tray and toast icons in `app/resources/icons/` are drawn from the bat in `app/src/shared/emblems.ts` (VENGEANCE's, since the tray never follows a Theme): after changing it, run `npm run icons` and commit the result.
+
+## On Linux
+
+`npm run dev` and every check above run on Linux too. A development run keeps its settings in `~/.config/Bat-Signal Dev`. Start at sign-in writes `~/.config/autostart/com.lucasmoont.bat-signal.dev.desktop`, for this checkout's Electron with the app folder, which loads `out/`.
+
+What Bat-Signal asks of the system is in `app/src/main/platform.ts`, one answer for Windows and one for Linux; where windows land is a `Desktop` (`app/src/main/desktop.ts`), and on Hyprland 0.55+ it is `HyprlandDesktop`, which talks to Hyprland's socket in its Lua dialect. Anything else on Wayland gets Electron's own placement, which the compositor overrides. To try it outside Hyprland, run the app in a GNOME or KDE session, or with `--ozone-platform=x11` for X11.
+
+```bash
+cd app
+npm run pack:linux   # the app folder only: release/linux-unpacked/bat-signal
+npm run dist:linux   # the AppImage: release/Bat-Signal-<version>.AppImage
+```
+
+If AppImageLauncher is installed, it stops the AppImage to offer to integrate it: run it with `APPIMAGELAUNCHER_DISABLE=1` to skip that.
 
 ## Building the installer
 
