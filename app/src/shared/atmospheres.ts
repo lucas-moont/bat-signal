@@ -246,3 +246,21 @@ export const ANCIENT_GRACE_STATIC: NoiseAtmosphere = {
   band: { height: 24, alpha: 0.045, fall: 3 },
   still: 'calm',
 }
+
+/**
+ * BLUE COLLAR's colony (absolute-batman.md, section 9): about five bats crossing a band under the
+ * masthead in three depths of lavender, a few in the panel at a time, the nearest from the right,
+ * each on an arc that rises and dips, flying on past the edge before it comes back. Bigger and
+ * stronger than the dossier's, which read as specks (picked on screen, #121).
+ */
+export const BLUE_COLLAR_COLONY: AshAtmosphere = {
+  kind: 'ash',
+  color: '--colony',
+  density: 0.8,
+  depths: [
+    { alpha: 0.35, size: 14, wind: 3, fall: 0 },
+    { alpha: 0.45, size: 18, wind: 4, fall: 0 },
+    { alpha: 0.55, size: 22, wind: -5, fall: 0 },
+  ],
+  bats: { band: [64, 74], arc: 4, away: 160 },
+}
