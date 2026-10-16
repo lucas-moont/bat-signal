@@ -994,7 +994,7 @@ const GRACE_STANDING = graceMap([
 /** His arms raised or away: the barrel, then the waist. */
 const GRACE_ARMS_AWAY = graceMap([...BARREL, SUIT, ...BELOW_WAIST])
 const GRACE_SEATED = graceMap([...BARREL, WIDE, SUIT, SUIT])
-/** In the air: the barrel and the waist, his legs drawn tucked beside the map. */
+/** In the air: the barrel and the waist, his legs drawn up out of sight under it. */
 const GRACE_LEAPING = graceMap([...BARREL, SUIT, ...BELOW_WAIST.slice(0, 2)])
 /**
  * The armour: plates over his chest and pauldrons a unit past his shoulders (x 0–16), a lit edge
@@ -1102,36 +1102,28 @@ const BOLT = turned(
     'L11.2 -0.4 L10 -0.8 Z',
   -TILT,
 )
+/** His fists in the leap: one above his trailing shoulder, one ahead and below his leading one. */
+const LEAP_FISTS: Px[] = [
+  [0.5, 0.4, 1.5, 1.6],
+  [16.4, 7, 1.3, 1.3],
+]
 /**
- * In the leap, after the Book One cover (dkr-rework.md, section 5): his near arm raised, the forearm
- * across above his brow with its fins up and the fist ahead; his far arm reaching down and forward;
- * his legs tucked, the front knee forward and its boot trailing, a gap between them.
+ * In the leap, one arm from each shoulder, short: his trailing arm straight up beside the cowl, its
+ * fist above his shoulder; his leading arm reaching down and forward. The fists are black on a dark
+ * ground, so they wear the cape's rim, drawn first so only its outer half shows past them.
  */
 const LEAP_LIMBS: Layer[] = [
   {
     kind: 'rects',
     px: [
-      [10, 1, 4, 1],
-      [15, 6.5, 1, 1],
-      [16, 7.5, 1, 1],
-      [4, 8.5, 1, 1.5],
-      [9, 8.5, 4, 1],
-      [11, 9.5, 1.5, 1],
+      [1, 2, 1, 1.5],
+      [15, 5, 1, 1],
+      [16, 6, 1, 1],
     ],
     fill: 'var(--suit)',
   },
-  {
-    kind: 'rects',
-    px: [
-      [14, 0.5, 1.5, 2],
-      [11, 0, 0.5, 1],
-      [12.5, 0, 0.5, 1],
-      [16.5, 8.5, 1, 1.5],
-      [3.6, 10, 1, 1.5],
-      [9, 10.5, 2.5, 1],
-    ],
-    fill: 'var(--gloves)',
-  },
+  { kind: 'rects', px: LEAP_FISTS, className: 'clawd__cape-rim' },
+  { kind: 'rects', px: LEAP_FISTS, fill: 'var(--gloves)' },
 ]
 /** Leaping, the bolt behind him at a strength, or not yet there. */
 const leaping = (bolt?: number) => {
@@ -1156,9 +1148,9 @@ const LAUNCH = `translateY(-4px) rotate(${TILT}deg)`
 
 /**
  * The lightning leap (the Signature pose), after the Book One cover: on the ledge facing right, then
- * launched, leaning forward and tucked, the cape a wedge trailing up and back; then the bolt appears
- * behind him all at once, never drawn stroke by stroke or flashed, and stays, dimming a step later
- * as he holds the leap like a freeze-frame on a screen.
+ * launched, leaning forward, an arm up and an arm ahead, the cape a wedge trailing up and back;
+ * then the bolt appears behind him all at once, never drawn stroke by stroke or flashed, and stays,
+ * dimming a step later as he holds the leap like a freeze-frame on a screen.
  */
 const THE_LEAP: Script = [
   {
