@@ -488,9 +488,13 @@ describe('the colony', () => {
     for (const shape of bats) expect(read(shape).cy).toBeLessThanOrEqual(80 + arc)
   })
 
-  // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark.
-  it('keeps every bat to its band, its arc and its wings', () => {
-    for (const fills of ticks(600))
+  // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark. Bats
+  // that drift down as they cross come back in at the band's top, not above it.
+  it.each([0, 3])('keeps every bat to its band, its arc and its wings (falling %spx a tick)', (fall) => {
+    const painter = painterFor({ ...COLONY, depths: COLONY.depths.map((d) => ({ ...d, fall })) }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    for (const fills of fillsOver(painter, 600))
       for (const { shapes } of fills)
         for (const shape of shapes) {
           const reach = arc + read(shape).width / 4

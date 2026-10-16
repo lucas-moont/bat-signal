@@ -428,6 +428,8 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
       ctx.clearRect(0, 0, width, height)
       for (const { depth, dust: isDust, motes } of layers) {
         const { alpha, size, wind, fall } = depth
+        // A mote is gone once its whole square has left the top; a bat's line, once it has left the band.
+        const rise = bats ? 0 : size
         ctx.globalAlpha = alpha
         ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()
@@ -438,8 +440,8 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
           if (m.x > width || m.x < -size) {
             m.x += m.x > width ? -(width + size) : width + size
             m.y = top + random() * (bottom - top)
-          } else if (m.y > bottom || m.y < top - size) {
-            m.y += m.y > bottom ? -(bottom - top + size) : bottom - top + size
+          } else if (m.y > bottom || m.y < top - rise) {
+            m.y += m.y > bottom ? -(bottom - top + rise) : bottom - top + rise
             m.x = random() * width
           }
           draw(ctx, m, size, i)
