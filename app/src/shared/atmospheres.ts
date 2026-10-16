@@ -67,21 +67,31 @@ export interface LitWindowsAtmosphere extends Scene {
 
 /**
  * Ash blown on a desert wind: flakes cross the panel at a shallow slant, left to right, in depths
- * that differ in strength, size and speed, a share of them dust.
+ * that differ in strength, size and speed, a share of them dust. Or bats on the wind in its place
+ * (BLUE COLLAR's colony): a few in a band of the panel, flapping every tick, each on an arc that
+ * rises and dips as it crosses; the drawing BECOME A BAT's swarm flies (shared/bats.ts).
  */
 export interface AshAtmosphere extends Scene {
   kind: 'ash'
-  /** The variable the ash is filled in. */
+  /** The variable the ash, or the bats, are filled in. */
   color: string
-  /** The dust among it: its variable, and its share of the flakes. */
-  dust: { color: string; share: number }
-  /** Flakes per 1000 square pixels. */
+  /** The dust among the ash, if any: its variable, and its share of the flakes. */
+  dust?: { color: string; share: number }
+  /** Flakes per 1000 square pixels: of the band and as far past its ends as they fly, for bats. */
   density: number
   /**
-   * Each depth from the farthest to the nearest: its alpha, its flakes' size, and how far the wind
-   * carries them and they fall in a tick, in px.
+   * Each depth from the farthest to the nearest: its alpha, its flakes' size (a bat's width), and
+   * how far the wind carries them and they fall in a tick, in px (a wind under 0 blows from the
+   * right).
    */
   depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
+  /**
+   * Bats in place of the flakes: the band their lines lie in, its top and bottom in px from the
+   * panel's top; how far a bat rises above its line and dips below it as it crosses, in px (its
+   * wings reach a quarter of its width further); and how far it flies on past the panel's edge
+   * before it comes back, in px, so only a few of the colony are in the panel at once.
+   */
+  bats?: { band: readonly [number, number]; arc: number; away: number }
 }
 
 /**

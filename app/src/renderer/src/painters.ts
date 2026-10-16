@@ -10,6 +10,7 @@ import type {
   SmokeAtmosphere,
   SnowAtmosphere,
 } from '@shared/atmospheres'
+import { batOutline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -144,9 +145,13 @@ interface Flake {
 /** A flake's or a puff's sway, a step a tick: out one way, back, out the other way, back. */
 const SWAY = [0, 1, 0, -1]
 
+/** The frame of a cycle a tick each, `ticks` in, from a phase. */
+function frameAt<T>(frames: readonly T[], ticks: number, phase: number): T {
+  return frames[(Math.floor(ticks) + phase) % frames.length]!
+}
+
 /** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
-const swayAt = (amount: number, ticks: number, phase: number) =>
-  amount * SWAY[(Math.floor(ticks) + phase) % SWAY.length]!
+const swayAt = (amount: number, ticks: number, phase: number) => amount * frameAt(SWAY, ticks, phase)
 
 /**
  * Snow: flakes in depths, each depth filled as one path a tick. They fall a few pixels a tick,
@@ -349,58 +354,110 @@ interface Drift {
   motes: Mote[]
 }
 
+/** The frames of a bat's wingbeat, a tick each. */
+const BEAT: readonly Wings[] = ['up', 'down']
+
 /**
  * Ash: motes in depths, blown sideways more than they fall, each depth's ash and its dust filled as
  * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
- * along it, whichever way the wind blows.
+ * along it, whichever way the wind blows. With bats in place of the motes, they keep to their band,
+ * each drawn on its arc, flapping every tick, neighbours a beat apart.
  */
-function ash({ color: variable, dust, density, depths }: AshAtmosphere, random: () => number): Painter {
+function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, random: () => number): Painter {
+  /** Whether each of a depth's drifts is dust: ash, and dust if it has any. */
+  const dustiness = dust ? [false, true] : [false]
   const drifts = (lists: Mote[][] = []): Drift[] =>
     depths.flatMap((depth, d) =>
-      [false, true].map((isDust, c) => ({ depth, dust: isDust, motes: lists[2 * d + c] ?? [] })),
+      dustiness.map((isDust, c) => ({ depth, dust: isDust, motes: lists[dustiness.length * d + c] ?? [] })),
     )
   /** None until it has a size. */
   let layers = drifts()
   let width = 0
   let height = 0
+  /** Where the motes are blown: the whole canvas, or the bats' band. */
+  let [top, bottom] = [0, 0]
+  /** How far past the canvas's sides they go before coming back: the bats' way out, none for ash. */
+  const away = bats?.away ?? 0
+  /**
+   * Whole ticks of the clock since it began, each counted to the nearest: a tick that comes a hair
+   * early or late still turns the wings, so a beat never holds or skips.
+   */
+  let beats = 0
   let colors = { ash: '', dust: '' }
+
+  /** Each depth's bat in each frame of the wingbeat, at (0, 0): drawn once, moved into place. */
+  const outlines = new Map(
+    depths.map(({ size }) => [
+      size,
+      { up: batOutline('up', 0, 0, size), down: batOutline('down', 0, 0, size) },
+    ]),
+  )
+
+  /**
+   * A mote of `size`, at (x, y): a square, or a bat on its arc with its wings in this tick's beat,
+   * from its phase (its place in its depth, so neighbours beat a frame apart).
+   */
+  const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, phase: number) => {
+    if (!bats) return ctx.rect(x, y, size, size)
+    // Out past the panel's side: not drawn till it comes back.
+    if (x > width || x < -size) return
+    const along = (x + size) / (width + size)
+    const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
+    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
+    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
+    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
+    ctx.closePath()
+  }
 
   return {
     recolor(colorOf) {
-      colors = { ash: colorOf(variable), dust: colorOf(dust.color) }
+      colors = { ash: colorOf(variable), dust: dust ? colorOf(dust.color) : '' }
     },
     resize(w, h) {
       ;[width, height] = [w, h]
+      // The bats' band, as much of it as is on the canvas.
+      bottom = Math.min(bats?.band[1] ?? h, h)
+      top = Math.min(bats?.band[0] ?? 0, bottom)
+      beats = 0
       layers = drifts(
         scatter(
-          { count: howMany(width, height, density), lists: 2 * depths.length, width, height },
+          {
+            count: howMany(width + 2 * away, bottom - top, density),
+            lists: dustiness.length * depths.length,
+            width: width + 2 * away,
+            height: bottom - top,
+          },
           random,
-          () => 2 * Math.floor(random() * depths.length) + (random() < dust.share ? 1 : 0),
-          (x, y) => ({ x, y, gust: 1 - GUST + random() * 2 * GUST }),
+          () =>
+            dustiness.length * Math.floor(random() * depths.length) + (dust && random() < dust.share ? 1 : 0),
+          (x, y) => ({ x: x - away, y: top + y, gust: 1 - GUST + random() * 2 * GUST }),
         ),
       )
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
+      beats += Math.round(step)
       ctx.clearRect(0, 0, width, height)
       for (const { depth, dust: isDust, motes } of layers) {
         const { alpha, size, wind, fall } = depth
+        // A mote is gone once its whole square has left the top; a bat's line, once it has left the band.
+        const rise = bats ? 0 : size
         ctx.globalAlpha = alpha
         ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()
-        for (const m of motes) {
+        motes.forEach((m, phase) => {
           m.x += wind * m.gust * step
           m.y += fall * m.gust * step
           // Gone past an edge: back in at the opposite one, somewhere new along it.
-          if (m.x > width || m.x < -size) {
-            m.x += m.x > width ? -(width + size) : width + size
-            m.y = random() * height
-          } else if (m.y > height || m.y < -size) {
-            m.y += m.y > height ? -(height + size) : height + size
+          if (m.x > width + away || m.x < -size - away) {
+            m.x += m.x > width + away ? -(width + 2 * away + size) : width + 2 * away + size
+            m.y = top + random() * (bottom - top)
+          } else if (m.y > bottom || m.y < top - rise) {
+            m.y += m.y > bottom ? -(bottom - top + rise) : bottom - top + rise
             m.x = random() * width
           }
-          ctx.rect(m.x, m.y, size, size)
-        }
+          draw(ctx, m, size, phase)
+        })
         ctx.fill()
       }
     },

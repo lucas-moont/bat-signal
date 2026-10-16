@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
 import { painterFor, type Painter } from '../../src/renderer/src/painters'
+import { batOutline, type Wings } from '../../src/shared/bats'
 import {
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
@@ -19,20 +20,25 @@ type Box = { x: number; y: number; w: number; h: number; color: string; alpha: n
 
 type Disc = { x: number; y: number; r: number }
 
+/** A shape drawn in straight lines: its points in order round its edge. */
+type Shape = (readonly [number, number])[]
+
 /**
  * A canvas context that records what it is asked to draw, in which color and strength: one list of
- * segments per stroke() (the rain), one list of squares and of discs per fill() (the snow, the
- * smoke), and each box filled or outlined on its own (the lit windows), and how often it is cleared.
+ * segments per stroke() (the rain), one list of squares, of discs and of shapes per fill() (the snow,
+ * the smoke, the bats), and each box filled or outlined on its own (the lit windows), and how often
+ * it is cleared.
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
-  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[] }[] = []
+  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[]; shapes: Shape[] }[] = []
   const boxes: Box[] = []
   const outlines: Box[] = []
   const cleared = { times: 0 }
   let segments: Segment[] = []
   let rects: Square[] = []
   let discs: Disc[] = []
+  let shapes: Shape[] = []
   let from = { x: 0, y: 0 }
   const ctx = {
     globalAlpha: 1,
@@ -43,13 +49,21 @@ function recorder() {
       boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
     strokeRect: (x: number, y: number, w: number, h: number) =>
       outlines.push({ x, y, w, h, color: ctx.strokeStyle, alpha: ctx.globalAlpha }),
-    beginPath: () => ([segments, rects, discs] = [[], [], []]),
-    moveTo: (x: number, y: number) => (from = { x, y }),
-    lineTo: (x: number, y: number) => segments.push({ x0: from.x, y0: from.y, x1: x, y1: y }),
+    beginPath: () => ([segments, rects, discs, shapes] = [[], [], [], []]),
+    moveTo: (x: number, y: number) => {
+      from = { x, y }
+      shapes.push([[x, y]])
+    },
+    lineTo: (x: number, y: number) => {
+      segments.push({ x0: from.x, y0: from.y, x1: x, y1: y })
+      shapes.at(-1)?.push([x, y])
+      from = { x, y }
+    },
+    closePath: () => {},
     stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
     arc: (x: number, y: number, r: number) => discs.push({ x, y, r }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs }),
+    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs, shapes }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
@@ -89,6 +103,21 @@ const ASH: AshAtmosphere = {
   ],
 }
 
+/**
+ * A colony: three bats in a band from 70 to 90px down, on 6px arcs, the near ones from the right,
+ * each back in the panel as soon as it has left it.
+ */
+const COLONY: AshAtmosphere = {
+  kind: 'ash',
+  color: '--colony',
+  density: 0.5,
+  depths: [
+    { alpha: 0.2, size: 8, wind: 3, fall: 0 },
+    { alpha: 0.3, size: 12, wind: -5, fall: 0 },
+  ],
+  bats: { band: [70, 90], arc: 6, away: 0 },
+}
+
 /** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
 const SMOKE: SmokeAtmosphere = {
   kind: 'smoke',
@@ -116,7 +145,7 @@ const NOISE: NoiseAtmosphere = {
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, SMOKE, NOISE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -125,7 +154,7 @@ describe('a painter given its colors before its size', () => {
       expect(() => painter.paint(ctx, 0)).not.toThrow()
       const drawn = [
         ...strokes.flatMap((s) => s.segments),
-        ...fills.flatMap((f) => [...f.rects, ...f.discs]),
+        ...fills.flatMap((f) => [...f.rects, ...f.discs, ...f.shapes]),
         ...boxes,
       ]
       expect(drawn).toHaveLength(0)
@@ -396,6 +425,141 @@ describe('the ash', () => {
       expect(r.y).toBeGreaterThan(-10)
       expect(r.y).toBeLessThan(440 + 10)
     }
+  })
+})
+
+// BLUE COLLAR's colony (absolute-batman.md, section 9): the ash painter flies bats in place of its
+// motes, the drawing BECOME A BAT's swarm flies, on arcs across a band of the panel.
+describe('the colony', () => {
+  const BATS = Math.round(((320 * 20) / 1000) * COLONY.density)
+  const { band, arc } = COLONY.bats!
+  const colorOf = (variable: string) => ({ '--colony': '#b8b0e0' })[variable] ?? ''
+
+  const colony = () => {
+    const painter = painterFor(COLONY, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+  /** What it fills as it appears, then after each of `n` ticks of the clock. */
+  const ticks = (n: number) => fillsOver(colony(), n)
+
+  /** A drawn bat's width, the middle of its body and which way its wings beat. */
+  const read = (shape: Shape) => {
+    const xs = shape.map(([x]) => x)
+    const [left, right] = [Math.min(...xs), Math.max(...xs)]
+    const width = right - left
+    const cx = (left + right) / 2
+    // Its first point is where the drawing puts it, either frame, about a body at (0, 0).
+    const cy = shape[0]![1] - batOutline('up', 0, 0, width)[0]![1]
+    const matches = (wings: Wings) =>
+      batOutline(wings, cx, cy, width).every(
+        ([x, y], i) => Math.hypot(x - shape[i]![0], y - shape[i]![1]) < 1e-6,
+      )
+    return { width, cx, cy, wings: matches('up') ? 'up' : matches('down') ? 'down' : null }
+  }
+
+  /** The first bat of the first depth, in each frame: the same bat throughout. */
+  const firstBat = (n: number) => ticks(n).map((fills) => read(fills[0]!.shapes[0]!))
+
+  it('flies bats, the shared drawing, as many as its density asks of its band', () => {
+    for (const fills of ticks(50)) {
+      const bats = fills.flatMap((f) => f.shapes)
+      expect(bats).toHaveLength(BATS)
+      for (const shape of bats) expect(read(shape).wings).not.toBeNull()
+      for (const f of fills) expect(f.rects).toHaveLength(0)
+    }
+  })
+
+  it('fills each depth in its strength, its bats as wide as its size', () => {
+    for (const f of ticks(0)[0]!) {
+      const depth = COLONY.depths.find((d) => d.alpha === f.alpha)!
+      expect(f.color).toBe('#b8b0e0')
+      for (const shape of f.shapes) expect(read(shape).width).toBeCloseTo(depth.size)
+    }
+  })
+
+  // A window shorter than the band: the bats keep to what of it is on the canvas.
+  it('keeps its band on the canvas', () => {
+    const painter = painterFor(COLONY, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 80)
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 0)
+    const bats = fills.flatMap((f) => f.shapes)
+    expect(bats).toHaveLength(Math.round(((320 * 10) / 1000) * COLONY.density))
+    for (const shape of bats) expect(read(shape).cy).toBeLessThanOrEqual(80 + arc)
+  })
+
+  // Under the masthead and above the first card: never behind Bat-Clawd or the wordmark. Bats
+  // that drift down as they cross come back in at the band's top, not above it.
+  it.each([0, 3])('keeps every bat to its band, its arc and its wings (falling %spx a tick)', (fall) => {
+    const painter = painterFor({ ...COLONY, depths: COLONY.depths.map((d) => ({ ...d, fall })) }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    for (const fills of fillsOver(painter, 600))
+      for (const { shapes } of fills)
+        for (const shape of shapes) {
+          const reach = arc + read(shape).width / 4
+          for (const [, y] of shape) {
+            expect(y).toBeGreaterThanOrEqual(band[0] - reach - 1e-9)
+            expect(y).toBeLessThanOrEqual(band[1] + reach + 1e-9)
+          }
+        }
+  })
+
+  it('beats its wings every tick', () => {
+    const beats = firstBat(20)
+      .slice(1)
+      .map((bat) => bat.wings)
+    for (let i = 1; i < beats.length; i++) expect(beats[i]).not.toBe(beats[i - 1])
+  })
+
+  // The page's clock is a timer: its ticks come a hair early or late, and a beat must not hold.
+  it('beats its wings every tick on a clock that runs a little early or late', () => {
+    const painter = colony()
+    painter.paint(recorder().ctx, 0)
+    const beats = [0.97, 1.03, 0.98, 1.04, 0.96, 1.02, 0.99, 1.01, 0.97, 1.03].map((ticks) => {
+      const r = recorder()
+      painter.paint(r.ctx, ticks / FPS)
+      return read(r.fills[0]!.shapes[0]!).wings
+    })
+    for (let i = 1; i < beats.length; i++) expect(beats[i]).not.toBe(beats[i - 1])
+  })
+
+  // An arc that rises and dips, not ash's straight slant (jury-wave-2.md, section 3.9).
+  it('flies each crossing on an arc that rises and dips', () => {
+    const bats = firstBat(400)
+    // One whole crossing: from where it came back in at the left edge to where it next does.
+    const comebacks = bats.flatMap((bat, i) => (i > 0 && bat.cx < bats[i - 1]!.cx ? [i] : []))
+    const ys = bats.slice(comebacks[0], comebacks[1]).map((bat) => bat.cy)
+    expect(ys.length).toBeGreaterThan(50)
+    expect(Math.max(...ys) - Math.min(...ys)).toBeGreaterThan(1.8 * arc)
+  })
+
+  // At most a few at once, a new one coming in every so often (absolute-batman.md, section 9).
+  it('flies its bats out past the edges before they come back, so fewer are in the panel at once', () => {
+    const far: AshAtmosphere = { ...COLONY, density: 1, bats: { ...COLONY.bats!, away: 320 } }
+    const colonySize = Math.round(((3 * 320 * 20) / 1000) * far.density)
+    const painter = painterFor(far, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const inPanel = fillsOver(painter, 400).map(
+      (fills) =>
+        fills.flatMap((f) => f.shapes).filter((shape) => shape.some(([x]) => x >= 0 && x <= 320)).length,
+    )
+    // Only the bats on the canvas are drawn.
+    for (const fills of fillsOver(painter, 50))
+      for (const shape of fills.flatMap((f) => f.shapes))
+        expect(shape.some(([x]) => x >= 0 && x <= 320)).toBe(true)
+    expect(Math.max(...inPanel)).toBeLessThan(colonySize)
+    expect(Math.min(...inPanel)).toBeLessThan(Math.max(...inPanel))
+  })
+
+  it('crosses with its depths, either way the wind blows', () => {
+    const [first, next] = ticks(1)
+    const ways = first!.map((f, d) => Math.sign(read(next![d]!.shapes[0]!).cx - read(f.shapes[0]!).cx))
+    expect(ways).toEqual(COLONY.depths.map((d) => Math.sign(d.wind)))
   })
 })
 
