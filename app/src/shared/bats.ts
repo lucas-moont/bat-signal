@@ -65,7 +65,7 @@ const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
  * The points round a bat in flight `width` wide, its body at (cx, cy), in its frame of the
  * wingbeat: what a canvas draws it from, line by line (BLUE COLLAR's colony).
  */
-export const batOutline = (wings: Wings, cx: number, cy: number, width: number): Outline => {
+export function batOutline(wings: Wings, cx: number, cy: number, width: number): Outline {
   const scale = width / BOX_WIDTH
   return OUTLINES[wings].map(([x, y]) => [cx + x * scale, cy + y * scale] as const)
 }
