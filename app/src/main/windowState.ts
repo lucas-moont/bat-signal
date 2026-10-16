@@ -24,7 +24,7 @@ const distance = (area: Rect, p: Anchor): number =>
   )
 
 /** The work area holding the corner, or the nearest one when the corner slipped just off it. */
-const areaOf = (anchor: Anchor, displays: { workArea: Rect }[]): Rect =>
+export const areaOf = (anchor: Anchor, displays: { workArea: Rect }[]): Rect =>
   displays.reduce(
     (best, d) => (distance(d.workArea, anchor) < distance(best, anchor) ? d.workArea : best),
     displays[0]!.workArea,

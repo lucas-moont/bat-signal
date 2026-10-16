@@ -1,9 +1,9 @@
 // Bat-Signal's sounds: one per burst, the burst's most urgent, never two within SOUND_GAP_MS, and
-// none while Windows wants quiet. Played by the signal window, the page that is always loaded.
+// none while the desktop wants quiet. Played by the signal window, the page that is always loaded.
 import { cueFor, soundGapOpen, type Cue } from '../shared/announcer'
 import type { Notice } from '../shared/notices'
 import { Burst } from './burst'
-import { quietNow } from './quiet'
+import { platform } from './platform'
 
 export class BatSignalCues {
   /** When the last sound played: the gap counts from there. */
@@ -20,8 +20,8 @@ export class BatSignalCues {
 
   private sound(cue: Cue | undefined): void {
     if (!cue || !soundGapOpen(this.lastAt, Date.now())) return
-    void quietNow().then((quiet) => {
-      // Asked again: another sound may have played while Windows answered.
+    void platform.quietNow().then((quiet) => {
+      // Asked again: another sound may have played while the desktop answered.
       if (quiet || !soundGapOpen(this.lastAt, Date.now())) return
       if (this.play(cue)) this.lastAt = Date.now()
     })

@@ -5,8 +5,18 @@ import type { StoreSnapshot } from '../shared/types'
 import { TRAY_WORDS } from '../shared/words'
 import { trayLook, trayMenu, type TrayAction } from './trayMenu'
 import type { BatSignalWindows } from './window'
-import restIcon from '../../resources/icons/tray.ico?asset'
-import litIcon from '../../resources/icons/tray-lit.ico?asset'
+import restIco from '../../resources/icons/tray.ico?asset'
+import litIco from '../../resources/icons/tray-lit.ico?asset'
+import restPng from '../../resources/icons/tray.png?asset'
+import litPng from '../../resources/icons/tray-lit.png?asset'
+
+/** Windows picks a size per DPI from the .ico; Linux trays read one PNG and scale it themselves. */
+const [restIcon, litIcon] = process.platform === 'win32' ? [restIco, litIco] : [restPng, litPng]
+/**
+ * Linux trays (StatusNotifierItem) open the menu themselves and send no right-click: the menu is
+ * handed over ahead, and handed over again whenever the view it ticks changes.
+ */
+const MENU_AHEAD = process.platform === 'linux'
 
 /** Clicks closer than this are one double-click: the panel opens once, not open-and-shut. */
 const DOUBLE_CLICK_MS = 500
@@ -27,8 +37,13 @@ export class BatSignalTray {
       this.lastClick = now
       windows.act('trayClick')
     })
-    // Built as it opens, so it always ticks the view on screen.
-    this.tray.on('right-click', () => this.tray.popUpContextMenu(this.menu()))
+    if (MENU_AHEAD) {
+      this.tray.setContextMenu(this.menu())
+      windows.onModeChange(() => this.tray.setContextMenu(this.menu()))
+    } else {
+      // Built as it opens, so it always ticks the view on screen.
+      this.tray.on('right-click', () => this.tray.popUpContextMenu(this.menu()))
+    }
   }
 
   /** A new snapshot: light the icon (or put it out) and update the count in its tooltip. */

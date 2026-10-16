@@ -5,7 +5,9 @@ import {
   AT_LOGIN,
   isLoginLaunch,
   loginItemFor,
+  relaunchAction,
   startupState,
+  TOGGLE,
 } from '../src/main/loginItem'
 
 const packaged = {
@@ -52,6 +54,21 @@ describe('isLoginLaunch', () => {
   it('takes any other launch for the user opening it', () => {
     expect(isLoginLaunch(['Bat-Signal.exe'])).toBe(false)
     expect(isLoginLaunch(['Bat-Signal.exe', `${AT_LOGIN}x`])).toBe(false)
+  })
+})
+
+describe('relaunchAction: Bat-Signal launched again while it runs', () => {
+  it('comes back as it was when the user opens it again', () => {
+    expect(relaunchAction(['bat-signal'])).toBe('summon')
+  })
+
+  it('acts as the global shortcut with --toggle, which a Wayland desktop binds to a key', () => {
+    expect(relaunchAction(['bat-signal', TOGGLE])).toBe('shortcut')
+  })
+
+  it('changes nothing for a launch at sign-in', () => {
+    expect(relaunchAction(['bat-signal', AT_LOGIN])).toBe('none')
+    expect(relaunchAction(['bat-signal', AT_LOGIN, TOGGLE])).toBe('none')
   })
 })
 

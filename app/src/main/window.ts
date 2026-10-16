@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { app, BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import type { CuePlay } from '../shared/announcer'
 import { num, obj } from '../shared/guards'
 import { IPC } from '../shared/ipc'
@@ -15,10 +15,12 @@ import type { AppStatus } from '../shared/status'
 import { THEMES, type ThemeId } from '../shared/themes'
 import type { StoreSnapshot } from '../shared/types'
 import { DEV_SERVER, isOwnPage, RENDERER_FILE } from './appIpc'
+import { electronDesktop, type Desktop } from './desktop'
 import { jsonFile } from './jsonFile'
 import { nextMode, type ModeAction } from './modes'
 import {
   anchoredRect,
+  areaOf,
   cornerOf,
   noticePlacement,
   perchRect,
@@ -110,11 +112,6 @@ function parsePlace(raw: unknown): Place {
 
 const placeFile = jsonFile('window.json', parsePlace)
 
-function displaysPrimaryFirst() {
-  const primary = screen.getPrimaryDisplay()
-  return [primary, ...screen.getAllDisplays().filter((d) => d.id !== primary.id)]
-}
-
 /** Opens a window's page wearing the Theme, so its first frame already has the Theme's colors. */
 function load(win: BrowserWindow, view: 'panel' | 'signal', theme: ThemeId): void {
   if (DEV_SERVER) void win.loadURL(`${DEV_SERVER}?view=${view}&theme=${theme}`)
@@ -149,10 +146,15 @@ export class BatSignalWindows {
   private onTop = true
   /** Set while the strip waits for its first height (see setMode). */
   private stripPending?: NodeJS.Timeout
+  private readonly modeListeners: ((mode: WindowMode) => void)[] = []
 
-  constructor(settings: Settings) {
+  /** desktop: where the windows land and how their moves are heard (see desktop.ts). */
+  constructor(
+    settings: Settings,
+    private readonly desktop: Desktop = electronDesktop,
+  ) {
     const place = placeFile.load()
-    this.anchor = resolveAnchor(place.anchor, displaysPrimaryFirst(), MARGIN)
+    this.anchor = resolveAnchor(place.anchor, desktop.displays(), MARGIN)
     this.panelSize = place.panel
     this.lastOpened = place.open
 
@@ -169,6 +171,7 @@ export class BatSignalWindows {
       // Otherwise Electron reports the never-shown panel as visible and its loops keep running.
       paintWhenInitiallyHidden: false,
       webPreferences,
+      ...desktop.windowOptions,
     })
     this.signal = new BrowserWindow({
       ...this.rect(SIGNAL.disc),
@@ -179,18 +182,20 @@ export class BatSignalWindows {
       skipTaskbar: true,
       show: false,
       webPreferences,
+      ...desktop.windowOptions,
     })
+    desktop.adopt(this.panel, 'panel')
+    desktop.adopt(this.signal, 'signal')
     this.apply(settings)
 
     // ready-to-show did not fire for this transparent window in testing; show it once it has loaded.
     this.signal.webContents.once('did-finish-load', () => this.setMode(this.current))
-    // The panel is moved and resized by hand: its bottom-right corner becomes the anchor.
-    this.panel.on('moved', () => this.followPanel())
+    // The panel is moved and resized by hand: its bottom-right corner becomes the anchor, and
     // Bat-Clawd rides along while the strip is dragged.
-    this.panel.on('move', () => {
+    desktop.onUserMove(this.panel, (settled) => {
+      if (settled) this.followPanel()
       if (MODES[this.current].signal === 'perch') this.placePerch()
     })
-    this.panel.on('resized', () => this.followPanel())
     const onTopTimer = setInterval(() => this.keepOnTop(), ON_TOP_EVERY_MS)
     app.on('before-quit', () => {
       clearInterval(onTopTimer)
@@ -224,6 +229,11 @@ export class BatSignalWindows {
 
   get mode(): WindowMode {
     return this.current
+  }
+
+  /** Called with each new mode, for what shows the mode outside the windows (Linux's tray menu). */
+  onModeChange(listener: (mode: WindowMode) => void): void {
+    this.modeListeners.push(listener)
   }
 
   /** The panel window is on screen, as the panel or the strip. */
@@ -276,13 +286,13 @@ export class BatSignalWindows {
     this.panel.setBackgroundColor(THEMES[settings.theme].ground)
     for (const win of [this.panel, this.signal]) {
       win.setAlwaysOnTop(settings.alwaysOnTop, 'floating')
-      win.setOpacity(settings.opacity)
+      this.desktop.setOpacity(win, settings.opacity)
     }
     this.broadcast(IPC.settings, settings)
   }
 
   private keepOnTop(): void {
-    if (!this.onTop) return
+    if (!this.onTop || !this.desktop.reassertsOnTop) return
     // Only the panel window: the signal window is click-through (as the perch) or inactive (as
     // the disc), and the overlay leaves those alone; toggling it would only redraw a transparent window.
     const win = this.panel
@@ -337,16 +347,17 @@ export class BatSignalWindows {
       this.preparePanel(spec.panel)
       if (holdStrip) {
         // Out of sight and at the strip's width, so the page measures the rows it will show.
-        this.panel.hide()
-        this.panel.setBounds(this.watchRect())
+        this.desktop.hide(this.panel)
+        this.desktop.setBounds(this.panel, this.watchRect())
       }
       // The latest snapshot before the mode, so the page lays out the sessions of now.
       if (this.latest) this.send(this.panel, IPC.snapshot, this.latest)
     } else {
-      this.panel.hide()
+      this.desktop.hide(this.panel)
     }
     if (entering) {
       this.current = mode
+      for (const listener of this.modeListeners) listener(mode)
       // A held strip is news only to its own page for now: the disc stays the disc until the
       // strip shows, and turns into the perch then (revealStrip).
       if (holdStrip) this.send(this.panel, IPC.mode, mode)
@@ -362,8 +373,7 @@ export class BatSignalWindows {
   }
 
   private preparePanel(spec: PanelSpec): void {
-    this.panel.setResizable(spec.resizable)
-    this.panel.setMinimumSize(spec.minSize.width, spec.minSize.height)
+    this.desktop.setSizing(this.panel, spec)
     this.panel.setFocusable(spec.focusable)
   }
 
@@ -371,22 +381,20 @@ export class BatSignalWindows {
   private show(): void {
     const { panel, signal } = MODES[this.current]
     if (panel) {
-      this.panel.setBounds(panel.size === 'dragged' ? this.rect(this.panelSize) : this.watchRect())
-      if (panel.focusable) {
-        this.panel.show()
-        this.panel.focus()
-      } else {
-        this.panel.showInactive()
-      }
+      this.desktop.setBounds(
+        this.panel,
+        panel.size === 'dragged' ? this.rect(this.panelSize) : this.watchRect(),
+      )
+      this.desktop.show(this.panel, panel.focusable)
     }
     if (signal === 'disc') {
       this.signal.setIgnoreMouseEvents(false) // the perch let every click through; the disc takes them
       this.placeSignal()
-      this.signal.showInactive()
+      this.desktop.show(this.signal, false)
     } else if (signal === 'perch') {
       this.placePerch()
     } else {
-      this.signal.hide()
+      this.desktop.hide(this.signal)
     }
   }
 
@@ -412,7 +420,7 @@ export class BatSignalWindows {
       this.noticeOut = out
       if (MODES[this.current].signal === 'disc') this.placeSignal()
     }
-    const { below, right } = noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst())
+    const { below, right } = noticePlacement(this.anchor, SIGNAL, this.desktop.displays())
     return { below, right }
   }
 
@@ -435,7 +443,7 @@ export class BatSignalWindows {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return
     // Keep the disc itself on screen, so dragging back works at once.
     const moved = { x: this.anchor.x + dx, y: this.anchor.y + dy }
-    this.anchor = cornerOf(anchoredRect(moved, SIGNAL.disc, displaysPrimaryFirst()))
+    this.anchor = cornerOf(anchoredRect(moved, SIGNAL.disc, this.desktop.displays()))
     this.placeSignal()
     this.scheduleSave()
   }
@@ -445,11 +453,11 @@ export class BatSignalWindows {
    * (without forwarding, which would cost CPU). Hidden when the strip has no room above it.
    */
   private placePerch(): void {
-    const rect = perchRect(this.panel.getBounds(), PERCH, displaysPrimaryFirst())
-    if (!rect) return this.signal.hide()
+    const rect = perchRect(this.desktop.getBounds(this.panel), PERCH, this.desktop.displays())
+    if (!rect) return this.desktop.hide(this.signal)
     this.signal.setIgnoreMouseEvents(true)
-    this.signal.setBounds(rect)
-    this.signal.showInactive()
+    this.desktop.setBounds(this.signal, rect)
+    this.desktop.show(this.signal, false)
   }
 
   private watchRect() {
@@ -457,14 +465,15 @@ export class BatSignalWindows {
   }
 
   private rect(size: Size) {
-    return anchoredRect(this.anchor, size, displaysPrimaryFirst())
+    return anchoredRect(this.anchor, size, this.desktop.displays())
   }
 
   /** The signal window at its current size: the disc, or the disc with a notice card. */
   private placeSignal(): void {
-    this.signal.setBounds(
+    this.desktop.setBounds(
+      this.signal,
       this.noticeOut
-        ? noticePlacement(this.anchor, SIGNAL, displaysPrimaryFirst()).rect
+        ? noticePlacement(this.anchor, SIGNAL, this.desktop.displays()).rect
         : this.rect(SIGNAL.disc),
     )
   }
@@ -472,7 +481,7 @@ export class BatSignalWindows {
   /** The watch strip measured its rows: fit the window to them, growing up from the corner. */
   setWatchHeight(height: number): void {
     if (!Number.isFinite(height)) return
-    const area = screen.getDisplayNearestPoint(this.anchor).workArea
+    const area = areaOf(this.anchor, this.desktop.displays())
     const next = Math.round(Math.min(Math.max(height, WATCH.minHeight), area.height * WATCH.maxShare))
     // The first height after the strip opens is its page saying it is ready (WatchStrip sends one
     // as it mounts): the strip shows now, at that height.
@@ -484,7 +493,7 @@ export class BatSignalWindows {
     if (next === this.watchHeight) return
     this.watchHeight = next
     if (MODES[this.current].panel?.size === 'fitted') {
-      this.panel.setBounds(this.watchRect())
+      this.desktop.setBounds(this.panel, this.watchRect())
       this.placePerch()
     }
   }
@@ -492,7 +501,7 @@ export class BatSignalWindows {
   private followPanel(): void {
     const panel = MODES[this.current].panel
     if (!panel) return
-    const b = this.panel.getBounds()
+    const b = this.desktop.getBounds(this.panel)
     this.anchor = cornerOf(b)
     if (panel.size === 'dragged') this.panelSize = { width: b.width, height: b.height }
     this.scheduleSave()

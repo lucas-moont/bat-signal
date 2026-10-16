@@ -8,24 +8,22 @@ import { startBatSignal } from './batSignal'
 import { settingsFile } from './settings'
 import { appIdFor } from './identity'
 import { handleIpc, isOwnPage, onIpc } from './appIpc'
-import { isLoginLaunch } from './loginItem'
+import { relaunchAction } from './loginItem'
 import { createShortcut } from './shortcut'
-import { createStartup } from './startup'
 import { BatSignalCues } from './cues'
-import { warmQuiet } from './quiet'
-import { powershell } from './powershell'
+import { platform } from './platform'
 import { BatSignalToasts } from './toasts'
 import { migrateUserData } from './userData'
 import { BatSignalTray } from './tray'
 import { BatSignalWindows } from './window'
 
-/** Brings Bat-Signal forward when it is launched again; nothing to bring until it has started. */
-let summon = (): void => undefined
+/** What a second launch does (see relaunchAction); nothing to do until Bat-Signal has started. */
+let relaunched = (_action: 'shortcut' | 'summon'): void => undefined
 
-function start(): void {
+async function start(): Promise<void> {
   migrateUserData()
   let settings = settingsFile.load()
-  const windows = new BatSignalWindows(settings)
+  const windows = new BatSignalWindows(settings, await platform.createDesktop())
   // Before anything can hide the windows: the tray is the way back.
   const tray = new BatSignalTray(windows)
   // A clicked toast opens its case, as a notice card does (or the panel, for a case gone); it is
@@ -39,7 +37,7 @@ function start(): void {
     return true
   })
   // With sound on, the quiet check is made ready ahead, so the first sound is not late.
-  if (settings.announce.sound) warmQuiet()
+  if (settings.announce.sound) platform.warmQuiet()
   // News is found once, and what each way of announcing it wants comes out of the same list.
   let announcer = emptyAnnouncer()
   const stop = startBatSignal((snapshot) => {
@@ -60,9 +58,9 @@ function start(): void {
     () => windows.act('shortcut'),
     () => publishStatus(),
   )
-  // Starting with Windows: what Windows has (Task Manager can change it too), read when the
-  // settings sheet, the one place that shows it, opens.
-  const startup = createStartup(() => publishStatus())
+  // Starting at sign-in: what the system has (Task Manager, or the desktop's startup settings, can
+  // change it too), read when the settings sheet, the one place that shows it, opens.
+  const startup = platform.createStartup(() => publishStatus())
   // What is happening now, read from each feature; sent to the pages only when it changed (each
   // feature keeps the same value until then).
   const readStatus = (): AppStatus => ({ shortcut: shortcut.status, startup: startup.state })
@@ -78,7 +76,7 @@ function start(): void {
   /** New settings take effect: the one path for the settings sheet's patches and hand edits alike. */
   const adopt = (next: Settings, { touchesShortcut }: { touchesShortcut: boolean }) => {
     settings = next
-    if (settings.announce.sound) warmQuiet()
+    if (settings.announce.sound) platform.warmQuiet()
     windows.apply(settings)
     // Only a change that names the shortcut touches it (and retries it, if another app had it).
     if (touchesShortcut) shortcut.apply(settings.shortcut)
@@ -136,7 +134,7 @@ function start(): void {
   })
   onIpc(IPC.hide, () => windows.act('close'))
 
-  summon = () => windows.act('summon')
+  relaunched = (action) => windows.act(action)
   // Written at before-quit: Windows ending the session may close the app before will-quit.
   app.once('before-quit', () => {
     // No hand edit may reach windows that are closing.
@@ -147,7 +145,7 @@ function start(): void {
   app.once('will-quit', () => {
     toasts.dispose()
     cues.dispose()
-    powershell.close()
+    platform.close()
     shortcut.dispose()
   })
 }
@@ -175,9 +173,11 @@ if (!app.requestSingleInstanceLock()) {
   app.setAppUserModelId(appIdFor(app.isPackaged))
   // Launching Bat-Signal again (it runs once) brings it back instead of doing nothing; listened
   // for from the start, since a second launch can come while this one is still getting ready.
-  // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing.
+  // A launch at sign-in while Bat-Signal already runs (started by hand) changes nothing, and one
+  // with --toggle acts as the global shortcut.
   app.on('second-instance', (_event, argv) => {
-    if (!isLoginLaunch(argv)) summon()
+    const action = relaunchAction(argv)
+    if (action !== 'none') relaunched(action)
   })
   void app.whenReady().then(start)
   app.on('window-all-closed', () => app.quit())

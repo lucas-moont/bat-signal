@@ -4,13 +4,12 @@ import { beforeNewsDemoSnapshot, demoSnapshot, quietDemoSnapshot } from '../shar
 import { IPC } from '../shared/ipc'
 import type { StoreSnapshot, TerminalOutcome } from '../shared/types'
 import { HookServer } from './sources/hookServer'
-import { goToTerminal, warmTerminal } from './sources/windowsTerminal'
 import { isSessionId, SessionRegistry } from './sources/sessionRegistry'
 import { listSubagentTranscripts, locateTranscript } from './sources/transcriptLocator'
 import { TranscriptTailer } from './sources/transcriptTailer'
-import { createWindowsProbe } from './sources/windowsProbe'
 import { SessionStore } from './store'
 import { handleIpc, onIpc } from './appIpc'
+import { platform } from './platform'
 
 /** Transcripts are re-read this often, so the window stays current even without the plugin. */
 const REFRESH_MS = 2000
@@ -54,7 +53,7 @@ function startDemo(publish: Publish): () => void {
     // The demo's sessions have no terminal: always the resume command, for one of them only.
     handleIpc(IPC.goToTerminal, (_event, sessionId: unknown) =>
       demoSnapshot().sessions.some((s) => s.sessionId === sessionId)
-        ? goToTerminal({ pid: -1, sessionId: String(sessionId) })
+        ? platform.goToTerminal({ pid: -1, sessionId: String(sessionId) })
         : undefined,
     ),
   ]
@@ -74,7 +73,7 @@ function startLive(publish: Publish): () => void {
     clock: () => new Date(),
   })
 
-  const registry = new SessionRegistry(join(claudeDir, 'sessions'), createWindowsProbe())
+  const registry = new SessionRegistry(join(claudeDir, 'sessions'), platform.createProbe())
   registry.on('change', (entries) => void store.setLiveSessions(entries))
 
   let rereadTimer: NodeJS.Timeout | undefined
@@ -111,9 +110,9 @@ function startLive(publish: Publish): () => void {
       if (!isSessionId(sessionId)) return undefined
       // A session that left the snapshot can still be resumed by its id.
       const session = store.snapshot().sessions.find((s) => s.sessionId === sessionId)
-      return goToTerminal(session ?? { pid: -1, sessionId })
+      return platform.goToTerminal(session ?? { pid: -1, sessionId })
     }),
-    onIpc(IPC.warmTerminal, warmTerminal),
+    onIpc(IPC.warmTerminal, platform.warmTerminal),
   ]
 
   registry.start()
