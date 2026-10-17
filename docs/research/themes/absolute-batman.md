@@ -4,6 +4,18 @@ Research note, 2026-10-14. Scope: one Bat-Signal Theme after *Absolute Batman* (
 
 Revised 2026-10-14 after the wave 2 jury (`jury-wave-2.md` §9).
 
+
+**Built in #121 (2026-10-16)** as `absolute-batman-2024`, demo flag `collar`. Where this note and the build differ, the build follows the maintainer's decisions on screen, each made from a labelled board with the covers beside it:
+- **The emblem is traced from DC's flat insignia variant cover for #1** (`BLOCK_2024`): about **1.65:1 with its spikes, 2.07:1 without**, not §8's 2.3:1 read off a foreshortened chest. A slab whose sides bow out, a wing-tip horn at each upper corner, a spike a side and two ears along the top, and along the bottom a spike at each corner, one a side and a wide V. The masthead and the disc wear it at its own shape.
+- **On his chest it is the flat slab** §7 asked for, 8 units wide and 3 tall (the traced outline stretched), picked over the true shape and a slab pec to pec: the true shape, under Clawd's orange jaw, read as a mouth.
+- **Bat-Clawd** tapers from round shoulders (x 0–16) to the belt instead of §7's one-unit pads, so his bulk is a wedge where ANCIENT GRACE's is a barrel; his arms hang apart from his body so their **black forearm stripes** read (§7 had dropped them); **black spiked shoulder pads** cap his shoulders in every pose; and he wears **black trunks over the suit**, below the olive belt (both the maintainer's notes).
+- **Signature pose: the stand on the #1 cover**, the maintainer's pick over A, B and C (§7), which §7 had ruled out as a front-on stand like VENGEANCE's. Feet planted wide, his striped arms come down and in to his hips, a narrow strip of cape along the outside of each; he takes the cape's edges and pulls them across in front of him, **crossing in an X** from each hand to the opposite foot, its lower edges scalloped to wing tips; **nothing of the cape hangs behind him**, so the night shows past his sides and between his legs; then he lowers his head. Its edges curve, as the cover's cloth does. The reveal is four steps; on the perch he glances along the street from under his brow.
+- **Moods:** asleep wrapped in the cape; flying on a line from his raised right hand, the cape in blades behind; alarmed, the block off his chest and raised over his left shoulder as an axe, his shoulder spikes out.
+- **The colony** (§9) flies bigger and stronger than §9 drew it: 14–22px at 35–55% (§9's 8–14px at 20–30% read as specks), about five in a band under the masthead (y 64–74), each flying 160px past the edge before it comes back, so a few are in the panel at once. It rides the ash painter's own loop (#131).
+- **Kept as §1 asked:** the lit disc in SFX Lemon itself (A, a flat field), Bungee stamps at 9.5px (the WOFF confirms PERMISSION fits every room; 10px fails the narrowest margin by 1.3px), Shantell Sans for the Shift notes.
+- **Credit:** "Snyder & Dragotta's Absolute Batman": with their first names, or with "and", it ran to a third line on its picker folder. The README and NOTICE credit Scott Snyder, Nick Dragotta and Frank Martin in full.
+- **Signature caption** "Made it myself." waits for #109 with the other captions.
+
 ## 1. TL;DR
 
 - **The Theme in one sentence:** heavy black ink on a violet night, a huge working man's Batman in a cold teal suit with a block of a bat across his chest, and one loud flat colour, the comic's sound-effect lemon, kept for "something needs you".
