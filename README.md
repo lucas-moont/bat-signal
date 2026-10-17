@@ -133,6 +133,6 @@ Running it from source, the checks, building the installer and releasing are in 
 
 ---
 
-Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022), Tim Burton's *Batman* (1989), Christopher Nolan's *Dark Knight* trilogy, Zack Snyder's *Batman v Superman*, Frank Miller and David Mazzucchelli's *Batman: Year One*, Frank Miller's *The Dark Knight Returns* and Scott Snyder and Nick Dragotta's *Absolute Batman* (coloured by Frank Martin) are trademarks of DC Comics, used here as fan art; see [NOTICE](NOTICE) for them and for the fonts' licences.
+Fan project. Not affiliated with Warner Bros., DC Comics or Anthropic. The bat symbols from *The Batman* (2022), Tim Burton's *Batman* (1989), Christopher Nolan's *Dark Knight* trilogy, Zack Snyder's *Batman v Superman*, Frank Miller and David Mazzucchelli's *Batman: Year One*, Frank Miller's *The Dark Knight Returns* and Scott Snyder and Nick Dragotta's *Absolute Batman* are trademarks of DC Comics, used here as fan art (BLUE COLLAR also owes its palette to Frank Martin's colours); see [NOTICE](NOTICE) for them and for the fonts' licences.
 
 License: [MIT](LICENSE), except the bat emblems and the bundled fonts, which keep their own terms: see [NOTICE](NOTICE).
