@@ -4,7 +4,6 @@
 // or previewed.
 import '@fontsource/bungee/400.css'
 import '@fontsource/shantell-sans/400.css'
-import '@fontsource/shantell-sans/500.css'
 import '@fontsource/barlow-semi-condensed/400.css'
 import '@fontsource/barlow-semi-condensed/500.css'
 import '@fontsource/barlow-semi-condensed/600.css'

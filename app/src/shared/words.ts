@@ -783,6 +783,10 @@ export const ANCIENT_GRACE_WORDS: Words = {
  * plain, physical and hopeful. A work site's words: a permit asked for, a fuse blown, a machine
  * jammed. Case and Needs you stay.
  */
+
+/** BLUE COLLAR's all-clear: the empty panel's title, and the quiet disc's tooltip begins with it. */
+const GRID_HOLDING = "The grid's holding."
+
 export const BLUE_COLLAR_WORDS: Words = {
   terms: {
     ...STANDARD_TERMS,
@@ -802,7 +806,7 @@ export const BLUE_COLLAR_WORDS: Words = {
     tagline: 'Built, not bought.',
     empty: {
       ...STANDARD_VOICE.empty,
-      quiet: { ...STANDARD_VOICE.empty.quiet, title: "The grid's holding." },
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: GRID_HOLDING },
       noCases: {
         ...STANDARD_VOICE.empty.noCases,
         title: (t) => `No ${lower(t.case.many)} running. Clock out.`,
@@ -819,7 +823,7 @@ export const BLUE_COLLAR_WORDS: Words = {
     },
     signal: {
       ...STANDARD_VOICE.signal,
-      openTip: (lit) => (lit ? '' : "The grid's holding. ") + STANDARD_VOICE.signal.openTip(lit),
+      openTip: (lit) => (lit ? '' : `${GRID_HOLDING} `) + STANDARD_VOICE.signal.openTip(lit),
     },
     settings: {
       ...STANDARD_VOICE.settings,
