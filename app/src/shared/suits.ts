@@ -1354,9 +1354,10 @@ const STAND_CAPE = {
   /**
    * Pulled across him: from his left hand down and across to his right foot, curving, wide as a wing,
    * its lower edge scalloped to a wing tip at the outer corner; mirrored, the right hand's crosses
-   * over it to his left foot, an X in front of his legs.
+   * over it to his left foot, an X in front of his legs. Its tips stop above the frame's last row,
+   * which the perch keeps below the window's edge.
    */
-  taut: 'M4.6 9 L6.2 9 Q9.4 10.2 13.8 11.2 L13 11.8 L12 11.4 L11.2 12 L10 11.5 L9 12 Q6.8 10.8 4.6 9 Z',
+  taut: 'M4.6 9 L6.2 9 Q9.4 10.1 13.8 10.8 L13 11.25 L12 10.95 L11.2 11.25 L10 11 L9 11.25 Q6.8 10.6 4.6 9 Z',
 }
 /** Standing as on the #1 cover, the cape's fall from his hands as `fall` draws it. */
 const holding = (fall: string) =>
