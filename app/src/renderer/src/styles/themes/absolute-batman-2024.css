@@ -95,11 +95,11 @@
   --disc-bat: var(--line);
   --glass-shine: #2a2348;
   --glass: var(--abyss);
-  --disc-rim-inner: #070405;
+  --disc-rim-inner: var(--chest);
   --disc-rim-outer: var(--line);
   --lens-core: var(--signal-hot);
-  --lens-rim: #070405;
-  --lens-bat: #070405;
+  --lens-rim: var(--chest);
+  --lens-bat: var(--chest);
   --lens-bat-edge: transparent;
   /* Lit, the field prints flat: no inner shading over it, Martin's flat colour. */
   --lens-shade: 0 0 transparent;
