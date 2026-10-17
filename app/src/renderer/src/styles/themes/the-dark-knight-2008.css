@@ -109,6 +109,9 @@
   --lens-rim: #10305a;
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
+  --lens-shade:
+    inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);
   --notice-top: #111a23;
   --notice-foot: var(--smoke);
   --notice-hover-top: #172331;

@@ -101,6 +101,8 @@
   --lens-rim: #070405;
   --lens-bat: #070405;
   --lens-bat-edge: transparent;
+  /* Lit, the field prints flat: no inner shading over it, Martin's flat colour. */
+  --lens-shade: 0 0 transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);
   --notice-hover-top: #211b3a;
@@ -154,10 +156,4 @@
 
   /* Lit: one flat field, Martin's flat colour. */
   --disc-lens: linear-gradient(in srgb, var(--signal-hot), var(--signal-hot));
-}
-
-/* Lit, the field prints flat: none of the lens's inner shading over it, only its glow around. */
-:root[data-theme='absolute-batman-2024'] .disc--lit .disc__face,
-[data-theme='absolute-batman-2024'] .disc--lit .disc__face {
-  box-shadow: 0 0 18px var(--signal-glow);
 }
