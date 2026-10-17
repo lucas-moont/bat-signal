@@ -1224,8 +1224,11 @@ const COLLAR_WIDE = collarMap(
  */
 const CHEST_BLOCK: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 8, height: 3 }
 
-/** A path in the cape's black and rim, mirrored across him unless it says otherwise, smooth if curved. */
-const capePath = (d: string, { mirrored = true, smooth = false } = {}): Layer => ({
+/**
+ * A path in the cape's black and rim (the cape, and what is made like it: his pads), mirrored
+ * across him unless it says otherwise, smooth if curved.
+ */
+const inCape = (d: string, { mirrored = true, smooth = false } = {}): Layer => ({
   kind: 'path',
   d,
   className: 'clawd__cape',
@@ -1250,20 +1253,38 @@ const BLADES = {
 
 /** A shoulder pad's plate, capping his shoulder and running a little way down his arm (left half). */
 const PAD = 'M3.6 5 L3.6 6.1 Q1.9 6.3 0.3 7.3 L-0.1 6.3 Q0.3 4.8 2.2 4.6 Z'
+/** Where each of a pad's three spikes stands on it: its left and right foot (left half). */
+const SPIKE_FEET = [
+  [0.6, 5.4, 1, 5.1],
+  [1.6, 4.8, 2.1, 4.7],
+  [2.8, 4.7, 3.3, 4.7],
+] as const
+/** His pads with their spikes out to these tips. */
+const padsTo = (tips: readonly (readonly [number, number])[]) =>
+  inCape(
+    [
+      PAD,
+      ...SPIKE_FEET.map(
+        ([x0, y0, x1, y1], i) => `M${x0} ${y0} L${tips[i]![0]} ${tips[i]![1]} L${x1} ${y1} Z`,
+      ),
+    ].join(' '),
+    { smooth: true },
+  )
 /**
  * His shoulder pads, as on the #1 cover: black plates over his arms (mirrored), small spikes along
  * their tops, or the spikes out long when something needs the user.
  */
 const PADS = {
-  rest: capePath(
-    `${PAD} M0.6 5.4 L0.2 4.6 L1 5.1 Z M1.6 4.8 L1.5 4 L2.1 4.7 Z M2.8 4.7 L2.9 3.9 L3.3 4.7 Z`,
-    {
-      smooth: true,
-    },
-  ),
-  out: capePath(`${PAD} M0.6 5.4 L-0.2 3.6 L1 5.1 Z M1.6 4.8 L1.2 3.2 L2.1 4.7 Z M2.8 4.7 L3 3 L3.3 4.7 Z`, {
-    smooth: true,
-  }),
+  rest: padsTo([
+    [0.2, 4.6],
+    [1.5, 4],
+    [2.9, 3.9],
+  ]),
+  out: padsTo([
+    [-0.2, 3.6],
+    [1.2, 3.2],
+    [3, 3],
+  ]),
 }
 
 /** A pose in the working suit: the block on his chest and his pads at rest, unless it says otherwise. */
@@ -1342,7 +1363,7 @@ const holding = (fall: string) =>
   collarPose(
     COLLAR_WIDE,
     [],
-    [capePath(STAND_CAPE.sleeve, { smooth: true }), ...ARM_IN, capePath(fall, { smooth: true })],
+    [inCape(STAND_CAPE.sleeve, { smooth: true }), ...ARM_IN, inCape(fall, { smooth: true })],
   )
 const pulledTaut = holding(STAND_CAPE.taut)
 /**
