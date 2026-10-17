@@ -777,15 +777,15 @@ export const ANCIENT_GRACE_WORDS: Words = {
   },
 }
 
+/** BLUE COLLAR's all-clear: the empty panel's title, and the quiet disc's tooltip begins with it. */
+const GRID_HOLDING = "The grid's holding."
+
 /**
  * BLUE COLLAR's words, after Scott Snyder and Nick Dragotta's Absolute Batman (absolute-batman.md,
  * sections 5 and 6): the night shift of a city engineer who keeps the grid and the sewers running,
  * plain, physical and hopeful. A work site's words: a permit asked for, a fuse blown, a machine
  * jammed. Case and Needs you stay.
  */
-
-/** BLUE COLLAR's all-clear: the empty panel's title, and the quiet disc's tooltip begins with it. */
-const GRID_HOLDING = "The grid's holding."
 
 export const BLUE_COLLAR_WORDS: Words = {
   terms: {
@@ -817,7 +817,7 @@ export const BLUE_COLLAR_WORDS: Words = {
       name: 'Shift notes',
       dateline: datelineOf('NIGHT SHIFT'),
       signature: 'Needs your hands',
-      nil: () => 'Nothing needs your hands. The grid runs without you tonight.',
+      nil: () => 'Nothing needs your hands. Everything on the board is running.',
       caseNotes: () => 'On the clock',
       end: (waiting) => (waiting ? "Tools stay out. There's work on your bench." : 'Tools down. Go home.'),
     },
