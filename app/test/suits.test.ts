@@ -114,7 +114,8 @@ describe("BLUE COLLAR's suit", () => {
     const pads = p.front.at(-1)
     return pads?.kind === 'path' && pads.mirrored ? pads.d.split(' M')[0] : undefined
   }
-  const hasBlock = (p: Pose) => p.front.some((layer) => layer.kind === 'emblem')
+  /** The block on his chest: the emblem in the chest's ink (the axe's head wears the cape's). */
+  const hasBlock = (p: Pose) => p.front.some((layer) => layer.kind === 'emblem' && !layer.className)
 
   it('wears the same shoulder pads over everything in every pose', () => {
     const plates = new Set(every.map(padPlate))

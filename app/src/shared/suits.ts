@@ -4,7 +4,7 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { BAT_1989, BLOCK_2024, emblem, OVAL_1989 } from './emblems'
+import { BAT_1989, emblem, OVAL_1989 } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -34,10 +34,11 @@ export type Layer =
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
   /**
-   * The Theme's emblem across his chest, centred on (cx, cy), `width` units wide, and as tall as its
-   * shape makes it unless given a `height` (BLUE COLLAR's block, flattened to a slab).
+   * The Theme's emblem, centred on (cx, cy), `width` units wide, and as tall as its shape makes it
+   * unless given a `height` (BLUE COLLAR's block, flattened to a slab): across his chest, in the chest's
+   * ink, or held, in a class's colors (BLUE COLLAR's axe, in the cape's).
    */
-  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number }
+  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number; className?: string }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
@@ -1223,19 +1224,6 @@ const COLLAR_WIDE = collarMap(
  */
 const CHEST_BLOCK: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 8, height: 3 }
 
-/** The block's box on its grid. */
-const BLOCK_BOX = emblem(BLOCK_2024, 'none').bat
-/** The block as a path on his grid, centred on (cx, cy), `width` units wide: the axe's head. */
-const blockAt = (cx: number, cy: number, width: number) => {
-  const k = width / BLOCK_BOX.width
-  const [x0, y0] = [BLOCK_BOX.x + BLOCK_BOX.width / 2, BLOCK_BOX.y + BLOCK_BOX.height / 2]
-  const at = (v: number) => String(Number(v.toFixed(2)))
-  return BLOCK_2024.replace(
-    /(-?[\d.]+) (-?[\d.]+)/g,
-    (_, x: string, y: string) => `${at(cx + (Number(x) - x0) * k)} ${at(cy + (Number(y) - y0) * k)}`,
-  )
-}
-
 /** A path in the cape's black and rim, mirrored across him unless it says otherwise, smooth if curved. */
 const capePath = (d: string, { mirrored = true, smooth = false } = {}): Layer => ({
   kind: 'path',
@@ -1306,8 +1294,9 @@ const theAxe = collarPose(
   oneArmUp('left'),
   [{ kind: 'cape', d: BLADES.hanging, mirrored: true }],
   [
-    ...raisedArm(1, [{ kind: 'rects', px: [[1.2, 0, 0.6, 3]], fill: 'var(--buckle)' }]),
-    capePath(blockAt(1.5, -0.4, 4), { mirrored: false, smooth: true }),
+    ...raisedArm(1, [{ kind: 'rects', px: [[1.2, 0.8, 0.6, 2.2]], fill: 'var(--buckle)' }]),
+    // Its head, the block itself, inside the frame's top.
+    { kind: 'emblem', cx: 1.5, cy: 0.25, width: 4, className: 'clawd__cape' },
   ],
   { chest: [], pads: PADS.out },
 )
