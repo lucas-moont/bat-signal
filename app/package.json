@@ -99,12 +99,12 @@
         "to": "licenses/Barlow Semi Condensed.txt"
       },
       {
-        "from": "node_modules/@fontsource/bungee/LICENSE",
-        "to": "licenses/Bungee.txt"
-      },
-      {
         "from": "node_modules/@fontsource/big-shoulders-stencil/LICENSE",
         "to": "licenses/Big Shoulders Stencil.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/bungee/LICENSE",
+        "to": "licenses/Bungee.txt"
       },
       {
         "from": "node_modules/@fontsource/jetbrains-mono/LICENSE",
