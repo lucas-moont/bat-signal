@@ -146,8 +146,8 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
     expect(themeFromFlags(new Set(['demo', 'knightmare']))).toBe('batman-v-superman-2016')
     expect(themeFromFlags(new Set(['demo', 'yearone']))).toBe('batman-year-one-1987')
-    expect(themeFromFlags(new Set(['demo', 'collar']))).toBe('absolute-batman-2024')
     expect(themeFromFlags(new Set(['demo', 'grace']))).toBe('the-dark-knight-returns-1986')
+    expect(themeFromFlags(new Set(['demo', 'collar']))).toBe('absolute-batman-2024')
   })
 
   it('names no Theme without a Theme flag', () => {
