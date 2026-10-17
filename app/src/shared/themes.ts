@@ -5,6 +5,7 @@
 import {
   ANCIENT_GRACE_STATIC,
   BECOME_A_BAT_SMOKE,
+  BLUE_COLLAR_COLONY,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
@@ -17,6 +18,7 @@ import {
   BAT_1989,
   BAT_2008,
   BAT_2016,
+  BLOCK_2024,
   emblem,
   OVAL_1989,
   WINGS,
@@ -25,6 +27,7 @@ import {
 import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
+  BLUE_COLLAR_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
   VENGEANCE_SUIT,
@@ -34,6 +37,7 @@ import {
 import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
+  BLUE_COLLAR_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
   STANDARD_WORDS,
@@ -49,6 +53,7 @@ export const THEME_IDS = [
   'batman-v-superman-2016',
   'batman-year-one-1987',
   'the-dark-knight-returns-1986',
+  'absolute-batman-2024',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -125,6 +130,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_1986, 'none'),
     suit: ANCIENT_GRACE_SUIT,
     atmosphere: ANCIENT_GRACE_STATIC,
+  },
+  /** Scott Snyder and Nick Dragotta's Absolute Batman (2024), BLUE COLLAR: a violet night, SFX lemon. */
+  'absolute-batman-2024': {
+    flag: 'collar',
+    ground: '#0a0812',
+    words: BLUE_COLLAR_WORDS,
+    emblem: emblem(BLOCK_2024, 'none'),
+    suit: BLUE_COLLAR_SUIT,
+    atmosphere: BLUE_COLLAR_COLONY,
   },
 }
 

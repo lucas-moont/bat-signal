@@ -11,10 +11,14 @@ import { useTheme } from '../theme'
 /** The worn Theme's emblem. */
 export const useEmblem = (): Emblem => THEMES[useTheme()].emblem
 
-/** An SVG transform that draws an emblem `width` units wide, centred on (cx, cy). */
-export function batAt({ bat }: Emblem, cx: number, cy: number, width: number): string {
-  const k = width / bat.width
-  return `translate(${cx - (bat.x + bat.width / 2) * k} ${cy - (bat.y + bat.height / 2) * k}) scale(${k})`
+/**
+ * An SVG transform that draws an emblem `width` units wide, centred on (cx, cy), as tall as its shape
+ * makes it, or `height` units if given.
+ */
+export function batAt({ bat }: Emblem, cx: number, cy: number, width: number, height?: number): string {
+  const kx = width / bat.width
+  const ky = height === undefined ? kx : height / bat.height
+  return `translate(${cx - (bat.x + bat.width / 2) * kx} ${cy - (bat.y + bat.height / 2) * ky}) scale(${kx} ${ky})`
 }
 
 /**

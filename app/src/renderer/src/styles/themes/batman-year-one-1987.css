@@ -109,6 +109,8 @@
   --lens-rim: var(--blood);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
+  /* Lit, the lens prints flat: no inner shading over it (picked on screen, #122). */
+  --lens-shade: 0 0 transparent;
   --notice-top: #17190a;
   --notice-foot: var(--smoke);
   --notice-hover-top: #252810;
@@ -166,11 +168,4 @@
     var(--signal-hot) 34% 68%,
     var(--signal) 68% 100%
   );
-}
-
-/* Lit, the rings print flat, as a newsprint plate does: none of the lens's inner shading over them,
-   only its glow around (picked on screen over the shaded lens every other Theme wears). */
-:root[data-theme='batman-year-one-1987'] .disc--lit .disc__face,
-[data-theme='batman-year-one-1987'] .disc--lit .disc__face {
-  box-shadow: 0 0 18px var(--signal-glow);
 }

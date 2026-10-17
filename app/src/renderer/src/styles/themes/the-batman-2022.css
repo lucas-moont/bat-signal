@@ -126,6 +126,9 @@
   --lens-bat: #050000;
   /* An outline round the lit disc's bat, for a lens too pale to hold its shape alone: none here. */
   --lens-bat-edge: transparent;
+  --lens-shade:
+    inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);
   /* The notice card riding the beam, at rest and under the pointer. */
   --notice-top: #17110f;
   --notice-foot: #0b0807;

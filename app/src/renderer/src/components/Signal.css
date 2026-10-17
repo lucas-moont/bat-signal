@@ -72,8 +72,7 @@
   background: var(--disc-lens);
   border-color: var(--lens-rim);
   box-shadow:
-    inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
-    inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent),
+    var(--lens-shade),
     0 0 18px var(--signal-glow);
 }
 

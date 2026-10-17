@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
+  BLUE_COLLAR_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
@@ -98,5 +99,40 @@ describe('a watch on a nudged Signature pose', () => {
     ]
     const watch = watchOn(tilted, [{ look: 0.3 }, { look: -0.3 }], [{ pose, look: 0 }])
     for (const step of watch) expect(step.transform).toBe('rotate(-15deg)')
+  })
+})
+
+// BLUE COLLAR's working suit (absolute-batman.md, section 7, and its built note): his black shoulder
+// pads in every pose; the block on his chest until it comes off as the axe; and the stand on the #1
+// cover as his Signature pose, his head lowered at the end.
+describe("BLUE COLLAR's suit", () => {
+  const { poses, watch } = BLUE_COLLAR_SUIT
+  const signature = BLUE_COLLAR_SUIT.signature!
+  const every = [...poses.sleeping, ...poses.flying, ...poses.alarmed, ...signature.map((step) => step.pose)]
+  /** The plate a pose's pads begin with: its last layer, in front of everything, is the pads. */
+  const padPlate = (p: Pose) => {
+    const pads = p.front.at(-1)
+    return pads?.kind === 'path' && pads.mirrored ? pads.d.split(' M')[0] : undefined
+  }
+  /** The block on his chest: the emblem in the chest's ink (the axe's head wears the cape's). */
+  const hasBlock = (p: Pose) => p.front.some((layer) => layer.kind === 'emblem' && !layer.className)
+
+  it('wears the same shoulder pads over everything in every pose', () => {
+    const plates = new Set(every.map(padPlate))
+    expect(plates.size).toBe(1)
+    expect([...plates][0]).toBeDefined()
+  })
+
+  it('takes the block off his chest only when it is the axe he raises', () => {
+    expect(poses.flying.every(hasBlock)).toBe(true)
+    expect(signature.every((step) => hasBlock(step.pose))).toBe(true)
+    expect(poses.alarmed.some(hasBlock)).toBe(false)
+  })
+
+  // The perch holds the stand the reveal ends on, glancing along the street from it.
+  it('holds his stand on the perch', () => {
+    const stand = scriptAt(signature, Infinity).pose
+    for (const step of watch) expect(step.pose).toBe(stand)
+    expect(watch.filter((step) => step.look !== 0)).toHaveLength(2)
   })
 })

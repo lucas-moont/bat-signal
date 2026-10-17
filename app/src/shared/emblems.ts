@@ -78,6 +78,19 @@ export const BAT_1986 =
   'L115.5 25.4 L113.5 20.1 L110.5 14.7 L105.5 8 L100.5 3 L96.8 0 L89.3 2 L81.9 3.7 L74.4 4.7 ' +
   'L67.3 4.7 L65.6 2 L64.1 5.5 Z'
 
+/**
+ * BLUE COLLAR's block, after Absolute Batman (2024), on the same 120x48 grid: the chest plate that
+ * comes off as an axe's head, traced from DC's flat insignia variant cover for #1 (absolute-batman.md,
+ * built note). About 1.65:1 with its spikes, 2.07:1 without: a slab whose sides bow out, a wing-tip
+ * horn at each upper corner, a spike a side and two ears along a nearly straight top, and along the
+ * bottom a spike at each corner, one a side and a wide V at the middle. Mirrored at x = 60.
+ */
+export const BLOCK_2024 =
+  'M60 4.7 L58.9 4.7 L56.9 0 L55.3 4.7 L41 5 L39.6 1.4 L38.4 5 L24.8 5.9 L23.6 1.5 L21.1 13.4 ' +
+  'L20.3 25.1 L21.7 41.7 L23.7 47 L24.9 42.7 L38.7 42.7 L40.6 47.3 L41.9 42.8 L56.8 42.9 L60 48 ' +
+  'L63.2 42.9 L78.1 42.8 L79.4 47.3 L81.3 42.7 L95.1 42.7 L96.3 47 L98.3 41.7 L99.7 25.1 L98.9 13.4 ' +
+  'L96.4 1.5 L95.2 5.9 L81.6 5 L80.4 1.4 L79 5 L64.7 4.7 L63.1 0 L61.1 4.7 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 

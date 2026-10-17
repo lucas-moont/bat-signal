@@ -9,6 +9,7 @@ import { THEME_IDS, THEMES } from '../src/shared/themes'
 import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
+  BLUE_COLLAR_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
   STANDARD_WORDS,
@@ -250,5 +251,46 @@ describe("each Theme's Voice", () => {
         expect(said.get(line) ?? theme, `"${line}" in ${theme}`).toBe(theme)
         said.set(line, theme)
       }
+  })
+})
+
+describe("BLUE COLLAR's words", () => {
+  const { terms, voice } = BLUE_COLLAR_WORDS
+
+  // A work site (absolute-batman.md, section 6): Case and Needs you stay; the stamps are a permit
+  // asked for, a fuse blown, a machine jammed. PERMIT? keeps its question mark: bare, it reads granted.
+  it('speak a work-site Lexicon', () => {
+    expect(terms.case).toEqual(STANDARD_TERMS.case)
+    expect(terms.needsYou).toEqual(STANDARD_TERMS.needsYou)
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Permit?',
+      error: 'Blown',
+      waiting: 'Asking',
+      stalled: 'Jammed',
+    })
+  })
+
+  it('dates its shift notes on the night shift, in the 24-hour clock', () => {
+    expect(voice.report.name).toBe('Shift notes')
+    expect(voice.report.dateline(new Date(2026, 9, 14, 2, 14))).toBe('NIGHT SHIFT · 02:14')
+  })
+
+  it('sends you home only when nothing waits on your bench', () => {
+    expect(voice.report.end(2)).toBe("Tools stay out. There's work on your bench.")
+    expect(voice.report.end(0)).toBe('Tools down. Go home.')
+  })
+
+  it('holds the grid when all is clear', () => {
+    expect(voice.empty.quiet.title).toBe("The grid's holding.")
+    expect(voice.empty.noCases.title(terms)).toBe('No cases running. Clock out.')
+    expect(voice.signal.openTip(false)).toMatch(/^The grid's holding\. /)
+    expect(voice.signal.openTip(true)).not.toMatch(/grid/)
+  })
+
+  it('names its bats and its toolbox', () => {
+    expect(voice.settings.kicker).toBe('Toolbox')
+    expect(voice.settings.atmosphere.label).toBe('Bats')
+    expect(voice.settings.atmosphere.hint(terms)).toBe('Bats over Gotham behind the cases')
   })
 })

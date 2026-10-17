@@ -33,8 +33,12 @@ export type Layer =
     }
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
-  /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
-  | { kind: 'emblem'; cx: number; cy: number; width: number }
+  /**
+   * The Theme's emblem, centred on (cx, cy), `width` units wide, and as tall as its shape makes it
+   * unless given a `height` (BLUE COLLAR's block, flattened to a slab): across his chest, in the chest's
+   * ink, or held, in a class's colors (BLUE COLLAR's axe, in the cape's).
+   */
+  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number; className?: string }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
@@ -1176,5 +1180,220 @@ export const ANCIENT_GRACE_SUIT: Suit = {
   watch: watchOn(THE_LEAP, [{ look: GAZE }, { look: 0, lookY: 0.4 }]),
   signature: THE_LEAP,
   // Lightning Cyan is the Alarm color and never shows at rest: the bolt is white, lit blue.
+  aura: 'alarmed',
+}
+
+// --- BLUE COLLAR: the working suit, after Scott Snyder and Nick Dragotta's Absolute Batman
+// (absolute-batman.md, section 7). The hulking city engineer: a cold teal suit over huge round
+// shoulders, black stripes on his forearms, the block across his chest that comes off as an axe's
+// head, an olive belt with its pouches, and a black cape whose hem ends in long blades. ---
+
+/**
+ * Below the cowl, his shoulders: round, past his body each side, wider than his waist, so he tapers
+ * to the belt as the #1 cover draws him (DKR's bulk is a barrel; his is a wedge).
+ */
+const COLLAR_SHOULDERS = ['..SSSSSSSSSSSS..', '.SSSSSSSSSSSSSS.', 'SSSSSSSSSSSSSSSS', 'SSSSSSSSSSSSSSSS']
+/** His arms hanging apart from his body, black stripes across the forearms, down to his gloves. */
+const ARMS_DOWN = ['.g.SSSSSSSSSS.g.', '.S.SSSSSSSSSS.S.', '.g.SSSSSSSSSS.g.']
+/** The olive belt, its pouches darker. */
+const BELT = '...bbkbbbbkbb...'
+/**
+ * The belt a full unit, his gloves hanging beside it; then the black trunks he wears over the suit,
+ * his teal legs and black boots.
+ */
+const COLLAR_BELOW = ['.g.bbkbbbbkbb.g.', BELT, '...cccccccccc...', '....S.S..S.S....', '....g.g..g.g....']
+/** A row with one of his arms raised out of the map: its three columns at that side blanked. */
+const armRaised = (side: 'left' | 'right') => (row: string) =>
+  side === 'left' ? `...${row.slice(3)}` : `${row.slice(0, 13)}...`
+const collarMap = (arms: readonly string[], below: readonly string[] = COLLAR_BELOW) =>
+  map([], [...COLLAR_SHOULDERS, ...arms, ...below])
+/** One arm raised, the other hanging, its glove beside the belt. */
+const oneArmUp = (side: 'left' | 'right') =>
+  collarMap(ARMS_DOWN.map(armRaised(side)), [armRaised(side)(COLLAR_BELOW[0]!), ...COLLAR_BELOW.slice(1)])
+const COLLAR_STANDING = collarMap(ARMS_DOWN)
+const COLLAR_SEATED = collarMap([SUIT, SUIT, SUIT, SUIT], [])
+/** Standing wide as on the #1 cover: his arms drawn in front of him, his feet planted apart. */
+const COLLAR_WIDE = collarMap(
+  [SUIT, SUIT, SUIT],
+  [BELT, BELT, COLLAR_BELOW[2]!, '...SS......SS...', '...gg......gg...'],
+)
+
+/**
+ * The block across his chest, a flat slab 8 units wide and 3 tall, from under his jaw to the belt
+ * (picked on screen, #121: the insignia's own 1.65:1 read as a mouth under the orange jaw).
+ */
+const CHEST_BLOCK: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 8, height: 3 }
+
+/**
+ * A path in the cape's black and rim (the cape, and what is made like it: his pads), mirrored
+ * across him unless it says otherwise, smooth if curved.
+ */
+const inCape = (d: string, { mirrored = true, smooth = false } = {}): Layer => ({
+  kind: 'path',
+  d,
+  className: 'clawd__cape',
+  mirrored,
+  smooth,
+})
+
+/** The cape's hem in long blades, the outer one hooked. */
+const BLADES = {
+  /** Hanging behind him, three blades a side (left half; mirrored). */
+  hanging:
+    'M8 5 L1 5 L0.2 8.6 L-0.6 11.9 L0.2 11.3 L0.8 10.5 L1.6 11.9 L2.4 10.5 L3.2 11.9 L4 10.4 L8 10.4 Z',
+  /** Closed round him, asleep. */
+  wrapped:
+    'M2.6 6.4 L13.4 6.4 L14.6 11.6 L13.6 10.4 L12.8 11.6 L12 10.4 L11.2 11.4 L4.8 11.4 L4 10.4 ' +
+    'L3.2 11.6 L2.4 10.4 L1.4 11.6 Z',
+  /** Swinging out behind him on the line, its blades trailing to the left. */
+  swung:
+    'M3 5 L13 5 L13 10 L10 10.4 L8 11.6 L7 10.2 L5 11.6 L4.4 10 L2 11.4 L1.4 9.6 L-1.4 10.8 L-1 9 ' +
+    'L-3.8 9.6 L-2.6 7.6 L-5.6 7.6 Z',
+}
+
+/** A shoulder pad's plate, capping his shoulder and running a little way down his arm (left half). */
+const PAD = 'M3.6 5 L3.6 6.1 Q1.9 6.3 0.3 7.3 L-0.1 6.3 Q0.3 4.8 2.2 4.6 Z'
+/** Where each of a pad's three spikes stands on it: its left and right foot (left half). */
+const SPIKE_FEET = [
+  [0.6, 5.4, 1, 5.1],
+  [1.6, 4.8, 2.1, 4.7],
+  [2.8, 4.7, 3.3, 4.7],
+] as const
+/** His pads with their spikes out to these tips. */
+const padsTo = (tips: readonly (readonly [number, number])[]) =>
+  inCape(
+    [
+      PAD,
+      ...SPIKE_FEET.map(
+        ([x0, y0, x1, y1], i) => `M${x0} ${y0} L${tips[i]![0]} ${tips[i]![1]} L${x1} ${y1} Z`,
+      ),
+    ].join(' '),
+    { smooth: true },
+  )
+/**
+ * His shoulder pads, as on the #1 cover: black plates over his arms (mirrored), small spikes along
+ * their tops, or the spikes out long when something needs the user.
+ */
+const PADS = {
+  rest: padsTo([
+    [0.2, 4.6],
+    [1.5, 4],
+    [2.9, 3.9],
+  ]),
+  out: padsTo([
+    [-0.2, 3.6],
+    [1.2, 3.2],
+    [3, 3],
+  ]),
+}
+
+/** A pose in the working suit: the block on his chest and his pads at rest, unless it says otherwise. */
+const collarPose = (
+  map: OutfitMap,
+  behind: Layer[],
+  front: Layer[] = [],
+  { chest = [CHEST_BLOCK], pads = PADS.rest }: { chest?: Layer[]; pads?: Layer } = {},
+) => pose(map, behind, [...front, pads], { chest })
+
+/** An arm raised at column `x`, its glove a unit above his shoulder, holding `held` under the glove. */
+const raisedArm = (x: number, held: Layer[] = []): Layer[] => [
+  { kind: 'rects', px: [[x, 3, 1, 3]], fill: 'var(--suit)' },
+  ...held,
+  { kind: 'rects', px: [[x, 2, 1, 1]], fill: 'var(--gloves)' },
+]
+
+/** The tether up from his raised right hand, past the frame's top. */
+const LINE: Layer = { kind: 'path', d: 'M14 4 L14.5 4 L16.5 -2 L16 -2 Z', fill: 'var(--cowl-edge)' }
+/** On a line (flying): his right hand up on the tether, the cape swung out behind him. */
+const onALine = collarPose(oneArmUp('right'), [{ kind: 'cape', d: BLADES.swung }, LINE], raisedArm(14))
+
+/**
+ * The axe (alarmed): the block gone from his chest, its head raised over his left shoulder on a
+ * short handle down to his hand, his shoulder spikes out.
+ */
+const theAxe = collarPose(
+  oneArmUp('left'),
+  [{ kind: 'cape', d: BLADES.hanging, mirrored: true }],
+  [
+    ...raisedArm(1, [{ kind: 'rects', px: [[1.2, 0.8, 0.6, 2.2]], fill: 'var(--buckle)' }]),
+    // Its head, the block itself, inside the frame's top.
+    { kind: 'emblem', cx: 1.5, cy: 0.25, width: 4, className: 'clawd__cape' },
+  ],
+  { chest: [], pads: PADS.out },
+)
+
+/** Standing, the cape hanging in its blades. */
+const standing = collarPose(COLLAR_STANDING, [{ kind: 'cape', d: BLADES.hanging, mirrored: true }])
+
+/**
+ * His arms on the #1 cover: from the shoulder down and in to the hand at his hip, a straight
+ * diagonal, two black stripes across the forearm, then the glove (left; mirrored).
+ */
+const ARM_IN: Layer[] = [
+  { kind: 'path', d: 'M1.63 5.6 L5.22 8.05 L4.61 8.97 L0.97 6.6 Z', fill: 'var(--suit)', mirrored: true },
+  {
+    kind: 'path',
+    d:
+      'M3.73 7 L4.15 7.28 L3.49 8.28 L3.07 8 Z M4.48 7.52 L4.9 7.8 L4.25 8.77 L3.83 8.49 Z ' +
+      'M5.17 7.94 L5.84 8.38 L5.16 9.42 L4.48 8.97 Z',
+    fill: 'var(--gloves)',
+    mirrored: true,
+  },
+]
+/**
+ * The cape on the #1 cover (drawn with the maintainer on screen, #121): none of it hangs behind him,
+ * so the night shows past his sides and between his legs; in front, a strip along each arm from the
+ * shoulder to the hand at his hip, then the cloth running on past the hand and crossing to the
+ * opposite foot. Its edges curve as the cover's cloth does (left halves; mirrored).
+ */
+const STAND_CAPE = {
+  /** A narrow strip along the outside of his arm, shoulder to hand (drawn under the arm). */
+  sleeve: 'M1.02 6.52 Q3 7.6 4.8 9.04 L4.55 9.41 Q2.6 8.2 0.75 6.93 Z',
+  /** Just taken in his hand: a short fall below it. */
+  gripped: 'M4.6 8.8 L6.2 8.8 Q6.4 9.8 7.2 10.6 Q5.4 10.2 4.6 8.8 Z',
+  /**
+   * Pulled across him: from his left hand down and across to his right foot, curving, wide as a wing,
+   * its lower edge scalloped to a wing tip at the outer corner; mirrored, the right hand's crosses
+   * over it to his left foot, an X in front of his legs. Its tips stop above the frame's last row,
+   * which the perch keeps below the window's edge.
+   */
+  taut: 'M4.6 9 L6.2 9 Q9.4 10.1 13.8 10.8 L13 11.25 L12 10.95 L11.2 11.25 L10 11 L9 11.25 Q6.8 10.6 4.6 9 Z',
+}
+/** Standing as on the #1 cover, the cape's fall from his hands as `fall` draws it. */
+const holding = (fall: string) =>
+  collarPose(
+    COLLAR_WIDE,
+    [],
+    [inCape(STAND_CAPE.sleeve, { smooth: true }), ...ARM_IN, inCape(fall, { smooth: true })],
+  )
+const pulledTaut = holding(STAND_CAPE.taut)
+/**
+ * The stand on the #1 cover (the Signature pose, picked on screen, #121): feet planted wide, he
+ * takes the cape's edges at his hips and pulls it taut in front of him. His eyes stay level: lowered,
+ * they would sit on his jaw (the Costume Rule keeps them in the cowl).
+ */
+const THE_STAND: Script = [
+  { pose: standing, look: 0 },
+  { pose: holding(STAND_CAPE.gripped), look: 0 },
+  { pose: pulledTaut, look: 0 },
+]
+
+/** Asleep, wrapped in the cape, his shoulder pads over it. */
+const wrapped = seated(COLLAR_SEATED, BLADES.wrapped)
+const asleep: Pose = { ...wrapped, front: [...wrapped.front, PADS.rest] }
+
+export const BLUE_COLLAR_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [asleep],
+    flying: [
+      { ...onALine, transform: 'rotate(3deg)' },
+      { ...onALine, transform: 'rotate(-3deg)' },
+    ],
+    alarmed: [theAxe],
+  },
+  watch: watchOn(THE_STAND, [{ look: -GAZE }, { look: GAZE }]),
+  signature: THE_STAND,
+  // SFX Lemon is the Alarm color and never shows at rest.
   aura: 'alarmed',
 }
