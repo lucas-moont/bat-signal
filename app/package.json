@@ -99,6 +99,10 @@
         "to": "licenses/Barlow Semi Condensed.txt"
       },
       {
+        "from": "node_modules/@fontsource/bungee/LICENSE",
+        "to": "licenses/Bungee.txt"
+      },
+      {
         "from": "node_modules/@fontsource/big-shoulders-stencil/LICENSE",
         "to": "licenses/Big Shoulders Stencil.txt"
       },
@@ -121,6 +125,10 @@
       {
         "from": "node_modules/@fontsource/permanent-marker/LICENSE",
         "to": "licenses/Permanent Marker.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/shantell-sans/LICENSE",
+        "to": "licenses/Shantell Sans.txt"
       },
       {
         "from": "node_modules/@fontsource/special-elite/LICENSE",
