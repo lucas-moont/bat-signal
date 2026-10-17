@@ -826,5 +826,7 @@ export const BLUE_COLLAR_WORDS: Words = {
       kicker: 'Toolbox',
       atmosphere: { label: 'Bats', hint: (t) => `Bats over Gotham behind the ${lower(t.case.many)}` },
     },
+    // On the perch he stands as on the #1 cover.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd holding his cape across him' },
   },
 }
