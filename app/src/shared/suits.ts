@@ -33,8 +33,11 @@ export type Layer =
     }
   /** Rects in one color, or in a class's, at an opacity if faint (a faint light behind his eyes). */
   | { kind: 'rects'; px: readonly Px[]; fill?: string; className?: string; opacity?: number }
-  /** The Theme's emblem across his chest, centred on (cx, cy), `width` units wide. */
-  | { kind: 'emblem'; cx: number; cy: number; width: number }
+  /**
+   * The Theme's emblem across his chest, centred on (cx, cy), `width` units wide, and as tall as its
+   * shape makes it unless given a `height` (BLUE COLLAR's block, flattened to a slab).
+   */
+  | { kind: 'emblem'; cx: number; cy: number; width: number; height?: number }
   /**
    * A cape behind him (the Costume Rule): its cloth, with its rim cut away over his body (BODY_BOX)
    * so it reads as behind him. Mirrored like a path.
@@ -1191,59 +1194,63 @@ export const ANCIENT_GRACE_SUIT: Suit = {
 const COLLAR_SHOULDERS = ['..SSSSSSSSSSSS..', '.SSSSSSSSSSSSSS.', 'SSSSSSSSSSSSSSSS', 'SSSSSSSSSSSSSSSS']
 /** His arms hanging apart from his body, black stripes across the forearms, down to his gloves. */
 const ARMS_DOWN = ['.g.SSSSSSSSSS.g.', '.S.SSSSSSSSSS.S.', '.g.SSSSSSSSSS.g.']
-/** His left arm hanging, his right one raised out of the map. */
-const LEFT_ARM_DOWN = ['.g.SSSSSSSSSS...', '.S.SSSSSSSSSS...', '.g.SSSSSSSSSS...']
-/** His right arm hanging, his left one raised out of the map. */
-const RIGHT_ARM_DOWN = ['...SSSSSSSSSS.g.', '...SSSSSSSSSS.S.', '...SSSSSSSSSS.g.']
+/** The olive belt, its pouches darker. */
+const BELT = '...bbkbbbbkbb...'
 /**
- * The olive belt, a full unit, its pouches darker, his gloves hanging beside it; then the black trunks
- * he wears over the suit, his teal legs and black boots.
+ * The belt a full unit, his gloves hanging beside it; then the black trunks he wears over the suit,
+ * his teal legs and black boots.
  */
-const COLLAR_BELOW = [
-  '.g.bbkbbbbkbb.g.',
-  '...bbkbbbbkbb...',
-  '...cccccccccc...',
-  '....S.S..S.S....',
-  '....g.g..g.g....',
-]
-const collarMap = (arms: readonly string[], below = COLLAR_BELOW) =>
-  map([], [...COLLAR_SHOULDERS, ...arms, ...below], LEGEND, HEAD)
+const COLLAR_BELOW = ['.g.bbkbbbbkbb.g.', BELT, '...cccccccccc...', '....S.S..S.S....', '....g.g..g.g....']
+/** A row with one of his arms raised out of the map: its three columns at that side blanked. */
+const armRaised = (side: 'left' | 'right') => (row: string) =>
+  side === 'left' ? `...${row.slice(3)}` : `${row.slice(0, 13)}...`
+const collarMap = (arms: readonly string[], below: readonly string[] = COLLAR_BELOW) =>
+  map([], [...COLLAR_SHOULDERS, ...arms, ...below])
+/** One arm raised, the other hanging, its glove beside the belt. */
+const oneArmUp = (side: 'left' | 'right') =>
+  collarMap(ARMS_DOWN.map(armRaised(side)), [armRaised(side)(COLLAR_BELOW[0]!), ...COLLAR_BELOW.slice(1)])
 const COLLAR_STANDING = collarMap(ARMS_DOWN)
-const COLLAR_RIGHT_UP = collarMap(LEFT_ARM_DOWN, ['.g.bbkbbbbkbb...', ...COLLAR_BELOW.slice(1)])
-const COLLAR_LEFT_UP = collarMap(RIGHT_ARM_DOWN, ['...bbkbbbbkbb.g.', ...COLLAR_BELOW.slice(1)])
-const COLLAR_SEATED = map([], [...COLLAR_SHOULDERS, SUIT, SUIT, SUIT, SUIT], LEGEND, HEAD)
+const COLLAR_SEATED = collarMap([SUIT, SUIT, SUIT, SUIT], [])
+/** Standing wide as on the #1 cover: his arms drawn in front of him, his feet planted apart. */
+const COLLAR_WIDE = collarMap(
+  [SUIT, SUIT, SUIT],
+  [BELT, BELT, COLLAR_BELOW[2]!, '...SS......SS...', '...gg......gg...'],
+)
 
 /**
- * The block (BLOCK_2024) as a path on his grid, centred on (cx, cy), `width` units wide and as tall as
- * its own shape makes it, unless given a height.
+ * The block across his chest, a flat slab 8 units wide and 3 tall, from under his jaw to the belt
+ * (picked on screen, #121: the insignia's own 1.65:1 read as a mouth under the orange jaw).
  */
-const blockAt = (cx: number, cy: number, width: number, height?: number) => {
-  const box = emblem(BLOCK_2024, 'none').bat
-  const [kx, ky] = [width / box.width, (height ?? (width * box.height) / box.width) / box.height]
+const CHEST_BLOCK: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 8, height: 3 }
+
+/** The block's box on its grid. */
+const BLOCK_BOX = emblem(BLOCK_2024, 'none').bat
+/** The block as a path on his grid, centred on (cx, cy), `width` units wide: the axe's head. */
+const blockAt = (cx: number, cy: number, width: number) => {
+  const k = width / BLOCK_BOX.width
+  const [x0, y0] = [BLOCK_BOX.x + BLOCK_BOX.width / 2, BLOCK_BOX.y + BLOCK_BOX.height / 2]
   const at = (v: number) => String(Number(v.toFixed(2)))
   return BLOCK_2024.replace(
     /(-?[\d.]+) (-?[\d.]+)/g,
-    (_, x: string, y: string) =>
-      `${at(cx + (Number(x) - box.x - box.width / 2) * kx)} ${at(cy + (Number(y) - box.y - box.height / 2) * ky)}`,
+    (_, x: string, y: string) => `${at(cx + (Number(x) - x0) * k)} ${at(cy + (Number(y) - y0) * k)}`,
   )
 }
 
-/**
- * The block across his chest, a flat slab 8 units wide and 3 tall, from under his jaw to the belt:
- * its outline stretched from the insignia's 1.65:1 (picked on screen over the true shape and a slab
- * pec to pec, #121).
- */
-const CHEST_BLOCK: Layer = {
+/** A path in the cape's black and rim, mirrored across him unless it says otherwise, smooth if curved. */
+const capePath = (d: string, { mirrored = true, smooth = false } = {}): Layer => ({
   kind: 'path',
-  d: blockAt(8, 6.6, 8, 3),
-  className: 'clawd__emblem',
-  smooth: true,
-}
+  d,
+  className: 'clawd__cape',
+  mirrored,
+  smooth,
+})
 
-/** The cape's hem: three long blades a side, the outer one hooked (left half; mirrored). */
+/** The cape's hem in long blades, the outer one hooked. */
 const BLADES = {
+  /** Hanging behind him, three blades a side (left half; mirrored). */
   hanging:
     'M8 5 L1 5 L0.2 8.6 L-0.6 11.9 L0.2 11.3 L0.8 10.5 L1.6 11.9 L2.4 10.5 L3.2 11.9 L4 10.4 L8 10.4 Z',
+  /** Closed round him, asleep. */
   wrapped:
     'M2.6 6.4 L13.4 6.4 L14.6 11.6 L13.6 10.4 L12.8 11.6 L12 10.4 L11.2 11.4 L4.8 11.4 L4 10.4 ' +
     'L3.2 11.6 L2.4 10.4 L1.4 11.6 Z',
@@ -1253,64 +1260,61 @@ const BLADES = {
     'L-3.8 9.6 L-2.6 7.6 L-5.6 7.6 Z',
 }
 
+/** A shoulder pad's plate, capping his shoulder and running a little way down his arm (left half). */
+const PAD = 'M3.6 5 L3.6 6.1 Q1.9 6.3 0.3 7.3 L-0.1 6.3 Q0.3 4.8 2.2 4.6 Z'
 /**
- * His shoulder pads, as on the #1 cover: black plates capping his shoulders and running a little way
- * down the outside of his arms, small spikes along their tops (left half; mirrored). Over his arms.
+ * His shoulder pads, as on the #1 cover: black plates over his arms (mirrored), small spikes along
+ * their tops, or the spikes out long when something needs the user.
  */
-const PADS: Layer = {
-  kind: 'path',
-  d:
-    'M3.6 5 L3.6 6.1 Q1.9 6.3 0.3 7.3 L-0.1 6.3 Q0.3 4.8 2.2 4.6 Z ' +
-    'M0.6 5.4 L0.2 4.6 L1 5.1 Z M1.6 4.8 L1.5 4 L2.1 4.7 Z M2.8 4.7 L2.9 3.9 L3.3 4.7 Z',
-  fill: 'var(--cowl)',
-  className: 'clawd__cape',
-  mirrored: true,
-  smooth: true,
+const PADS = {
+  rest: capePath(
+    `${PAD} M0.6 5.4 L0.2 4.6 L1 5.1 Z M1.6 4.8 L1.5 4 L2.1 4.7 Z M2.8 4.7 L2.9 3.9 L3.3 4.7 Z`,
+    {
+      smooth: true,
+    },
+  ),
+  out: capePath(`${PAD} M0.6 5.4 L-0.2 3.6 L1 5.1 Z M1.6 4.8 L1.2 3.2 L2.1 4.7 Z M2.8 4.7 L3 3 L3.3 4.7 Z`, {
+    smooth: true,
+  }),
 }
 
-/** A pose in the working suit, its shoulder pads on, the block on his chest unless it says otherwise. */
-const collarPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: Layer[] = [CHEST_BLOCK]) =>
-  pose(map, behind, [...front, PADS], { chest })
+/** A pose in the working suit: the block on his chest and his pads at rest, unless it says otherwise. */
+const collarPose = (
+  map: OutfitMap,
+  behind: Layer[],
+  front: Layer[] = [],
+  { chest = [CHEST_BLOCK], pads = PADS.rest }: { chest?: Layer[]; pads?: Layer } = {},
+) => pose(map, behind, [...front, pads], { chest })
+
+/** An arm raised at column `x`, its glove a unit above his shoulder, holding `held` under the glove. */
+const raisedArm = (x: number, held: Layer[] = []): Layer[] => [
+  { kind: 'rects', px: [[x, 3, 1, 3]], fill: 'var(--suit)' },
+  ...held,
+  { kind: 'rects', px: [[x, 2, 1, 1]], fill: 'var(--gloves)' },
+]
 
 /** The tether up from his raised right hand, past the frame's top. */
 const LINE: Layer = { kind: 'path', d: 'M14 4 L14.5 4 L16.5 -2 L16 -2 Z', fill: 'var(--cowl-edge)' }
 /** On a line (flying): his right hand up on the tether, the cape swung out behind him. */
-const onALine = collarPose(
-  COLLAR_RIGHT_UP,
-  [{ kind: 'cape', d: BLADES.swung }, LINE],
-  [
-    { kind: 'rects', px: [[14, 3, 1, 3]], fill: 'var(--suit)' },
-    { kind: 'rects', px: [[14, 2, 1, 1]], fill: 'var(--gloves)' },
-  ],
-)
+const onALine = collarPose(oneArmUp('right'), [{ kind: 'cape', d: BLADES.swung }, LINE], raisedArm(14))
 
-/** His shoulder spikes, out when something needs the user (left half; mirrored). */
-const SPIKES = 'M1 5.4 L1.2 3.4 L2 5 Z M2.4 5 L3 3.2 L3.6 5 Z'
 /**
  * The axe (alarmed): the block gone from his chest, its head raised over his left shoulder on a
  * short handle down to his hand, his shoulder spikes out.
  */
 const theAxe = collarPose(
-  COLLAR_LEFT_UP,
+  oneArmUp('left'),
   [{ kind: 'cape', d: BLADES.hanging, mirrored: true }],
   [
-    { kind: 'path', d: SPIKES, fill: 'var(--cowl)', className: 'clawd__cape', mirrored: true },
-    { kind: 'rects', px: [[1, 3, 1, 3]], fill: 'var(--suit)' },
-    { kind: 'rects', px: [[1.2, 0, 0.6, 3]], fill: 'var(--buckle)' },
-    { kind: 'rects', px: [[1, 2, 1, 1]], fill: 'var(--gloves)' },
-    { kind: 'path', d: blockAt(1.5, -0.4, 4), className: 'clawd__cape', smooth: true },
+    ...raisedArm(1, [{ kind: 'rects', px: [[1.2, 0, 0.6, 3]], fill: 'var(--buckle)' }]),
+    capePath(blockAt(1.5, -0.4, 4), { mirrored: false, smooth: true }),
   ],
-  [],
+  { chest: [], pads: PADS.out },
 )
 
 /** Standing, the cape hanging in its blades. */
 const standing = collarPose(COLLAR_STANDING, [{ kind: 'cape', d: BLADES.hanging, mirrored: true }])
 
-/** Standing wide as on the #1 cover: his arms brought in front of him, his feet planted apart. */
-const COLLAR_WIDE = collarMap(
-  [SUIT, SUIT, SUIT],
-  ['...bbkbbbbkbb...', '...bbkbbbbkbb...', '...cccccccccc...', '...SS......SS...', '...gg......gg...'],
-)
 /**
  * His arms on the #1 cover: from the shoulder down and in to the hand at his hip, a straight
  * diagonal, two black stripes across the forearm, then the glove (left; mirrored).
@@ -1327,10 +1331,10 @@ const ARM_IN: Layer[] = [
   },
 ]
 /**
- * The cape on the #1 cover, from the maintainer's notes: none of it hangs behind him, so the night
- * shows past his sides and between his legs; in front, a strip along each arm from the shoulder to the hand
- * at his hip, then the cloth running on past the hand and crossing to the opposite foot. Its edges
- * curve as the cover's cloth does (left halves; mirrored).
+ * The cape on the #1 cover (drawn with the maintainer on screen, #121): none of it hangs behind him,
+ * so the night shows past his sides and between his legs; in front, a strip along each arm from the
+ * shoulder to the hand at his hip, then the cloth running on past the hand and crossing to the
+ * opposite foot. Its edges curve as the cover's cloth does (left halves; mirrored).
  */
 const STAND_CAPE = {
   /** A narrow strip along the outside of his arm, shoulder to hand (drawn under the arm). */
@@ -1342,34 +1346,30 @@ const STAND_CAPE = {
    * its lower edge scalloped to a wing tip at the outer corner; mirrored, the right hand's crosses
    * over it to his left foot, an X in front of his legs.
    */
-  taut: 'M4.6 9 L6.2 9 Q9.4 10.2 13.8 11.2 L13 11.8 L12 11.4 L11.2 12 L10 11.5 L9 12 ' + 'Q6.8 10.8 4.6 9 Z',
+  taut: 'M4.6 9 L6.2 9 Q9.4 10.2 13.8 11.2 L13 11.8 L12 11.4 L11.2 12 L10 11.5 L9 12 Q6.8 10.8 4.6 9 Z',
 }
 /** Standing as on the #1 cover, the cape's fall from his hands as `fall` draws it. */
 const holding = (fall: string) =>
   collarPose(
     COLLAR_WIDE,
     [],
-    [
-      { kind: 'path', d: STAND_CAPE.sleeve, className: 'clawd__cape', mirrored: true, smooth: true },
-      ...ARM_IN,
-      { kind: 'path', d: fall, className: 'clawd__cape', mirrored: true, smooth: true },
-    ],
+    [capePath(STAND_CAPE.sleeve, { smooth: true }), ...ARM_IN, capePath(fall, { smooth: true })],
   )
+const pulledTaut = holding(STAND_CAPE.taut)
 /**
- * The stand on the #1 cover (the Signature pose, the maintainer's pick over the dossier's three):
- * feet planted wide, he takes the cape's edges at his hips, pulls it taut in front of him, and
- * lowers his head.
+ * The stand on the #1 cover (the Signature pose, picked on screen, #121): feet planted wide, he
+ * takes the cape's edges at his hips, pulls it taut in front of him, and lowers his head.
  */
 const THE_STAND: Script = [
   { pose: standing, look: 0 },
   { pose: holding(STAND_CAPE.gripped), look: 0 },
-  { pose: holding(STAND_CAPE.taut), look: 0 },
-  { pose: holding(STAND_CAPE.taut), look: 0, lookY: 0.4 },
+  { pose: pulledTaut, look: 0 },
+  { pose: pulledTaut, look: 0, lookY: 0.4 },
 ]
 
 /** Asleep, wrapped in the cape, his shoulder pads over it. */
 const wrapped = seated(COLLAR_SEATED, BLADES.wrapped)
-const asleep: Pose = { ...wrapped, front: [...wrapped.front, PADS] }
+const asleep: Pose = { ...wrapped, front: [...wrapped.front, PADS.rest] }
 
 export const BLUE_COLLAR_SUIT: Suit = {
   eyes: EYES,
