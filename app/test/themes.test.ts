@@ -71,6 +71,14 @@ describe('the Themes', () => {
     })
   })
 
+  // With both creators' first names, or "and", the credit ran to a third line on its folder.
+  it("names BLUE COLLAR after Snyder & Dragotta's Absolute Batman", () => {
+    expect(THEMES['absolute-batman-2024'].words.voice.theme).toEqual({
+      name: 'BLUE COLLAR',
+      film: "Snyder & Dragotta's Absolute\u00a0Batman",
+    })
+  })
+
   // The demo page's hash splits on "-" (#demo-watch-report → demo, watch, report).
   it('each have a one-word demo flag of their own', () => {
     const flags = THEME_IDS.map((id) => THEMES[id].flag)
@@ -138,6 +146,7 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'protector']))).toBe('the-dark-knight-2008')
     expect(themeFromFlags(new Set(['demo', 'knightmare']))).toBe('batman-v-superman-2016')
     expect(themeFromFlags(new Set(['demo', 'yearone']))).toBe('batman-year-one-1987')
+    expect(themeFromFlags(new Set(['demo', 'collar']))).toBe('absolute-batman-2024')
     expect(themeFromFlags(new Set(['demo', 'grace']))).toBe('the-dark-knight-returns-1986')
   })
 
