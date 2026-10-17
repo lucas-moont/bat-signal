@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
+  BLUE_COLLAR_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
@@ -98,5 +99,34 @@ describe('a watch on a nudged Signature pose', () => {
     ]
     const watch = watchOn(tilted, [{ look: 0.3 }, { look: -0.3 }], [{ pose, look: 0 }])
     for (const step of watch) expect(step.transform).toBe('rotate(-15deg)')
+  })
+})
+
+// BLUE COLLAR's working suit (absolute-batman.md, section 7, and its built note): his black shoulder
+// pads in every pose; the block on his chest until it comes off as the axe; and the stand on the #1
+// cover as his Signature pose, his head lowered at the end.
+describe("BLUE COLLAR's suit", () => {
+  const { poses, signature, watch } = BLUE_COLLAR_SUIT
+  const front = (p: Pose) => p.front.flatMap((layer) => (layer.kind === 'path' ? [layer] : []))
+  const hasPads = (p: Pose) => front(p).some((layer) => layer.d.startsWith('M3.6 5 L3.6 6.1'))
+  const hasBlock = (p: Pose) => front(p).some((layer) => layer.className === 'clawd__emblem')
+  const every = [...poses.sleeping, ...poses.flying, ...poses.alarmed, ...signature!.map((step) => step.pose)]
+
+  it('wears his shoulder pads in every pose', () => {
+    for (const p of every) expect(hasPads(p)).toBe(true)
+  })
+
+  it('takes the block off his chest only when it is the axe he raises', () => {
+    expect(poses.flying.every(hasBlock)).toBe(true)
+    expect(signature!.every((step) => hasBlock(step.pose))).toBe(true)
+    expect(poses.alarmed.some(hasBlock)).toBe(false)
+  })
+
+  // The watch looks ahead between its glances, as every Theme's does; his glances stay low.
+  it('ends his stand with his head lowered, and glances along the street from under it', () => {
+    expect(scriptAt(signature!, Infinity).lookY).toBeGreaterThan(0)
+    const glances = watch.filter((step) => step.look !== 0)
+    expect(glances).toHaveLength(2)
+    for (const step of glances) expect(step.lookY).toBeGreaterThan(0)
   })
 })
