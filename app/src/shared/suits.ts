@@ -1358,13 +1358,13 @@ const holding = (fall: string) =>
 const pulledTaut = holding(STAND_CAPE.taut)
 /**
  * The stand on the #1 cover (the Signature pose, picked on screen, #121): feet planted wide, he
- * takes the cape's edges at his hips, pulls it taut in front of him, and lowers his head.
+ * takes the cape's edges at his hips and pulls it taut in front of him. His eyes stay level: lowered,
+ * they would sit on his jaw (the Costume Rule keeps them in the cowl).
  */
 const THE_STAND: Script = [
   { pose: standing, look: 0 },
   { pose: holding(STAND_CAPE.gripped), look: 0 },
   { pose: pulledTaut, look: 0 },
-  { pose: pulledTaut, look: 0, lookY: 0.4 },
 ]
 
 /** Asleep, wrapped in the cape, his shoulder pads over it. */
@@ -1381,10 +1381,7 @@ export const BLUE_COLLAR_SUIT: Suit = {
     ],
     alarmed: [theAxe],
   },
-  watch: watchOn(THE_STAND, [
-    { look: -GAZE, lookY: 0.4 },
-    { look: GAZE, lookY: 0.4 },
-  ]),
+  watch: watchOn(THE_STAND, [{ look: -GAZE }, { look: GAZE }]),
   signature: THE_STAND,
   // SFX Lemon is the Alarm color and never shows at rest.
   aura: 'alarmed',

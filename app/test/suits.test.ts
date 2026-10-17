@@ -128,11 +128,10 @@ describe("BLUE COLLAR's suit", () => {
     expect(poses.alarmed.some(hasBlock)).toBe(false)
   })
 
-  // The watch looks ahead between its glances, as every Theme's does; his glances stay low.
-  it('ends his stand with his head lowered, and glances along the street from under it', () => {
-    expect(scriptAt(signature, Infinity).lookY).toBeGreaterThan(0)
-    const glances = watch.filter((step) => step.look !== 0)
-    expect(glances).toHaveLength(2)
-    for (const step of glances) expect(step.lookY).toBeGreaterThan(0)
+  // The perch holds the stand the reveal ends on, glancing along the street from it.
+  it('holds his stand on the perch', () => {
+    const stand = scriptAt(signature, Infinity).pose
+    for (const step of watch) expect(step.pose).toBe(stand)
+    expect(watch.filter((step) => step.look !== 0)).toHaveLength(2)
   })
 })
