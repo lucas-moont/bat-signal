@@ -9,5 +9,9 @@
   "homepage": "https://github.com/lucas-moont/bat-signal",
   "repository": "https://github.com/lucas-moont/bat-signal",
   "license": "MIT",
-  "keywords": ["monitoring", "notifications", "desktop"]
+  "keywords": [
+    "monitoring",
+    "notifications",
+    "desktop"
+  ]
 }
