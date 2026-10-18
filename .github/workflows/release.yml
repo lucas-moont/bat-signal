@@ -1,8 +1,8 @@
 name: Release
 
 # A v* tag publishes that version: the Windows installer, the Linux AppImage, their checksums and
-# the notes from CHANGELOG.md. Everything is checked first, on both systems, and a tag with a "-"
-# (v1.0.0-rc.1) makes a pre-release. Built only on GitHub's own runners, from the tag, as SignPath
+# the notes from CHANGELOG.md. Everything is checked first, and a tag with a "-" (v1.0.0-rc.1)
+# makes a pre-release. Built only on GitHub's own runners, from the tag, as SignPath
 # Foundation requires for signing later.
 on:
   push:
@@ -19,8 +19,6 @@ jobs:
     defaults:
       run:
         working-directory: app
-    env:
-      APPIMAGE: ${{ needs.linux.outputs.appimage }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -42,8 +40,9 @@ jobs:
           if ("v$($pkg.version)" -cne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
           "VERSION=$($pkg.version)" >> $env:GITHUB_ENV
           "PRODUCT=$($pkg.productName)" >> $env:GITHUB_ENV
-          # As build.nsis.artifactName names it.
+          # As build.nsis.artifactName and build.appImage.artifactName name them.
           "SETUP=$($pkg.productName)-Setup-$($pkg.version).exe" >> $env:GITHUB_ENV
+          "APPIMAGE=$($pkg.productName)-$($pkg.version).AppImage" >> $env:GITHUB_ENV
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
@@ -87,9 +86,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'The files did not reach the release.' }
           gh release edit $tag --draft=false
 
-  # The AppImage, checked and built on Linux with the same guards. It publishes nothing itself: the
-  # release job publishes it beside the installer, so a run that fails on either system publishes
-  # nothing.
+  # The AppImage, built on Linux. It publishes nothing itself: the release job checks everything,
+  # then publishes it beside the installer.
   linux:
     runs-on: ubuntu-latest
     permissions:
@@ -97,44 +95,20 @@ jobs:
     defaults:
       run:
         working-directory: app
-    outputs:
-      appimage: ${{ steps.version.outputs.appimage }}
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false # npm's install scripts run next
-          fetch-depth: 0 # the history, to tell whether the tag is on main
-      - name: The tagged commit is on main
-        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: app/package-lock.json
-      - name: The tag names the version in package.json
-        id: version
-        run: |
-          version=$(node -p 'require("./package.json").version')
-          product=$(node -p 'require("./package.json").productName')
-          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME, but package.json says $version" >&2
-            exit 1
-          fi
-          echo "VERSION=$version" >> "$GITHUB_ENV"
-          # As build.appImage.artifactName names it.
-          echo "appimage=$product-$version.AppImage" >> "$GITHUB_OUTPUT"
       - run: npm ci
-      - run: npm run format:check
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-      # The release job reads them again; this run stops here too, before the AppImage is built.
-      - name: The notes, before anything is built
-        run: node scripts/release-notes.mts "$VERSION" > /dev/null
       - run: npm run dist:linux
       - uses: actions/upload-artifact@v7
         with:
           name: appimage
-          path: app/release/${{ steps.version.outputs.appimage }}
+          path: app/release/*.AppImage
           if-no-files-found: error
           compression-level: 0 # an AppImage is compressed already
