@@ -64,7 +64,7 @@ The installer is unsigned for now (see [`docs/research/code-signing.md`](docs/re
 2. In `app/`, run `npm version x.y.z --no-git-tag-version` (it updates the lockfile too), and commit it as `chore: version x.y.z`.
 3. Once that is on `main`, tag it and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 
-The [release workflow](.github/workflows/release.yml) then checks everything, builds and checks the installer, and publishes a GitHub release with the installer, `SHA256SUMS.txt` and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that does not match `package.json`, or a version with no notes, publishes nothing.
+The [release workflow](.github/workflows/release.yml) then checks everything on Linux and builds the AppImage, then checks everything on Windows and builds and checks the installer. Only when both pass does it publish a GitHub release with `Bat-Signal-Setup-x.y.z.exe`, `Bat-Signal-x.y.z.AppImage`, `SHA256SUMS.txt` (one line for each) and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that is not on `main` or does not match `package.json`, or a version with no notes, publishes nothing.
 
 ## Commits
 
