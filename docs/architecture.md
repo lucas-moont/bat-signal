@@ -105,15 +105,14 @@ Channels (keys of `IPC` in `app/src/shared/ipc.ts`, each sent as `bat-signal:<na
 
 ## The platform layer
 
-What the main process asks of the system goes through `platform.ts`, one answer per system (Strategy): which processes still run (the probe), the way to a session's terminal, whether the desktop wants quiet, starting at sign-in, and where windows land. Windows' answers are the PowerShell host, `reg.exe` and Electron's login items; Linux's are `/proc`, an XDG autostart entry (`autostart.ts`, pure, and `linuxStartup.ts`) and, on Hyprland, Hyprland's socket.
+What the main process asks of the system goes through `platform.ts`, one answer per system (Strategy): the process probe, the way to a session's terminal, the quiet check, starting at sign-in, and where windows land. Windows' answers are the PowerShell host, `reg.exe` and Electron's login items; Linux's are `/proc`, an XDG autostart entry (`autostart.ts`, `linuxStartup.ts`) and, on Hyprland, its socket.
 
-Where windows land is a `Desktop` (`desktop.ts`), which `BatSignalWindows` asks instead of calling `setBounds`, `show` and `hide` itself. `electronDesktop` is Electron's own placement, right on Windows and X11. Wayland lets no app place its windows or hear when they move, so on Hyprland 0.55 and later (it speaks Lua there, which `speaksLua` checks once Electron is ready) the windows go through `HyprlandDesktop` (`hyprlandDesktop.ts`, with the socket and the pure request builders in `hyprland.ts`):
+Where windows land is a `Desktop` (`desktop.ts`). `electronDesktop` is Electron's own placement, right on Windows and X11. Wayland lets no app place its windows or hear when they move, so on Hyprland 0.55+ (checked by `speaksLua`) the windows go through `HyprlandDesktop` (`hyprlandDesktop.ts`; the socket and the pure request builders are in `hyprland.ts`):
 
-- Before each show, a named window rule says where the window opens (`openingRule`): floating and pinned, with no border, shadow or animation of Hyprland's, on its screen at its place and size, and as opaque as the Opacity setting says, over the user's own rules. Sent again before every show, it updates the rule of that name, so a window never opens in the middle and then jumps. The rules know the two windows by the titles they open with (`TITLES`).
-- Once a window is on screen, it is moved and resized with dispatchers, and given the keyboard when it should have it.
-- Hyprland reports no move made by hand, so while the panel shows, its place is read back every 250 ms; a change counts as the user's move, as Electron's `moved` would on Windows.
-- Chromium sizes a Wayland window past what it was asked for (its shadow, a minimum size, a fixed size), so on Hyprland it is given none of them, and the rules and dispatchers alone size the windows.
-- The work area takes away what Hyprland's bars reserve, which Electron doesn't know on Wayland.
+- A named window rule (`openingRule`), sent again before each show, opens the window floating, pinned and frameless at its place and size, so it never opens in the middle and jumps. Once it shows, dispatchers move it.
+- Hyprland reports no move made by hand, so while the panel shows, its place is read back every 250 ms.
+- Chromium sizes a Wayland window past what it was asked for (its shadow, a minimum or fixed size), so on Hyprland it gets none of them and Hyprland alone sizes the windows.
+- The work area leaves out what Hyprland's bars reserve, which Electron doesn't know on Wayland.
 
 On any other Wayland desktop the windows open where the compositor puts them.
 

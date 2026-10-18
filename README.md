@@ -99,15 +99,7 @@ From Windows Settings → Apps. Uninstalling also removes Bat-Signal from the ap
 
 The AppImage needs FUSE 2 (`libfuse.so.2`: the `libfuse2` package, `libfuse2t64` on Ubuntu 24.04, `fuse2` on Arch). Without it, run it with `--appimage-extract-and-run`.
 
-To build it yourself instead (Node.js 24.2+):
-
-```bash
-cd app
-npm ci
-npm run dist:linux
-```
-
-That makes `app/release/Bat-Signal-<version>.AppImage`.
+To build it yourself instead, see [On Linux](CONTRIBUTING.md#on-linux).
 
 How much of Bat-Signal works depends on the desktop, because on Wayland only the compositor may place a window or bring another one forward:
 

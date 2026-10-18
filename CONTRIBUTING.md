@@ -38,7 +38,7 @@ The tray and toast icons in `app/resources/icons/` are drawn from the bat in `ap
 
 `npm run dev` and every check above run on Linux too. A development run keeps its settings in `~/.config/Bat-Signal Dev`. Start at sign-in writes `~/.config/autostart/com.lucasmoont.bat-signal.dev.desktop`, for this checkout's Electron with the app folder, which loads `out/`.
 
-What Bat-Signal asks of the system is in `app/src/main/platform.ts`, one answer for Windows and one for Linux; where windows land is a `Desktop` (`app/src/main/desktop.ts`), and on Hyprland 0.55+ it is `HyprlandDesktop`, which talks to Hyprland's socket in its Lua dialect. Anything else on Wayland gets Electron's own placement, which the compositor overrides. To try it outside Hyprland, run the app in a GNOME or KDE session, or with `--ozone-platform=x11` for X11.
+How each system is handled is in [the platform layer](docs/architecture.md#the-platform-layer). To try it outside Hyprland, run the app in a GNOME or KDE session, or with `--ozone-platform=x11` for X11.
 
 ```bash
 cd app
@@ -64,7 +64,7 @@ The installer is unsigned for now (see [`docs/research/code-signing.md`](docs/re
 2. In `app/`, run `npm version x.y.z --no-git-tag-version` (it updates the lockfile too), and commit it as `chore: version x.y.z`.
 3. Once that is on `main`, tag it and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 
-The [release workflow](.github/workflows/release.yml) then checks everything on Linux and builds the AppImage, then checks everything on Windows and builds and checks the installer. Only when both pass does it publish a GitHub release with `Bat-Signal-Setup-x.y.z.exe`, `Bat-Signal-x.y.z.AppImage`, `SHA256SUMS.txt` (one line for each) and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that is not on `main` or does not match `package.json`, or a version with no notes, publishes nothing.
+The [release workflow](.github/workflows/release.yml) then builds the AppImage on Linux, checks everything on Windows, and builds and checks the installer. Only when all of it passes does it publish a GitHub release with `Bat-Signal-Setup-x.y.z.exe`, `Bat-Signal-x.y.z.AppImage`, `SHA256SUMS.txt` (one line for each) and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that is not on `main` or does not match `package.json`, or a version with no notes, publishes nothing.
 
 ## Commits
 
