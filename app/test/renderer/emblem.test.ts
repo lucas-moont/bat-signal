@@ -129,16 +129,24 @@ describe("VENGEANCE's emblem", () => {
 })
 
 // Bat-Clawd's chest wears the Theme's own emblem, placed on his grid: centred where asked, as wide
-// as asked, and as tall as its shape makes it.
+// as asked, and as tall as its shape makes it, or as a suit asks (BLUE COLLAR's slab).
 describe('a bat on his chest', () => {
   const bat = emblem(WINGS, 'none')
   /** Where the transform puts the bat's box: its left, top, width and height. */
   const placed = (transform: string) => {
     const [tx = NaN, ty = NaN] = /translate\(([-\d.e]+) ([-\d.e]+)\)/.exec(transform)!.slice(1).map(Number)
-    const k = Number(/scale\(([-\d.e]+)\)/.exec(transform)![1])
+    const [kx = NaN, ky = NaN] = /scale\(([-\d.e]+) ([-\d.e]+)\)/.exec(transform)!.slice(1).map(Number)
     const { x, y, width, height } = bat.bat
-    return { x: tx + x * k, y: ty + y * k, w: width * k, h: height * k }
+    return { x: tx + x * kx, y: ty + y * ky, w: width * kx, h: height * ky }
   }
+
+  it('takes the height a suit asks for, still centred', () => {
+    const box = placed(batAt(bat, 8, 6.6, 8, 3))
+    expect(box.w).toBeCloseTo(8)
+    expect(box.h).toBeCloseTo(3)
+    expect(box.x + box.w / 2).toBeCloseTo(8)
+    expect(box.y + box.h / 2).toBeCloseTo(6.6)
+  })
 
   it('keeps its shape, centred and as wide as asked', () => {
     const box = placed(batAt(bat, 8, 7, 7))
