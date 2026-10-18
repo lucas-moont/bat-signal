@@ -14,7 +14,7 @@ const OUT = join(APP, 'resources', 'icons')
 const SIZES = [16, 20, 24, 32, 40, 48, 64, 256]
 /** Linux trays (StatusNotifierItem) draw the icon at the bar's size, rarely past 32px at 200%. */
 const LINUX_TRAY_SIZE = 64
-/** The app's icon on Linux (launchers, the AppImage, the .deb): the disc at rest, as Windows' .ico has it. */
+/** The app's icon on Linux (launchers, the AppImage): the disc at rest, as Windows' .ico has it. */
 const LINUX_APP_SIZE = 256
 /** Windows draws a toast's image at up to 48px, at up to 200% scale. */
 const TOAST_SIZE = 96

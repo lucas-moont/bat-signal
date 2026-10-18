@@ -36,11 +36,11 @@ export function parseStat(text: string): ProcStat | undefined {
 export const readStat = (pid: number): Promise<ProcStat | undefined> =>
   readFile(`/proc/${pid}/stat`, 'utf8').then(parseStat, () => undefined)
 
-/** The process and its ancestors, nearest first, as far as /proc goes (at most `limit` of them). */
-export async function ancestry(pid: number, limit = 64): Promise<ProcStat[]> {
+/** The process and its ancestors, nearest first, as far as /proc goes. */
+export async function ancestry(pid: number): Promise<ProcStat[]> {
   const line: ProcStat[] = []
   const seen = new Set<number>()
-  for (let next = pid; next > 0 && line.length < limit && !seen.has(next);) {
+  for (let next = pid; next > 0 && !seen.has(next);) {
     seen.add(next)
     const stat = await readStat(next)
     if (!stat) break

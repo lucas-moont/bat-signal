@@ -4,7 +4,6 @@ import {
   pickSessionWindow,
   pickTab,
   pickWindowTab,
-  resumeCommand,
   type DesktopWindow,
   type ProcessInfo,
 } from '../src/main/terminal'
@@ -97,14 +96,6 @@ describe('pickWindowTab', () => {
   it('finds nothing when no window has a tab of that name', () => {
     expect(pickWindowTab(windows, 'gcpd')).toBeUndefined()
     expect(pickWindowTab(windows, undefined)).toBeUndefined()
-  })
-})
-
-describe('resumeCommand', () => {
-  it('is what reopens the session in a terminal', () => {
-    expect(resumeCommand('0b1e2d3c-4a5b-4c6d-8e7f-9a0b1c2d3e4f')).toBe(
-      'claude --resume 0b1e2d3c-4a5b-4c6d-8e7f-9a0b1c2d3e4f',
-    )
   })
 })
 

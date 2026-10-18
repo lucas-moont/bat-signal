@@ -15,7 +15,7 @@ import type { AppStatus } from '../shared/status'
 import { THEMES, type ThemeId } from '../shared/themes'
 import type { StoreSnapshot } from '../shared/types'
 import { DEV_SERVER, isOwnPage, RENDERER_FILE } from './appIpc'
-import { electronDesktop, type Desktop } from './desktop'
+import type { Desktop } from './desktop'
 import { jsonFile } from './jsonFile'
 import { nextMode, type ModeAction } from './modes'
 import {
@@ -146,12 +146,11 @@ export class BatSignalWindows {
   private onTop = true
   /** Set while the strip waits for its first height (see setMode). */
   private stripPending?: NodeJS.Timeout
-  private readonly modeListeners: ((mode: WindowMode) => void)[] = []
 
   /** desktop: where the windows land and how their moves are heard (see desktop.ts). */
   constructor(
     settings: Settings,
-    private readonly desktop: Desktop = electronDesktop,
+    private readonly desktop: Desktop,
   ) {
     const place = placeFile.load()
     this.anchor = resolveAnchor(place.anchor, desktop.displays(), MARGIN)
@@ -232,9 +231,7 @@ export class BatSignalWindows {
   }
 
   /** Called with each new mode, for what shows the mode outside the windows (Linux's tray menu). */
-  onModeChange(listener: (mode: WindowMode) => void): void {
-    this.modeListeners.push(listener)
-  }
+  onModeChange: (mode: WindowMode) => void = () => undefined
 
   /** The panel window is on screen, as the panel or the strip. */
   private get panelShown(): boolean {
@@ -357,7 +354,7 @@ export class BatSignalWindows {
     }
     if (entering) {
       this.current = mode
-      for (const listener of this.modeListeners) listener(mode)
+      this.onModeChange(mode)
       // A held strip is news only to its own page for now: the disc stays the disc until the
       // strip shows, and turns into the perch then (revealStrip).
       if (holdStrip) this.send(this.panel, IPC.mode, mode)

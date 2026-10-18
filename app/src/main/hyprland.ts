@@ -100,27 +100,6 @@ export const allOk = (reply: string): boolean =>
     .filter(Boolean)
     .every((line) => line === 'ok')
 
-/** What a window rule does to the windows it matches; numbers and booleans, written as Lua. */
-export type RuleEffects = Record<string, string | number | boolean | [number, number]>
-
-const luaValue = (value: RuleEffects[string]): string =>
-  Array.isArray(value)
-    ? `{ ${value.map((n) => Math.round(n)).join(', ')} }`
-    : typeof value === 'string'
-      ? lua(value)
-      : String(value)
-
-/**
- * A named window rule for the windows whose first title is exactly `title`. Registering one with a
- * name Hyprland already has updates that rule, so it can be sent again before each time the window
- * opens, with where it should open.
- */
-export function windowRule(name: string, title: string, effects: RuleEffects): string {
-  const exact = `^${title.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&')}$`
-  const fields = Object.entries(effects).map(([key, value]) => `${key} = ${luaValue(value)}`)
-  return `hl.window_rule({ name = ${lua(name)}, match = { initial_title = ${lua(exact)} }, ${fields.join(', ')} })`
-}
-
 export class Hyprland {
   constructor(private readonly path: string) {}
 
@@ -240,20 +219,11 @@ export const sameRect = (a: LayoutRect, b: LayoutRect): boolean =>
 /** The windows' titles, which the rules match: each is the title the window opens with. */
 export const TITLES: Record<WindowRole, string> = { panel: 'Bat-Signal', signal: 'Bat-Signal Signal' }
 
-/** What every Bat-Signal window wears on Hyprland: no frame of Hyprland's around Bat-Signal's own. */
-const LOOK: RuleEffects = {
-  float: true,
-  pin: true,
-  border_size: 0,
-  no_shadow: true,
-  no_blur: true,
-  rounding: 0,
-  no_anim: true,
-}
-
 /**
- * The rule that opens a window at `rect`, on the screen that holds it, as opaque as the settings say
- * (over the user's own rules: Bat-Signal has its own setting for it), taking the keyboard or not.
+ * The named rule that opens a window at `rect`, on the screen that holds it: floating and pinned,
+ * with no frame of Hyprland's around Bat-Signal's own, as opaque as the settings say (over the
+ * user's own rules), taking the keyboard or not. It matches the window's first title exactly, and
+ * sending a name Hyprland already has updates that rule, so it is sent again before each show.
  */
 export function openingRule(
   role: WindowRole,
@@ -262,12 +232,15 @@ export function openingRule(
   { focus, opacity }: { focus: boolean; opacity: number },
 ): string {
   const screen = monitorRect(monitor)
-  return windowRule(`bat-signal-${role}`, TITLES[role], {
-    ...LOOK,
-    no_initial_focus: !focus,
-    opacity: opacityEffect(opacity),
-    monitor: monitor.name,
-    move: [rect.x - screen.x, rect.y - screen.y],
-    size: [rect.width, rect.height],
-  })
+  const pair = (a: number, b: number) => `{ ${Math.round(a)}, ${Math.round(b)} }`
+  return [
+    `hl.window_rule({ name = ${lua(`bat-signal-${role}`)}`,
+    `match = { initial_title = ${lua(`^${TITLES[role]}$`)} }`,
+    'float = true, pin = true, border_size = 0, no_shadow = true, no_blur = true, rounding = 0, no_anim = true',
+    `no_initial_focus = ${!focus}`,
+    `opacity = ${lua(opacityEffect(opacity))}`,
+    `monitor = ${lua(monitor.name)}`,
+    `move = ${pair(rect.x - screen.x, rect.y - screen.y)}`,
+    `size = ${pair(rect.width, rect.height)} })`,
+  ].join(', ')
 }

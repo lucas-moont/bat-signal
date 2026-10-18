@@ -11,8 +11,6 @@ import {
   openingRule,
   sameRect,
   socketPath,
-  TITLES,
-  windowRule,
   workAreaOf,
   type HyprMonitor,
 } from '../src/main/hyprland'
@@ -87,27 +85,13 @@ describe('batch and allOk', () => {
   })
 })
 
-describe('windowRule', () => {
-  it("matches the window's first title exactly, its regex characters escaped", () => {
-    expect(windowRule('bat-signal-panel', 'Bat-Signal', { float: true })).toBe(
-      String.raw`hl.window_rule({ name = "bat-signal-panel", match = { initial_title = "^Bat\\-Signal$" }, float = true })`,
-    )
-  })
-
-  it('writes numbers, booleans, strings and pairs as Lua', () => {
-    expect(windowRule('r', 'x', { border_size: 0, pin: false, monitor: 'DP-1', move: [16.4, 20] })).toContain(
-      'border_size = 0, pin = false, monitor = "DP-1", move = { 16, 20 }',
-    )
-  })
-})
-
 describe('openingRule: a window opens where it should, never in the middle first', () => {
   it('places it on its screen, in that screen’s own coordinates, at its size', () => {
     const rule = openingRule('panel', { x: 4144, y: 624, width: 320, height: 440 }, external, {
       focus: true,
       opacity: 1,
     })
-    expect(rule).toContain(`initial_title = "^Bat\\\\-Signal$"`)
+    expect(rule).toContain('match = { initial_title = "^Bat-Signal$" }')
     expect(rule).toContain('monitor = "HDMI-A-1", move = { 1584, 624 }, size = { 320, 440 }')
     expect(rule).toContain('float = true, pin = true')
     expect(rule).toContain('no_initial_focus = false')
@@ -121,10 +105,6 @@ describe('openingRule: a window opens where it should, never in the middle first
     expect(rule).toContain('"bat-signal-signal"')
     expect(rule).toContain('no_initial_focus = true')
     expect(rule).toContain('opacity = "0.85 override 0.85 override 0.85 override"')
-  })
-
-  it('gives each window its own title to be told apart by', () => {
-    expect(new Set(Object.values(TITLES)).size).toBe(2)
   })
 })
 

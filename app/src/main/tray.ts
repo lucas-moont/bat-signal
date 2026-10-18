@@ -39,7 +39,7 @@ export class BatSignalTray {
     })
     if (MENU_AHEAD) {
       this.tray.setContextMenu(this.menu())
-      windows.onModeChange(() => this.tray.setContextMenu(this.menu()))
+      windows.onModeChange = () => this.tray.setContextMenu(this.menu())
     } else {
       // Built as it opens, so it always ticks the view on screen.
       this.tray.on('right-click', () => this.tray.popUpContextMenu(this.menu()))
