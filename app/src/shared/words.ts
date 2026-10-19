@@ -876,7 +876,9 @@ export const SERIOUS_HOUSE_WORDS: Words = {
   },
   voice: {
     ...STANDARD_VOICE,
-    theme: { name: 'SERIOUS HOUSE', film: "Grant Morrison and Dave McKean's Arkham Asylum (1989)" },
+    // The book first, so its picker folder's credit keeps to two lines (authors first, it ran to a
+    // third), and their names still tell it from the 2009 game.
+    theme: { name: 'SERIOUS HOUSE', film: 'Arkham Asylum, by Morrison and McKean' },
     tagline: 'The house keeps its own hours.',
     empty: {
       ...STANDARD_VOICE.empty,
