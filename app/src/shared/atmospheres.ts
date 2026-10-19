@@ -303,3 +303,18 @@ export const BLUE_COLLAR_COLONY: AshAtmosphere = {
   ],
   bats: { band: [64, 74], arc: 4, away: 160 },
 }
+
+/**
+ * SERIOUS HOUSE's scratches in the paint (arkham-asylum.md, section 9): a hairline of paper white cut
+ * about once a second, near upright, staying where it was cut and healing over two to three seconds,
+ * so two or three show at a time; under them four torn panes of paper, faint as the drawers of the
+ * house behind the cases. Under reduced motion it stands as one frozen frame.
+ */
+export const SERIOUS_HOUSE_SCRATCHES: NoiseAtmosphere = {
+  kind: 'noise',
+  color: '--scratch',
+  alphas: [0.06, 0.09, 0.12],
+  marks: { kind: 'hairlines', length: [20, 120], tilt: 8, every: 1, life: [2, 3] },
+  panes: { color: '--pane', count: 4, size: [40, 140], alphas: [0.02, 0.04] },
+  still: 'calm',
+}
