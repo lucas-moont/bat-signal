@@ -639,9 +639,10 @@ function hairlines(
 
   /** A hairline somewhere new: its length, lean, strength and life, both its ends on the canvas. */
   const cut = (): Cut => {
-    const long = Math.min(height, between(length, random))
     const lean = ((random() * 2 - 1) * tilt * Math.PI) / 180
-    const [dx, dy] = [long * Math.sin(lean), long * Math.cos(lean)]
+    // No longer than the canvas is tall, nor than its lean lets it be on a narrow one.
+    const span = Math.min(between(length, random), height, width / Math.abs(Math.sin(lean)))
+    const [dx, dy] = [span * Math.sin(lean), span * Math.cos(lean)]
     const x0 = Math.max(0, -dx) + random() * Math.max(0, width - Math.abs(dx))
     const y0 = random() * (height - dy)
     return {

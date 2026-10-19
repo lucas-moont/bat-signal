@@ -907,6 +907,17 @@ describe('the scratches', () => {
     }
   })
 
+  it('keeps both ends on a canvas narrower than a lean', () => {
+    const painter = painterFor(SCRATCHES, seeded())
+    painter.recolor(() => SCRATCH)
+    painter.resize(6, 440)
+    for (const { segment: d } of framesOver(painter, 80).flatMap(cuts))
+      for (const x of [d.x0, d.x1]) {
+        expect(x).toBeGreaterThanOrEqual(-1e-9)
+        expect(x).toBeLessThanOrEqual(6 + 1e-9)
+      }
+  })
+
   // One at a time: a new scratch every `every` seconds, never two together, so it never pulses.
   it('cuts one at a time, one every so often', () => {
     const born = births(framesOver(scratches(), 80))
