@@ -706,6 +706,8 @@ interface Pane {
 /** A pane's torn edge: a point every so many px along each side, nudged in or out up to `TEAR`. */
 const TEAR_STEP = 8
 const TEAR = 1.5
+/** The panes' seed: the same panes in every window, on every launch and after every resize. */
+const PANES_SEED = 0.5
 
 /**
  * Panes laid out from a seed: each its size and strength, somewhere on the canvas, its four sides
@@ -750,8 +752,6 @@ function noise(
   random: () => number,
 ): Painter {
   const painted = marks.kind === 'specks' ? specks(marks, alphas, random) : hairlines(marks, alphas, random)
-  /** Its panes' seed, so a resize lays the same ones again. */
-  const seed = panes ? random() : 0
   let laid: Pane[] = []
   let width = 0
   let height = 0
@@ -768,7 +768,7 @@ function noise(
       // Anywhere along its roll the first time, so a new canvas doesn't always start it at the top;
       // a resize leaves it where it is.
       if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
-      if (panes) laid = layPanes(panes, seed, width, height)
+      if (panes) laid = layPanes(panes, PANES_SEED, width, height)
       painted.resize(width, height)
     },
     paint(ctx, dt) {

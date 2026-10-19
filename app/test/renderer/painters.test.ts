@@ -1032,6 +1032,23 @@ describe('the scratches', () => {
       for (const frame of frames) expect(frame).toEqual(frames[0])
       painter.resize(320, 440)
       expect(panes(framesOver(painter, 0)[0])).toEqual(frames[0])
+      // A smaller canvas: as many, still on it.
+      painter.resize(200, 300)
+      const smaller = panes(framesOver(painter, 0)[0])
+      expect(smaller).toHaveLength(PANES.count)
+      for (const { shape } of smaller) {
+        const b = box(shape)
+        expect(b.x).toBeGreaterThanOrEqual(-2)
+        expect(b.x + b.w).toBeLessThanOrEqual(202)
+        expect(b.y).toBeGreaterThanOrEqual(-2)
+        expect(b.y + b.h).toBeLessThanOrEqual(302)
+      }
+    })
+
+    // From a fixed seed: the same panes in every window, on every launch.
+    it('lays the same panes whatever its random numbers', () => {
+      const [a, b] = [7, 99].map((seed) => panes(framesOver(scratches(SCRATCHES, seed), 0)[0]))
+      expect(a).toEqual(b)
     })
 
     it('lays a pane with no size on the canvas, not nowhere', () => {
