@@ -30,6 +30,8 @@ export interface Painter {
 
 /** One tick of the clock, in seconds. */
 const STEP = 1 / FPS
+/** A time in seconds as whole ticks of the clock, one at least. */
+const ticksOf = (seconds: number) => Math.max(1, Math.round(seconds / STEP))
 /** The longest move painted: the page waking from a pause doesn't fling the scene across. */
 const MAX_DT = 2 * STEP
 /** The rain's frame rate on its own timer, before it joined the shared clock. */
@@ -564,8 +566,8 @@ interface Speck {
  * born a tick apart, so a share of them moves each tick.
  */
 function specks({ size, density, life }: Specks, alphas: readonly number[], random: () => number): Marks {
-  /** A speck's life in whole ticks of the clock, one at least. */
-  const lifeTicks = Math.max(1, Math.round(life / STEP))
+  /** A speck's life in whole ticks. */
+  const lifeTicks = ticksOf(life)
   /** The specks at each strength, none until it has a size. */
   let layers: Speck[][] = alphas.map((): Speck[] => [])
   let width = 0
@@ -627,8 +629,8 @@ function hairlines(
   alphas: readonly number[],
   random: () => number,
 ): Marks {
-  const everyTicks = Math.max(1, Math.round(every / STEP))
-  const [shortest, longest] = life.map((s) => Math.max(1, Math.round(s / STEP))) as [number, number]
+  const everyTicks = ticksOf(every)
+  const [shortest, longest] = [ticksOf(life[0]), ticksOf(life[1])]
   /** Enough turns that the longest life is over before its next one. */
   const turns = Math.ceil(longest / everyTicks)
   const round = turns * everyTicks
