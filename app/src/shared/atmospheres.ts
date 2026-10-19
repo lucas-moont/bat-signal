@@ -120,25 +120,66 @@ export interface SmokeAtmosphere extends Scene {
 }
 
 /**
- * Noise on a screen: marks scattered over the panel that stay put for their life and then appear
- * somewhere else, never falling, born a tick apart so the noise never pulses; and, if it asks for
- * one, a soft band rolling down the panel, as an old set's picture rolls.
+ * A noise's specks: squares scattered over the panel, born a tick apart, each staying put for its
+ * life and then appearing somewhere else.
  */
-export interface NoiseAtmosphere extends Scene {
-  kind: 'noise'
-  /** The variable its marks and its band are filled in. */
-  color: string
-  /** Its marks' size: each a speck, a square this many px wide. */
+export interface Specks {
+  kind: 'specks'
+  /** A speck's width, in px. */
   size: number
-  /** Marks per 1000 square pixels. */
+  /** Specks per 1000 square pixels. */
   density: number
-  /** The strengths (alphas) a mark may have, one picked for each. */
-  alphas: readonly number[]
   /**
-   * How long a mark stays put, in seconds, counted in whole ticks of the clock (one at least): a
+   * How long a speck stays put, in seconds, counted in whole ticks of the clock (one at least): a
    * tick for static, which flickers in place.
    */
   life: number
+}
+
+/**
+ * A noise's hairlines: scratches cut one at a time, each staying where it was cut for its life and
+ * fading to nothing over it, as a scratch heals.
+ */
+export interface Hairlines {
+  kind: 'hairlines'
+  /** The shortest and the longest a hairline is, in px. */
+  length: readonly [number, number]
+  /** How far a hairline may lean either way off upright, in degrees. */
+  tilt: number
+  /** Seconds between two cuts, counted in whole ticks of the clock. */
+  every: number
+  /** The shortest and the longest a hairline stays, in seconds, counted in whole ticks. */
+  life: readonly [number, number]
+}
+
+/**
+ * A noise's panes: torn scraps of paper behind its marks, the same ones every time, so they never
+ * move (repainted with the marks each tick, a few shapes).
+ */
+export interface Panes {
+  /** The variable they are filled in. */
+  color: string
+  /** How many. */
+  count: number
+  /** The smallest and the largest a pane is across and down, in px. */
+  size: readonly [number, number]
+  /** The faintest and the strongest a pane may be (alphas). */
+  alphas: readonly [number, number]
+}
+
+/**
+ * Noise on a screen or in the paint: marks that never fall, specks flickering in place or hairlines
+ * cut and healing; under them, if it asks for them, a few torn panes that never move; over them, if
+ * it asks for one, a soft band rolling down the panel, as an old set's picture rolls.
+ */
+export interface NoiseAtmosphere extends Scene {
+  kind: 'noise'
+  /** The variable its marks and its band are painted in. */
+  color: string
+  /** The strengths (alphas) a mark may have, one picked for each. */
+  alphas: readonly number[]
+  marks: Specks | Hairlines
+  panes?: Panes
   /**
    * The band: its height and how far it rolls down a tick, in px, and its strength (alpha), about
    * that at its middle and softer toward its edges (its boxes overlap there, so their alphas
@@ -239,10 +280,8 @@ export const BECOME_A_BAT_SMOKE: SmokeAtmosphere = {
 export const ANCIENT_GRACE_STATIC: NoiseAtmosphere = {
   kind: 'noise',
   color: '--static',
-  size: 1,
-  density: 0.6,
   alphas: [0.08, 0.12, 0.18],
-  life: 1 / 8,
+  marks: { kind: 'specks', size: 1, density: 0.6, life: 1 / 8 },
   band: { height: 24, alpha: 0.045, fall: 3 },
   still: 'calm',
 }

@@ -7,7 +7,9 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type AshAtmosphere,
+  type Hairlines,
   type NoiseAtmosphere,
+  type Panes,
   type SmokeAtmosphere,
   type SnowAtmosphere,
 } from '../../src/shared/atmospheres'
@@ -75,17 +77,23 @@ function seeded(seed = 7) {
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
-/** What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart. */
-function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
+/**
+ * What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart (or the
+ * time `dt` gives for the tick).
+ */
+function framesOver(painter: Painter, n: number, dt: number | ((tick: number) => number) = 1 / FPS) {
   const first = recorder()
   painter.paint(first.ctx, 0)
-  const after = Array.from({ length: n }, () => {
+  const after = Array.from({ length: n }, (_, i) => {
     const r = recorder()
-    painter.paint(r.ctx, dt)
+    painter.paint(r.ctx, typeof dt === 'number' ? dt : dt(i))
     return r
   })
   return [first, ...after] as const
 }
+
+/** A tick of a timer that runs a hair early, then a hair late, by turns. */
+const JITTERED = (tick: number) => (tick % 2 ? 1.002 : 0.998) / FPS
 
 /** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
 const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
@@ -130,22 +138,37 @@ const SMOKE: SmokeAtmosphere = {
   sway: 1,
 }
 
-/** Static: specks at three strengths that live a tick each, and a band 24px tall, its roll bar. */
+/** Static's specks: 1px, living a tick each. */
+const SPECKS = { kind: 'specks', size: 1, density: 0.5, life: 1 / FPS } as const
+
+/** Static: specks at three strengths, and a band 24px tall, its roll bar. */
 const NOISE: NoiseAtmosphere = {
   kind: 'noise',
   color: '--static',
-  size: 1,
-  density: 0.5,
   alphas: [0.04, 0.07, 0.1],
-  life: 1 / FPS,
+  marks: SPECKS,
   band: { height: 24, alpha: 0.03, fall: 3 },
+}
+
+/**
+ * Scratches: hairlines 20 to 120px long, one cut a second, each staying two to three seconds as it
+ * fades, over four torn panes.
+ */
+const HAIRLINES: Hairlines = { kind: 'hairlines', length: [20, 120], tilt: 8, every: 1, life: [2, 3] }
+const PANES: Panes = { color: '--pane', count: 4, size: [40, 140], alphas: [0.02, 0.04] }
+const SCRATCHES: NoiseAtmosphere = {
+  kind: 'noise',
+  color: '--scratch',
+  alphas: [0.06, 0.09, 0.12],
+  marks: HAIRLINES,
+  panes: PANES,
 }
 
 // The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE, SCRATCHES])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -672,6 +695,8 @@ describe('the noise', () => {
   }
 
   const over = (n: number, dt = 1 / FPS, painter = noise()) => framesOver(painter, n, dt)
+  /** Static whose specks live life ticks. */
+  const livingFor = (life: number): NoiseAtmosphere => ({ ...NOISE, marks: { ...SPECKS, life: life / FPS } })
   /** Where the specks are in a frame, as "x,y". */
   const spots = ({ fills }: ReturnType<typeof recorder>) =>
     fills.flatMap((f) => f.rects.map((r) => `${r.x},${r.y}`))
@@ -679,9 +704,9 @@ describe('the noise', () => {
   it('scatters as many specks as its density asks, each its size, in its color and strengths', () => {
     const [frame] = over(0)
     const specks = frame!.fills.flatMap((f) => f.rects)
-    expect(specks).toHaveLength(Math.round(((320 * 440) / 1000) * NOISE.density))
+    expect(specks).toHaveLength(Math.round(((320 * 440) / 1000) * SPECKS.density))
     for (const s of specks) {
-      expect(s.size).toBe(NOISE.size)
+      expect(s.size).toBe(SPECKS.size)
       expect(s.x).toBeGreaterThanOrEqual(0)
       expect(s.x).toBeLessThan(320)
       expect(s.y).toBeGreaterThanOrEqual(0)
@@ -713,7 +738,7 @@ describe('the noise', () => {
   // moves each tick and the noise never pulses.
   it('keeps each speck in place for its life, a share of them moving each tick', () => {
     const life = 3
-    const at = over(9, 1 / FPS, noise({ ...NOISE, life: life / FPS })).map(spots)
+    const at = over(9, 1 / FPS, noise(livingFor(life))).map(spots)
     const n = at[0]!.length
     const movedAt = (k: number) => at.flatMap((frame, i) => (i > 0 && frame[k] !== at[i - 1]![k] ? [i] : []))
     for (let k = 0; k < n; k++) {
@@ -730,18 +755,7 @@ describe('the noise', () => {
   // The page's clock is a timer, a hair early or late each tick: static still flickers every tick,
   // and a longer life still lasts its whole ticks.
   it('counts whole ticks on a clock that runs a hair early or late', () => {
-    const jittered = (life: number) => {
-      const painter = noise({ ...NOISE, life: life / FPS })
-      const first = recorder()
-      painter.paint(first.ctx, 0)
-      const frames = [spots(first)]
-      for (let i = 0; i < 12; i++) {
-        const r = recorder()
-        painter.paint(r.ctx, (i % 2 ? 1.002 : 0.998) / FPS)
-        frames.push(spots(r))
-      }
-      return frames
-    }
+    const jittered = (life: number) => framesOver(noise(livingFor(life)), 12, JITTERED).map(spots)
     const statics = jittered(1)
     for (let i = 1; i < statics.length; i++) expect(statics[i]![0]).not.toBe(statics[i - 1]![0])
     const longer = jittered(3)
@@ -826,6 +840,237 @@ describe('the noise', () => {
       const { band: _, ...plain } = NOISE
       const [boxes] = bars(over(0, 1 / FPS, noise(plain)))
       expect(boxes).toHaveLength(0)
+    })
+  })
+})
+
+describe('the scratches', () => {
+  const SCRATCH = '#f3e5e8'
+  const PANE = '#d2c4ca'
+  const scratches = (atmosphere: NoiseAtmosphere = SCRATCHES, seed = 7) => {
+    const painter = painterFor(atmosphere, seeded(seed))
+    painter.recolor((variable) => (variable === '--pane' ? PANE : SCRATCH))
+    painter.resize(320, 440)
+    return painter
+  }
+  const { length: lengths, tilt, every, life } = HAIRLINES
+
+  /** Each hairline in a frame, keyed by where it is, with its strength. */
+  const cuts = ({ strokes }: ReturnType<typeof recorder>) =>
+    strokes.flatMap((s) =>
+      s.segments.map((d) => ({
+        key: `${d.x0},${d.y0},${d.x1},${d.y1}`,
+        segment: d,
+        alpha: s.alpha,
+        color: s.color,
+      })),
+    )
+  /** The frames each hairline shows in, by its key. */
+  const lives = (frames: readonly ReturnType<typeof recorder>[]) => {
+    const seen = new Map<string, { frames: number[]; alphas: number[] }>()
+    frames.forEach((frame, i) => {
+      for (const { key, alpha } of cuts(frame)) {
+        const s = seen.get(key) ?? { frames: [], alphas: [] }
+        s.frames.push(i)
+        s.alphas.push(alpha)
+        seen.set(key, s)
+      }
+    })
+    return seen
+  }
+  /** The frames a new hairline was cut on, in order (not those already there at the start). */
+  const births = (frames: readonly ReturnType<typeof recorder>[]) =>
+    [...lives(frames).values()]
+      .map((s) => s.frames[0]!)
+      .filter((first) => first > 0)
+      .sort((a, b) => a - b)
+
+  it('cuts hairlines as long as it asks, leaning no further than it asks, on the canvas, in its color', () => {
+    const frames = framesOver(scratches(), 80)
+    const all = frames.flatMap(cuts)
+    expect(all.length).toBeGreaterThan(0)
+    for (const { segment: d, color } of all) {
+      expect(color).toBe(SCRATCH)
+      expect(length(d)).toBeGreaterThanOrEqual(lengths[0] - 0.5)
+      expect(length(d)).toBeLessThanOrEqual(lengths[1] + 0.5)
+      const lean = (Math.atan2(Math.abs(d.x1 - d.x0), Math.abs(d.y1 - d.y0)) * 180) / Math.PI
+      expect(lean).toBeLessThanOrEqual(tilt + 1e-9)
+      for (const [x, y] of [
+        [d.x0, d.y0],
+        [d.x1, d.y1],
+      ] as const) {
+        expect(x).toBeGreaterThanOrEqual(0)
+        expect(x).toBeLessThanOrEqual(320)
+        expect(y).toBeGreaterThanOrEqual(0)
+        expect(y).toBeLessThanOrEqual(440)
+      }
+    }
+  })
+
+  // A 1px line on a whole pixel's edge is smeared over two columns at half strength.
+  it('cuts each from the middle of a pixel, so an upright one is sharp', () => {
+    for (const { segment: d } of framesOver(scratches(), 80).flatMap(cuts)) expect(d.x0 % 1).toBe(0.5)
+  })
+
+  it('keeps both ends on a canvas narrower than a lean', () => {
+    const painter = painterFor(SCRATCHES, seeded())
+    painter.recolor(() => SCRATCH)
+    painter.resize(6, 440)
+    for (const { segment: d } of framesOver(painter, 80).flatMap(cuts))
+      for (const x of [d.x0, d.x1]) {
+        expect(x).toBeGreaterThanOrEqual(-1e-9)
+        expect(x).toBeLessThanOrEqual(6 + 1e-9)
+      }
+  })
+
+  // One at a time: a new scratch every `every` seconds, never two together, so it never pulses.
+  it('cuts one at a time, one every so often', () => {
+    const born = births(framesOver(scratches(), 80))
+    expect(born.length).toBeGreaterThanOrEqual(8)
+    for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
+  })
+
+  // A scratch stays where it was cut for its life, fading from its strength to nothing: it heals.
+  it('keeps each where it was cut for its life, fading to nothing over it', () => {
+    const frames = framesOver(scratches(), 80)
+    const whole = [...lives(frames).values()].filter(
+      (s) => s.frames[0]! > 0 && s.frames.at(-1)! < frames.length - 1,
+    )
+    expect(whole.length).toBeGreaterThanOrEqual(6)
+    for (const { frames: shown, alphas } of whole) {
+      for (let j = 1; j < shown.length; j++) expect(shown[j]! - shown[j - 1]!).toBe(1)
+      expect(shown.length).toBeGreaterThanOrEqual(life[0] * FPS)
+      expect(shown.length).toBeLessThanOrEqual(life[1] * FPS)
+      expect(SCRATCHES.alphas).toContain(alphas[0])
+      for (let j = 1; j < alphas.length; j++) expect(alphas[j]!).toBeLessThan(alphas[j - 1]!)
+    }
+  })
+
+  it('shows two or three at a time, from the first frame', () => {
+    const counts = framesOver(scratches(), 80).map((f) => cuts(f).length)
+    for (const n of counts) {
+      expect(n).toBeGreaterThanOrEqual(1)
+      expect(n).toBeLessThanOrEqual(Math.ceil(life[1] / every))
+    }
+    expect(counts[0]).toBeGreaterThanOrEqual(2)
+  })
+
+  it('counts whole ticks on a clock that runs a hair early or late', () => {
+    const born = births(framesOver(scratches(), 60, JITTERED))
+    expect(born.length).toBeGreaterThanOrEqual(6)
+    for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
+  })
+
+  it('stands still while no time passes', () => {
+    const painter = scratches()
+    const [a, b] = [recorder(), recorder()]
+    painter.paint(a.ctx, 0)
+    painter.paint(b.ctx, 0)
+    expect(cuts(b)).toEqual(cuts(a))
+  })
+
+  // The panel resizes as it is dragged or changes mode: a scratch stays where it was cut, at its
+  // age, and the beat goes on. Only one the smaller canvas no longer holds is cut afresh.
+  it('keeps its scratches and its beat through a resize', () => {
+    const painter = scratches()
+    const before = framesOver(painter, 5)
+    painter.resize(400, 500)
+    const after = framesOver(painter, 40)
+    expect(cuts(after[0]).map((c) => c.key)).toEqual(cuts(before.at(-1)!).map((c) => c.key))
+    const born = births([...before, ...after.slice(1)])
+    expect(born.length).toBeGreaterThanOrEqual(5)
+    for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
+    painter.resize(60, 50)
+    for (const { segment: d } of cuts(framesOver(painter, 0)[0])) {
+      for (const x of [d.x0, d.x1]) expect(x).toBeGreaterThanOrEqual(0)
+      for (const x of [d.x0, d.x1]) expect(x).toBeLessThanOrEqual(60)
+      for (const y of [d.y0, d.y1]) expect(y).toBeGreaterThanOrEqual(0)
+      for (const y of [d.y0, d.y1]) expect(y).toBeLessThanOrEqual(50)
+    }
+  })
+
+  describe('its panes', () => {
+    const panes = (frame: ReturnType<typeof recorder>) =>
+      frame.fills
+        .filter((f) => f.color === PANE)
+        .flatMap((f) => f.shapes.map((shape) => ({ shape, alpha: f.alpha })))
+    const box = (shape: Shape) => {
+      const [xs, ys] = [shape.map(([x]) => x), shape.map(([, y]) => y)]
+      return {
+        x: Math.min(...xs),
+        y: Math.min(...ys),
+        w: Math.max(...xs) - Math.min(...xs),
+        h: Math.max(...ys) - Math.min(...ys),
+      }
+    }
+
+    it('lays as many torn panes as it asks, each its size and strength, on the canvas', () => {
+      const [frame] = framesOver(scratches(), 0)
+      const laid = panes(frame)
+      const { count, size, alphas } = PANES
+      expect(laid).toHaveLength(count)
+      for (const { shape, alpha } of laid) {
+        // Torn: more than a rectangle's four corners.
+        expect(shape.length).toBeGreaterThan(4)
+        expect(alpha).toBeGreaterThanOrEqual(alphas[0])
+        expect(alpha).toBeLessThanOrEqual(alphas[1])
+        const b = box(shape)
+        for (const side of [b.w, b.h]) {
+          // Its tears nudge each edge up to 1.5px in or out.
+          expect(side).toBeGreaterThanOrEqual(size[0] - 4)
+          expect(side).toBeLessThanOrEqual(size[1] + 4)
+        }
+        expect(b.x).toBeGreaterThanOrEqual(-2)
+        expect(b.x + b.w).toBeLessThanOrEqual(322)
+      }
+    })
+
+    // A still layer: the same panes on every tick, and after a resize the same ones laid again.
+    it('keeps the same panes on every tick and through a resize', () => {
+      const painter = scratches()
+      const frames = framesOver(painter, 12).map(panes)
+      for (const frame of frames) expect(frame).toEqual(frames[0])
+      painter.resize(320, 440)
+      expect(panes(framesOver(painter, 0)[0])).toEqual(frames[0])
+      // A smaller canvas: as many, still on it.
+      painter.resize(200, 300)
+      const smaller = panes(framesOver(painter, 0)[0])
+      expect(smaller).toHaveLength(PANES.count)
+      for (const { shape } of smaller) {
+        const b = box(shape)
+        expect(b.x).toBeGreaterThanOrEqual(-2)
+        expect(b.x + b.w).toBeLessThanOrEqual(202)
+        expect(b.y).toBeGreaterThanOrEqual(-2)
+        expect(b.y + b.h).toBeLessThanOrEqual(302)
+      }
+    })
+
+    // From a fixed seed: the same panes in every window, on every launch.
+    it('lays the same panes whatever its random numbers', () => {
+      const [a, b] = [7, 99].map((seed) => panes(framesOver(scratches(SCRATCHES, seed), 0)[0]))
+      expect(a).toEqual(b)
+    })
+
+    it('lays a pane with no size on the canvas, not nowhere', () => {
+      const flat = { ...SCRATCHES, panes: { ...PANES, size: [0, 0] as const } }
+      for (const { shape } of panes(framesOver(scratches(flat), 0)[0]))
+        for (const [x, y] of shape) expect(Number.isFinite(x) && Number.isFinite(y)).toBe(true)
+    })
+
+    // A variable the page can't read comes back empty: the canvas would keep its last fill (a
+    // scratch's or the band's color), so the panes wait for theirs instead.
+    it('lays none while its color is unread', () => {
+      const painter = painterFor(SCRATCHES, seeded())
+      painter.recolor((variable) => (variable === '--pane' ? '' : SCRATCH))
+      painter.resize(320, 440)
+      const frames = framesOver(painter, 3)
+      for (const frame of frames) expect(frame.fills.flatMap((f) => f.shapes)).toHaveLength(0)
+    })
+
+    it('has none when it asks for none', () => {
+      const { panes: _, ...plain } = SCRATCHES
+      const [frame] = framesOver(scratches(plain), 0)
+      expect(panes(frame)).toHaveLength(0)
     })
   })
 })
