@@ -609,7 +609,7 @@ function specks({ size, density, life }: Specks, alphas: readonly number[], rand
   }
 }
 
-interface Cut {
+interface Line {
   x0: number
   y0: number
   x1: number
@@ -635,12 +635,12 @@ function hairlines(
   const turns = Math.ceil(longest / everyTicks)
   const round = turns * everyTicks
   /** Each turn's hairline, and the whole ticks since it was cut. */
-  let cuts: { cut: Cut; age: number }[] = []
+  let cuts: { line: Line; age: number }[] = []
   let width = 0
   let height = 0
 
   /** A hairline somewhere new: its length, lean, strength and life, both its ends on the canvas. */
-  const cut = (): Cut => {
+  const cut = (): Line => {
     const lean = ((random() * 2 - 1) * tilt * Math.PI) / 180
     // No longer than the canvas is tall, nor than its lean lets it be on a narrow one.
     const span = Math.min(between(length, random), height, width / Math.abs(Math.sin(lean)))
@@ -661,7 +661,7 @@ function hairlines(
   }
 
   /** Whether a hairline's both ends are on the canvas. */
-  const fits = ({ x0, y0, x1, y1 }: Cut) =>
+  const fits = ({ x0, y0, x1, y1 }: Line) =>
     [x0, x1].every((x) => x >= 0 && x <= width) && [y0, y1].every((y) => y >= 0 && y <= height)
 
   return {
@@ -670,11 +670,11 @@ function hairlines(
       // A resize keeps each where it was cut, at its age, so the beat goes on; only one the canvas
       // no longer holds is cut afresh.
       if (cuts.length) {
-        for (const turn of cuts) if (!fits(turn.cut)) turn.cut = cut()
+        for (const turn of cuts) if (!fits(turn.line)) turn.line = cut()
         return
       }
       // A turn apart, so the canvas starts with some already part-way through their lives.
-      cuts = Array.from({ length: turns }, (_, i) => ({ cut: cut(), age: i * everyTicks }))
+      cuts = Array.from({ length: turns }, (_, i) => ({ line: cut(), age: i * everyTicks }))
     },
     paint(ctx, ticks, color) {
       ctx.strokeStyle = color
@@ -683,9 +683,9 @@ function hairlines(
         turn.age += ticks
         if (turn.age >= round) {
           turn.age %= round
-          turn.cut = cut()
+          turn.line = cut()
         }
-        const { cut: c, age } = turn
+        const { line: c, age } = turn
         if (age >= c.life) continue
         ctx.globalAlpha = c.alpha * (1 - age / c.life)
         ctx.beginPath()
@@ -751,7 +751,8 @@ function noise(
   { color: variable, alphas, marks, panes, band }: NoiseAtmosphere,
   random: () => number,
 ): Painter {
-  const painted = marks.kind === 'specks' ? specks(marks, alphas, random) : hairlines(marks, alphas, random)
+  const markPainter =
+    marks.kind === 'specks' ? specks(marks, alphas, random) : hairlines(marks, alphas, random)
   let laid: Pane[] = []
   let width = 0
   let height = 0
@@ -769,7 +770,7 @@ function noise(
       // a resize leaves it where it is.
       if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
       if (panes) laid = layPanes(panes, PANES_SEED, width, height)
-      painted.resize(width, height)
+      markPainter.resize(width, height)
     },
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
@@ -784,7 +785,7 @@ function noise(
       }
       // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
       // freeze whole on every early one.
-      painted.paint(ctx, Math.round(step), colors.marks)
+      markPainter.paint(ctx, Math.round(step), colors.marks)
       if (!band || bandTop === undefined) return
       ctx.fillStyle = colors.marks
       bandTop += band.fall * step
