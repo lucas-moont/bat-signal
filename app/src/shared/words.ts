@@ -842,3 +842,68 @@ export const BLUE_COLLAR_WORDS: Words = {
     mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd holding his cape across him' },
   },
 }
+
+/** "2:14 a.m.", as a watchman writes the hour in his book: built only for the Theme that dates so. */
+let roundsFormat: Intl.DateTimeFormat | undefined
+const roundsAt = (now: Date) => {
+  const parts = (roundsFormat ??= new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })).formatToParts(now)
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? ''
+  return `Rounds at ${part('hour')}:${part('minute')} ${part('dayPeriod') === 'PM' ? 'p.m.' : 'a.m.'}`
+}
+
+/**
+ * SERIOUS HOUSE's words, after Grant Morrison and Dave McKean's Arkham Asylum (arkham-asylum.md,
+ * sections 5 and 6): the house at night, speaking as a watchman does his rounds, room by room and
+ * door by door, formal and quiet, never grim and never a joke. It stays on the building and on
+ * Batman: no word for the people in it, no villain named. A door's words: someone knocking, a note
+ * left, a request to let in, something broken. Case stays.
+ */
+export const SERIOUS_HOUSE_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    needsYou: { label: 'Doorstep', count: (n) => `${n} on the doorstep` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Let in?',
+      error: 'Broken',
+      waiting: 'Knocking',
+      reply: 'New note',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    theme: { name: 'SERIOUS HOUSE', film: "Grant Morrison and Dave McKean's Arkham Asylum (1989)" },
+    tagline: 'The house keeps its own hours.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Every door is shut.' },
+      unheard: { title: 'No sound from the rooms.', hint: "Some can't be heard from here." },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} in the house tonight.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Night rounds',
+      // A sentence in the watchman's book, not a place and a time.
+      dateline: roundsAt,
+      signature: 'On the doorstep',
+      nil: () => 'Nothing on the doorstep. Every door can stay shut tonight.',
+      caseNotes: () => 'Lights still on',
+      end: (waiting) => (waiting ? 'Some doors are still open.' : 'Rounds done. Lamps out.'),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'The study',
+      atmosphere: {
+        label: 'Scratches',
+        hint: (t) => `Scratches in the paint behind the ${lower(t.case.many)}`,
+      },
+    },
+  },
+}
