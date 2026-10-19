@@ -153,6 +153,18 @@ export interface Hairlines {
 }
 
 /**
+ * A noise's panes: torn scraps of paper behind its marks, this many, each between the two sizes
+ * across and between the two strengths (alphas), in their own variable. The same ones every time,
+ * so they never move (repainted with the marks each tick, a few shapes).
+ */
+export interface Panes {
+  color: string
+  count: number
+  size: readonly [number, number]
+  alphas: readonly [number, number]
+}
+
+/**
  * Noise on a screen or in the paint: marks that never fall, specks flickering in place or hairlines
  * cut and healing; under them, if it asks for them, a few torn panes that never move; over them, if
  * it asks for one, a soft band rolling down the panel, as an old set's picture rolls.
@@ -164,11 +176,7 @@ export interface NoiseAtmosphere extends Scene {
   /** The strengths (alphas) a mark may have, one picked for each. */
   alphas: readonly number[]
   marks: Specks | Hairlines
-  /**
-   * The panes: torn scraps of paper behind the marks, this many, each between the two sizes across
-   * and between the two strengths (alphas), in their own variable. The same ones every time.
-   */
-  panes?: { color: string; count: number; size: readonly [number, number]; alphas: readonly [number, number] }
+  panes?: Panes
   /**
    * The band: its height and how far it rolls down a tick, in px, and its strength (alpha), about
    * that at its middle and softer toward its edges (its boxes overlap there, so their alphas

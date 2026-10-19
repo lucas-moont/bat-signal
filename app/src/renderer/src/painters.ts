@@ -7,12 +7,13 @@ import type {
   Hairlines,
   LitWindowsAtmosphere,
   NoiseAtmosphere,
+  Panes,
   RainAtmosphere,
   SmokeAtmosphere,
   SnowAtmosphere,
   Specks,
 } from '@shared/atmospheres'
-import { batOutline, type Wings } from '@shared/bats'
+import { batOutline, type Outline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
 
 export interface Painter {
@@ -150,6 +151,16 @@ const SWAY = [0, 1, 0, -1]
 /** The frame of a cycle a tick each, `ticks` in, from a phase. */
 function frameAt<T>(frames: readonly T[], ticks: number, phase: number): T {
   return frames[(Math.floor(ticks) + phase) % frames.length]!
+}
+
+/** A number between the two, picked by `next`. */
+const between = ([low, high]: readonly [number, number], next: () => number) => low + next() * (high - low)
+
+/** An outline as a closed shape on the path, moved by (dx, dy). */
+function trace(ctx: CanvasRenderingContext2D, outline: Outline, dx = 0, dy = 0) {
+  ctx.moveTo(dx + outline[0]![0], dy + outline[0]![1])
+  for (let p = 1; p < outline.length; p++) ctx.lineTo(dx + outline[p]![0], dy + outline[p]![1])
+  ctx.closePath()
 }
 
 /** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
@@ -405,10 +416,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
-    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
-    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
-    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
-    ctx.closePath()
+    trace(ctx, outlines.get(size)![frameAt(BEAT, beats, phase)], cx, cy)
   }
 
   return {
@@ -539,8 +547,8 @@ function smoke(
 /** A noise's marks, laid out for a canvas's size, then moved on and painted a whole tick at a time. */
 interface Marks {
   resize(width: number, height: number): void
-  /** `ticks` whole ticks on, painted in the color the noise has set. */
-  paint(ctx: CanvasRenderingContext2D, ticks: number): void
+  /** `ticks` whole ticks on, painted in `color`. */
+  paint(ctx: CanvasRenderingContext2D, ticks: number, color: string): void
 }
 
 interface Speck {
@@ -580,7 +588,8 @@ function specks({ size, density, life }: Specks, alphas: readonly number[], rand
         (x, y) => ({ x: Math.floor(x), y: Math.floor(y), age: born++ % lifeTicks }),
       )
     },
-    paint(ctx, ticks) {
+    paint(ctx, ticks, color) {
+      ctx.fillStyle = color
       alphas.forEach((alpha, level) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
@@ -606,8 +615,6 @@ interface Cut {
   alpha: number
   /** How long it stays, in whole ticks. */
   life: number
-  /** Whole ticks since it was cut. */
-  age: number
 }
 
 /**
@@ -625,41 +632,46 @@ function hairlines(
   /** Enough turns that the longest life is over before its next one. */
   const turns = Math.ceil(longest / everyTicks)
   const round = turns * everyTicks
-  let cuts: Cut[] = []
+  /** Each turn's hairline, and the whole ticks since it was cut. */
+  let cuts: { cut: Cut; age: number }[] = []
   let width = 0
   let height = 0
 
-  /** Cut somewhere new: its length, its lean, its strength and its life, both ends on the canvas. */
-  const cut = (c: Cut) => {
-    const long = Math.min(height, length[0] + random() * (length[1] - length[0]))
+  /** A hairline somewhere new: its length, lean, strength and life, both its ends on the canvas. */
+  const cut = (): Cut => {
+    const long = Math.min(height, between(length, random))
     const lean = ((random() * 2 - 1) * tilt * Math.PI) / 180
     const [dx, dy] = [long * Math.sin(lean), long * Math.cos(lean)]
-    c.x0 = Math.max(0, -dx) + random() * Math.max(0, width - Math.abs(dx))
-    c.y0 = random() * (height - dy)
-    ;[c.x1, c.y1] = [c.x0 + dx, c.y0 + dy]
-    c.alpha = alphas[Math.floor(random() * alphas.length)]!
-    c.life = shortest + Math.floor(random() * (longest - shortest + 1))
+    const x0 = Math.max(0, -dx) + random() * Math.max(0, width - Math.abs(dx))
+    const y0 = random() * (height - dy)
+    return {
+      x0,
+      y0,
+      x1: x0 + dx,
+      y1: y0 + dy,
+      alpha: alphas[Math.floor(random() * alphas.length)]!,
+      life: Math.floor(between([shortest, longest + 1], random)),
+    }
   }
 
   return {
     resize(w, h) {
       ;[width, height] = [w, h]
       // A turn apart, so the canvas starts with some already part-way through their lives.
-      cuts = Array.from({ length: turns }, (_, i) => {
-        const c = { age: i * everyTicks } as Cut
-        cut(c)
-        return c
-      })
+      cuts = Array.from({ length: turns }, (_, i) => ({ cut: cut(), age: i * everyTicks }))
     },
-    paint(ctx, ticks) {
-      for (const c of cuts) {
-        c.age += ticks
-        if (c.age >= round) {
-          c.age %= round
-          cut(c)
+    paint(ctx, ticks, color) {
+      ctx.strokeStyle = color
+      ctx.lineWidth = 1
+      for (const turn of cuts) {
+        turn.age += ticks
+        if (turn.age >= round) {
+          turn.age %= round
+          turn.cut = cut()
         }
-        if (c.age >= c.life) continue
-        ctx.globalAlpha = c.alpha * (1 - c.age / c.life)
+        const { cut: c, age } = turn
+        if (age >= c.life) continue
+        ctx.globalAlpha = c.alpha * (1 - age / c.life)
         ctx.beginPath()
         ctx.moveTo(c.x0, c.y0)
         ctx.lineTo(c.x1, c.y1)
@@ -671,7 +683,7 @@ function hairlines(
 
 /** A pane: its torn outline's points, and its strength. */
 interface Pane {
-  outline: (readonly [number, number])[]
+  outline: Outline
   alpha: number
 }
 
@@ -683,18 +695,12 @@ const TEAR = 1.5
  * Panes laid out from a seed: each its size and strength, somewhere on the canvas, its four sides
  * torn. The same seed lays the same panes.
  */
-function layPanes(
-  { count, size, alphas }: NonNullable<NoiseAtmosphere['panes']>,
-  seed: number,
-  width: number,
-  height: number,
-): Pane[] {
+function layPanes({ count, size, alphas }: Panes, seed: number, width: number, height: number): Pane[] {
   const layout = seededFrom(seed)
-  const between = ([low, high]: readonly [number, number]) => low + layout() * (high - low)
   return Array.from({ length: count }, () => {
-    const [w, h] = [between(size), between(size)]
+    const [w, h] = [between(size, layout), between(size, layout)]
     const [x, y] = [layout() * Math.max(0, width - w), layout() * Math.max(0, height - h)]
-    const alpha = between(alphas)
+    const alpha = between(alphas, layout)
     const corners = [
       [x, y],
       [x + w, y],
@@ -756,18 +762,14 @@ function noise(
       for (const { outline, alpha } of laid) {
         ctx.globalAlpha = alpha
         ctx.beginPath()
-        ctx.moveTo(...outline[0]!)
-        for (let p = 1; p < outline.length; p++) ctx.lineTo(...outline[p]!)
-        ctx.closePath()
+        trace(ctx, outline)
         ctx.fill()
       }
-      ctx.fillStyle = colors.marks
-      ctx.strokeStyle = colors.marks
-      ctx.lineWidth = 1
       // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
       // freeze whole on every early one.
-      painted.paint(ctx, Math.round(step))
+      painted.paint(ctx, Math.round(step), colors.marks)
       if (!band || bandTop === undefined) return
+      ctx.fillStyle = colors.marks
       bandTop += band.fall * step
       if (bandTop > height) bandTop -= height + band.height
       const middle = bandTop + band.height / 2
