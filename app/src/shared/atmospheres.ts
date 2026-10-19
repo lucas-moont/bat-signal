@@ -153,14 +153,17 @@ export interface Hairlines {
 }
 
 /**
- * A noise's panes: torn scraps of paper behind its marks, this many, each between the two sizes
- * across and between the two strengths (alphas), in their own variable. The same ones every time,
- * so they never move (repainted with the marks each tick, a few shapes).
+ * A noise's panes: torn scraps of paper behind its marks, the same ones every time, so they never
+ * move (repainted with the marks each tick, a few shapes).
  */
 export interface Panes {
+  /** The variable they are filled in. */
   color: string
+  /** How many. */
   count: number
+  /** The smallest and the largest a pane is across and down, in px. */
   size: readonly [number, number]
+  /** The faintest and the strongest a pane may be (alphas). */
   alphas: readonly [number, number]
 }
 
@@ -171,7 +174,7 @@ export interface Panes {
  */
 export interface NoiseAtmosphere extends Scene {
   kind: 'noise'
-  /** The variable its marks and its band are filled in. */
+  /** The variable its marks and its band are painted in. */
   color: string
   /** The strengths (alphas) a mark may have, one picked for each. */
   alphas: readonly number[]
