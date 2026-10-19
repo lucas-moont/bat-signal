@@ -20,8 +20,16 @@ const readApproval = (name: string): Promise<string | undefined> =>
     .then(({ stdout }) => stdout)
     .catch((error: { code?: unknown }) => (error.code === 1 ? '' : undefined))
 
+/** Starting at sign-in, whichever system keeps the record of it: what the settings sheet reads and switches. */
+export interface Startup {
+  readonly state: StartupState
+  /** Reads the system again: the switch may have moved outside Bat-Signal. */
+  refresh(): Promise<void>
+  set(on: boolean): void
+}
+
 /** onChange: the state may have changed; the status should go out (it is sent only if it did). */
-export function createStartup(onChange: () => void) {
+export function createStartup(onChange: () => void): Startup {
   const env = { isPackaged: app.isPackaged, execPath: process.execPath, appPath: app.getAppPath() }
   let approved = true
   // On or off from the start (a cheap read, no process), so the switch does not flicker when the

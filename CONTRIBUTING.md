@@ -4,7 +4,7 @@ Thanks for your interest. The project is small, and so are the rules.
 
 ## Running locally
 
-Requirements: Windows 10/11, Node.js 24.2+ (the privacy check runs TypeScript directly and uses `import.meta.main`) and Claude Code installed.
+Requirements: Windows 10/11 or Linux, Node.js 24.2+ (the privacy check runs TypeScript directly and uses `import.meta.main`) and Claude Code installed.
 
 ```bash
 cd app
@@ -34,6 +34,20 @@ Windows shows toasts only from an app it knows by a Start menu shortcut. In deve
 
 The tray and toast icons in `app/resources/icons/` are drawn from the bat in `app/src/shared/emblems.ts` (VENGEANCE's, since the tray never follows a Theme): after changing it, run `npm run icons` and commit the result.
 
+## On Linux
+
+`npm run dev` and every check above run on Linux too. A development run keeps its settings in `~/.config/Bat-Signal Dev`. Start at sign-in writes `~/.config/autostart/com.lucasmoont.bat-signal.dev.desktop`, for this checkout's Electron with the app folder, which loads `out/`.
+
+How each system is handled is in [the platform layer](docs/architecture.md#the-platform-layer). To try it outside Hyprland, run the app in a GNOME or KDE session, or with `--ozone-platform=x11` for X11.
+
+```bash
+cd app
+npm run pack:linux   # the app folder only: release/linux-unpacked/bat-signal
+npm run dist:linux   # the AppImage: release/Bat-Signal-<version>.AppImage
+```
+
+If AppImageLauncher is installed, it stops the AppImage to offer to integrate it: run it with `APPIMAGELAUNCHER_DISABLE=1` to skip that.
+
 ## Building the installer
 
 ```bash
@@ -50,7 +64,7 @@ The installer is unsigned for now (see [`docs/research/code-signing.md`](docs/re
 2. In `app/`, run `npm version x.y.z --no-git-tag-version` (it updates the lockfile too), and commit it as `chore: version x.y.z`.
 3. Once that is on `main`, tag it and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 
-The [release workflow](.github/workflows/release.yml) then checks everything, builds and checks the installer, and publishes a GitHub release with the installer, `SHA256SUMS.txt` and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that does not match `package.json`, or a version with no notes, publishes nothing.
+The [release workflow](.github/workflows/release.yml) then builds the AppImage on Linux, checks everything on Windows, and builds and checks the installer. Only when all of it passes does it publish a GitHub release with `Bat-Signal-Setup-x.y.z.exe`, `Bat-Signal-x.y.z.AppImage`, `SHA256SUMS.txt` (one line for each) and that section as its notes. A version with a `-` (`1.0.0-rc.1`) is published as a pre-release. A tag that is not on `main` or does not match `package.json`, or a version with no notes, publishes nothing.
 
 ## Commits
 

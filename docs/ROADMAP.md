@@ -44,7 +44,7 @@ Move from watching to acting, carefully and always with explicit confirmation.
 
 ## v3: "the full Bat-Computer"
 
-- **Cross-platform.** macOS and Linux; sessions inside WSL.
+- **Cross-platform.** macOS; Linux releases, and window placement on more Wayland desktops than Hyprland (KDE, GNOME); sessions inside WSL.
 - **Remote and cloud sessions.** claude.ai/code, Remote Control, sessions on other machines.
 - **Daily digest.** "Today your sessions did…", generated with the Claude API.
 - **Phone.** Push via ntfy or Telegram when you're away from the PC.

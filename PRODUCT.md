@@ -6,7 +6,7 @@
 
 web
 
-The UI is web technology (React 19 in Electron's renderer), shipped as a Windows desktop app. Windows is the only target today; macOS and Linux are v3 ideas in `docs/ROADMAP.md`.
+The UI is web technology (React 19 in Electron's renderer), shipped as a Windows desktop app. Linux runs from source (an AppImage), at its best on Hyprland, whose windows Bat-Signal can place; macOS is a v3 idea in `docs/ROADMAP.md`.
 
 ## Users
 

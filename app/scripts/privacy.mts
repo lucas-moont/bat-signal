@@ -61,8 +61,9 @@ const UUID_WORD = new RegExp(`\\b${UUID.source}\\b`, 'gi')
 const TRANSCRIPT = new RegExp(`(?:^|[\\\\/])(${UUID.source})\\.jsonl$`, 'i')
 
 /**
- * Account names that are also everyday words in code (containers run as root or node): matching
- * them would flag ordinary lines. Names under 4 letters are skipped for the same reason.
+ * Account names that are also everyday words in code (containers run as root or node, GitHub's
+ * Linux runners as runner): matching them would flag ordinary lines (runner.os, a runner-up). Names
+ * under 4 letters are skipped for the same reason.
  */
 const EVERYDAY_NAMES = new Set([
   'root',
@@ -74,6 +75,7 @@ const EVERYDAY_NAMES = new Set([
   'test',
   'ubuntu',
   'vscode',
+  'runner',
 ])
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

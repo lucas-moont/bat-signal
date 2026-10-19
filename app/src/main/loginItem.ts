@@ -40,6 +40,16 @@ export const loginItemFor = (enabled: boolean, env: LaunchEnv): LoginItem => ({
 export const isLoginLaunch = (argv: readonly string[]): boolean => argv.includes(AT_LOGIN)
 
 /**
+ * The flag that makes a launch while Bat-Signal runs act as the global shortcut. On Wayland an app
+ * cannot hold a global shortcut of its own: the desktop's own key binding runs `bat-signal --toggle`.
+ */
+export const TOGGLE = '--toggle'
+
+/** What a launch while Bat-Signal already runs asks for: nothing, the shortcut's toggle, or to come back. */
+export const relaunchAction = (argv: readonly string[]): 'none' | 'shortcut' | 'summon' =>
+  isLoginLaunch(argv) ? 'none' : argv.includes(TOGGLE) ? 'shortcut' : 'summon'
+
+/**
  * Whether Task Manager lets the login entry run, from `reg query` of STARTUP_APPROVED for its name.
  * Its first byte is even when switched on and odd when switched off; an entry Task Manager never
  * touched has no value and runs. (Electron's own reading misses entries with arguments.)

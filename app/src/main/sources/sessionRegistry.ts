@@ -20,15 +20,29 @@ export interface RegistryEntry {
 /** The OS boundary: lets tests fake which processes exist. */
 export interface ProcessProbe {
   isRunning(pid: number): boolean
-  /** Creation time of each pid as a Windows FILETIME string, or null if it is gone. */
+  /**
+   * Creation time of each pid as Claude Code writes it in procStart, or null if it is gone: a
+   * Windows FILETIME on Windows, clock ticks since boot on Linux.
+   */
   startTimes(pids: number[]): Promise<Map<number, string | null>>
+}
+
+/** Whether a pid is running: signal 0 checks without sending anything. */
+export function pidExists(pid: number): boolean {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch (err) {
+    // EPERM: the process exists but belongs to someone else.
+    return (err as NodeJS.ErrnoException).code === 'EPERM'
+  }
 }
 
 /** The entries whose process is still the one that wrote them, looked up in one batch. */
 export async function liveEntries(entries: RegistryEntry[], probe: ProcessProbe): Promise<RegistryEntry[]> {
   const running = entries.filter((e) => probe.isRunning(e.pid))
   const starts = await probe.startTimes(running.filter((e) => e.procStart).map((e) => e.pid))
-  // A crashed session leaves its file behind, and Windows reuses pids:
+  // A crashed session leaves its file behind, and the OS reuses pids:
   // only trust the pid if the process started when the file says it did.
   return running.filter((e) => !e.procStart || starts.get(e.pid) === e.procStart)
 }

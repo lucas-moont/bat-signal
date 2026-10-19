@@ -1,8 +1,9 @@
 name: Release
 
-# A v* tag publishes that version: the installer, its checksum and its notes from CHANGELOG.md.
-# Everything is checked first, and a tag with a "-" (v1.0.0-rc.1) makes a pre-release. Built only
-# on GitHub's own runners, from the tag, as SignPath Foundation requires for signing later.
+# A v* tag publishes that version: the Windows installer, the Linux AppImage, their checksums and
+# the notes from CHANGELOG.md. Everything is checked first, and a tag with a "-" (v1.0.0-rc.1)
+# makes a pre-release. Built only on GitHub's own runners, from the tag, as SignPath
+# Foundation requires for signing later.
 on:
   push:
     tags: ['v*']
@@ -12,6 +13,8 @@ permissions:
 
 jobs:
   release:
+    # It publishes the AppImage too, so it starts once the linux job below has built it.
+    needs: linux
     runs-on: windows-latest
     defaults:
       run:
@@ -37,8 +40,9 @@ jobs:
           if ("v$($pkg.version)" -cne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME, but package.json says $($pkg.version)" }
           "VERSION=$($pkg.version)" >> $env:GITHUB_ENV
           "PRODUCT=$($pkg.productName)" >> $env:GITHUB_ENV
-          # As build.nsis.artifactName names it.
+          # As build.nsis.artifactName and build.appImage.artifactName name them.
           "SETUP=$($pkg.productName)-Setup-$($pkg.version).exe" >> $env:GITHUB_ENV
+          "APPIMAGE=$($pkg.productName)-$($pkg.version).AppImage" >> $env:GITHUB_ENV
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
@@ -49,21 +53,28 @@ jobs:
         run: node scripts/release-notes.mts "$VERSION" > release-notes.md
       - run: npm run dist
       - run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/installer-check.ps1
-      - name: The checksum
+      - name: The AppImage, from the linux job
+        uses: actions/download-artifact@v8
+        with:
+          name: appimage
+          path: app/release
+      - name: The checksums
         shell: pwsh
         working-directory: app/release
+        # LF between the lines, as sha256sum --check reads them on Linux.
         run: |
-          "$((Get-FileHash $env:SETUP -Algorithm SHA256).Hash.ToLower())  $env:SETUP" | Set-Content SHA256SUMS.txt -NoNewline
+          $sums = $env:SETUP, $env:APPIMAGE | ForEach-Object { "$((Get-FileHash $_ -Algorithm SHA256).Hash.ToLower())  $_" }
+          $sums -join "`n" | Set-Content SHA256SUMS.txt -NoNewline
       - name: Publish
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        # A draft first, made public once both files are up: a run that fails halfway publishes
-        # nothing, and running it again replaces what the last try uploaded.
+        # A draft first, made public once all three files are up: a run that fails halfway
+        # publishes nothing, and running it again replaces what the last try uploaded.
         run: |
           $tag = $env:GITHUB_REF_NAME
-          $files = "release/$env:SETUP", 'release/SHA256SUMS.txt'
+          $files = "release/$env:SETUP", "release/$env:APPIMAGE", 'release/SHA256SUMS.txt'
           # One plain argument: splatting a one-item list (@flags) passed it letter by letter.
           $prerelease = if ($env:VERSION.Contains('-')) { '--prerelease' } else { '--prerelease=false' }
           gh release view $tag *> $null
@@ -74,3 +85,30 @@ jobs:
           }
           if ($LASTEXITCODE -ne 0) { throw 'The files did not reach the release.' }
           gh release edit $tag --draft=false
+
+  # The AppImage, built on Linux. It publishes nothing itself: the release job checks everything,
+  # then publishes it beside the installer.
+  linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # npm's install scripts run next
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run dist:linux
+      - uses: actions/upload-artifact@v7
+        with:
+          name: appimage
+          path: app/release/*.AppImage
+          if-no-files-found: error
+          compression-level: 0 # an AppImage is compressed already

@@ -112,6 +112,11 @@ describe('privacy check: what only this machine knows', () => {
     expect(scan('const root = git(); node scripts/x.mts; npm run dev', container)).toEqual([])
   })
 
+  it("ignores GitHub's Linux runner account, a word the workflows themselves use", () => {
+    const linuxRunner: LocalIdentity = { names: ['runner'], ids: [] }
+    expect(scan("if: runner.os == 'Linux' # the runner-up", linuxRunner)).toEqual([])
+  })
+
   it('flags a real Claude session id, but not other ids', () => {
     expect(scan('resume 0F1E2D3C-4B5A-6978-8A9B-0C1D2E3F4A5B', me)).toEqual(['1:session id'])
     expect(scan('resume 11111111-2222-3333-4444-555555555555', me)).toEqual([])

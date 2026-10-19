@@ -1,12 +1,13 @@
 {
-  "description": "Bat-Signal: report session activity to the Bat-Signal desktop app on 127.0.0.1:47777. Observe-only: each hook posts the event in the background and discards the reply, so whatever answers on that port can never take a decision, block a turn or add context. If the app isn't running, the post fails within a second and nothing changes for Claude Code.",
+  "description": "Bat-Signal: report session activity to the Bat-Signal desktop app on 127.0.0.1:47777. Observe-only: each hook runs curl directly (no shell, so the same hook works on Windows, Linux and macOS) in the background, and writes the reply to a file in the plugin's data folder that nothing reads, so whatever answers on that port can never take a decision, block a turn or add context. If the app isn't running, the post fails within a second and nothing changes for Claude Code.",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -18,7 +19,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -30,7 +32,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -42,7 +45,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -54,7 +58,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -66,7 +71,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -78,7 +84,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -90,7 +97,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -102,7 +110,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -114,7 +123,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -126,7 +136,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -138,7 +149,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -150,7 +162,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }
@@ -162,7 +175,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl.exe -s -m 1 -o NUL -H \"Content-Type: application/json\" --data-binary '@-' http://127.0.0.1:47777/hook; exit 0",
+            "command": "curl",
+            "args": ["-s", "-m", "1", "--create-dirs", "-o", "${CLAUDE_PLUGIN_DATA}/reply", "-H", "Content-Type: application/json", "--data-binary", "@-", "http://127.0.0.1:47777/hook"],
             "async": true,
             "timeout": 5
           }

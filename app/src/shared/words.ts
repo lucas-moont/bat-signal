@@ -258,6 +258,12 @@ const dateline = (now: Date) => {
 /** The product's name, the same under every Theme. */
 export const PRODUCT = 'Bat-Signal'
 
+/**
+ * Whether Bat-Signal runs on Windows, whose parts the settings name (Windows notifications, Task
+ * Manager); elsewhere they name the desktop's. Read from the navigator, which the pages and Node have.
+ */
+const ON_WINDOWS = typeof navigator === 'undefined' || /^win/i.test(navigator.platform)
+
 /** The command that installs the plugin: typed into a terminal, so never re-voiced. */
 export const PLUGIN_INSTALL = 'claude plugin install bat-signal@bat-signal'
 
@@ -379,7 +385,7 @@ export const STANDARD_VOICE: Voice = {
     title: 'Settings',
     look: 'Look',
     comfort: 'Comfort',
-    notifications: 'Windows notifications',
+    notifications: ON_WINDOWS ? 'Windows notifications' : 'Desktop notifications',
     sound: 'Sound',
     animations: { label: 'Animations', hint: 'Intro, flying mascot, typewriter and transitions' },
     atmosphere: { label: 'Rain', hint: (t) => `Gotham weather behind the ${lower(t.case.many)}` },
@@ -394,9 +400,11 @@ export const STANDARD_VOICE: Voice = {
     onTop: { label: 'Always on top', hint: 'Keep the window above everything else' },
     opacity: 'Opacity',
     startup: {
-      label: 'Start with Windows',
+      label: ON_WINDOWS ? 'Start with Windows' : 'Start at sign-in',
       hint: 'Wakes as the disc when you sign in',
-      blocked: 'Turned off in Task Manager: switch it on here to allow it again',
+      blocked: ON_WINDOWS
+        ? 'Turned off in Task Manager: switch it on here to allow it again'
+        : "Turned off in your desktop's startup settings: switch it on here to allow it again",
     },
     allToasts: {
       label: 'All notifications',
@@ -424,7 +432,7 @@ export const STANDARD_VOICE: Voice = {
     hint: {
       active: `Opens and folds ${PRODUCT} from any app`,
       off: 'Off: click to set one',
-      taken: 'Another app (or Windows) already uses it: click to pick another',
+      taken: `Another app (or ${ON_WINDOWS ? 'Windows' : 'the desktop'}) already uses it: click to pick another`,
     },
     recordingHint: 'Esc cancels · Backspace turns it off',
     pressKeys: 'Press keys',
