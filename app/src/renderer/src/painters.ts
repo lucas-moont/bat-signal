@@ -769,7 +769,8 @@ function noise(
       const step = Math.min(dt, MAX_DT) / STEP
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = colors.panes
-      for (const { outline, alpha } of laid) {
+      // Without their color (an empty one would leave the canvas's last fill in place), none.
+      for (const { outline, alpha } of colors.panes ? laid : []) {
         ctx.globalAlpha = alpha
         ctx.beginPath()
         trace(ctx, outline)

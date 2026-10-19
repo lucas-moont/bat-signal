@@ -1018,6 +1018,16 @@ describe('the scratches', () => {
       expect(panes(framesOver(painter, 0)[0])).toEqual(frames[0])
     })
 
+    // A variable the page can't read comes back empty: the canvas would keep its last fill (a
+    // scratch's or the band's color), so the panes wait for theirs instead.
+    it('lays none while its color is unread', () => {
+      const painter = painterFor(SCRATCHES, seeded())
+      painter.recolor((variable) => (variable === '--pane' ? '' : SCRATCH))
+      painter.resize(320, 440)
+      const frames = framesOver(painter, 3)
+      for (const frame of frames) expect(frame.fills.flatMap((f) => f.shapes)).toHaveLength(0)
+    })
+
     it('has none when it asks for none', () => {
       const { panes: _, ...plain } = SCRATCHES
       const [frame] = framesOver(scratches(plain), 0)
