@@ -865,7 +865,7 @@ const roundsAt = (now: Date) => {
 export const SERIOUS_HOUSE_WORDS: Words = {
   terms: {
     ...STANDARD_TERMS,
-    needsYou: { label: 'Doorstep', count: (n) => `${n} on the doorstep` },
+    needsYou: { label: 'At the door', count: (n) => `${n} at the door` },
     stamp: {
       ...STANDARD_TERMS.stamp,
       permission: 'Let in?',
@@ -894,8 +894,8 @@ export const SERIOUS_HOUSE_WORDS: Words = {
       name: 'Night rounds',
       // A sentence in the watchman's book, not a place and a time.
       dateline: roundsAt,
-      signature: 'On the doorstep',
-      nil: () => 'Nothing on the doorstep. Every door can stay shut tonight.',
+      signature: 'At the door',
+      nil: () => 'No one at the door. Every door can stay shut tonight.',
       caseNotes: () => 'Lights still on',
       end: (waiting) => (waiting ? 'Some doors are still open.' : 'Rounds done. Lamps out.'),
     },
