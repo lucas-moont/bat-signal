@@ -654,9 +654,19 @@ function hairlines(
     }
   }
 
+  /** Whether a hairline's both ends are on the canvas. */
+  const fits = ({ x0, y0, x1, y1 }: Cut) =>
+    [x0, x1].every((x) => x >= 0 && x <= width) && [y0, y1].every((y) => y >= 0 && y <= height)
+
   return {
     resize(w, h) {
       ;[width, height] = [w, h]
+      // A resize keeps each where it was cut, at its age, so the beat goes on; only one the canvas
+      // no longer holds is cut afresh.
+      if (cuts.length) {
+        for (const turn of cuts) if (!fits(turn.cut)) turn.cut = cut()
+        return
+      }
       // A turn apart, so the canvas starts with some already part-way through their lives.
       cuts = Array.from({ length: turns }, (_, i) => ({ cut: cut(), age: i * everyTicks }))
     },

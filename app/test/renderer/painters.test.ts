@@ -953,6 +953,26 @@ describe('the scratches', () => {
     expect(cuts(b)).toEqual(cuts(a))
   })
 
+  // The panel resizes as it is dragged or changes mode: a scratch stays where it was cut, at its
+  // age, and the beat goes on. Only one the smaller canvas no longer holds is cut afresh.
+  it('keeps its scratches and its beat through a resize', () => {
+    const painter = scratches()
+    const before = framesOver(painter, 5)
+    painter.resize(400, 500)
+    const after = framesOver(painter, 40)
+    expect(cuts(after[0]).map((c) => c.key)).toEqual(cuts(before.at(-1)!).map((c) => c.key))
+    const born = births([...before, ...after.slice(1)])
+    expect(born.length).toBeGreaterThanOrEqual(5)
+    for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
+    painter.resize(60, 50)
+    for (const { segment: d } of cuts(framesOver(painter, 0)[0])) {
+      for (const x of [d.x0, d.x1]) expect(x).toBeGreaterThanOrEqual(0)
+      for (const x of [d.x0, d.x1]) expect(x).toBeLessThanOrEqual(60)
+      for (const y of [d.y0, d.y1]) expect(y).toBeGreaterThanOrEqual(0)
+      for (const y of [d.y0, d.y1]) expect(y).toBeLessThanOrEqual(50)
+    }
+  })
+
   describe('its panes', () => {
     const panes = (frame: ReturnType<typeof recorder>) =>
       frame.fills
