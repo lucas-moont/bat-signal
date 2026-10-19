@@ -725,8 +725,8 @@ function layPanes({ count, size, alphas }: Panes, seed: number, width: number, h
       const [bx, by] = corners[(i + 1) % 4]!
       const side = Math.hypot(bx - ax, by - ay)
       const steps = Math.max(1, Math.round(side / TEAR_STEP))
-      // Square to the side, so the tear nudges the edge in or out.
-      const [nx, ny] = [-(by - ay) / side, (bx - ax) / side]
+      // Square to the side, so the tear nudges the edge in or out; a side of no length isn't torn.
+      const [nx, ny] = side ? [-(by - ay) / side, (bx - ax) / side] : [0, 0]
       return Array.from({ length: steps }, (_, s) => {
         const tear = s ? (layout() * 2 - 1) * TEAR : 0
         return [ax + ((bx - ax) * s) / steps + nx * tear, ay + ((by - ay) * s) / steps + ny * tear] as const

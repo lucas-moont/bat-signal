@@ -1034,6 +1034,12 @@ describe('the scratches', () => {
       expect(panes(framesOver(painter, 0)[0])).toEqual(frames[0])
     })
 
+    it('lays a pane with no size on the canvas, not nowhere', () => {
+      const flat = { ...SCRATCHES, panes: { ...PANES, size: [0, 0] as const } }
+      for (const { shape } of panes(framesOver(scratches(flat), 0)[0]))
+        for (const [x, y] of shape) expect(Number.isFinite(x) && Number.isFinite(y)).toBe(true)
+    })
+
     // A variable the page can't read comes back empty: the canvas would keep its last fill (a
     // scratch's or the band's color), so the panes wait for theirs instead.
     it('lays none while its color is unread', () => {
