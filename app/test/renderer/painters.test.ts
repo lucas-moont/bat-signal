@@ -7,7 +7,9 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type AshAtmosphere,
+  type Hairlines,
   type NoiseAtmosphere,
+  type Panes,
   type SmokeAtmosphere,
   type SnowAtmosphere,
 } from '../../src/shared/atmospheres'
@@ -75,17 +77,23 @@ function seeded(seed = 7) {
 
 const length = (d: Segment) => Math.hypot(d.x0 - d.x1, d.y0 - d.y1)
 
-/** What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart. */
-function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
+/**
+ * What a painter draws as it appears, then on each of `n` ticks of the clock `dt` apart (or the
+ * time `dt` gives for the tick).
+ */
+function framesOver(painter: Painter, n: number, dt: number | ((tick: number) => number) = 1 / FPS) {
   const first = recorder()
   painter.paint(first.ctx, 0)
-  const after = Array.from({ length: n }, () => {
+  const after = Array.from({ length: n }, (_, i) => {
     const r = recorder()
-    painter.paint(r.ctx, dt)
+    painter.paint(r.ctx, typeof dt === 'number' ? dt : dt(i))
     return r
   })
   return [first, ...after] as const
 }
+
+/** A tick of a timer that runs a hair early, then a hair late, by turns. */
+const JITTERED = (tick: number) => (tick % 2 ? 1.002 : 0.998) / FPS
 
 /** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
 const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
@@ -146,12 +154,14 @@ const NOISE: NoiseAtmosphere = {
  * Scratches: hairlines 20 to 120px long, one cut a second, each staying two to three seconds as it
  * fades, over four torn panes.
  */
+const HAIRLINES: Hairlines = { kind: 'hairlines', length: [20, 120], tilt: 8, every: 1, life: [2, 3] }
+const PANES: Panes = { color: '--pane', count: 4, size: [40, 140], alphas: [0.02, 0.04] }
 const SCRATCHES: NoiseAtmosphere = {
   kind: 'noise',
   color: '--scratch',
   alphas: [0.06, 0.09, 0.12],
-  marks: { kind: 'hairlines', length: [20, 120], tilt: 8, every: 1, life: [2, 3] },
-  panes: { color: '--pane', count: 4, size: [40, 140], alphas: [0.02, 0.04] },
+  marks: HAIRLINES,
+  panes: PANES,
 }
 
 // The page hands a painter its colors as the canvas mounts, and paints at once so a still scene
@@ -745,18 +755,7 @@ describe('the noise', () => {
   // The page's clock is a timer, a hair early or late each tick: static still flickers every tick,
   // and a longer life still lasts its whole ticks.
   it('counts whole ticks on a clock that runs a hair early or late', () => {
-    const jittered = (life: number) => {
-      const painter = noise(livingFor(life))
-      const first = recorder()
-      painter.paint(first.ctx, 0)
-      const frames = [spots(first)]
-      for (let i = 0; i < 12; i++) {
-        const r = recorder()
-        painter.paint(r.ctx, (i % 2 ? 1.002 : 0.998) / FPS)
-        frames.push(spots(r))
-      }
-      return frames
-    }
+    const jittered = (life: number) => framesOver(noise(livingFor(life)), 12, JITTERED).map(spots)
     const statics = jittered(1)
     for (let i = 1; i < statics.length; i++) expect(statics[i]![0]).not.toBe(statics[i - 1]![0])
     const longer = jittered(3)
@@ -854,12 +853,7 @@ describe('the scratches', () => {
     painter.resize(320, 440)
     return painter
   }
-  const {
-    length: lengths,
-    tilt,
-    every,
-    life,
-  } = SCRATCHES.marks as Extract<NoiseAtmosphere['marks'], { kind: 'hairlines' }>
+  const { length: lengths, tilt, every, life } = HAIRLINES
 
   /** Each hairline in a frame, keyed by where it is, with its strength. */
   const cuts = ({ strokes }: ReturnType<typeof recorder>) =>
@@ -873,10 +867,10 @@ describe('the scratches', () => {
     )
   /** The frames each hairline shows in, by its key. */
   const lives = (frames: readonly ReturnType<typeof recorder>[]) => {
-    const seen = new Map<string, { frames: number[]; alphas: number[]; segment: Segment }>()
+    const seen = new Map<string, { frames: number[]; alphas: number[] }>()
     frames.forEach((frame, i) => {
-      for (const { key, segment, alpha } of cuts(frame)) {
-        const s = seen.get(key) ?? { frames: [], alphas: [], segment }
+      for (const { key, alpha } of cuts(frame)) {
+        const s = seen.get(key) ?? { frames: [], alphas: [] }
         s.frames.push(i)
         s.alphas.push(alpha)
         seen.set(key, s)
@@ -884,6 +878,12 @@ describe('the scratches', () => {
     })
     return seen
   }
+  /** The frames a new hairline was cut on, in order (not those already there at the start). */
+  const births = (frames: readonly ReturnType<typeof recorder>[]) =>
+    [...lives(frames).values()]
+      .map((s) => s.frames[0]!)
+      .filter((first) => first > 0)
+      .sort((a, b) => a - b)
 
   it('cuts hairlines as long as it asks, leaning no further than it asks, on the canvas, in its color', () => {
     const frames = framesOver(scratches(), 80)
@@ -909,10 +909,7 @@ describe('the scratches', () => {
 
   // One at a time: a new scratch every `every` seconds, never two together, so it never pulses.
   it('cuts one at a time, one every so often', () => {
-    const born = [...lives(framesOver(scratches(), 80)).values()]
-      .map((s) => s.frames[0]!)
-      .filter((first) => first > 0)
-      .sort((a, b) => a - b)
+    const born = births(framesOver(scratches(), 80))
     expect(born.length).toBeGreaterThanOrEqual(8)
     for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
   })
@@ -943,15 +940,8 @@ describe('the scratches', () => {
   })
 
   it('counts whole ticks on a clock that runs a hair early or late', () => {
-    const painter = scratches()
-    const frames = [recorder()]
-    painter.paint(frames[0]!.ctx, 0)
-    for (let i = 0; i < 60; i++) {
-      const r = recorder()
-      painter.paint(r.ctx, (i % 2 ? 1.002 : 0.998) / FPS)
-      frames.push(r)
-    }
-    const born = [...lives(frames).values()].map((s) => s.frames[0]!).filter((first) => first > 0)
+    const born = births(framesOver(scratches(), 60, JITTERED))
+    expect(born.length).toBeGreaterThanOrEqual(6)
     for (let j = 1; j < born.length; j++) expect(born[j]! - born[j - 1]!).toBe(every * FPS)
   })
 
@@ -981,18 +971,19 @@ describe('the scratches', () => {
     it('lays as many torn panes as it asks, each its size and strength, on the canvas', () => {
       const [frame] = framesOver(scratches(), 0)
       const laid = panes(frame)
-      expect(laid).toHaveLength(SCRATCHES.panes!.count)
-      const [low, high] = SCRATCHES.panes!.alphas
+      const { count, size, alphas } = PANES
+      expect(laid).toHaveLength(count)
       for (const { shape, alpha } of laid) {
         // Torn: more than a rectangle's four corners.
         expect(shape.length).toBeGreaterThan(4)
-        expect(alpha).toBeGreaterThanOrEqual(low)
-        expect(alpha).toBeLessThanOrEqual(high)
+        expect(alpha).toBeGreaterThanOrEqual(alphas[0])
+        expect(alpha).toBeLessThanOrEqual(alphas[1])
         const b = box(shape)
-        expect(b.w).toBeGreaterThanOrEqual(SCRATCHES.panes!.size[0] - 4)
-        expect(b.w).toBeLessThanOrEqual(SCRATCHES.panes!.size[1] + 4)
-        expect(b.h).toBeGreaterThanOrEqual(SCRATCHES.panes!.size[0] - 4)
-        expect(b.h).toBeLessThanOrEqual(SCRATCHES.panes!.size[1] + 4)
+        for (const side of [b.w, b.h]) {
+          // Its tears nudge each edge up to 1.5px in or out.
+          expect(side).toBeGreaterThanOrEqual(size[0] - 4)
+          expect(side).toBeLessThanOrEqual(size[1] + 4)
+        }
         expect(b.x).toBeGreaterThanOrEqual(-2)
         expect(b.x + b.w).toBeLessThanOrEqual(322)
       }
