@@ -907,6 +907,11 @@ describe('the scratches', () => {
     }
   })
 
+  // A 1px line on a whole pixel's edge is smeared over two columns at half strength.
+  it('cuts each from the middle of a pixel, so an upright one is sharp', () => {
+    for (const { segment: d } of framesOver(scratches(), 80).flatMap(cuts)) expect(d.x0 % 1).toBe(0.5)
+  })
+
   it('keeps both ends on a canvas narrower than a lean', () => {
     const painter = painterFor(SCRATCHES, seeded())
     painter.recolor(() => SCRATCH)

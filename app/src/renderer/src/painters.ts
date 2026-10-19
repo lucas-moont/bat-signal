@@ -643,7 +643,10 @@ function hairlines(
     // No longer than the canvas is tall, nor than its lean lets it be on a narrow one.
     const span = Math.min(between(length, random), height, width / Math.abs(Math.sin(lean)))
     const [dx, dy] = [span * Math.sin(lean), span * Math.cos(lean)]
-    const x0 = Math.max(0, -dx) + random() * Math.max(0, width - Math.abs(dx))
+    const [left, right] = [Math.max(0, -dx), Math.max(0, width - Math.max(0, dx))]
+    // From the middle of a pixel, so an upright one lights a column of pixels, not two at half
+    // strength; inside its room even so.
+    const x0 = Math.min(right, Math.max(left, Math.floor(left + random() * (right - left)) + 0.5))
     const y0 = random() * (height - dy)
     return {
       x0,
