@@ -186,6 +186,11 @@ describe('a scribbled emblem', () => {
     expect(draw()).toBe(draw())
   })
 
+  // Two channels of the noise, one a direction: from one, every edge would shift along a diagonal.
+  it('wobbles its edge across and down apart', () => {
+    expect(draw()).toMatch(/<feDisplacementMap[^>]* xChannelSelector="R" yChannelSelector="G"/)
+  })
+
   // A sweep from one end of the bat to the other, so no wingtip is left bare, and nothing far past it.
   it('covers the bat from end to end, and strays only a little past it', () => {
     const points = strokes(draw()).flatMap((s) => s.points)

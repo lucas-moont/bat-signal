@@ -44,7 +44,13 @@ export function ScribbledBat({
             numOctaves={2}
             seed={3}
           />
-          <feDisplacementMap in="SourceGraphic" scale={bat.width * WOBBLE} />
+          {/* Across by one channel of the noise and down by another, so every edge wobbles. */}
+          <feDisplacementMap
+            in="SourceGraphic"
+            scale={bat.width * WOBBLE}
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
         </filter>
         <mask
           id={scratch}
