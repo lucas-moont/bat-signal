@@ -234,7 +234,7 @@ const CELL = { w: 3, h: 4, mullion: 1 }
 const INSET = 3
 
 /** The same numbers in [0, 1) every time from the same seed in [0, 1) (Park and Miller's). */
-function seededFrom(seed: number): () => number {
+export function seededFrom(seed: number): () => number {
   let state = Math.floor(seed * 2147483646) + 1
   return () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646
 }
