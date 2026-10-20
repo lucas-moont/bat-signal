@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
+import { strokesOf } from '../../src/renderer/src/scribble'
 import { emblem, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
@@ -182,7 +183,9 @@ describe('a scribbled emblem', () => {
     expect(draw({ outline: 'var(--lens-bat-edge)' })).not.toContain('var(--lens-bat-edge)')
   })
 
+  // Worked out twice, on two copies of the box, so neither is the other's kept strokes.
   it('scribbles the same way every time it is drawn', () => {
+    expect(strokesOf({ ...bat })).toEqual(strokesOf({ ...bat }))
     expect(draw()).toBe(draw())
   })
 
