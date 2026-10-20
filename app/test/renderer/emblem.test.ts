@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
+import { strokesOf } from '../../src/renderer/src/scribble'
 import { emblem, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
@@ -157,7 +158,7 @@ describe('a bat on his chest', () => {
   })
 })
 
-// SERIOUS HOUSE's bat is a pencil's scribble, the book's opening Signal drawn in pencil (#123,
+// SERIOUS HOUSE's bat is a pencil's scribble, the bat on the book's opening page (#123,
 // arkham-horror-references.md): up-and-down strokes and a few crossing scratches, cut to the bat's
 // shape, no fill under them and no outline round them.
 describe('a scribbled emblem', () => {
@@ -178,8 +179,19 @@ describe('a scribbled emblem', () => {
     expect(strokes(markup).length).toBeGreaterThan(20)
   })
 
+  it('draws no outline even where a place asks for one (the lit lens)', () => {
+    expect(draw({ outline: 'var(--lens-bat-edge)' })).not.toContain('var(--lens-bat-edge)')
+  })
+
+  // Worked out twice, on two copies of the box, so neither is the other's kept strokes.
   it('scribbles the same way every time it is drawn', () => {
+    expect(strokesOf({ ...bat })).toEqual(strokesOf({ ...bat }))
     expect(draw()).toBe(draw())
+  })
+
+  // Two channels of the noise, one a direction: from one, every edge would shift along a diagonal.
+  it('wobbles its edge across and down apart', () => {
+    expect(draw()).toMatch(/<feDisplacementMap[^>]* xChannelSelector="R" yChannelSelector="G"/)
   })
 
   // A sweep from one end of the bat to the other, so no wingtip is left bare, and nothing far past it.
