@@ -1,5 +1,5 @@
 // An emblem's scribble finish (BatEmblem.tsx): the pencil's strokes (scribble.ts) cut to the bat's
-// shape, with no fill under them and no outline round them, as SERIOUS HOUSE's Signal (#123).
+// shape, with no fill under them and no outline round them, as SERIOUS HOUSE's bat (#123).
 
 import { useId } from 'react'
 import type { Box } from '@shared/emblems'

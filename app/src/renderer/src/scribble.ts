@@ -1,5 +1,5 @@
 // A scribbled emblem's strokes (ScribbledBat.tsx): a pencil going up and down across the bat, as
-// SERIOUS HOUSE's Signal is drawn on the book's opening page (#123), then a few scratches crossing
+// SERIOUS HOUSE's bat is drawn on the book's opening page (#123), then a few scratches crossing
 // them. Worked out on the bat's own box, so any outline on any grid can wear it, and from a fixed
 // seed, so the same bat is scribbled the same way every time.
 

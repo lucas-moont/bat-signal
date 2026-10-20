@@ -157,7 +157,7 @@ describe('a bat on his chest', () => {
   })
 })
 
-// SERIOUS HOUSE's bat is a pencil's scribble, the book's opening Signal drawn in pencil (#123,
+// SERIOUS HOUSE's bat is a pencil's scribble, the bat on the book's opening page (#123,
 // arkham-horror-references.md): up-and-down strokes and a few crossing scratches, cut to the bat's
 // shape, no fill under them and no outline round them.
 describe('a scribbled emblem', () => {
