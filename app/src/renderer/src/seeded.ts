@@ -7,6 +7,8 @@ export function seededFrom(seed: number): () => number {
   return () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646
 }
 
+/** The lowest and highest a number may be. */
+export type Range = readonly [number, number]
+
 /** A number between the two, picked by `next`. */
-export const between = ([low, high]: readonly [number, number], next: () => number) =>
-  low + next() * (high - low)
+export const between = ([low, high]: Range, next: () => number) => low + next() * (high - low)
