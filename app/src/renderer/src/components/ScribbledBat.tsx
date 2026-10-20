@@ -20,17 +20,18 @@ const FINEST_PX = 0.6
 export function ScribbledBat({
   path,
   bat,
-  fill,
+  ink,
   unitPx,
 }: {
   path: string
   bat: Box
-  fill: string
+  /** The strokes' color. */
+  ink: string
   /** How many pixels one unit of the emblem's grid is drawn at. */
   unitPx: number
 }) {
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
-  const scratch = useId()
+  const cut = useId()
   const wobble = useId()
   const margin = bat.width * MARGIN
   return (
@@ -53,7 +54,7 @@ export function ScribbledBat({
           />
         </filter>
         <mask
-          id={scratch}
+          id={cut}
           maskUnits="userSpaceOnUse"
           // Read by its alpha, so the shape needs no color of its own.
           style={{ maskType: 'alpha' }}
@@ -72,7 +73,7 @@ export function ScribbledBat({
           />
         </mask>
       </defs>
-      <g mask={`url(#${scratch})`} fill="none" stroke={fill} strokeLinecap="round" strokeLinejoin="round">
+      <g mask={`url(#${cut})`} fill="none" stroke={ink} strokeLinecap="round" strokeLinejoin="round">
         {strokesOf(bat).map((stroke, i) => (
           <polyline
             key={i}

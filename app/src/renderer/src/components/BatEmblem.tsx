@@ -124,7 +124,7 @@ export function BatEmblem({
         />
       )}
       {finish === 'scribble' ? (
-        <ScribbledBat path={path} bat={bat} fill={fill} unitPx={size / box.width} />
+        <ScribbledBat path={path} bat={bat} ink={fill} unitPx={size / box.width} />
       ) : (
         <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
       )}
