@@ -1,11 +1,12 @@
 // The worn Theme's emblem (shared/emblems.ts): in the masthead, on the disc and in the intro,
-// with its finish (VENGEANCE's scratched metal) and on its plate if it has one (PALE MOONLIGHT's
+// with its finish (VENGEANCE's scratched metal, SERIOUS HOUSE's pencil scribble) and on its plate if it has one (PALE MOONLIGHT's
 // oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
 
 import { useId } from 'react'
 import type { Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
+import { strokesOf } from '../scribble'
 import { useTheme } from '../theme'
 
 /** The worn Theme's emblem. */
@@ -27,6 +28,16 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number, he
  */
 export const OUTLINE_SHARE = 0.07
 
+/**
+ * A scribbled bat's edge, as shares of its width: the mask's spill past the outline and how far the
+ * edge wobbles, so the strokes stop unevenly, as a pencil does; and the wobble's grain, per width.
+ */
+const SPILL = 0.0076
+const WOBBLE = 0.009
+const WOBBLE_GRAIN = 27.6
+/** The finest a scribbled stroke is drawn, in pixels: finer fades to a smudge on the disc. */
+const FINEST_PX = 0.6
+
 export function BatEmblem({
   size = 40,
   title,
@@ -44,7 +55,8 @@ export function BatEmblem({
   /** An outline under the bat's fill, in this color (a lit lens too pale to hold its shape alone). */
   outline?: string
 }) {
-  const { path, bat, finish, plate } = useEmblem()
+  const worn = useEmblem()
+  const { path, bat, finish, plate } = worn
   // The box around the bat, or its plate, with a unit of air on every side: the size a place
   // gives is the emblem's.
   const edge = plate?.box ?? bat
@@ -52,6 +64,8 @@ export function BatEmblem({
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
   const light = useId()
+  const scratch = useId()
+  const wobble = useId()
   return (
     <svg
       width={size}
@@ -120,7 +134,53 @@ export function BatEmblem({
           strokeLinejoin="round"
         />
       )}
-      <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
+      {finish === 'scribble' ? (
+        <>
+          <defs>
+            {/* The bat's shape, a little past its outline and wobbling, so the strokes stop unevenly. */}
+            <filter id={wobble} x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency={WOBBLE_GRAIN / bat.width}
+                numOctaves={2}
+                seed={3}
+              />
+              <feDisplacementMap in="SourceGraphic" scale={bat.width * WOBBLE} />
+            </filter>
+            <mask
+              id={scratch}
+              maskUnits="userSpaceOnUse"
+              // Read by its alpha, so the shape needs no color of its own.
+              style={{ maskType: 'alpha' }}
+              x={bat.x - bat.width * 0.1}
+              y={bat.y - bat.width * 0.1}
+              width={bat.width * 1.2}
+              height={bat.height + bat.width * 0.2}
+            >
+              <path
+                d={path}
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth={bat.width * SPILL}
+                strokeLinejoin="round"
+                filter={`url(#${wobble})`}
+              />
+            </mask>
+          </defs>
+          <g mask={`url(#${scratch})`} fill="none" stroke={fill} strokeLinecap="round" strokeLinejoin="round">
+            {strokesOf(worn).map((stroke, i) => (
+              <polyline
+                key={i}
+                points={stroke.points}
+                strokeWidth={Math.max(stroke.width * bat.width, (FINEST_PX * box.width) / size)}
+                opacity={stroke.opacity}
+              />
+            ))}
+          </g>
+        </>
+      ) : (
+        <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
+      )}
     </svg>
   )
 }
