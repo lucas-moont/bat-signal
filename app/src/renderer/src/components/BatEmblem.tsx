@@ -112,8 +112,9 @@ export function BatEmblem({
           />
         </>
       )}
-      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. */}
-      {outline && (
+      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. A
+          scribbled bat has none: its strokes stop unevenly, with no edge drawn round them. */}
+      {outline && finish !== 'scribble' && (
         <path
           d={path}
           fill="none"

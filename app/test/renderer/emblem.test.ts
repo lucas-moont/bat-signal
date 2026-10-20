@@ -178,6 +178,10 @@ describe('a scribbled emblem', () => {
     expect(strokes(markup).length).toBeGreaterThan(20)
   })
 
+  it('draws no outline even where a place asks for one (the lit lens)', () => {
+    expect(draw({ outline: 'var(--lens-bat-edge)' })).not.toContain('var(--lens-bat-edge)')
+  })
+
   it('scribbles the same way every time it is drawn', () => {
     expect(draw()).toBe(draw())
   })
