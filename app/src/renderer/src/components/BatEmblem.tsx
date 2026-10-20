@@ -1,12 +1,14 @@
 // The worn Theme's emblem (shared/emblems.ts): in the masthead, on the disc and in the intro,
-// with its finish (VENGEANCE's scratched metal) and on its plate if it has one (PALE MOONLIGHT's
-// oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
+// with its finish (VENGEANCE's scratched metal, SERIOUS HOUSE's pencil scribble) and on its plate
+// if it has one (PALE MOONLIGHT's oval, lit with the disc); Bat-Clawd wears the same outline on his
+// chest.
 
 import { useId } from 'react'
 import type { Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
+import { ScribbledBat } from './ScribbledBat'
 
 /** The worn Theme's emblem. */
 export const useEmblem = (): Emblem => THEMES[useTheme()].emblem
@@ -110,8 +112,9 @@ export function BatEmblem({
           />
         </>
       )}
-      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. */}
-      {outline && (
+      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. A
+          scribbled bat has none: its strokes stop unevenly, with no edge drawn round them. */}
+      {outline && finish !== 'scribble' && (
         <path
           d={path}
           fill="none"
@@ -120,7 +123,11 @@ export function BatEmblem({
           strokeLinejoin="round"
         />
       )}
-      <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
+      {finish === 'scribble' ? (
+        <ScribbledBat path={path} bat={bat} ink={fill} unitPx={size / box.width} />
+      ) : (
+        <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
+      )}
     </svg>
   )
 }

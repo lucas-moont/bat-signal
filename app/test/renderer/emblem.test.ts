@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
+import { strokesOf } from '../../src/renderer/src/scribble'
 import { emblem, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
@@ -154,5 +155,80 @@ describe('a bat on his chest', () => {
     expect(box.h).toBeCloseTo((7 * bat.bat.height) / bat.bat.width)
     expect(box.x + box.w / 2).toBeCloseTo(8)
     expect(box.y + box.h / 2).toBeCloseTo(7)
+  })
+})
+
+// SERIOUS HOUSE's bat is a pencil's scribble, the bat on the book's opening page (#123,
+// arkham-horror-references.md): up-and-down strokes and a few crossing scratches, cut to the bat's
+// shape, no fill under them and no outline round them.
+describe('a scribbled emblem', () => {
+  standInTheme({ emblem: emblem(WINGS, 'scribble') })
+  const { bat } = emblem(WINGS, 'scribble')
+  const strokes = (markup: string) =>
+    [...markup.matchAll(/<polyline points="([^"]+)" stroke-width="([^"]+)"/g)].map((m) => ({
+      points: m[1]!.split(' ').map((p) => p.split(',').map(Number) as [number, number]),
+      width: Number(m[2]),
+    }))
+
+  it('draws no solid bat and no outline, only strokes in its color, cut to the bat', () => {
+    const markup = draw()
+    expect(markup).not.toContain('fill="var(--emblem)"')
+    const mask = markup.match(/<mask id="([^"]+)"[^>]*><path d="([^"]+)" fill="currentColor"/)
+    expect(mask?.[2]).toBe(WINGS)
+    expect(markup).toContain(`<g mask="url(#${mask?.[1]})" fill="none" stroke="var(--emblem)"`)
+    expect(strokes(markup).length).toBeGreaterThan(20)
+  })
+
+  it('draws no outline even where a place asks for one (the lit lens)', () => {
+    expect(draw({ outline: 'var(--lens-bat-edge)' })).not.toContain('var(--lens-bat-edge)')
+  })
+
+  // Worked out twice, on two copies of the box, so neither is the other's kept strokes.
+  it('scribbles the same way every time it is drawn', () => {
+    expect(strokesOf({ ...bat })).toEqual(strokesOf({ ...bat }))
+    expect(draw()).toBe(draw())
+  })
+
+  // Two channels of the noise, one a direction: from one, every edge would shift along a diagonal.
+  it('wobbles its edge across and down apart', () => {
+    expect(draw()).toMatch(/<feDisplacementMap[^>]* xChannelSelector="R" yChannelSelector="G"/)
+  })
+
+  // A sweep from one end of the bat to the other, so no wingtip is left bare, and nothing far past it.
+  it('covers the bat from end to end, and strays only a little past it', () => {
+    const points = strokes(draw()).flatMap((s) => s.points)
+    const xs = points.map(([x]) => x)
+    const ys = points.map(([, y]) => y)
+    const stray = bat.width * 0.08
+    expect(Math.min(...xs)).toBeLessThanOrEqual(bat.x)
+    expect(Math.max(...xs)).toBeGreaterThanOrEqual(bat.x + bat.width)
+    expect(Math.min(...ys)).toBeLessThanOrEqual(bat.y)
+    expect(Math.max(...ys)).toBeGreaterThanOrEqual(bat.y + bat.height)
+    expect(Math.min(...xs)).toBeGreaterThanOrEqual(bat.x - stray)
+    expect(Math.max(...xs)).toBeLessThanOrEqual(bat.x + bat.width + stray)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(bat.y - stray)
+    expect(Math.max(...ys)).toBeLessThanOrEqual(bat.y + bat.height + stray)
+  })
+
+  // Small on the disc, a fine stroke would fade to a smudge: none goes under half a pixel.
+  it('keeps every stroke at least half a pixel wide, however small the bat is drawn', () => {
+    for (const size of [28, 44, 120]) {
+      const markup = draw({ size })
+      const box = markup.match(/viewBox="[^ ]+ [^ ]+ ([^ ]+) /)?.[1]
+      const px = Number(box) / size
+      for (const { width } of strokes(markup)) expect(width).toBeGreaterThanOrEqual(px * 0.5 - 1e-9)
+    }
+  })
+
+  it('gives every emblem its own mask and wobble, so none borrows another one', () => {
+    const markup = renderToStaticMarkup(
+      createElement('div', null, createElement(BatEmblem), createElement(BatEmblem)),
+    )
+    const masks = [...markup.matchAll(/<mask id="([^"]+)"/g)].map((m) => m[1])
+    const filters = [...markup.matchAll(/<filter id="([^"]+)"/g)].map((m) => m[1])
+    expect(new Set(masks).size).toBe(2)
+    expect(new Set(filters).size).toBe(2)
+    expect([...markup.matchAll(/mask="url\(#([^)]+)\)"/g)].map((m) => m[1])).toEqual(masks)
+    expect([...markup.matchAll(/filter="url\(#([^)]+)\)"/g)].map((m) => m[1])).toEqual(filters)
   })
 })

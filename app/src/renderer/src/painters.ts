@@ -15,6 +15,7 @@ import type {
 } from '@shared/atmospheres'
 import { batOutline, type Outline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
+import { between, seededFrom } from './seeded'
 
 export interface Painter {
   /** Its Atmosphere's colors afresh, each read from the page by its variable's name. */
@@ -155,9 +156,6 @@ function frameAt<T>(frames: readonly T[], ticks: number, phase: number): T {
   return frames[(Math.floor(ticks) + phase) % frames.length]!
 }
 
-/** A number between the two, picked by `next`. */
-const between = ([low, high]: readonly [number, number], next: () => number) => low + next() * (high - low)
-
 /** An outline as a closed shape on the path, moved by (dx, dy). */
 function trace(ctx: CanvasRenderingContext2D, outline: Outline, dx = 0, dy = 0) {
   ctx.moveTo(dx + outline[0]![0], dy + outline[0]![1])
@@ -232,12 +230,6 @@ interface Window {
 const CELL = { w: 3, h: 4, mullion: 1 }
 /** The glass wall's margin inside a tower's edge, in px. */
 const INSET = 3
-
-/** The same numbers in [0, 1) every time from the same seed in [0, 1) (Park and Miller's). */
-function seededFrom(seed: number): () => number {
-  let state = Math.floor(seed * 2147483646) + 1
-  return () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646
-}
 
 /**
  * Lit windows: a still skyline, painted whole once (and again after a resize or new colors), then
