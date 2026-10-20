@@ -91,6 +91,22 @@ export const BLOCK_2024 =
   'L63.2 42.9 L78.1 42.8 L79.4 47.3 L81.3 42.7 L95.1 42.7 L96.3 47 L98.3 41.7 L99.7 25.1 L98.9 13.4 ' +
   'L96.4 1.5 L95.2 5.9 L81.6 5 L80.4 1.4 L79 5 L64.7 4.7 L63.1 0 L61.1 4.7 Z'
 
+/**
+ * SERIOUS HOUSE's bat, the Bat-Signal in pencil on Arkham Asylum's opening page (1989), on the same
+ * 120x48 grid: our own drawing, never McKean's (ADR 0001), its proportions read from the
+ * maintainer's sketch of that Signal (#123). About 1.55:1, its wings reaching past the grid's
+ * floor: two tall, thin ears, a deep round bite into each wing's top, hooked upper tips, outer edges
+ * bowing out to long lower tips, and underneath two bites a side with a long point between them,
+ * then a thin tail. Drawn as a left half and mirrored at x = 60, and worn scribbled.
+ */
+export const SIGNAL_IN_PENCIL =
+  'M60 5.5 Q58 5.6 56.2 6.6 L53.8 0.3 Q53 8 51.7 16.3 Q48.2 17.4 44.4 15.6 Q40.4 12.6 40.8 7.4 ' +
+  'Q41.4 4 43.6 2.3 Q29.4 6 23.5 15 Q20.9 20 20.6 25 Q21.8 33.6 27.4 42 Q31.6 47.6 37.4 51.4 ' +
+  'Q27.6 37.2 28.8 30 Q30 25.9 35.1 26.2 Q41.2 27.6 44.3 43.4 Q45.9 30 51.6 32.2 Q58.2 39 60 47.8 ' +
+  'Q61.8 39 68.4 32.2 Q74.1 30 75.7 43.4 Q78.8 27.6 84.9 26.2 Q90 25.9 91.2 30 Q92.4 37.2 82.6 51.4 ' +
+  'Q88.4 47.6 92.6 42 Q98.2 33.6 99.4 25 Q99.1 20 96.5 15 Q90.6 6 76.4 2.3 Q78.6 4 79.2 7.4 ' +
+  'Q79.6 12.6 75.6 15.6 Q71.8 17.4 68.3 16.3 Q67 8 66.2 0.3 L63.8 6.6 Q62 5.6 60 5.5 Z'
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 
