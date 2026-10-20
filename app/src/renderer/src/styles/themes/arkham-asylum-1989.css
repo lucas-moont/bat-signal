@@ -1,0 +1,196 @@
+/*
+ * SERIOUS HOUSE, after Grant Morrison and Dave McKean's Arkham Asylum: its palette, faces and the
+ * texture of its pages (docs/research/themes/arkham-horror-references.md, sections 3 to 6). The
+ * book's own colours, picked on screen (#123): Batman's blue-black ink for the ground, half the page
+ * in it; paper white for what you read; the Joker's scarlet, his voice and the blood, only when
+ * something needs you; the Joker's green for running work, the life of the house; and the ochre of
+ * Amadeus Arkham's journal paper for what waits on you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --surface and --raised: Batman's darks ([09], [11]) and his cowl's shadow side ([49]) darkened.
+ * - --signal-hot: the Joker's scarlet (h 31-40), lifted from #fe3323 so it passes on every ground.
+ * - --ink-live: the Joker's hair; --ink-soft: the journal paper ([36] #c9bb86), lifted.
+ */
+:root[data-theme='arkham-asylum-1989'],
+[data-theme='arkham-asylum-1989'] {
+  --abyss: #05070a;
+  --smoke: #080b0f;
+  --surface: #0a0d12;
+  --raised: #151f2f;
+  --line: #24324a;
+  --surface-deep: #07090d;
+  --frame: #0d1219;
+  --header-fade: #07090d;
+  --sheet-top: #0f1520;
+  --shadow: #000000;
+
+  /* The Alarm color, the Joker's scarlet: never at rest. */
+  --blood: #4a1210;
+  --signal: #c0141d;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #ff4a3f;
+  --on-signal: var(--bone);
+  --ink-hot: #ff5a4e;
+  --ink-soft: #dccd9c;
+  --ink-live: #86d66a;
+  --ink: #c3ccd6;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is scarlet. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: LET IN? and BROKEN in scarlet, KNOCKING and NEW NOTE in journal ochre,
+     Stalled in Ash; running work in the Joker's green. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 40%, transparent);
+
+  /* Quit's hover stays a shadow: scarlet is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: var(--blood);
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+
+  --clawd: #d77757;
+
+  --bone: #eef2f4;
+  --ash: #8e9bab;
+  --bone-dim: var(--ink);
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd as McKean's shadow: blue-black ink for the cowl, cape and gloves, the body lifted a
+     little so it doesn't vanish, and Batman's blue, muted, as the cold rim the Costume Rule asks for. */
+  --batman-blue: #8aa3b8;
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #070a10;
+  --cowl-edge: color-mix(in srgb, var(--batman-blue) 35%, transparent);
+  --cowl-shine: var(--raised);
+  --suit: #26364c;
+  --gloves: var(--cowl);
+  --belt: var(--suit);
+  --buckle: var(--belt);
+  --cape: var(--cowl);
+  --cape-rim: color-mix(in srgb, var(--batman-blue) 45%, transparent);
+  --thread: var(--cape-rim);
+  --chest: var(--cowl);
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem, in Ash on the dark header. */
+  --emblem: var(--ash);
+
+  /* The Signal disc. Unlit: blue-black glass, the bat a shade in it. Lit: a scarlet lens from a pale
+     core to dried blood at the rim, the black bat across it. */
+  --disc-bat: var(--raised);
+  --glass-shine: #1a2436;
+  --glass: var(--abyss);
+  --disc-rim-inner: #030406;
+  --disc-rim-outer: var(--line);
+  --lens-core: #ffd3c8;
+  --lens-rim: var(--signal);
+  --lens-bat: var(--abyss);
+  --lens-bat-edge: transparent;
+  --lens-shade:
+    inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);
+  --notice-top: var(--surface);
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #172235;
+  --notice-hover-foot: #0e141d;
+
+  /* One light from above, a bare bulb or a doorway ([07], [08], [16]), a coarse spray grain, and
+     scratches in the paint over a few torn panes. */
+  --haze: color-mix(in srgb, var(--bone) 7%, transparent);
+  --haze-edge: color-mix(in srgb, var(--bone) 2%, transparent);
+  --haze-inset: -35% -20% auto -20%;
+  --grain-opacity: 0.1;
+  --searchlight: var(--bone);
+  --scratch: var(--bone);
+  --pane: var(--ink);
+
+  /* Covered By Your Grace, thin uneven capitals in the Joker's register (never Saladino's hand), for
+     the wordmark, the headings and the stamps; Kalam, a slanted hand like Arkham's journal, for the
+     night report; Barlow Semi Condensed for the rest. */
+  --font-display: 'Covered By Your Grace', 'Segoe Print', cursive;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-stamp);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: 'Kalam', 'Segoe Print', cursive;
+  --font-headline: var(--font-display);
+  --headline-weight: 400;
+  --font-dateline: var(--font-report);
+  --dateline-weight: 700;
+  --font-stamp: var(--font-display);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.3px;
+  --wordmark-size: 22px;
+  --wordmark-tracking: 0.5px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 14%, transparent);
+
+  /* A doubled, uneven underline, in the scarlet and the journal ochre. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 2.4Q14 1.6 28 2.7M1 4.1Q15 3.4 27 4.3' fill='none' stroke='%23ff5a4e' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 2.4Q14 1.6 28 2.7M1 4.1Q15 3.4 27 4.3' fill='none' stroke='%23dccd9c' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* No box: the word in ink, as the Joker's script has no balloon, set crooked and spattered. */
+  --stamp-tilt: -2deg;
+  --stamp-tilt-slight: 1.5deg;
+  --stamp-border: 0px;
+  --stamp-size: 12px;
+  --stamp-weight: var(--display-weight);
+  --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* The lit lens: a scarlet radial with a paper grain over it. */
+  --lens-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --disc-lens:
+    var(--lens-grain) center / 100% 100%,
+    radial-gradient(
+      circle at 50% 45% in srgb,
+      var(--lens-core),
+      var(--signal-hot) 45%,
+      var(--signal) 78%,
+      var(--blood)
+    );
+}
+
+/* McKean's tall strips: the ground cut into four by hairline paper rules, one strip left darker, a
+   film strip of glimpses where you never see the whole room ([20], [41], [43]). */
+:root[data-theme='arkham-asylum-1989'] .atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg in srgb,
+      transparent 0 calc(25% - 1px),
+      color-mix(in srgb, var(--bone) 9%, transparent) calc(25% - 1px) 25%
+    ),
+    linear-gradient(
+      90deg in srgb,
+      transparent 50%,
+      color-mix(in srgb, var(--shadow) 18%, transparent) 50% 75%,
+      transparent 75%
+    );
+}
+
+/* A coarser grain, like airbrush spray over paint ([11], [20], [49]): our own noise, never a scan. */
+:root[data-theme='arkham-asylum-1989'] .atmosphere__grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

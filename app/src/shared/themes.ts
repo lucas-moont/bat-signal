@@ -8,6 +8,7 @@ import {
   BLUE_COLLAR_COLONY,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
+  SERIOUS_HOUSE_SCRATCHES,
   VENGEANCE_RAIN,
   WATCHFUL_PROTECTOR_WINDOWS,
   type Atmosphere,
@@ -21,6 +22,7 @@ import {
   BLOCK_2024,
   emblem,
   OVAL_1989,
+  SIGNAL_IN_PENCIL,
   WINGS,
   type Emblem,
 } from './emblems'
@@ -40,6 +42,7 @@ import {
   BLUE_COLLAR_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
+  SERIOUS_HOUSE_WORDS,
   STANDARD_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
   withLexicon,
@@ -54,6 +57,7 @@ export const THEME_IDS = [
   'batman-year-one-1987',
   'the-dark-knight-returns-1986',
   'absolute-batman-2024',
+  'arkham-asylum-1989',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -139,6 +143,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BLOCK_2024, 'none'),
     suit: BLUE_COLLAR_SUIT,
     atmosphere: BLUE_COLLAR_COLONY,
+  },
+  /** Grant Morrison and Dave McKean's Arkham Asylum (1989), SERIOUS HOUSE: blue-black ink, the Joker's scarlet. */
+  'arkham-asylum-1989': {
+    flag: 'house',
+    ground: '#05070a',
+    words: SERIOUS_HOUSE_WORDS,
+    emblem: emblem(SIGNAL_IN_PENCIL, 'scribble'),
+    suit: VENGEANCE_SUIT, // PLACEHOLDER until the suit is drawn from the references
+    atmosphere: SERIOUS_HOUSE_SCRATCHES,
   },
 }
 
