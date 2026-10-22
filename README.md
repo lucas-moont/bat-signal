@@ -6,7 +6,7 @@
   <img src="docs/screenshots/demo.gif" width="480" alt="The Bat-Signal disc lights and sends a permission notice up its beam; then the panel opens on Needs you, a case opens, and its Terminal button lights up">
 </p>
 
-**Status:** v1.0 for Windows 10/11. [Download it](#install), or see the [roadmap](docs/ROADMAP.md). Linux gets an AppImage from the release after 1.2.0, at its best on Hyprland: see [Linux](#linux).
+**Status:** v1.3 for Windows 10/11, and an AppImage for Linux, at its best on Hyprland. [Download it](#install) (on Linux, see [Linux](#linux)), or see the [roadmap](docs/ROADMAP.md).
 
 Bat-Signal rests in a corner of your screen as a small signal disc. When something happens, the disc lights up and a notice card rises from it; click it to open the full panel right on that case. It:
 
@@ -93,7 +93,7 @@ From Windows Settings → Apps. Uninstalling also removes Bat-Signal from the ap
 
 ### Linux
 
-1. **Download** `Bat-Signal-<version>.AppImage` from the [Releases page](https://github.com/lucas-moont/bat-signal/releases) (the releases after 1.2.0 have one). Optionally, check it against `SHA256SUMS.txt` from the same release: in the folder holding both, `sha256sum --check --ignore-missing SHA256SUMS.txt` must print `Bat-Signal-<version>.AppImage: OK`.
+1. **Download** `Bat-Signal-<version>.AppImage` from the [Releases page](https://github.com/lucas-moont/bat-signal/releases) (1.3.0 and later have one). Optionally, check it against `SHA256SUMS.txt` from the same release: in the folder holding both, `sha256sum --check --ignore-missing SHA256SUMS.txt` must print `Bat-Signal-<version>.AppImage: OK`.
 2. **Move it** where it can stay (the examples below use `~/Applications/Bat-Signal.AppImage`), make it executable with `chmod +x`, and run it. It keeps its settings in `~/.config/Bat-Signal`.
 3. **Install the plugin** as above.
 
