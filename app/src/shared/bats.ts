@@ -59,7 +59,7 @@ const OUTLINES: Record<Wings, Outline> = { up: mirrored(HALVES.up), down: mirror
 const BOX_WIDTH = 12
 
 /** A number for a path: two decimals at most, and no "-0". */
-export const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
+const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
 
 /**
  * The points round a bat in flight `width` wide, its body at (cx, cy), in its frame of the

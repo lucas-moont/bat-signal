@@ -110,13 +110,13 @@ export interface Plate {
 
 /**
  * A Theme's emblem: its outline, on whatever grid it was traced on; where the outline lies on that
- * grid; its finish ("wear" is VENGEANCE's scratched metal, "scribble" a pencil's strokes with no fill
- * or outline, "none" a plain fill); and the plate it sits on, if it has one.
+ * grid; its finish ("wear" is VENGEANCE's scratched metal, "none" a plain fill); and the plate it
+ * sits on, if it has one.
  */
 export interface Emblem {
   path: string
   bat: Box
-  finish: 'wear' | 'scribble' | 'none'
+  finish: 'wear' | 'none'
   plate?: Plate
 }
 
