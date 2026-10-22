@@ -107,6 +107,37 @@ export const SIGNAL_IN_PENCIL =
   'Q88.4 47.6 92.6 42 Q98.2 33.6 99.4 25 Q99.1 20 96.5 15 Q90.6 6 76.4 2.3 Q78.6 4 79.2 7.4 ' +
   'Q79.6 12.6 75.6 15.6 Q71.8 17.4 68.3 16.3 Q67 8 66.2 0.3 L63.8 6.6 Q62 5.6 60 5.5 Z'
 
+/**
+ * The Joker's laugh gouged into SERIOUS HOUSE's Signal disc (#123): three HAs, scattered and turned
+ * every way, over the bat and off it; our own hand, never Saladino's lettering (ADR 0001). Each row a
+ * stroke from one point to another on the disc's face, 0 to 100 across (picked on screen as S2).
+ */
+export const JOKERS_LAUGH: Lamp = {
+  laugh: [
+    // HA, top left, turned back
+    [12.1, 18.4, 17.3, 32.5],
+    [20.9, 15.2, 26.0, 29.3],
+    [13.4, 26.2, 24.9, 21.1],
+    [30.5, 27.7, 29.3, 10.9],
+    [29.3, 10.9, 39.3, 24.5],
+    [29.8, 22.5, 36.8, 19.0],
+    // HA, right, smaller, turned forward
+    [59.7, 23.9, 56.8, 35.6],
+    [66.9, 25.7, 64.0, 37.4],
+    [57.1, 29.7, 67.0, 31.4],
+    [67.8, 38.3, 74.5, 26.6],
+    [74.5, 26.6, 75.0, 40.1],
+    [69.6, 34.6, 75.8, 35.4],
+    // HA, below, the largest
+    [29.2, 65.3, 30.9, 81.2],
+    [39.1, 64.3, 40.8, 80.2],
+    [28.5, 73.8, 41.8, 71.4],
+    [45.9, 79.7, 49.0, 62.0],
+    [49.0, 62.0, 55.7, 78.6],
+    [46.5, 74.1, 54.6, 72.3],
+  ],
+}
+
 /** The 1989 oval the bat sits on: about 1.75:1, centred on the grid, a 2-unit rim. */
 export const OVAL_1989 = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 

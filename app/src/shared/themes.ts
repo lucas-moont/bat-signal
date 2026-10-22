@@ -22,6 +22,7 @@ import {
   BLOCK_2024,
   emblem,
   OVAL_1989,
+  JOKERS_LAUGH,
   SIGNAL_IN_PENCIL,
   WINGS,
   type Emblem,
@@ -149,7 +150,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     flag: 'house',
     ground: '#05070a',
     words: SERIOUS_HOUSE_WORDS,
-    emblem: emblem(SIGNAL_IN_PENCIL, 'scribble'),
+    emblem: { ...emblem(SIGNAL_IN_PENCIL, 'scribble'), lamp: JOKERS_LAUGH },
     suit: VENGEANCE_SUIT, // PLACEHOLDER until the suit is drawn from the references
     atmosphere: SERIOUS_HOUSE_SCRATCHES,
   },
