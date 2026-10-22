@@ -5,7 +5,7 @@
 // on the bat's own outline, so any emblem can wear it, and from a fixed seed, so the same bat is
 // scribbled the same way every time.
 
-import { pathNumber } from '@shared/bats'
+import { type Outline, pathNumber } from '@shared/bats'
 import type { Emblem } from '@shared/emblems'
 import { between, type Range, seededFrom } from './seeded'
 
@@ -16,12 +16,15 @@ export interface Stroke {
   opacity: number
 }
 
-type Point = readonly [number, number]
+type Point = Outline[number]
 
 /** The pencil's measure: an eightieth of the bat's width. Every length below is in it. */
 const UNITS = 80
 
-/** Where a hand presses harder: the middle of the stretch (a share of the bat's width), how far either side it reaches, and how many passes more it makes there. */
+/**
+ * Where a hand presses harder: the middle of the stretch (a share of the bat's width), how far
+ * either side it reaches, and how many passes more it makes there.
+ */
 interface Press {
   at: number
   reach: number
@@ -46,9 +49,11 @@ interface Hand {
   presses: readonly Press[]
 }
 
-/** The up-and-down strokes, nearly upright, then the scratches crossing them, finer and wilder;
+/**
+ * The up-and-down strokes, nearly upright, then the scratches crossing them, finer and wilder;
  * both darkest on the head, heavy on the left wing, light on the right but for its tip (picked on
- * screen, #123). */
+ * screen, #123).
+ */
 const HANDS: readonly Hand[] = [
   {
     seed: 0.61,
@@ -79,14 +84,37 @@ const HANDS: readonly Hand[] = [
   },
 ]
 
+/** A turn well past its edge lands at least this far past it. */
+const WELL_PAST = 0.8
 /** How often a turn falls short of its edge, and by how much. */
 const SHORT = { odds: 0.08, by: [0.5, 2.2] as Range }
+/** How far each step strays from the hand's, and a turn not aimed at an edge from its mark. */
+const WANDER = { step: [0.6, 1.4] as Range, turn: [-1, 1] as Range }
+/** A piece of the bat narrower than this is left alone. */
+const NARROWEST = 0.4
+/**
+ * Where runs start: the sweep's one every `gap`, from `out` before the bat to `out` past it; a pass's
+ * anywhere from `before` the bat to `short` of its far end.
+ */
+const STARTS = { out: 4, gap: 12, before: 3, short: 2 }
+/** How closely a press's passes gather about its middle, as a share of its reach. */
+const GATHER = 0.6
 /** How dark a stroke is where the hand presses harder, and elsewhere; and how much wider it is there. */
 const PRESSED: Range = [0.82, 1]
 const LIGHT: Range = [0.25, 0.7]
 const PRESSED_WIDTH = 1.15
-/** A long scratch: how much wider than the hand's strokes, and how dark. */
-const SLASH = { widen: 1.3, dark: [0.7, 0.95] as Range }
+/**
+ * A long scratch: how much wider than the hand's strokes and how dark; how far in from the bat's
+ * ends it may cross; how far past the bat it runs either side; how its middle sags, and its ends wander.
+ */
+const SLASH = {
+  widen: 1.3,
+  dark: [0.7, 0.95] as Range,
+  inset: 8,
+  past: [3, 8] as Range,
+  sag: [-2, 2] as Range,
+  wander: [-0.6, 0.6] as Range,
+}
 
 /**
  * A run's shape: how far it reaches; where its top and bottom turns fall, as shares of the bat's
@@ -94,14 +122,29 @@ const SLASH = { widen: 1.3, dark: [0.7, 0.95] as Range }
  */
 interface Shape {
   reach: Range
-  top: () => number
-  bottom: () => number
+  top: (random: () => number) => number
+  bottom: (random: () => number) => number
   spacing: number
 }
 
-/** A run across the bat from u to its end, and whether the hand presses harder over it. */
+/** First one sweep from end to end, then passes over stretches of it, then more where the hand presses. */
+const SWEEP: Shape = { reach: [10, 16], top: () => 0, bottom: () => 1, spacing: 2.2 }
+const PASS: Shape = {
+  reach: [6, 14],
+  top: (random) => (random() < 0.5 ? 0 : between([0, 0.35], random)),
+  bottom: (random) => (random() < 0.5 ? 1 : between([0.58, 1], random)),
+  spacing: 1.6,
+}
+const PRESS: Shape = {
+  reach: [4, 9],
+  top: (random) => (random() < 2 / 3 ? 0 : between([0, 0.3], random)),
+  bottom: () => 1,
+  spacing: 1.9,
+}
+
+/** A run across the bat from one line to another, and whether the hand presses harder over it. */
 interface Run {
-  u: number
+  from: number
   end: number
   top: number
   bottom: number
@@ -122,9 +165,9 @@ function along(points: readonly Point[], t: number): Point {
 /** How many straight runs a curve is flattened into. */
 const CURVE_STEPS = 12
 
-/** An outline's edges, its curves flattened to short straight runs. */
+/** An outline's edges, its curves flattened to short straight runs, and each shape closed, as SVG fills it. */
 function edgesOf(path: string): (readonly [Point, Point])[] {
-  const tokens = path.match(/[MLQCZ]|-?[\d.]+/g) ?? []
+  const tokens = path.match(/[A-Za-z]|-?[\d.]+/g) ?? []
   const edges: (readonly [Point, Point])[] = []
   let start: Point = [0, 0]
   let at: Point = [0, 0]
@@ -132,16 +175,23 @@ function edgesOf(path: string): (readonly [Point, Point])[] {
     edges.push([at, next])
     at = next
   }
+  const close = () => {
+    if (at[0] !== start[0] || at[1] !== start[1]) to(start)
+  }
   for (let i = 0; i < tokens.length;) {
     const command = tokens[i++]
     const read = (): Point => [Number(tokens[i++]), Number(tokens[i++])]
-    if (command === 'M') start = at = read()
-    else if (command === 'L') to(read())
+    if (command === 'M') {
+      close()
+      start = at = read()
+    } else if (command === 'L') to(read())
     else if (command === 'Q' || command === 'C') {
       const curve = [at, ...(command === 'Q' ? [read(), read()] : [read(), read(), read()])]
       for (let k = 1; k <= CURVE_STEPS; k++) to(along(curve, k / CURVE_STEPS))
-    } else if (command === 'Z') to(start)
+    } else if (command === 'Z') close()
+    else throw new Error(`An emblem's outline can't be scribbled: ${command} is not M, L, Q, C or Z`)
   }
+  close()
   return edges
 }
 
@@ -170,50 +220,41 @@ function scribble({ path, bat }: Emblem, hand: Hand): Stroke[] {
   // How far past an edge a turn aimed at it lands (short of it, below 0).
   const miss = () => {
     const roll = random()
-    if (roll < hand.miss.past) return between([0.8, hand.miss.far], random) * unit
+    if (roll < hand.miss.past) return between([WELL_PAST, hand.miss.far], random) * unit
     if (roll < hand.miss.past + SHORT.odds) return -between(SHORT.by, random) * unit
     return wavering(random) * hand.miss.spread * unit
   }
   const pressedAt = (u: number, end: number) =>
     hand.presses.some(({ at, reach }) => Math.abs((u + end) / 2 - (bat.x + at * bat.width)) < reach * unit)
-  const run = (u: number, { reach, top, bottom, spacing }: Shape): Run => {
-    const end = u + between(reach, random) * unit
-    return { u, end, top: top(), bottom: bottom(), spacing, pressed: pressedAt(u, end) }
-  }
-  const SWEEP: Shape = { reach: [10, 16], top: () => 0, bottom: () => 1, spacing: 2.2 }
-  const PASS: Shape = {
-    reach: [6, 14],
-    top: () => (random() < 0.5 ? 0 : between([0, 0.35], random)),
-    bottom: () => (random() < 0.5 ? 1 : between([0.58, 1], random)),
-    spacing: 1.6,
-  }
-  const PRESS: Shape = {
-    reach: [4, 9],
-    top: () => (random() < 2 / 3 ? 0 : between([0, 0.3], random)),
-    bottom: () => 1,
-    spacing: 1.9,
+  const run = (from: number, { reach, top, bottom, spacing }: Shape, pressed?: boolean): Run => {
+    const end = from + between(reach, random) * unit
+    return {
+      from,
+      end,
+      top: top(random),
+      bottom: bottom(random),
+      spacing,
+      pressed: pressed ?? pressedAt(from, end),
+    }
   }
 
-  // First one sweep from end to end, then passes over stretches of it, then more where it presses,
-  // each centred on a point about the stretch's middle.
+  // The sweep, the passes, and the presses' passes, each centred on a point about its stretch's middle.
   const runs: Run[] = []
-  for (let u = bat.x - 4 * unit; u < bat.x + bat.width + 4 * unit; u += 12 * unit) runs.push(run(u, SWEEP))
+  const { out, gap, before, short } = STARTS
+  for (let u = bat.x - out * unit; u < bat.x + bat.width + out * unit; u += gap * unit)
+    runs.push(run(u, SWEEP))
   for (let i = 0; i < hand.passes; i++)
-    runs.push(run(between([bat.x - 3 * unit, bat.x + bat.width - 2 * unit], random), PASS))
+    runs.push(run(between([bat.x - before * unit, bat.x + bat.width - short * unit], random), PASS))
   for (const { at, reach, passes } of hand.presses)
     for (let i = 0; i < passes; i++) {
-      const centre = bat.x + at * bat.width + wavering(random) * reach * 0.6 * unit
-      const pass = run(centre, PRESS)
-      const half = (pass.end - pass.u) / 2
-      runs.push({ ...pass, u: pass.u - half, end: pass.end - half, pressed: true })
+      const centre = bat.x + at * bat.width + wavering(random) * reach * GATHER * unit
+      const pass = run(centre, PRESS, true)
+      const half = (pass.end - pass.from) / 2
+      runs.push({ ...pass, from: pass.from - half, end: pass.end - half })
     }
 
   const strokes: Stroke[] = []
-  const draw = (
-    points: string[],
-    pressed: boolean,
-    { widen, dark } = { widen: 1, dark: pressed ? PRESSED : LIGHT },
-  ) => {
+  const draw = (points: string[], pressed: boolean, widen = 1, dark = pressed ? PRESSED : LIGHT) => {
     if (points.length > 1)
       strokes.push({
         points: points.join(' '),
@@ -221,23 +262,23 @@ function scribble({ path, bat }: Emblem, hand: Hand): Stroke[] {
         opacity: between(dark, random),
       })
   }
-  for (const { u: from, end, top, bottom, spacing, pressed } of runs) {
+  for (const { from, end, top, bottom, spacing, pressed } of runs) {
     // One track for each piece of the bat the line crosses (a wing, and a tip below it), each
     // zigzagging on its own; where a piece ends, the pencil lifts.
     let tracks: { points: string[]; span: Range; up: boolean }[] = []
-    for (let u = from; u < end; u += hand.step * spacing * between([0.6, 1.4], random) * unit) {
+    for (let u = from; u < end; u += hand.step * spacing * between(WANDER.step, random) * unit) {
       const kept: typeof tracks = []
       for (const [a, b] of spans(u)) {
-        if (b - a < 0.4 * unit) continue
+        if (b - a < NARROWEST * unit) continue
         const track = tracks.find((t) => !kept.includes(t) && t.span[0] < b && a < t.span[1]) ?? {
           points: [],
           span: [a, b],
           up: random() < 0.5,
         }
-        track.span = [a, b]
+        track.span = [a, b] // where its piece of the bat runs now
         const y = track.up
-          ? a + top * (b - a) - (top === 0 ? miss() : between([-1, 1], random) * unit)
-          : a + bottom * (b - a) + (bottom === 1 ? miss() : between([-1, 1], random) * unit)
+          ? a + top * (b - a) - (top === 0 ? miss() : between(WANDER.turn, random) * unit)
+          : a + bottom * (b - a) + (bottom === 1 ? miss() : between(WANDER.turn, random) * unit)
         track.points.push(`${pathNumber(toX(u, y))},${pathNumber(y)}`)
         track.up = !track.up
         kept.push(track)
@@ -250,19 +291,19 @@ function scribble({ path, bat }: Emblem, hand: Hand): Stroke[] {
 
   // A few long scratches clawed right across, leaving the bat on both sides.
   for (let i = 0; i < hand.slashes; i++) {
-    const u = between([bat.x + 8 * unit, bat.x + bat.width - 8 * unit], random)
+    const u = between([bat.x + SLASH.inset * unit, bat.x + bat.width - SLASH.inset * unit], random)
     const widest = spans(u).reduce<Range | undefined>(
       (w, s) => (!w || s[1] - s[0] > w[1] - w[0] ? s : w),
       undefined,
     )
     if (!widest) continue
-    const top = widest[0] - between([3, 8], random) * unit
-    const bottom = widest[1] + between([3, 8], random) * unit
-    const ys = [top, (top + bottom) / 2 + between([-2, 2], random) * unit, bottom]
+    const top = widest[0] - between(SLASH.past, random) * unit
+    const bottom = widest[1] + between(SLASH.past, random) * unit
+    const ys = [top, (top + bottom) / 2 + between(SLASH.sag, random) * unit, bottom]
     const points = ys.map(
-      (y) => `${pathNumber(toX(u, y) + between([-0.6, 0.6], random) * unit)},${pathNumber(y)}`,
+      (y) => `${pathNumber(toX(u, y) + between(SLASH.wander, random) * unit)},${pathNumber(y)}`,
     )
-    draw(points, false, SLASH)
+    draw(points, false, SLASH.widen, SLASH.dark)
   }
   return strokes
 }
