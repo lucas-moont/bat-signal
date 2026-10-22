@@ -4,7 +4,7 @@
 // chest.
 
 import { useId } from 'react'
-import type { Emblem } from '@shared/emblems'
+import type { Box, Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
@@ -21,6 +21,15 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number, he
   const kx = width / bat.width
   const ky = height === undefined ? kx : height / bat.height
   return `translate(${cx - (bat.x + bat.width / 2) * kx} ${cy - (bat.y + bat.height / 2) * ky}) scale(${kx} ${ky})`
+}
+
+/**
+ * The box an emblem is drawn in: round the bat, or its plate, with a unit of air on every side. The
+ * size a place gives is this box's.
+ */
+export function emblemBox({ bat, plate }: Emblem): Box {
+  const edge = plate?.box ?? bat
+  return { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
 }
 
 /**
@@ -48,10 +57,7 @@ export function BatEmblem({
 }) {
   const emblem = useEmblem()
   const { path, bat, finish, plate } = emblem
-  // The box around the bat, or its plate, with a unit of air on every side: the size a place
-  // gives is the emblem's.
-  const edge = plate?.box ?? bat
-  const box = { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
+  const box = emblemBox(emblem)
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
   const light = useId()
