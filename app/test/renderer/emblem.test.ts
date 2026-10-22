@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
 import { strokesOf } from '../../src/renderer/src/scribble'
 import { emblem, WINGS } from '../../src/shared/emblems'
+import { THEMES } from '../../src/shared/themes'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -159,23 +160,49 @@ describe('a bat on his chest', () => {
 })
 
 // SERIOUS HOUSE's bat is a pencil's scribble, the bat on the book's opening page (#123,
-// arkham-horror-references.md): up-and-down strokes and a few crossing scratches, cut to the bat's
-// shape, no fill under them and no outline round them.
+// arkham-horror-references.md): up-and-down strokes and crossing scratches, no fill under them and
+// no outline round them, from a hand that aims at the bat's edge and misses it, pressing harder on
+// the head and on one wing than on the other.
 describe('a scribbled emblem', () => {
-  standInTheme({ emblem: emblem(WINGS, 'scribble') })
-  const { bat } = emblem(WINGS, 'scribble')
+  const worn = emblem(WINGS, 'scribble')
+  standInTheme({ emblem: worn })
+  const { bat } = worn
   const strokes = (markup: string) =>
-    [...markup.matchAll(/<polyline points="([^"]+)" stroke-width="([^"]+)"/g)].map((m) => ({
+    [...markup.matchAll(/<polyline points="([^"]+)" stroke-width="([^"]+)" opacity="([^"]+)"/g)].map((m) => ({
       points: m[1]!.split(' ').map((p) => p.split(',').map(Number) as [number, number]),
       width: Number(m[2]),
+      opacity: Number(m[3]),
     }))
+  // The outline's corners, and how far a point lies outside it (0 inside).
+  const corners = [...WINGS.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m): [number, number] => [
+    Number(m[1]),
+    Number(m[2]),
+  ])
+  const edges = corners.map((a, i) => [a, corners[(i + 1) % corners.length]!] as const)
+  const outside = ([x, y]: [number, number]) => {
+    const inside = edges.reduce(
+      (odd, [[ax, ay], [bx, by]]) =>
+        ay > y !== by > y && x < ax + ((y - ay) * (bx - ax)) / (by - ay) ? !odd : odd,
+      false,
+    )
+    if (inside) return 0
+    return Math.min(
+      ...edges.map(([[ax, ay], [bx, by]]) => {
+        const t = Math.max(
+          0,
+          Math.min(1, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)),
+        )
+        return Math.hypot(x - ax - t * (bx - ax), y - ay - t * (by - ay))
+      }),
+    )
+  }
 
-  it('draws no solid bat and no outline, only strokes in its color, cut to the bat', () => {
+  it('draws no solid bat, no outline and nothing to cut it, only strokes in its color', () => {
     const markup = draw()
     expect(markup).not.toContain('fill="var(--emblem)"')
-    const mask = markup.match(/<mask id="([^"]+)"[^>]*><path d="([^"]+)" fill="currentColor"/)
-    expect(mask?.[2]).toBe(WINGS)
-    expect(markup).toContain(`<g mask="url(#${mask?.[1]})" fill="none" stroke="var(--emblem)"`)
+    expect(markup).not.toContain('<mask')
+    expect(markup).not.toContain('<filter')
+    expect(markup).toContain('<g fill="none" stroke="var(--emblem)"')
     expect(strokes(markup).length).toBeGreaterThan(20)
   })
 
@@ -183,31 +210,64 @@ describe('a scribbled emblem', () => {
     expect(draw({ outline: 'var(--lens-bat-edge)' })).not.toContain('var(--lens-bat-edge)')
   })
 
-  // Worked out twice, on two copies of the box, so neither is the other's kept strokes.
+  // Worked out twice, on two copies of the emblem, so neither is the other's kept strokes.
   it('scribbles the same way every time it is drawn', () => {
-    expect(strokesOf({ ...bat })).toEqual(strokesOf({ ...bat }))
+    expect(strokesOf({ ...worn })).toEqual(strokesOf({ ...worn }))
     expect(draw()).toBe(draw())
   })
 
-  // Two channels of the noise, one a direction: from one, every edge would shift along a diagonal.
-  it('wobbles its edge across and down apart', () => {
-    expect(draw()).toMatch(/<feDisplacementMap[^>]* xChannelSelector="R" yChannelSelector="G"/)
-  })
-
-  // A sweep from one end of the bat to the other, so no wingtip is left bare, and nothing far past it.
-  it('covers the bat from end to end, and strays only a little past it', () => {
+  // A sweep from one end of the bat to the other and from its top to its bottom, so no wingtip,
+  // ear or tail is left bare.
+  it('covers the bat from end to end and top to bottom', () => {
     const points = strokes(draw()).flatMap((s) => s.points)
     const xs = points.map(([x]) => x)
     const ys = points.map(([, y]) => y)
-    const stray = bat.width * 0.08
-    expect(Math.min(...xs)).toBeLessThanOrEqual(bat.x)
-    expect(Math.max(...xs)).toBeGreaterThanOrEqual(bat.x + bat.width)
+    expect(Math.min(...xs)).toBeLessThanOrEqual(bat.x + bat.width * 0.02)
+    expect(Math.max(...xs)).toBeGreaterThanOrEqual(bat.x + bat.width * 0.98)
     expect(Math.min(...ys)).toBeLessThanOrEqual(bat.y)
     expect(Math.max(...ys)).toBeGreaterThanOrEqual(bat.y + bat.height)
-    expect(Math.min(...xs)).toBeGreaterThanOrEqual(bat.x - stray)
-    expect(Math.max(...xs)).toBeLessThanOrEqual(bat.x + bat.width + stray)
-    expect(Math.min(...ys)).toBeGreaterThanOrEqual(bat.y - stray)
-    expect(Math.max(...ys)).toBeLessThanOrEqual(bat.y + bat.height + stray)
+  })
+
+  // Aimed at the edge, most turns land near it; some well past it, and none far from the bat.
+  it('misses the edge now and then, and never strays far from the bat', () => {
+    const away = strokes(draw()).flatMap((s) => s.points.map(outside))
+    const past = away.filter((d) => d > bat.width * 0.02).length / away.length
+    expect(past).toBeGreaterThan(0.03)
+    expect(past).toBeLessThan(0.4)
+    expect(Math.max(...away)).toBeLessThan(bat.width * 0.12)
+  })
+
+  // The book's bat is darkest at the head: the hand presses harder there than on the far wingtip.
+  it('presses harder on the head than on the right wingtip', () => {
+    const across = (s: { points: [number, number][] }) =>
+      (s.points.reduce((sum, [x]) => sum + x, 0) / s.points.length - bat.x) / bat.width
+    const all = strokes(draw())
+    const head = all.filter((s) => Math.abs(across(s) - 0.5) < 0.06)
+    const tip = all.filter((s) => across(s) > 0.92)
+    const ink = (some: typeof all) => some.reduce((sum, s) => sum + s.opacity * s.width, 0)
+    expect(head.length).toBeGreaterThan(tip.length)
+    expect(ink(head) / head.length).toBeGreaterThan(ink(tip) / tip.length)
+  })
+
+  it('lays more ink on the left wing than on the right', () => {
+    const ink = (side: (x: number) => boolean) =>
+      strokes(draw())
+        .filter((s) =>
+          side((s.points.reduce((sum, [x]) => sum + x, 0) / s.points.length - bat.x) / bat.width),
+        )
+        .reduce((sum, s) => sum + s.opacity * s.width * s.points.length, 0)
+    expect(ink((x) => x < 0.4)).toBeGreaterThan(ink((x) => x > 0.6))
+  })
+
+  // SVG fills an outline as closed whether or not it ends in Z: so does the pencil.
+  it('scribbles an outline left open as it would the closed one', () => {
+    const open = 'M20 20 L100 20 L100 40 L20 40'
+    expect(strokesOf(emblem(open, 'scribble'))).toEqual(strokesOf(emblem(`${open} Z`, 'scribble')))
+  })
+
+  // A command it can't follow would be dropped and the strokes aimed at the wrong edge: it says so.
+  it("refuses an outline it can't follow", () => {
+    expect(() => strokesOf(emblem('M0 0 H10 L10 10 Z', 'scribble'))).toThrow(/H is not/)
   })
 
   // Small on the disc, a fine stroke would fade to a smudge: none goes under half a pixel.
@@ -219,16 +279,16 @@ describe('a scribbled emblem', () => {
       for (const { width } of strokes(markup)) expect(width).toBeGreaterThanOrEqual(px * 0.5 - 1e-9)
     }
   })
+})
 
-  it('gives every emblem its own mask and wobble, so none borrows another one', () => {
-    const markup = renderToStaticMarkup(
-      createElement('div', null, createElement(BatEmblem), createElement(BatEmblem)),
+// Any Theme may wear the scribble: every outline is one the pencil can follow, so switching to it
+// never fails as the panel draws.
+describe("every Theme's outline, scribbled", () => {
+  it.each(Object.entries(THEMES))('%s', (_, theme) => {
+    const points = strokesOf(emblem(theme.emblem.path, 'scribble')).flatMap((s) =>
+      s.points.split(/[ ,]/).map(Number),
     )
-    const masks = [...markup.matchAll(/<mask id="([^"]+)"/g)].map((m) => m[1])
-    const filters = [...markup.matchAll(/<filter id="([^"]+)"/g)].map((m) => m[1])
-    expect(new Set(masks).size).toBe(2)
-    expect(new Set(filters).size).toBe(2)
-    expect([...markup.matchAll(/mask="url\(#([^)]+)\)"/g)].map((m) => m[1])).toEqual(masks)
-    expect([...markup.matchAll(/filter="url\(#([^)]+)\)"/g)].map((m) => m[1])).toEqual(filters)
+    expect(points.length).toBeGreaterThan(0)
+    expect(points.every(Number.isFinite)).toBe(true)
   })
 })
