@@ -16,7 +16,7 @@ import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { useWords } from '../words'
 import { mascotMood } from '@shared/view'
 import { BatClawd } from './BatClawd'
-import { BatEmblem } from './BatEmblem'
+import { DiscBat } from './DiscBat'
 import { Glow } from './Live'
 import './Cards.css'
 import './Signal.css'
@@ -257,13 +257,7 @@ function Disc({
       {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
         {/* The lens lights for news as well; a plate, in the Alarm color, only when something needs you. */}
-        <BatEmblem
-          size={44}
-          title=""
-          fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'}
-          outline={lit ? 'var(--lens-bat-edge)' : undefined}
-          lit={count > 0}
-        />
+        <DiscBat lit={lit} count={count} />
       </span>
       <AnimatePresence>
         {count > 0 && (
