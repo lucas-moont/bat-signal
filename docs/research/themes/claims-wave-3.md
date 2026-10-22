@@ -26,12 +26,23 @@ Its emblem is the book's own pencil Bat-Signal, in scribble. Its texture is McKe
 
 ## Wave 3
 
-Filled in from each dossier's `## Claims` block.
+Filled in from each dossier's `## Claims` block. Full blocks at the end of [`animated-series.md`](animated-series.md), [`long-halloween.md`](long-halloween.md) and [`arkham-games.md`](arkham-games.md).
 
 | Theme | Round | Ground (surface) | Alarm (signal-hot) | Waiting / working ink | Display / stamp / report | Suit | Signature | Atmosphere | Words |
 |---|---|---|---|---|---|---|---|---|---|
-| The Animated Series | 1 | | | | | | | | |
-| The Long Halloween | 1 | | | | | | | | |
-| The Arkham games | 1 | | | | | | | | |
+| The Animated Series (DARK DECO) | 1 | black paper, neutral #161617 | A: red sky #ff6420, unlit #5a1601 at rest (9.7 from Clawd); B: rim blue #8b88ff | searchlight yellow #fee06b / rim blue-white #b7dbfe | Federo / Mohave 600 / Barlow | blue-grey, blue cape and cowl, blue rim, cel-yellow belt, scalloped cape | S1 the landing: a low crouched dome, cape to the roof | new `skyline`: still Deco skyline over a red sky, a police blimp with two beams | the title card, "I am the night."; PAGING YOU, GO AHEAD?, BUSTED, ANSWER ME, NEW LEAD, HELD UP |
+| The Long Halloween (HOLIDAY) | 1 | wine-black #1c0b14 | jack-o'-lantern orange #fe7500 | lens grey-green #a9bcbf / bone | Grenze Gotisch / Sofia Sans Extra Condensed / Barlow | blue cowl, huge bell cape, blue-grey suit, long ears, gold belt (or blue) | The long cape: a right triangle | `ash` with a page sprite: torn calendar pages | the Roman's table, counting to the next holiday; BLESSING?, BOTCHED, A WORD, MESSAGE, ON ICE |
+| The Arkham games (FREEFLOW) | 1 | asylum green #0b1a10 (C* 9.4) | menu amber #ffad00 (9.2 from PALE MOONLIGHT's gold) | pale asylum green #b3e8b8 / bone | Oxanium 700 / Oxanium 600 / Barlow | dark-grey armour, black cowl, cape over the shoulders, gauntlet fins, wide flat chest bat | The gargoyle: a lopsided crouch on the perch (fallback: the grapnel) | `rain`, near vertical, green haze from above; optional searchlights | the objective log; Mission, Objective, ACCESS?, FAILED, RESPOND, INCOMING, STALLED |
 | Adam West | 2 | | | | | | | | |
 | Lego Batman | 3 | | | | | | | | |
+
+### Open after round 1, for the jury
+
+- **Orange.** HOLIDAY's #fe7500 and TAS's red sky #ff6420 are 7.0 apart and both near Clawd's hue; the Arkham games moved to amber after a 0.3 clash. Only one orange should stay. TAS has a fallback (B, rim blue), HOLIDAY has none it likes.
+- **Green.** The games take it as a ground (C* 9.4 on the surface) with a pale green waiting ink; SERIOUS HOUSE keeps its green working ink (12.5 apart). The maintainer decides.
+- **Two crouches.** TAS's landing and the games' gargoyle. Different outlines at 54px, same idea.
+- **Two searchlight skies.** TAS's blimp beams and the games' optional searchlights: one Theme each.
+- **The classic suit twice.** TAS and HOLIDAY both wear blue-grey with a blue cape and a gold belt (belts 2.3 apart). HOLIDAY separates by long ears, the bell cape and a bright blue cowl.
+
+Round 2 (Adam West) and round 3 (Lego Batman) avoid all of the above: orange, amber, asylum green, wine-black and black paper as grounds, the crouches, the searchlights, the classic blue-grey suit, Federo, Grenze Gotisch, Sofia Sans Extra Condensed, Mohave and Oxanium.
+
