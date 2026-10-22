@@ -87,7 +87,7 @@
   --cape-rim: color-mix(in srgb, var(--batman-blue) 45%, transparent);
   --thread: var(--cape-rim);
   --chest: var(--cowl);
-  --aura-core: color-mix(in srgb, #a3201a 85%, transparent);
+  --aura-core: color-mix(in srgb, color-mix(in srgb, var(--signal) 85%, var(--shadow)) 85%, transparent);
   --aura-glow: color-mix(in srgb, var(--blood) 70%, transparent);
 
   /* The emblem, in Ash on the dark header. */
