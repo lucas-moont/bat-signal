@@ -153,7 +153,8 @@ export const THEMES: Record<ThemeId, Theme> = {
     flag: 'house',
     ground: '#05070a',
     words: SERIOUS_HOUSE_WORDS,
-    emblem: { ...emblem(SIGNAL_IN_PENCIL, 'scribble'), lamp: JOKERS_LAUGH },
+    emblem: emblem(SIGNAL_IN_PENCIL, 'scribble'),
+    lamp: JOKERS_LAUGH,
     suit: VENGEANCE_SUIT, // PLACEHOLDER until the suit is drawn from the references
     atmosphere: SERIOUS_HOUSE_SCRATCHES,
   },
