@@ -33,8 +33,8 @@ describe('a disc whose Theme has a scratched lamp', () => {
       [30, 20, 30, 35],
     ],
   }
-  const worn = { ...emblem(WINGS, 'scribble'), lamp }
-  standInTheme({ emblem: worn })
+  const worn = emblem(WINGS, 'scribble')
+  standInTheme({ emblem: worn, lamp })
 
   it('draws the bat solid, from its own outline, in the lens color when lit', () => {
     const markup = draw(true)
@@ -42,6 +42,14 @@ describe('a disc whose Theme has a scratched lamp', () => {
     expect(markup).toMatch(new RegExp(`<path d="${WINGS}" transform="[^"]+" fill="var\\(--lens-bat\\)"`))
     // Not the scribble the rest of the app wears.
     expect(markup).not.toContain('<polyline')
+  })
+
+  // The lamp fills the face inside its border (Signal.css: 64px, a 1.5px border): its bat as wide
+  // there as BatEmblem draws it on every other disc, 44px across its box.
+  it('draws the bat as wide as the emblem is drawn on any other disc', () => {
+    const scale = Number(batTransform(draw(true))?.match(/scale\(([\d.]+)/)?.[1])
+    const px = (worn.bat.width * scale * (64 - 2 * 1.5)) / 100
+    expect(px).toBeCloseTo((44 * worn.bat.width) / (worn.bat.width + 2), 5)
   })
 
   it('scratches through the bat to the light, and into the glass beside it', () => {
@@ -55,17 +63,25 @@ describe('a disc whose Theme has a scratched lamp', () => {
     expect(glass).toBeLessThan(markup.indexOf(`<path d="${WINGS}" transform="${batTransform(markup)}" fill=`))
   })
 
-  it('gouges the laugh in the Alarm color, and keeps every mark on the glass', () => {
-    const markup = draw(true)
+  // The Alarm Color Rule (DESIGN.md): the Joker's scarlet only while something needs you; for news
+  // alone, or at rest, the laugh is dried blood.
+  it('gouges the laugh in the Alarm color only while something needs you', () => {
+    const markup = draw(true, 1)
     expect(markup).toContain('fill="var(--signal-hot)"')
     expect(markup).toMatch(/<clipPath id="[^"]+"><circle cx="50" cy="50" r="[\d.]+"/)
   })
 
-  it('keeps it all, faint, on the dark glass when unlit', () => {
+  it('lights the lamp for news with no Alarm color in it', () => {
+    const markup = draw(true, 0)
+    expect(markup).not.toMatch(/var\(--signal(-hot)?\)/)
+    expect(markup).toContain('fill="var(--blood)"')
+  })
+
+  it('keeps it all, faint, on the dark glass when unlit, the Alarm color nowhere', () => {
     const markup = draw(false)
     expect(markup).toMatch(new RegExp(`<path d="${WINGS}" transform="[^"]+" fill="var\\(--disc-bat\\)"`))
-    expect(markup).toContain('fill="var(--signal)"')
-    expect(markup).not.toContain('var(--signal-hot)')
+    expect(markup).toMatch(/fill="var\(--blood\)" opacity="[\d.]+"/)
+    expect(markup).not.toMatch(/var\(--signal(-hot)?\)/)
     expect(markup).not.toContain('var(--lens-core)')
   })
 

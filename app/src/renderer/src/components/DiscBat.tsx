@@ -4,43 +4,62 @@
 
 import { useId } from 'react'
 import type { Emblem, Lamp } from '@shared/emblems'
+import { THEMES } from '@shared/themes'
 import { gougesOf } from '../gouge'
-import { batAt, BatEmblem, useEmblem } from './BatEmblem'
+import { useTheme } from '../theme'
+import { batAt, BatEmblem, emblemBox } from './BatEmblem'
 
-/** The bat's width on the lamp's face (0 to 100 across), as wide as the emblem draws it on the disc. */
+/**
+ * How wide the emblem is drawn on the disc, and the face the lamp fills, inside its border
+ * (Signal.css's .disc__face: 64px across, a 1.5px border), in px.
+ */
 const BAT_SIZE = 44
-const FACE = 64
-/** The glass inside the disc's rim, a radius on the face. */
+const FACE = 64 - 2 * 1.5
+/**
+ * How far from the middle the marks reach, a radius on the face (0 to 100 across): past the glass
+ * onto the rim's shading, as scratches on the lamp's housing, never past its edge.
+ */
 const GLASS = 48
-/** How strong the scratches are: through the bat to the light, into the glass, and the laugh unlit. */
-const THROUGH = 0.85
-const INTO = 0.4
-const LAUGH_UNLIT = 0.3
+/** How strong the marks are: through the bat to the light, into the glass, and the laugh unlit. */
+const OPACITY = { through: 0.85, into: 0.4, laughUnlit: 0.3 }
 
 export function DiscBat({ lit, count }: { lit: boolean; count: number }) {
-  const emblem = useEmblem()
-  return emblem.lamp ? (
-    <ScratchedLamp emblem={emblem} lamp={emblem.lamp} lit={lit} />
+  const { emblem, lamp } = THEMES[useTheme()]
+  const ink = lit ? 'var(--lens-bat)' : 'var(--disc-bat)'
+  return lamp ? (
+    <ScratchedLamp emblem={emblem} lamp={lamp} lit={lit} alarm={count > 0} ink={ink} />
   ) : (
     <BatEmblem
       size={BAT_SIZE}
       title=""
-      fill={lit ? 'var(--lens-bat)' : 'var(--disc-bat)'}
+      fill={ink}
       outline={lit ? 'var(--lens-bat-edge)' : undefined}
       lit={count > 0}
     />
   )
 }
 
-function ScratchedLamp({ emblem, lamp, lit }: { emblem: Emblem; lamp: Lamp; lit: boolean }) {
+function ScratchedLamp({
+  emblem,
+  lamp,
+  lit,
+  alarm,
+  ink,
+}: {
+  emblem: Emblem
+  lamp: Lamp
+  lit: boolean
+  /** Something needs the user: the only time the laugh is in the Alarm color. */
+  alarm: boolean
+  ink: string
+}) {
   // Their own ids: one shared by every lamp resolves to whichever comes first on the page.
   const glass = useId()
   const bat = useId()
   const { scratches, laugh } = gougesOf(lamp)
-  // As wide as BatEmblem draws the bat on the disc: its box, with a unit of air each side, is BAT_SIZE.
-  const width = ((BAT_SIZE / FACE) * 100 * emblem.bat.width) / (emblem.bat.width + 2)
+  // As wide as BatEmblem draws the bat on the disc, where its box is BAT_SIZE across.
+  const width = ((BAT_SIZE / FACE) * 100 * emblem.bat.width) / emblemBox(emblem).width
   const at = batAt(emblem, 50, 50, width)
-  const ink = lit ? 'var(--lens-bat)' : 'var(--disc-bat)'
   return (
     <svg className="disc__lamp" viewBox="0 0 100 100" aria-hidden>
       <defs>
@@ -53,18 +72,19 @@ function ScratchedLamp({ emblem, lamp, lit }: { emblem: Emblem; lamp: Lamp; lit:
       </defs>
       <g clipPath={`url(#${glass})`}>
         {/* Into the glass first, the bat laid over them, then through the bat to the light. */}
-        <path d={scratches} fill={ink} opacity={INTO} />
+        <path d={scratches} fill={ink} opacity={OPACITY.into} />
         <path d={emblem.path} transform={at} fill={ink} />
         <path
           d={scratches}
           fill={lit ? 'var(--lens-core)' : 'var(--glass-shine)'}
           clipPath={`url(#${bat})`}
-          opacity={THROUGH}
+          opacity={OPACITY.through}
         />
+        {/* The Joker's scarlet only while something needs you; for news, or at rest, dried blood. */}
         <path
           d={laugh}
-          fill={lit ? 'var(--signal-hot)' : 'var(--signal)'}
-          opacity={lit ? undefined : LAUGH_UNLIT}
+          fill={alarm ? 'var(--signal-hot)' : 'var(--blood)'}
+          opacity={lit ? undefined : OPACITY.laughUnlit}
         />
       </g>
     </svg>

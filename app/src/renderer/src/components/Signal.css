@@ -67,7 +67,7 @@
   border-color: var(--blood);
 }
 
-/* A Theme's own lamp (DiscBat.tsx) fills the face, its marks kept to the glass. */
+/* A Theme's own lamp (DiscBat.tsx) fills the face inside its border. */
 .disc__lamp {
   position: absolute;
   inset: 0;

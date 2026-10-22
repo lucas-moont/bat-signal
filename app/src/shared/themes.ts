@@ -26,6 +26,7 @@ import {
   SIGNAL_IN_PENCIL,
   WINGS,
   type Emblem,
+  type Lamp,
 } from './emblems'
 import {
   ANCIENT_GRACE_SUIT,
@@ -76,6 +77,8 @@ export interface Theme {
   words: Words
   /** Its bat: in the panel's masthead, on the disc, in the intro and on Bat-Clawd's chest. */
   emblem: Emblem
+  /** The Signal disc as a lamp of its own, scratched over (SERIOUS HOUSE's), in place of its lens. */
+  lamp?: Lamp
   /** Bat-Clawd dressed as this version of Batman (shared/suits.ts). */
   suit: Suit
   /** What its canvas paints behind the panel (shared/atmospheres.ts). */
