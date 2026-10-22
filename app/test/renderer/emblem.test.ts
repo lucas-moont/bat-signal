@@ -243,6 +243,11 @@ describe('a scribbled emblem', () => {
     expect(ink(head) / head.length).toBeGreaterThan(ink(tip) / tip.length)
   })
 
+  // A command it can't follow would be dropped and the strokes aimed at the wrong edge: it says so.
+  it("refuses an outline it can't follow", () => {
+    expect(() => strokesOf(emblem('M0 0 H10 L10 10 Z', 'scribble'))).toThrow(/H is not/)
+  })
+
   // Small on the disc, a fine stroke would fade to a smudge: none goes under half a pixel.
   it('keeps every stroke at least half a pixel wide, however small the bat is drawn', () => {
     for (const size of [28, 44, 120]) {
