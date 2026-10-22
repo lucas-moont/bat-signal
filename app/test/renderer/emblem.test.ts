@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
 import { strokesOf } from '../../src/renderer/src/scribble'
 import { emblem, WINGS } from '../../src/shared/emblems'
+import { THEMES } from '../../src/shared/themes'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -215,11 +216,16 @@ describe('a scribbled emblem', () => {
     expect(draw()).toBe(draw())
   })
 
-  // A sweep from one end of the bat to the other, so no wingtip is left bare.
-  it('covers the bat from end to end', () => {
-    const xs = strokes(draw()).flatMap((s) => s.points.map(([x]) => x))
+  // A sweep from one end of the bat to the other and from its top to its bottom, so no wingtip,
+  // ear or tail is left bare.
+  it('covers the bat from end to end and top to bottom', () => {
+    const points = strokes(draw()).flatMap((s) => s.points)
+    const xs = points.map(([x]) => x)
+    const ys = points.map(([, y]) => y)
     expect(Math.min(...xs)).toBeLessThanOrEqual(bat.x + bat.width * 0.02)
     expect(Math.max(...xs)).toBeGreaterThanOrEqual(bat.x + bat.width * 0.98)
+    expect(Math.min(...ys)).toBeLessThanOrEqual(bat.y)
+    expect(Math.max(...ys)).toBeGreaterThanOrEqual(bat.y + bat.height)
   })
 
   // Aimed at the edge, most turns land near it; some well past it, and none far from the bat.
@@ -243,6 +249,16 @@ describe('a scribbled emblem', () => {
     expect(ink(head) / head.length).toBeGreaterThan(ink(tip) / tip.length)
   })
 
+  it('lays more ink on the left wing than on the right', () => {
+    const ink = (side: (x: number) => boolean) =>
+      strokes(draw())
+        .filter((s) =>
+          side((s.points.reduce((sum, [x]) => sum + x, 0) / s.points.length - bat.x) / bat.width),
+        )
+        .reduce((sum, s) => sum + s.opacity * s.width * s.points.length, 0)
+    expect(ink((x) => x < 0.4)).toBeGreaterThan(ink((x) => x > 0.6))
+  })
+
   // SVG fills an outline as closed whether or not it ends in Z: so does the pencil.
   it('scribbles an outline left open as it would the closed one', () => {
     const open = 'M20 20 L100 20 L100 40 L20 40'
@@ -262,5 +278,17 @@ describe('a scribbled emblem', () => {
       const px = Number(box) / size
       for (const { width } of strokes(markup)) expect(width).toBeGreaterThanOrEqual(px * 0.5 - 1e-9)
     }
+  })
+})
+
+// Any Theme may wear the scribble: every outline is one the pencil can follow, so switching to it
+// never fails as the panel draws.
+describe("every Theme's outline, scribbled", () => {
+  it.each(Object.entries(THEMES))('%s', (_, theme) => {
+    const points = strokesOf(emblem(theme.emblem.path, 'scribble')).flatMap((s) =>
+      s.points.split(/[ ,]/).map(Number),
+    )
+    expect(points.length).toBeGreaterThan(0)
+    expect(points.every(Number.isFinite)).toBe(true)
   })
 })
