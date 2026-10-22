@@ -120,6 +120,15 @@ export interface Emblem {
   plate?: Plate
 }
 
+/**
+ * A Signal disc's lamp scratched over after it was made (SERIOUS HOUSE's, #123): its bat solid, then
+ * scratches over the bat and the glass, and a laugh gouged in, each of its strokes from one point to
+ * another on the disc's face (0 to 100 across).
+ */
+export interface Lamp {
+  laugh: readonly (readonly [number, number, number, number])[]
+}
+
 /** An emblem from its outline, its box read from the outline's points so a re-trace can't leave it behind. */
 export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): Emblem {
   const points = [...path.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)]

@@ -15,7 +15,7 @@ import type {
 } from '@shared/atmospheres'
 import { batOutline, type Outline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
-import { between, seededFrom } from './seeded'
+import { between, pick, seededFrom } from './seeded'
 
 export interface Painter {
   /** Its Atmosphere's colors afresh, each read from the page by its variable's name. */
@@ -647,7 +647,7 @@ function hairlines(
       y0,
       x1: x0 + dx,
       y1: y0 + dy,
-      alpha: alphas[Math.floor(random() * alphas.length)]!,
+      alpha: pick(alphas, random),
       life: Math.floor(between([shortest, longest + 1], random)),
     }
   }
