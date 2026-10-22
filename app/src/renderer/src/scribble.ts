@@ -137,7 +137,7 @@ function along(points: readonly Point[], t: number): Point {
 /** How many straight runs a curve is flattened into. */
 const CURVE_STEPS = 12
 
-/** An outline's edges, its curves flattened to short straight runs. */
+/** An outline's edges, its curves flattened to short straight runs, and each shape closed, as SVG fills it. */
 function edgesOf(path: string): (readonly [Point, Point])[] {
   const tokens = path.match(/[A-Za-z]|-?[\d.]+/g) ?? []
   const edges: (readonly [Point, Point])[] = []
@@ -147,17 +147,23 @@ function edgesOf(path: string): (readonly [Point, Point])[] {
     edges.push([at, next])
     at = next
   }
+  const close = () => {
+    if (at[0] !== start[0] || at[1] !== start[1]) to(start)
+  }
   for (let i = 0; i < tokens.length;) {
     const command = tokens[i++]
     const read = (): Point => [Number(tokens[i++]), Number(tokens[i++])]
-    if (command === 'M') start = at = read()
-    else if (command === 'L') to(read())
+    if (command === 'M') {
+      close()
+      start = at = read()
+    } else if (command === 'L') to(read())
     else if (command === 'Q' || command === 'C') {
       const curve = [at, ...(command === 'Q' ? [read(), read()] : [read(), read(), read()])]
       for (let k = 1; k <= CURVE_STEPS; k++) to(along(curve, k / CURVE_STEPS))
-    } else if (command === 'Z') to(start)
+    } else if (command === 'Z') close()
     else throw new Error(`An emblem's outline can't be scribbled: ${command} is not M, L, Q, C or Z`)
   }
+  close()
   return edges
 }
 

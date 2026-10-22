@@ -243,6 +243,12 @@ describe('a scribbled emblem', () => {
     expect(ink(head) / head.length).toBeGreaterThan(ink(tip) / tip.length)
   })
 
+  // SVG fills an outline as closed whether or not it ends in Z: so does the pencil.
+  it('scribbles an outline left open as it would the closed one', () => {
+    const open = 'M20 20 L100 20 L100 40 L20 40'
+    expect(strokesOf(emblem(open, 'scribble'))).toEqual(strokesOf(emblem(`${open} Z`, 'scribble')))
+  })
+
   // A command it can't follow would be dropped and the strokes aimed at the wrong edge: it says so.
   it("refuses an outline it can't follow", () => {
     expect(() => strokesOf(emblem('M0 0 H10 L10 10 Z', 'scribble'))).toThrow(/H is not/)
