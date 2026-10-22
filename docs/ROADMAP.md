@@ -30,6 +30,7 @@ Each theme dresses Bat-Signal as one version of Batman: palette, type, Bat-Clawd
 - [x] Wave 1, films (v1.2): PALE MOONLIGHT (Burton), WATCHFUL PROTECTOR (Nolan), KNIGHTMARE (Snyder), and a refreshed VENGEANCE Bat-Clawd
 - [x] Wave 2, comics (v1.3): The Dark Knight Returns, Absolute Batman, Year One (Arkham Asylum is paused, to come back in a later version)
 - [ ] Wave 3, classics (v1.4): The Animated Series, The Long Halloween, the Arkham games, Adam West, Lego Batman
+- [ ] Paused: SERIOUS HOUSE, after *Arkham Asylum* (Morrison and McKean), to be rethought as horror ([#123](https://github.com/lucas-moont/bat-signal/issues/123))
 
 ## v2: "the cave answers back"
 
