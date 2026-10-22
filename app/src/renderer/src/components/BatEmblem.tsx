@@ -46,7 +46,8 @@ export function BatEmblem({
   /** An outline under the bat's fill, in this color (a lit lens too pale to hold its shape alone). */
   outline?: string
 }) {
-  const { path, bat, finish, plate } = useEmblem()
+  const worn = useEmblem()
+  const { path, bat, finish, plate } = worn
   // The box around the bat, or its plate, with a unit of air on every side: the size a place
   // gives is the emblem's.
   const edge = plate?.box ?? bat
@@ -124,7 +125,7 @@ export function BatEmblem({
         />
       )}
       {finish === 'scribble' ? (
-        <ScribbledBat path={path} bat={bat} ink={fill} unitPx={size / box.width} />
+        <ScribbledBat emblem={worn} ink={fill} unitPx={size / box.width} />
       ) : (
         <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
       )}
