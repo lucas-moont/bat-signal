@@ -33,7 +33,7 @@ Filled in from each dossier's `## Claims` block. Full blocks at the end of [`ani
 | The Animated Series (DARK DECO) | 1 | black paper, neutral #161617 | A: red sky #ff6420, unlit #5a1601 at rest (9.7 from Clawd); B: rim blue #8b88ff | searchlight yellow #fee06b / rim blue-white #b7dbfe | Federo / Mohave 600 / Barlow | blue-grey, blue cape and cowl, blue rim, cel-yellow belt, scalloped cape | S1 the landing: a low crouched dome, cape to the roof | new `skyline`: still Deco skyline over a red sky, a police blimp with two beams | the title card, "I am the night."; PAGING YOU, GO AHEAD?, BUSTED, ANSWER ME, NEW LEAD, HELD UP |
 | The Long Halloween (HOLIDAY) | 1 | wine-black #1c0b14 | jack-o'-lantern orange #fe7500 | lens grey-green #a9bcbf / bone | Grenze Gotisch / Sofia Sans Extra Condensed / Barlow | blue cowl, huge bell cape, blue-grey suit, long ears, gold belt (or blue) | The long cape: a right triangle | `ash` with a page sprite: torn calendar pages | the Roman's table, counting to the next holiday; BLESSING?, BOTCHED, A WORD, MESSAGE, ON ICE |
 | The Arkham games (FREEFLOW) | 1 | asylum green #0b1a10 (C* 9.4) | menu amber #ffad00 (9.2 from PALE MOONLIGHT's gold) | pale asylum green #b3e8b8 / bone | Oxanium 700 / Oxanium 600 / Barlow | dark-grey armour, black cowl, cape over the shoulders, gauntlet fins, wide flat chest bat | The gargoyle: a lopsided crouch on the perch (fallback: the grapnel) | `rain`, near vertical, green haze from above; optional searchlights | the objective log; Mission, Objective, ACCESS?, FAILED, RESPOND, INCOMING, STALLED |
-| Adam West | 2 | | | | | | | | |
+| Adam West (SAME BAT-TIME) | 2 | credits navy #011c3a (C* 22.6) | V: satin violet #bb76ff (R Batphone red #fc5936 and G SFX green #3fd18a costed) | SFX green #38c886 / bone | Luckiest Guy / Luckiest Guy 11px / Barlow; Bowlby One SC headlines | lavender suit, violet satin cowl, cape and trunks with a sheen, yellow oval and belt, cape to mid-calf | the Batusi: a front stand, two arm loops beside the head | `smoke` sideways: cloud banks past a still 1966 Signal | the serial narrator; BATPHONE, MAY I?, FOILED, WHAT NOW?, NEW CLUE, HANGING; POW! only as a balloon beside the stamp |
 | Lego Batman | 3 | | | | | | | | |
 
 ### Open after round 1, for the jury
@@ -43,6 +43,15 @@ Filled in from each dossier's `## Claims` block. Full blocks at the end of [`ani
 - **Two crouches.** TAS's landing and the games' gargoyle. Different outlines at 54px, same idea.
 - **Two searchlight skies.** TAS's blimp beams and the games' optional searchlights: one Theme each.
 - **The classic suit twice.** TAS and HOLIDAY both wear blue-grey with a blue cape and a gold belt (belts 2.3 apart). HOLIDAY separates by long ears, the bell cape and a bright blue cowl.
+
+### Open after round 2
+
+- **Violet.** SAME BAT-TIME's alarm is satin violet, next to a violet satin suit. BLUE COLLAR's ground is violet too (its surface 9.3 from West's navy).
+- **The yellow oval and belt** are TAS's yellow (2.9 and 3.0 apart). West proposes J1: TAS dims its oval, HOLIDAY takes a blue belt.
+- **A third green.** West's waiting ink is SFX green, beside the games' green ground and SERIOUS HOUSE's green working ink (11.7 and 14.3 apart).
+- **The opening is not navy** (measured): the navy is the dusk cast cards, the credits sky and the Signal on clouds.
+
+Round 3 (Lego Batman) also avoids violet, navy, Luckiest Guy and Bowlby One SC, the Batusi's raised arms and the serial narrator.
 
 Round 2 (Adam West) and round 3 (Lego Batman) avoid: orange, amber, asylum green, wine-black and black paper as grounds, the crouches, the searchlights, the yellow chest oval (TAS's option C1, pending the jury), Federo, Grenze Gotisch, Sofia Sans Extra Condensed, Mohave and Oxanium.
 
