@@ -19,7 +19,7 @@ export function DiscBat({ lit, count }: { lit: boolean; count: number }) {
   const emblem = useEmblem()
   const ink = lit ? 'var(--lens-bat)' : 'var(--disc-bat)'
   return emblem.lamp ? (
-    <ScratchedLamp emblem={emblem} lamp={emblem.lamp} lit={lit} ink={ink} />
+    <ScratchedLamp emblem={emblem} lamp={emblem.lamp} lit={lit} alarm={count > 0} ink={ink} />
   ) : (
     <BatEmblem
       size={BAT_SIZE}
@@ -35,11 +35,14 @@ function ScratchedLamp({
   emblem,
   lamp,
   lit,
+  alarm,
   ink,
 }: {
   emblem: Emblem
   lamp: Lamp
   lit: boolean
+  /** Something needs the user: the only time the laugh is in the Alarm color. */
+  alarm: boolean
   ink: string
 }) {
   // Their own ids: one shared by every lamp resolves to whichever comes first on the page.
@@ -69,9 +72,10 @@ function ScratchedLamp({
           clipPath={`url(#${bat})`}
           opacity={OPACITY.through}
         />
+        {/* The Joker's scarlet only while something needs you; for news, or at rest, dried blood. */}
         <path
           d={laugh}
-          fill={lit ? 'var(--signal-hot)' : 'var(--signal)'}
+          fill={alarm ? 'var(--signal-hot)' : 'var(--blood)'}
           opacity={lit ? undefined : OPACITY.laughUnlit}
         />
       </g>

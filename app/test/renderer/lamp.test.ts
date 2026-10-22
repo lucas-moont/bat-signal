@@ -55,17 +55,25 @@ describe('a disc whose Theme has a scratched lamp', () => {
     expect(glass).toBeLessThan(markup.indexOf(`<path d="${WINGS}" transform="${batTransform(markup)}" fill=`))
   })
 
-  it('gouges the laugh in the Alarm color, and keeps every mark on the glass', () => {
-    const markup = draw(true)
+  // The Alarm Color Rule (DESIGN.md): the Joker's scarlet only while something needs you; for news
+  // alone, or at rest, the laugh is dried blood.
+  it('gouges the laugh in the Alarm color only while something needs you', () => {
+    const markup = draw(true, 1)
     expect(markup).toContain('fill="var(--signal-hot)"')
     expect(markup).toMatch(/<clipPath id="[^"]+"><circle cx="50" cy="50" r="[\d.]+"/)
   })
 
-  it('keeps it all, faint, on the dark glass when unlit', () => {
+  it('lights the lamp for news with no Alarm color in it', () => {
+    const markup = draw(true, 0)
+    expect(markup).not.toMatch(/var\(--signal(-hot)?\)/)
+    expect(markup).toContain('fill="var(--blood)"')
+  })
+
+  it('keeps it all, faint, on the dark glass when unlit, the Alarm color nowhere', () => {
     const markup = draw(false)
     expect(markup).toMatch(new RegExp(`<path d="${WINGS}" transform="[^"]+" fill="var\\(--disc-bat\\)"`))
-    expect(markup).toContain('fill="var(--signal)"')
-    expect(markup).not.toContain('var(--signal-hot)')
+    expect(markup).toMatch(/fill="var\(--blood\)" opacity="[\d.]+"/)
+    expect(markup).not.toMatch(/var\(--signal(-hot)?\)/)
     expect(markup).not.toContain('var(--lens-core)')
   })
 
