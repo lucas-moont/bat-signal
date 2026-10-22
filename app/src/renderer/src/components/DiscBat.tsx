@@ -7,9 +7,12 @@ import type { Emblem, Lamp } from '@shared/emblems'
 import { gougesOf } from '../gouge'
 import { batAt, BatEmblem, emblemBox, useEmblem } from './BatEmblem'
 
-/** How wide the emblem is drawn on the disc, and the disc's face (Signal.css's .disc), in px. */
+/**
+ * How wide the emblem is drawn on the disc, and the face the lamp fills, inside its border
+ * (Signal.css's .disc__face: 64px across, a 1.5px border), in px.
+ */
 const BAT_SIZE = 44
-const FACE = 64
+const FACE = 64 - 2 * 1.5
 /** The glass inside the disc's rim, a radius on the face (0 to 100 across). */
 const GLASS = 48
 /** How strong the marks are: through the bat to the light, into the glass, and the laugh unlit. */

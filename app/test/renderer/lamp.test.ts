@@ -44,6 +44,14 @@ describe('a disc whose Theme has a scratched lamp', () => {
     expect(markup).not.toContain('<polyline')
   })
 
+  // The lamp fills the face inside its border (Signal.css: 64px, a 1.5px border): its bat as wide
+  // there as BatEmblem draws it on every other disc, 44px across its box.
+  it('draws the bat as wide as the emblem is drawn on any other disc', () => {
+    const scale = Number(batTransform(draw(true))?.match(/scale\(([\d.]+)/)?.[1])
+    const px = (worn.bat.width * scale * (64 - 2 * 1.5)) / 100
+    expect(px).toBeCloseTo((44 * worn.bat.width) / (worn.bat.width + 2), 5)
+  })
+
   it('scratches through the bat to the light, and into the glass beside it', () => {
     const markup = draw(true)
     const clip = markup.match(/<clipPath id="([^"]+)"><path d="([^"]+)"/)
