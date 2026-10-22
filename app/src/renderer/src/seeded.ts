@@ -12,3 +12,8 @@ export type Range = readonly [number, number]
 
 /** A number between the two, picked by `next`. */
 export const between = ([low, high]: Range, next: () => number) => low + next() * (high - low)
+
+/** One of them, picked by `next`. */
+export function pick<T>(some: readonly T[], next: () => number): T {
+  return some[Math.floor(next() * some.length)]!
+}
