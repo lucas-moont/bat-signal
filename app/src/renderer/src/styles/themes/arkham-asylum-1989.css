@@ -92,15 +92,17 @@
   /* The emblem, in Ash on the dark header. */
   --emblem: var(--ash);
 
-  /* The Signal disc. Unlit: blue-black glass, the bat a shade in it. Lit: a scarlet lens from a pale
-     core to dried blood at the rim, the black bat across it. */
+  /* The Signal disc, the classic lamp scratched over (DiscBat.tsx). Unlit: blue-black glass, the bat a
+     shade in it, the marks faint. Lit: a plain yellow light from a white core to amber at the rim, the
+     solid black bat across it, scratched through to the light; the Joker's laugh in his scarlet. */
   --disc-bat: var(--raised);
   --glass-shine: #1a2436;
   --glass: var(--abyss);
   --disc-rim-inner: #030406;
   --disc-rim-outer: var(--line);
-  --lens-core: #ffd3c8;
-  --lens-rim: var(--signal);
+  --lens-core: #fffdf0;
+  --lens-rim: #c98a1c;
+  --lamp-glow: color-mix(in srgb, #ffd45a 45%, transparent);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
   --lens-shade:
@@ -157,17 +159,24 @@
   --stamp-weight: var(--display-weight);
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
-  /* The lit lens: a scarlet radial with a paper grain over it. */
-  --lens-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  --disc-lens:
-    var(--lens-grain) center / 100% 100%,
-    radial-gradient(
-      circle at 50% 45% in srgb,
-      var(--lens-core),
-      var(--signal-hot) 45%,
-      var(--signal) 78%,
-      var(--blood)
-    );
+  /* The lit lens: a lamp's plain light, no grain: it is a light, not a drawing. */
+  --disc-lens: radial-gradient(
+    circle at 50% 45% in srgb,
+    var(--lens-core),
+    #ffe680 42%,
+    #f0b33a 78%,
+    #7a4a10
+  );
+}
+
+/* The lamp glows yellow round its rim, as the classic Signal does; scarlet is the Joker's, in the laugh. */
+:root[data-theme='arkham-asylum-1989'] .disc--lit .disc__face {
+  box-shadow:
+    var(--lens-shade),
+    0 0 18px var(--lamp-glow);
+}
+:root[data-theme='arkham-asylum-1989'] .disc__halo {
+  background: radial-gradient(circle in srgb, var(--lamp-glow) 40%, transparent 70%);
 }
 
 /* McKean's tall strips: the ground cut into four by hairline paper rules, one strip left darker, a
