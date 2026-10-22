@@ -4,8 +4,10 @@
 
 import { useId } from 'react'
 import type { Emblem, Lamp } from '@shared/emblems'
+import { THEMES } from '@shared/themes'
 import { gougesOf } from '../gouge'
-import { batAt, BatEmblem, emblemBox, useEmblem } from './BatEmblem'
+import { useTheme } from '../theme'
+import { batAt, BatEmblem, emblemBox } from './BatEmblem'
 
 /**
  * How wide the emblem is drawn on the disc, and the face the lamp fills, inside its border
@@ -19,10 +21,10 @@ const GLASS = 48
 const OPACITY = { through: 0.85, into: 0.4, laughUnlit: 0.3 }
 
 export function DiscBat({ lit, count }: { lit: boolean; count: number }) {
-  const emblem = useEmblem()
+  const { emblem, lamp } = THEMES[useTheme()]
   const ink = lit ? 'var(--lens-bat)' : 'var(--disc-bat)'
-  return emblem.lamp ? (
-    <ScratchedLamp emblem={emblem} lamp={emblem.lamp} lit={lit} alarm={count > 0} ink={ink} />
+  return lamp ? (
+    <ScratchedLamp emblem={emblem} lamp={lamp} lit={lit} alarm={count > 0} ink={ink} />
   ) : (
     <BatEmblem
       size={BAT_SIZE}

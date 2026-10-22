@@ -33,8 +33,8 @@ describe('a disc whose Theme has a scratched lamp', () => {
       [30, 20, 30, 35],
     ],
   }
-  const worn = { ...emblem(WINGS, 'scribble'), lamp }
-  standInTheme({ emblem: worn })
+  const worn = emblem(WINGS, 'scribble')
+  standInTheme({ emblem: worn, lamp })
 
   it('draws the bat solid, from its own outline, in the lens color when lit', () => {
     const markup = draw(true)
