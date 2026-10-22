@@ -187,6 +187,16 @@ describe("SERIOUS HOUSE's suit", () => {
     }
   })
 
+  // The perch draws him 78px wide, 2px under its window's edge (Signal.css): nothing below y 11.28
+  // shows there, so the hem's points he wears on it, watching or alarmed, end above that.
+  it('keeps the points of the hems he wears on the perch above its edge', () => {
+    for (const p of [...watch.map((step) => step.pose), ...poses.alarmed])
+      for (const layer of [...p.behind, ...p.front])
+        if (layer.kind === 'path' || layer.kind === 'cape')
+          for (const [, y] of layer.d.matchAll(/-?[\d.]+ (-?[\d.]+)/g))
+            expect(Number(y)).toBeLessThanOrEqual(11.25)
+  })
+
   it('wears no belt and nothing on his chest', () => {
     for (const p of [...atRest, ...awake]) {
       expect(p.map.rows.join('')).not.toMatch(/[bk]/)

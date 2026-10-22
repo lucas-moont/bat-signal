@@ -1461,16 +1461,16 @@ const FIGURE =
 const HOUSE_CAPE = {
   /** Closed over him: no arms or legs, wider at the hem, torn into uneven points. */
   closed:
-    `M3 5 ${SHOULDER_POINTS.closed.right} L13.7 7.5 L14.5 11.9 L13.6 10.7 L12.8 11.6 L11.9 10.9 L11.1 12 ` +
-    'L10.2 10.8 L9.1 11.5 L8.3 10.7 L7.4 11.9 L6.5 10.9 L5.5 11.6 L4.7 10.6 L3.8 11.8 L2.9 10.9 ' +
-    `L1.5 11.9 L2.3 7.5 ${SHOULDER_POINTS.closed.left} Z`,
+    `M3 5 ${SHOULDER_POINTS.closed.right} L13.7 7.5 L14.5 11.1 L13.6 9.9 L12.8 10.8 L11.9 10.1 L11.1 11.2 ` +
+    'L10.2 10 L9.1 10.7 L8.3 9.9 L7.4 11.1 L6.5 10.1 L5.5 10.8 L4.7 9.8 L3.8 11 L2.9 10.1 ' +
+    `L1.5 11.1 L2.3 7.5 ${SHOULDER_POINTS.closed.left} Z`,
   /** Asleep: pulled up over his jaw to his eyes, hunched narrower. */
   huddled:
-    `M3 4.05 L13 4.05 ${SHOULDER_POINTS.closed.right} L13.4 7.5 L14 11.6 L13.1 10.8 L12.2 11.7 L11.3 10.9 ` +
-    'L10.3 11.8 L9.3 10.8 L8.2 11.6 L7.2 10.8 L6.1 11.7 L5.2 10.8 L4.1 11.8 L3 10.9 L2 11.6 L2.6 7.5 ' +
+    `M3 4.05 L13 4.05 ${SHOULDER_POINTS.closed.right} L13.4 7.5 L14 11 L13.1 10.2 L12.2 11.1 L11.3 10.3 ` +
+    'L10.3 11.2 L9.3 10.2 L8.2 11 L7.2 10.2 L6.1 11.1 L5.2 10.2 L4.1 11.2 L3 10.3 L2 11 L2.6 7.5 ' +
     `${SHOULDER_POINTS.closed.left} Z`,
   /** Its folds, closed: from the shoulders down to the hem's points. */
-  folds: 'M5.6 5.6 L4.7 10.6 M8 6 L8.3 10.7 M10.4 5.6 L11.1 10.8',
+  folds: 'M5.6 5.6 L4.7 9.8 M8 6 L8.3 9.9 M10.4 5.6 L11.1 10',
   /** Open, flung behind him as one torn wing to the trailing side, its tip hooked (flying). */
   flung:
     'M13 5 L3 5 L0 4.7 L-3 4.4 Q-4.8 4 -5.4 2.3 Q-5 3.84 -4.6 5.2 L-5.6 6.6 L-4.2 6.5 L-4.8 8 L-3 7.5 ' +
@@ -1478,7 +1478,7 @@ const HOUSE_CAPE = {
   /** Open and flared wide behind him, both corners hooked up (alarmed; left half, mirrored). */
   flared:
     'M8 5 L3 5 L1 4.6 Q-1 4 -1.6 2.2 Q-1.2 4.06 -1 5.2 L-3.6 6.2 L-2.6 7.2 L-4.4 8.4 L-2.6 8.8 ' +
-    'L-3.4 10.6 L-1.4 10 L-1 11.6 L0.6 10.6 L1.6 11.7 L2.8 10.6 L4 11.6 L5.4 10.6 L8 11.2 Z',
+    'L-3.4 10.1 L-1.4 10 L-1 11.1 L0.6 10.1 L1.6 11.2 L2.8 10.1 L4 11.1 L5.4 10.1 L8 10.7 Z',
 }
 
 /** Wrapped in the closed cape: only his head shows above it. */
