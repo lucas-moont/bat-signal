@@ -1397,3 +1397,130 @@ export const BLUE_COLLAR_SUIT: Suit = {
   // SFX Lemon is the Alarm color and never shows at rest.
   aura: 'alarmed',
 }
+
+// --- SERIOUS HOUSE: Batman as Dave McKean paints him in Arkham Asylum (arkham-horror-references.md,
+// sections 5 and 6.8), picked on screen: a black shadow, cowl, suit and cape alike, read by a cold blue
+// rim; no belt and nothing on his chest; ears tall and thin as needles; a point rising from each
+// shoulder like a bat's thumb claw. At rest the torn cape is closed over him, as the book shows him;
+// working or alarmed it opens. ---
+
+/** His head under the tall ears: the brow a unit in, the cowl down to his eyes, Clawd's jaw below. */
+const HOUSE_HEAD = twice([
+  '................',
+  '....cccccccc....',
+  '...cccccccccc...',
+  '...cccccccccc...',
+  '...cc######cc...',
+])
+/** Under the closed cape: no arms, no belt, no legs. */
+const HOUSE_CLOAKED = map([SUIT, SUIT, SUIT, SUIT], [], LEGEND, HOUSE_HEAD)
+/** The cape open: no belt, the suit straight down into his four legs. */
+const HOUSE_OPEN = map(
+  [SUIT, SUIT, SUIT],
+  [SUIT, SUIT, ...twice(['....S.S..S.S....']), '....S.S..S.S....'],
+  LEGEND,
+  HOUSE_HEAD,
+)
+/** The cowl's outline without ears (the ears are drawn behind it, tall). */
+const HOUSE_EDGE: Layer = {
+  kind: 'path',
+  d: 'M3 5 L3 2 L4 2 L4 1 L12 1 L12 2 L13 2 L13 5 Z',
+  className: 'clawd__cowl-edge',
+}
+/** The ears, a unit wide, from under the cowl to the frame's top, notched at their tips. */
+const NEEDLE_EARS: Layer = {
+  kind: 'path',
+  d: 'M4 1.6 L4 -1 L4.5 -0.7 L5 -1 L5 1.6 Z M11 1.6 L11 -1 L11.5 -0.7 L12 -1 L12 1.6 Z',
+  className: 'clawd__cape',
+}
+
+/**
+ * The shoulder points, as runs of an outline going up his left side and down his right: each rises
+ * from a root 0.8 high on the shoulder, out past it to a sharp tip 1.8 above the root, so the points
+ * are part of his silhouette rather than laid over it. With the cape open they grow from the suit,
+ * closed from the cape, a fifth of a unit lower.
+ */
+const SHOULDER_POINTS = {
+  open: {
+    left: 'L3 5.6 L2.3 5.6 Q1.2 5.3 0.9 3 Q1.6 4.6 2.5 4.8 L3 4.8',
+    right: 'L13 4.8 L13.5 4.8 Q14.4 4.6 15.1 3 Q14.8 5.3 13.7 5.6 L13 5.6',
+  },
+  closed: {
+    left: 'L3 5.8 L2.3 5.8 Q1.2 5.5 0.9 3.2 Q1.6 4.8 2.5 5 L3 5',
+    right: 'L13 5 L13.5 5 Q14.4 4.8 15.1 3.2 Q14.8 5.5 13.7 5.8 L13 5.8',
+  },
+}
+
+/** With the cape open, the outline round all of him: cowl, shoulder points, suit and legs. */
+const FIGURE =
+  `M3 9 ${SHOULDER_POINTS.open.left} L3 2 L4 2 L4 1 L12 1 L12 2 L13 2 ${SHOULDER_POINTS.open.right} L13 9 L12 9 ` +
+  'L12 10.5 L11 10.5 L11 9 L10 9 L10 10.5 L9 10.5 L9 9 L7 9 L7 10.5 L6 10.5 L6 9 L5 9 L5 10.5 L4 10.5 ' +
+  'L4 9 L3 9 Z'
+
+/** The cape, from the shoulders to its torn hem. */
+const HOUSE_CAPE = {
+  /** Closed over him: no arms or legs, wider at the hem, torn into uneven points. */
+  closed:
+    `M3 5 ${SHOULDER_POINTS.closed.right} L13.7 7.5 L14.5 11.9 L13.6 10.7 L12.8 11.6 L11.9 10.9 L11.1 12 ` +
+    'L10.2 10.8 L9.1 11.5 L8.3 10.7 L7.4 11.9 L6.5 10.9 L5.5 11.6 L4.7 10.6 L3.8 11.8 L2.9 10.9 ' +
+    `L1.5 11.9 L2.3 7.5 ${SHOULDER_POINTS.closed.left} Z`,
+  /** Asleep: pulled up over his jaw to his eyes, hunched narrower. */
+  huddled:
+    `M3 4.05 L13 4.05 ${SHOULDER_POINTS.closed.right} L13.4 7.5 L14 11.6 L13.1 10.8 L12.2 11.7 L11.3 10.9 ` +
+    'L10.3 11.8 L9.3 10.8 L8.2 11.6 L7.2 10.8 L6.1 11.7 L5.2 10.8 L4.1 11.8 L3 10.9 L2 11.6 L2.6 7.5 ' +
+    `${SHOULDER_POINTS.closed.left} Z`,
+  /** Its folds, closed: from the shoulders down to the hem's points. */
+  folds: 'M5.6 5.6 L4.7 10.6 M8 6 L8.3 10.7 M10.4 5.6 L11.1 10.8',
+  /** Open, flung behind him as one torn wing to the trailing side, its tip hooked (flying). */
+  flung:
+    'M13 5 L3 5 L0 4.7 L-3 4.4 Q-4.8 4 -5.4 2.3 Q-5 3.84 -4.6 5.2 L-5.6 6.6 L-4.2 6.5 L-4.8 8 L-3 7.5 ' +
+    'L-3.2 9.2 L-1.6 8.5 L-1.2 10.2 L0.4 9.3 L1 11 L2.6 10 L3.4 11 L13 11 Z',
+  /** Open and flared wide behind him, both corners hooked up (alarmed; left half, mirrored). */
+  flared:
+    'M8 5 L3 5 L1 4.6 Q-1 4 -1.6 2.2 Q-1.2 4.06 -1 5.2 L-3.6 6.2 L-2.6 7.2 L-4.4 8.4 L-2.6 8.8 ' +
+    'L-3.4 10.6 L-1.4 10 L-1 11.6 L0.6 10.6 L1.6 11.7 L2.8 10.6 L4 11.6 L5.4 10.6 L8 11.2 Z',
+}
+
+/** Wrapped in the closed cape: only his head shows above it. */
+const cloaked = (d: string, eyes: Pose['eyes'] = 'open'): Pose =>
+  pose(
+    HOUSE_CLOAKED,
+    [NEEDLE_EARS],
+    [
+      { kind: 'path', d, className: 'clawd__cape' },
+      { kind: 'path', d: HOUSE_CAPE.folds, className: 'clawd__rib' },
+    ],
+    { chest: [], edge: HOUSE_EDGE, eyes },
+  )
+
+/**
+ * The cape open behind him: his outline, then the same shape filled in his black over its inner half,
+ * so he reads as one silhouette on the cape, points and all.
+ */
+const opened = (cape: Layer): Pose => ({
+  map: HOUSE_OPEN,
+  behind: [
+    NEEDLE_EARS,
+    cape,
+    { kind: 'path', d: FIGURE, className: 'clawd__cowl-edge' },
+    { kind: 'path', d: FIGURE, fill: 'var(--suit)' },
+  ],
+  front: [],
+  eyes: 'open',
+})
+
+const flung = opened({ kind: 'cape', d: HOUSE_CAPE.flung })
+
+export const SERIOUS_HOUSE_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [cloaked(HOUSE_CAPE.huddled, 'shut')],
+    flying: [
+      { ...flung, transform: 'rotate(3deg)' },
+      { ...flung, transform: 'rotate(-3deg)' },
+    ],
+    alarmed: [opened({ kind: 'cape', d: HOUSE_CAPE.flared, mirrored: true })],
+  },
+  watch: [{ pose: cloaked(HOUSE_CAPE.closed), look: 0 }],
+  aura: 'alarmed',
+}

@@ -4,6 +4,7 @@ import {
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
   scriptAt,
+  SERIOUS_HOUSE_SUIT,
   stillStep,
   VENGEANCE_SUIT,
   watchOn,
@@ -134,5 +135,62 @@ describe("BLUE COLLAR's suit", () => {
     const stand = scriptAt(signature, Infinity).pose
     for (const step of watch) expect(step.pose).toBe(stand)
     expect(watch.filter((step) => step.look !== 0)).toHaveLength(2)
+  })
+})
+
+// SERIOUS HOUSE's suit (arkham-horror-references.md, sections 5 and 6.8, picked on screen): at rest
+// the cape closed over him, as the book shows him, open when he works or something needs you; a
+// point from each shoulder in every pose, part of his outline; no belt and nothing on his chest.
+describe("SERIOUS HOUSE's suit", () => {
+  const { poses, watch } = SERIOUS_HOUSE_SUIT
+  const atRest = [...poses.sleeping, ...watch.map((step) => step.pose)]
+  const awake = [...poses.flying, ...poses.alarmed]
+  const paths = (p: Pose) =>
+    [...p.behind, ...p.front].flatMap((layer) => (layer.kind === 'path' ? [layer] : []))
+  /** Whether his map draws legs: anything below the suit's last full row. */
+  const hasLegs = (p: Pose) =>
+    p.map.rows.slice((9 - p.map.top) * 2).some((row) => row.trim().replaceAll('.', ''))
+
+  it('is wrapped in the closed cape at rest, only his head above it', () => {
+    for (const p of atRest) {
+      expect(hasLegs(p)).toBe(false)
+      expect(p.front.some((layer) => layer.kind === 'path' && layer.className === 'clawd__cape')).toBe(true)
+      expect(p.behind.some((layer) => layer.kind === 'cape')).toBe(false)
+    }
+  })
+
+  it('opens the cape behind him when he works or is alarmed', () => {
+    for (const p of awake) {
+      expect(hasLegs(p)).toBe(true)
+      expect(p.behind.some((layer) => layer.kind === 'cape')).toBe(true)
+      expect(p.front).toEqual([])
+    }
+  })
+
+  it('grows a point from each shoulder in every pose, out of the outline he is drawn in', () => {
+    for (const p of [...atRest, ...awake]) {
+      // Both tips, x 0.9 and 15.1, on one outline: the closed cape's, or the figure's with it open.
+      const tips = paths(p).filter(
+        (layer) => / 0\.9 3(\.2)? /.test(layer.d) && / 15\.1 3(\.2)? /.test(layer.d),
+      )
+      expect(tips.length).toBeGreaterThan(0)
+    }
+  })
+
+  // With the cape open, his outline is drawn, then filled in the suit's black over its inner half.
+  it('reads as one silhouette on the open cape', () => {
+    for (const p of awake) {
+      const [edge, fill] = p.behind.slice(-2)
+      expect(edge).toMatchObject({ kind: 'path', className: 'clawd__cowl-edge' })
+      expect(fill).toMatchObject({ kind: 'path', fill: 'var(--suit)' })
+      expect(edge?.kind === 'path' && fill?.kind === 'path' && edge.d === fill.d).toBe(true)
+    }
+  })
+
+  it('wears no belt and nothing on his chest', () => {
+    for (const p of [...atRest, ...awake]) {
+      expect(p.map.rows.join('')).not.toMatch(/[bk]/)
+      expect([...p.behind, ...p.front].some((layer) => layer.kind === 'emblem')).toBe(false)
+    }
   })
 })
