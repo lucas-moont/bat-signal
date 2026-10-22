@@ -44,5 +44,7 @@ Filled in from each dossier's `## Claims` block. Full blocks at the end of [`ani
 - **Two searchlight skies.** TAS's blimp beams and the games' optional searchlights: one Theme each.
 - **The classic suit twice.** TAS and HOLIDAY both wear blue-grey with a blue cape and a gold belt (belts 2.3 apart). HOLIDAY separates by long ears, the bell cape and a bright blue cowl.
 
-Round 2 (Adam West) and round 3 (Lego Batman) avoid all of the above: orange, amber, asylum green, wine-black and black paper as grounds, the crouches, the searchlights, the classic blue-grey suit, Federo, Grenze Gotisch, Sofia Sans Extra Condensed, Mohave and Oxanium.
+Round 2 (Adam West) and round 3 (Lego Batman) avoid: orange, amber, asylum green, wine-black and black paper as grounds, the crouches, the searchlights, the yellow chest oval (TAS's option C1, pending the jury), Federo, Grenze Gotisch, Sofia Sans Extra Condensed, Mohave and Oxanium.
+
+The classic suit is the exception. Adam West's 1966 suit *is* grey with a blue cowl and cape, a yellow belt and a yellow oval, so his dossier can't avoid it without breaking fidelity. It must say what tells his version apart (the satin sheen, the short ears, the painted eyebrows, the cape's cut, the TV lighting) and what TAS and HOLIDAY would have to give up if the three stay.
 
