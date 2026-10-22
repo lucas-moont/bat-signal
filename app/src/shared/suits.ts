@@ -1524,3 +1524,59 @@ export const SERIOUS_HOUSE_SUIT: Suit = {
   watch: [{ pose: cloaked(HOUSE_CAPE.closed), look: 0 }],
   aura: 'alarmed',
 }
+
+// PROTOTYPE (#123): the three Signature poses for the on-screen round, from the research note's §6.8.
+const disc = (cx: number, cy: number, r: number) =>
+  `M${cx - r} ${cy} A${r} ${r} 0 1 0 ${cx + r} ${cy} A${r} ${r} 0 1 0 ${cx - r} ${cy} Z`
+const withBehind = (p: Pose, behind: Layer[]): Pose => ({ ...p, behind: [...p.behind.slice(0, 1), ...behind, ...p.behind.slice(1)] })
+const withFront = (p: Pose, front: Layer[]): Pose => ({ ...p, front: [...p.front, ...front] })
+const STANDING = cloaked(HOUSE_CAPE.closed)
+const DOOR_WING = {
+  half:
+    'M8 5 L3 5 L1 4.8 L-1 4.6 Q-2.4 4.4 -3 3.4 Q-2.6 4.4 -2.2 5.4 L-3 6.8 L-1.6 7 L-2 8.6 L-0.4 8.4 L0 10 ' +
+    'L1.6 9.6 L8 10 Z',
+  full:
+    'M8 5 L3 5 L0 3.6 L-3 2 Q-4.6 1 -5.2 -0.4 Q-4.6 0.8 -4 2.2 L-5.4 4 L-3.8 4.4 L-4.6 6.2 L-2.8 6.2 ' +
+    'L-3 8.2 L-1.4 7.6 L-1 9.6 L0.6 8.8 L1.4 10.6 L3 10 L8 10 Z',
+}
+const BALLOON_TAIL = 'M15.4 3.4 L13.6 4.4 L16.2 3.9 Z'
+const balloon = (r: number): Layer => ({ kind: 'path', d: disc(18.4, 1.6, r), className: 'clawd__cape' })
+const BANG: Layer = {
+  kind: 'rects',
+  px: [
+    [18.1, 0.2, 0.6, 1.7],
+    [18.1, 2.3, 0.6, 0.6],
+  ],
+  fill: 'var(--clawd-eye)',
+}
+const HAND: Layer = {
+  kind: 'path',
+  d: 'M13.2 7.4 L13.6 6.2 Q14.4 5.5 15.4 5.7 Q16.1 6.1 15.9 6.9 L15.2 7.5 Q14.2 7.8 13.2 7.4 Z',
+  className: 'clawd__cape',
+}
+const coin = (width: number): Layer[] => [
+  { kind: 'path', d: `M${14.9 - width / 2} 3.3 L${14.9 + width / 2} 3.3 L${14.9 + width / 2} 5.6 L${14.9 - width / 2} 5.6 Z`, fill: 'var(--ash)' },
+]
+const COIN_FACE: Layer[] = [
+  { kind: 'path', d: disc(14.9, 4.4, 1.15), fill: 'var(--ash)' },
+  { kind: 'rects', px: [[14.3, 3.7, 0.4, 0.4]], fill: 'var(--bone)' },
+]
+export const HOUSE_SIGNATURES: Record<string, Script> = {
+  door: [
+    { pose: STANDING, look: 0 },
+    { pose: withBehind(STANDING, [{ kind: 'cape', d: DOOR_WING.half }]), look: 0 },
+    { pose: withBehind(STANDING, [{ kind: 'cape', d: DOOR_WING.full }]), look: 0 },
+  ],
+  touch: [
+    { pose: STANDING, look: 0 },
+    { pose: withFront(STANDING, [balloon(1.2)]), look: 0 },
+    { pose: withFront(STANDING, [{ kind: 'path', d: BALLOON_TAIL, className: 'clawd__cape' }, balloon(2.3)]), look: 0 },
+    { pose: withFront(STANDING, [{ kind: 'path', d: BALLOON_TAIL, className: 'clawd__cape' }, balloon(2.3), BANG]), look: 0 },
+  ],
+  coin: [
+    { pose: STANDING, look: 0 },
+    { pose: withFront(STANDING, [HAND]), look: 0 },
+    { pose: withFront(STANDING, [HAND, ...coin(0.4)]), look: 0 },
+    { pose: withFront(STANDING, [HAND, ...COIN_FACE]), look: 0 },
+  ],
+}
