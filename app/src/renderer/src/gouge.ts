@@ -36,8 +36,8 @@ const GROUPS = {
 const NICKS = { across: [18, 82] as Range, down: [22, 78] as Range, length: [2, 6] as Range }
 /** How wide a scratch is at its middle, a nick, and a stroke of the laugh. */
 const WIDTH = { scratch: [0.55, 1.2] as Range, nick: [0.4, 0.75] as Range, laugh: [0.7, 1.35] as Range }
-/** How far a scratch bends from straight, and a stroke of the laugh. */
-const BEND = { scratch: [-1.5, 1.5] as Range, laugh: [-0.6, 0.6] as Range }
+/** How far a scratch bends from straight, and a stroke of the laugh; a nick is too short to bend. */
+const BEND = { scratch: [-1.5, 1.5] as Range, laugh: [-0.6, 0.6] as Range, nick: 0 }
 /**
  * A stroke of the laugh: how many times the blade goes over it, how far each time strays from it,
  * and where each starts and ends (shares of the stroke: before it and past it).
@@ -61,8 +61,11 @@ function scratch([x0, y0]: Point, [x1, y1]: Point, width: number, bend: number):
   )
 }
 
+/** Where a lamp's marks are drawn from: every lamp is scratched alike, its laugh its own. */
+const SEED = 0.37
+
 function gouge(lamp: Lamp): Gouges {
-  const random = seededFrom(0.37)
+  const random = seededFrom(SEED)
   const scratches: string[] = []
   for (let g = 0; g < GROUPS.count; g++) {
     const [cx, cy] = [between(GROUPS.across, random), between(GROUPS.down, random)]
@@ -96,7 +99,7 @@ function gouge(lamp: Lamp): Gouges {
         [x, y],
         [x + Math.cos(angle) * length, y + Math.sin(angle) * length],
         between(WIDTH.nick, random),
-        0,
+        BEND.nick,
       ),
     )
   }

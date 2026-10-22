@@ -1,5 +1,6 @@
 // Numbers drawn from a seed: the same ones every time, for whatever is laid out at random but must
-// look the same each run (the Atmospheres' skylines and panes, a scribbled emblem's strokes).
+// look the same each run (the Atmospheres' skylines and panes, a scribbled emblem's strokes, a
+// scratched lamp's marks).
 
 /** The same numbers in [0, 1) every time from the same seed in [0, 1) (Park and Miller's). */
 export function seededFrom(seed: number): () => number {

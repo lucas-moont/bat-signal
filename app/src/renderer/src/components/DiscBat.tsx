@@ -15,7 +15,10 @@ import { batAt, BatEmblem, emblemBox } from './BatEmblem'
  */
 const BAT_SIZE = 44
 const FACE = 64 - 2 * 1.5
-/** The glass inside the disc's rim, a radius on the face (0 to 100 across). */
+/**
+ * How far from the middle the marks reach, a radius on the face (0 to 100 across): past the glass
+ * onto the rim's shading, as scratches on the lamp's housing, never past its edge.
+ */
 const GLASS = 48
 /** How strong the marks are: through the bat to the light, into the glass, and the laugh unlit. */
 const OPACITY = { through: 0.85, into: 0.4, laughUnlit: 0.3 }
