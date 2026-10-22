@@ -70,15 +70,16 @@
   --ash-dim: var(--ash);
   --chevron: var(--ash);
 
-  /* Bat-Clawd as McKean's shadow: blue-black ink for the cowl, cape and gloves, the body lifted a
-     little so it doesn't vanish, and Batman's blue, muted, as the cold rim the Costume Rule asks for. */
+  /* Bat-Clawd as McKean's shadow, picked on screen: cowl, suit and cape one blue-black, read on the
+     ground and on each other by Batman's blue, muted, as the cold rim the Costume Rule asks for; his
+     aura the Joker's scarlet darkened to blood. */
   --batman-blue: #8aa3b8;
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #070a10;
-  --cowl-edge: color-mix(in srgb, var(--batman-blue) 35%, transparent);
+  --cowl-edge: color-mix(in srgb, var(--batman-blue) 65%, transparent);
   --cowl-shine: var(--raised);
-  --suit: #26364c;
+  --suit: var(--cowl);
   --gloves: var(--cowl);
   --belt: var(--suit);
   --buckle: var(--belt);
@@ -86,8 +87,8 @@
   --cape-rim: color-mix(in srgb, var(--batman-blue) 45%, transparent);
   --thread: var(--cape-rim);
   --chest: var(--cowl);
-  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
-  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+  --aura-core: color-mix(in srgb, #a3201a 85%, transparent);
+  --aura-glow: color-mix(in srgb, var(--blood) 70%, transparent);
 
   /* The emblem, in Ash on the dark header. */
   --emblem: var(--ash);
