@@ -843,24 +843,25 @@ export const BLUE_COLLAR_WORDS: Words = {
   },
 }
 
-/** "2:14 a.m.", as a watchman writes the hour in his book: built only for the Theme that dates so. */
-let roundsFormat: Intl.DateTimeFormat | undefined
-const roundsAt = (now: Date) => {
-  const parts = (roundsFormat ??= new Intl.DateTimeFormat('en-US', {
+/** "Heard at 2:14 a.m.": when the house heard it, built only for the Theme that dates so. */
+let heardFormat: Intl.DateTimeFormat | undefined
+const heardAt = (now: Date) => {
+  const parts = (heardFormat ??= new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   })).formatToParts(now)
   const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? ''
-  return `Rounds at ${part('hour')}:${part('minute')} ${part('dayPeriod') === 'PM' ? 'p.m.' : 'a.m.'}`
+  return `Heard at ${part('hour')}:${part('minute')} ${part('dayPeriod') === 'PM' ? 'p.m.' : 'a.m.'}`
 }
 
 /**
- * SERIOUS HOUSE's words, after Grant Morrison and Dave McKean's Arkham Asylum (arkham-asylum.md,
- * sections 5 and 6): the house at night, speaking as a watchman does his rounds, room by room and
- * door by door, formal and quiet, never grim and never a joke. It stays on the building and on
- * Batman: no word for the people in it, no villain named. A door's words: someone knocking, a note
- * left, a request to let in, something broken. Case stays.
+ * SERIOUS HOUSE's words, after Grant Morrison and Dave McKean's Arkham Asylum
+ * (arkham-horror-references.md, section 6.4, picked on screen as W1): the house itself speaking to
+ * you at night, in the present, short and uneasy, never cruel and never a joke. It stays on the
+ * building and on you: no word for the people in it, no villain named, nothing quoted from the book,
+ * and it never speaks for the Joker. A door's words: someone knocking, a note left, a request to
+ * let in, something broken. Case stays.
  */
 export const SERIOUS_HOUSE_WORDS: Words = {
   terms: {
@@ -879,25 +880,25 @@ export const SERIOUS_HOUSE_WORDS: Words = {
     // The book first, so its picker folder's credit keeps to two lines (authors first, it ran to a
     // third), and their names still tell it from the 2009 game.
     theme: { name: 'SERIOUS HOUSE', film: 'Arkham Asylum, by Morrison and McKean' },
-    tagline: 'The house keeps its own hours.',
+    tagline: 'The house is listening.',
     empty: {
       ...STANDARD_VOICE.empty,
-      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Every door is shut.' },
-      unheard: { title: 'No sound from the rooms.', hint: "Some can't be heard from here." },
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'The house is holding its breath.' },
+      unheard: { title: "Some rooms don't answer.", hint: "Some can't be heard from here." },
       noCases: {
         ...STANDARD_VOICE.empty.noCases,
-        title: (t) => `No ${lower(t.case.many)} in the house tonight.`,
+        title: () => 'No one else is awake.',
       },
     },
     report: {
       ...STANDARD_VOICE.report,
-      name: 'Night rounds',
-      // A sentence in the watchman's book, not a place and a time.
-      dateline: roundsAt,
+      name: 'What the house heard',
+      // When it heard, not a place and a time.
+      dateline: heardAt,
       signature: 'At the door',
-      nil: () => 'No one at the door. Every door can stay shut tonight.',
-      caseNotes: () => 'Lights still on',
-      end: (waiting) => (waiting ? 'Some doors are still open.' : 'Rounds done. Lamps out.'),
+      nil: () => 'No one at the door. The house is quiet around you.',
+      caseNotes: () => 'Rooms with a light on',
+      end: (waiting) => (waiting ? 'Someone is still at the door.' : 'Every door is shut behind you.'),
     },
     settings: {
       ...STANDARD_VOICE.settings,
