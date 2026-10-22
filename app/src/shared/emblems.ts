@@ -127,13 +127,24 @@ export interface Plate {
 /**
  * A Theme's emblem: its outline, on whatever grid it was traced on; where the outline lies on that
  * grid; its finish ("wear" is VENGEANCE's scratched metal, "scribble" a pencil's strokes with no fill
- * or outline, "none" a plain fill); and the plate it sits on, if it has one.
+ * or outline, "none" a plain fill); the plate it sits on, if it has one; and the Signal disc's lamp,
+ * if the Theme's disc is one of its own.
  */
 export interface Emblem {
   path: string
   bat: Box
   finish: 'wear' | 'scribble' | 'none'
   plate?: Plate
+  lamp?: Lamp
+}
+
+/**
+ * A Signal disc's lamp scratched over after it was made (SERIOUS HOUSE's, #123): its bat solid, then
+ * scratches over the bat and the glass, and a laugh gouged in, each of its strokes from one point to
+ * another on the disc's face (0 to 100 across).
+ */
+export interface Lamp {
+  laugh: readonly (readonly [number, number, number, number])[]
 }
 
 /** An emblem from its outline, its box read from the outline's points so a re-trace can't leave it behind. */
