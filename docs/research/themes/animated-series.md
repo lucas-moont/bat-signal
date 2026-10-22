@@ -23,7 +23,7 @@ Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on
 
 ## 2. References
 
-The folder is `…/scratchpad/refs-tas/` (outside the repository), with an `INDEX.md` listing 54 images: number, file, source URL, episode or edition, what it shows, and the decision it informs. All come from The World's Finest (dcanimated.com), which hosts Warner Bros. Animation material. No fan art.
+The folder is `…/scratchpad/refs-tas/` (outside the repository), with an `INDEX.md` listing 58 images: number, file, source URL, episode or edition, what it shows, and the decision it informs. [01]–[54] come from The World's Finest (dcanimated.com), a fan site that hosts Warner Bros. Animation material; [55]–[58] are official (DC's shop, Warner Bros. Home Entertainment's press image). No fan art.
 
 | Kind | Entries | Edition |
 |---|---|---|
@@ -33,6 +33,22 @@ The folder is `…/scratchpad/refs-tas/` (outside the repository), with an `INDE
 | Production backgrounds | [29]–[41] | Scans of painted boards. [29]–[35] carry their slates (On Leather Wings, Nothing to Fear, Christmas with the Joker); [36]–[41] do not name the episode |
 | Title cards | [42]–[50] | 1440x1080 captures of the 2018 HD remaster, regraded |
 | Cels | [51]–[54] | Production and promotional cels, photographed |
+
+**Official backing (added 2026-10-22).** Entries [01]–[54] are all hosted by one fan site. Four official images were added: [55] Timm's 1992 storyboard of the opening, sold by DC's own shop; [56] DC's licensed full-figure suit art "based on the 1992" series; [57] DC's licensed "Two-Face" frame, which reproduces that episode's title card and names the "Dark Deco" look; [58] Warner Bros. Home Entertainment's press image of the 2018 Blu-ray set. *Batman Animated* (Dini and Kidd, 1998) was not obtained: no authorised copy is online, and an unauthorised scan was not used. Which claims rest on what:
+
+| Claim | Official source | Frames and fan-hosted material only |
+|---|---|---|
+| The suit's pieces: grey body; blue cape, cowl, gloves, boots; dark trunks; yellow oval with a black bat; yellow belt | **[56]** (all pieces, front, flat colour) | also [01] [19] [23] [53] |
+| The suit's hues: blue-grey body, blue cape | **[56]**: grey `#949da4` (h 250), blue `#0067b2` (h 275), measured | The values proposed (`#5a6589`, `#1a3570`) come from the frames [01] [06], not from [56] |
+| The suit's lightness | none: [56] is a modern print, much lighter (L\* 64 against our 43) | [01] [06] [53]. **Kept darker on purpose**: [56]'s grey is 5.9 ΔE00 from BECOME A BAT's suit, its blue 16.3 from Blue Flame, its yellow `#fdbd5a` 6.4 from PALE MOONLIGHT's gold |
+| The oval: 1.4:1, the bat inset at 75% | [56] shows a rounder oval with a margin, by eye; not measured | **Measured only on [23] [53]** (two small cel photographs) |
+| The cape's three deep scallops a side | [56] (by eye) | [19] [20] |
+| The cowl's short ears, white eyes | [56] [55] | [21] [22] [08] |
+| The title cards: each episode its own card and lettering | **[57]** (one card, "Two-Face"); [58] is the release they come from | [42]–[50] are captures of the official 2018 Blu-ray [58], but hosted by the fan site |
+| The typefaces chosen (Federo, Mohave, Marcellus SC) | none: no source names the cards' typefaces | **Frames only**: chosen by eye against [42]–[50] and [57] |
+| "Dark Deco" as the show's name for its look | **[57]**'s listing (DC) | also Wikipedia |
+| The red sky, black silhouettes, blue rims (palette) | [55] is in black and grey only; [58]'s packaging is red and black | **Frames only**: [01]–[18] |
+| The Signature (the landing) | none confirmed: [55]'s panels are too small at 1000px to read that shot | **Frames only**: [05] [06] |
 
 **Edition caveat.** The frames are SD; the title cards are the 2018 regrade, not the 1992 broadcast; the cels and colour models are photographs at different exposures (the same suit grey reads L\* 26 on [53] and L\* 60 on [23]). Every hex below names its entry. Cel samples are used for hue, not lightness.
 
@@ -247,7 +263,7 @@ Inside the Theme: alarm to waiting 39.0, alarm to working 47.2, waiting to worki
 
 ## 4. Type
 
-The title cards change their lettering every episode [42]–[50]: tall monoline Deco caps ("Prophecy of Doom" [46], "Shadow of the Bat" [49]), a heavy condensed gothic ("Beware the Gray Ghost" [45]), a plain serif ("I Am the Night" [48]), brush hands ("Nothing to Fear" [43]). The series logo is wide-spaced thin Deco caps [26]. Their typefaces are not named by any source we found (§12). The proposal picks the two families the cards use most, without copying a card.
+The title cards change their lettering every episode [42]–[50]: tall monoline Deco caps ("Prophecy of Doom" [46], "Shadow of the Bat" [49]), a heavy condensed gothic ("Beware the Gray Ghost" [45]), a plain serif ("I Am the Night" [48]), brush hands ("Nothing to Fear" [43]). The series logo is wide-spaced thin Deco caps [26]. Their typefaces are not named by any source we found (§12). The font choices below rest on the frames only; the one official title card is [57] ("Two-Face", tall condensed caps). The proposal picks the two families the cards use most, without copying a card.
 
 A board sets the cards' lettering beside 15 open candidates, with PERMISSION measured in each (`boards-tas/fonts.png`, scratch).
 
@@ -300,7 +316,7 @@ Widths in Mohave 600 at 12px and 0.12em (PIL, approximate): PAGING YOU 66, GO AH
 
 The body keeps its pixels, white eyes and orange jaw (DESIGN.md, Costume Rule). One unit is about 1.9px at 54px.
 
-### 7.1 The suit (refs [19] [23] [53], the colour in [01] [06] [08])
+### 7.1 The suit (refs [19] [23] [53]; pieces checked against the official [56]; the colour from the frames [01] [06] [08])
 
 | Piece | Grid | Colour | Reads at 54px? |
 |---|---|---|---|
@@ -407,7 +423,8 @@ Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly
 
 ## 12. Unverified items
 
-- **The title cards' typefaces.** No source names them. Federo and Mohave are chosen by eye from the board.
+- **The title cards' typefaces.** No source names them, official or not. Federo and Mohave are chosen by eye from the board.
+- **Official colour.** The only official full-colour suit [56] is a modern licensed print: lighter and bluer than the frames. Our suit values follow the frames; *Batman Animated* (1998), which reproduces Timm's model sheets, was not consulted.
 - **The chest bat's shape and the oval's ratio.** Measured on two small cel photographs (the oval 56 × 41px and 28 × 20px). A sharper source (the 2018 HD remaster, a model sheet of the chest) is needed before the emblem is traced.
 - **Colour.** The opening frames are SD captures; the cels are photographs at different exposures; the title cards are the 2018 regrade. No hex here is a broadcast measurement.
 - **Episodes of [36]–[41].** The source does not name them. [40] shows an asylum gate under a red sky; whether it is Arkham in a 1992 episode is not confirmed.
@@ -421,6 +438,7 @@ Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly
 ## 13. Sources
 
 - The World's Finest (dcanimated.com), *Batman: The Animated Series* sections: [intro and credits](https://dcanimated.com/btas/btas-media/btas-media-intro-credits/), [model sheets](https://dcanimated.com/btas/btas-backstage/btas-backstage-models/), [backgrounds](https://dcanimated.com/btas/btas-backstage/btas-backstage-backgrounds/), [style guide](https://dcanimated.com/btas/btas-backstage/btas-backstage-style-guide/), [HD title cards](https://dcanimated.com/btas/btas-media/btas-media-hd-title-cards/), [gallery](https://dcanimated.com/btas/btas-media/btas-media-gallery/), [logos and graphic designs](https://dcanimated.com/btas/btas-backstage/btas-backstage-logos/). Every image is listed with its URL in the folder's `INDEX.md`.
+- Official images and listings: DC Shop, [title sequence storyboard print](https://shop.dc.com/products/batman-the-animated-series-title-sequence-storyboard-mightyprint-wall-art) ("drawn by Bruce Timm in 1992"), [Batman standee](https://shop.dc.com/products/batman-the-animated-series-batman-life-size-cardboard-cutout-standee), ["Two-Face" framed stills](https://shop.dc.com/products/batman-the-animated-series-two-face-framed-wall-art) ("Dark Deco"); Warner Bros. Home Entertainment's 2018 Blu-ray press release and image on [Blu-ray.com](https://m.blu-ray.com/news/newsitem.php?id=23673).
 - Jim Harvey, ["BTAS Interview – Eric Radomski"](https://dcanimated.com/btas/btas-backstage/btas-backstage-interviews/btas-interview-eric-radomski/), The World's Finest, September 2012.
 - Alexander Huls, ["Batman: The Animated Series"](https://www.artofthetitle.com/title/batman-the-animated-series/), *Art of the Title*, 6 June 2017.
 - Wikipedia, ["Batman: The Animated Series"](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series): Dark Deco, black paper, police blimps, title cards, music; it cites Paul Dini and Chip Kidd, *Batman Animated* (1998).
