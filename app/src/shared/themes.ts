@@ -34,6 +34,7 @@ import {
   BLUE_COLLAR_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
+  SERIOUS_HOUSE_SUIT,
   VENGEANCE_SUIT,
   WATCHFUL_PROTECTOR_SUIT,
   type Suit,
@@ -155,7 +156,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     words: SERIOUS_HOUSE_WORDS,
     emblem: emblem(SIGNAL_IN_PENCIL, 'scribble'),
     lamp: JOKERS_LAUGH,
-    suit: VENGEANCE_SUIT, // PLACEHOLDER until the suit is drawn from the references
+    suit: SERIOUS_HOUSE_SUIT,
     atmosphere: SERIOUS_HOUSE_SCRATCHES,
   },
 }
