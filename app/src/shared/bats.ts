@@ -7,7 +7,7 @@
 export type Wings = 'up' | 'down'
 
 /** A drawing's points, in order round its edge. */
-export type Outline = readonly (readonly [number, number])[]
+type Outline = readonly (readonly [number, number])[]
 
 /**
  * Each frame's left half on a 12x6 box centered on the body, from the top of the head round the
