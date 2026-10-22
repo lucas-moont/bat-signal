@@ -4,18 +4,14 @@
 import type {
   AshAtmosphere,
   Atmosphere,
-  Hairlines,
   LitWindowsAtmosphere,
   NoiseAtmosphere,
-  Panes,
   RainAtmosphere,
   SmokeAtmosphere,
   SnowAtmosphere,
-  Specks,
 } from '@shared/atmospheres'
-import { batOutline, type Outline, type Wings } from '@shared/bats'
+import { batOutline, type Wings } from '@shared/bats'
 import { FPS } from './clockRate'
-import { between, pick, seededFrom } from './seeded'
 
 export interface Painter {
   /** Its Atmosphere's colors afresh, each read from the page by its variable's name. */
@@ -31,8 +27,6 @@ export interface Painter {
 
 /** One tick of the clock, in seconds. */
 const STEP = 1 / FPS
-/** A time in seconds as whole ticks of the clock, one at least. */
-const ticksOf = (seconds: number) => Math.max(1, Math.round(seconds / STEP))
 /** The longest move painted: the page waking from a pause doesn't fling the scene across. */
 const MAX_DT = 2 * STEP
 /** The rain's frame rate on its own timer, before it joined the shared clock. */
@@ -156,13 +150,6 @@ function frameAt<T>(frames: readonly T[], ticks: number, phase: number): T {
   return frames[(Math.floor(ticks) + phase) % frames.length]!
 }
 
-/** An outline as a closed shape on the path, moved by (dx, dy). */
-function trace(ctx: CanvasRenderingContext2D, outline: Outline, dx = 0, dy = 0) {
-  ctx.moveTo(dx + outline[0]![0], dy + outline[0]![1])
-  for (let p = 1; p < outline.length; p++) ctx.lineTo(dx + outline[p]![0], dy + outline[p]![1])
-  ctx.closePath()
-}
-
 /** How far something swaying `amount` either way is off its column, `ticks` in, from its phase. */
 const swayAt = (amount: number, ticks: number, phase: number) => amount * frameAt(SWAY, ticks, phase)
 
@@ -230,6 +217,12 @@ interface Window {
 const CELL = { w: 3, h: 4, mullion: 1 }
 /** The glass wall's margin inside a tower's edge, in px. */
 const INSET = 3
+
+/** The same numbers in [0, 1) every time from the same seed in [0, 1) (Park and Miller's). */
+function seededFrom(seed: number): () => number {
+  let state = Math.floor(seed * 2147483646) + 1
+  return () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646
+}
 
 /**
  * Lit windows: a still skyline, painted whole once (and again after a resize or new colors), then
@@ -410,7 +403,10 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
-    trace(ctx, outlines.get(size)![frameAt(BEAT, beats, phase)], cx, cy)
+    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
+    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
+    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
+    ctx.closePath()
   }
 
   return {
@@ -538,42 +534,51 @@ function smoke(
   }
 }
 
-/** A noise's marks, laid out for a canvas's size, then moved on and painted a whole tick at a time. */
-interface Marks {
-  resize(width: number, height: number): void
-  /** `ticks` whole ticks on, painted in `color`. */
-  paint(ctx: CanvasRenderingContext2D, ticks: number, color: string): void
-}
-
-interface Speck {
+interface Mark {
   x: number
   y: number
   /** Whole ticks since it appeared where it is. */
   age: number
 }
 
+/** A band's soft edge: the boxes it is painted as, about one middle, each a share of its height. */
+const BAND_LAYERS = [1, 0.6, 0.3]
+
 /**
- * Specks at a few strengths, each strength filled as one path a tick. A speck stays put for its life,
- * then appears somewhere else on the canvas: it flickers in place and never falls. The specks were
- * born a tick apart, so a share of them moves each tick.
+ * Noise: marks at a few strengths, each strength filled as one path a tick. A mark stays put for its
+ * life, then appears somewhere else on the canvas: it flickers in place and never falls. The marks
+ * were born a tick apart, so a share of them moves each tick. A band, if it has one, rolls down
+ * over them and comes in again from above the top once it has rolled off the bottom.
  */
-function specks({ size, density, life }: Specks, alphas: readonly number[], random: () => number): Marks {
-  /** A speck's life in whole ticks. */
-  const lifeTicks = ticksOf(life)
-  /** The specks at each strength, none until it has a size. */
-  let layers: Speck[][] = alphas.map((): Speck[] => [])
+function noise(
+  { color: variable, size, density, alphas, life, band }: NoiseAtmosphere,
+  random: () => number,
+): Painter {
+  /** A mark's life in whole ticks of the clock, one at least. */
+  const lifeTicks = Math.max(1, Math.round(life / STEP))
+  /** The marks at each strength, none until it has a size. */
+  let layers: Mark[][] = alphas.map((): Mark[] => [])
   let width = 0
   let height = 0
+  /** The band's top: none without a band, or until the canvas first has a size. */
+  let bandTop: number | undefined
+  let color = ''
 
   /** Somewhere new on the canvas, on whole pixels. */
-  const place = (s: Speck) => {
-    s.x = Math.floor(random() * width)
-    s.y = Math.floor(random() * height)
+  const place = (m: Mark) => {
+    m.x = Math.floor(random() * width)
+    m.y = Math.floor(random() * height)
   }
 
   return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
     resize(w, h) {
       ;[width, height] = [w, h]
+      // Anywhere along its roll the first time, so a new canvas doesn't always start it at the top;
+      // a resize leaves it where it is.
+      if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
       let born = 0
       layers = scatter(
         { count: howMany(width, height, density), lists: alphas.length, width, height },
@@ -582,204 +587,27 @@ function specks({ size, density, life }: Specks, alphas: readonly number[], rand
         (x, y) => ({ x: Math.floor(x), y: Math.floor(y), age: born++ % lifeTicks }),
       )
     },
-    paint(ctx, ticks, color) {
+    paint(ctx, dt) {
+      const step = Math.min(dt, MAX_DT) / STEP
+      // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
+      // freeze whole on every early one.
+      const ticks = Math.round(step)
+      ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
       alphas.forEach((alpha, level) => {
         ctx.globalAlpha = alpha
         ctx.beginPath()
-        for (const s of layers[level]!) {
-          s.age += ticks
-          if (s.age >= lifeTicks) {
-            s.age %= lifeTicks
-            place(s)
+        for (const m of layers[level]!) {
+          m.age += ticks
+          if (m.age >= lifeTicks) {
+            m.age %= lifeTicks
+            place(m)
           }
-          ctx.rect(s.x, s.y, size, size)
+          ctx.rect(m.x, m.y, size, size)
         }
         ctx.fill()
       })
-    },
-  }
-}
-
-interface Line {
-  x0: number
-  y0: number
-  x1: number
-  y1: number
-  alpha: number
-  /** How long it stays, in whole ticks. */
-  life: number
-}
-
-/**
- * Hairlines, each stroked on its own. Each takes its turn on a round of the clock, one turn every so
- * many ticks: on its turn it is cut somewhere new, then stays where it is for its life, fading to
- * nothing, and is gone till its next turn. So a new one comes at a steady beat, never two together.
- */
-function hairlines(
-  { length, tilt, every, life }: Hairlines,
-  alphas: readonly number[],
-  random: () => number,
-): Marks {
-  const everyTicks = ticksOf(every)
-  const [shortest, longest] = [ticksOf(life[0]), ticksOf(life[1])]
-  /** Enough turns that the longest life is over before its next one. */
-  const turns = Math.ceil(longest / everyTicks)
-  const round = turns * everyTicks
-  /** Each turn's hairline, and the whole ticks since it was cut. */
-  let cuts: { line: Line; age: number }[] = []
-  let width = 0
-  let height = 0
-
-  /** A hairline somewhere new: its length, lean, strength and life, both its ends on the canvas. */
-  const cut = (): Line => {
-    const lean = ((random() * 2 - 1) * tilt * Math.PI) / 180
-    // No longer than the canvas is tall, nor than its lean lets it be on a narrow one.
-    const span = Math.min(between(length, random), height, width / Math.abs(Math.sin(lean)))
-    const [dx, dy] = [span * Math.sin(lean), span * Math.cos(lean)]
-    const [left, right] = [Math.max(0, -dx), Math.max(0, width - Math.max(0, dx))]
-    // From the middle of a pixel, so an upright one lights a column of pixels, not two at half
-    // strength; inside its room even so.
-    const x0 = Math.min(right, Math.max(left, Math.floor(left + random() * (right - left)) + 0.5))
-    const y0 = random() * (height - dy)
-    return {
-      x0,
-      y0,
-      x1: x0 + dx,
-      y1: y0 + dy,
-      alpha: pick(alphas, random),
-      life: Math.floor(between([shortest, longest + 1], random)),
-    }
-  }
-
-  /** Whether a hairline's both ends are on the canvas. */
-  const fits = ({ x0, y0, x1, y1 }: Line) =>
-    [x0, x1].every((x) => x >= 0 && x <= width) && [y0, y1].every((y) => y >= 0 && y <= height)
-
-  return {
-    resize(w, h) {
-      ;[width, height] = [w, h]
-      // A resize keeps each where it was cut, at its age, so the beat goes on; only one the canvas
-      // no longer holds is cut afresh.
-      if (cuts.length) {
-        for (const turn of cuts) if (!fits(turn.line)) turn.line = cut()
-        return
-      }
-      // A turn apart, so the canvas starts with some already part-way through their lives.
-      cuts = Array.from({ length: turns }, (_, i) => ({ line: cut(), age: i * everyTicks }))
-    },
-    paint(ctx, ticks, color) {
-      ctx.strokeStyle = color
-      ctx.lineWidth = 1
-      for (const turn of cuts) {
-        turn.age += ticks
-        if (turn.age >= round) {
-          turn.age %= round
-          turn.line = cut()
-        }
-        const { line: c, age } = turn
-        if (age >= c.life) continue
-        ctx.globalAlpha = c.alpha * (1 - age / c.life)
-        ctx.beginPath()
-        ctx.moveTo(c.x0, c.y0)
-        ctx.lineTo(c.x1, c.y1)
-        ctx.stroke()
-      }
-    },
-  }
-}
-
-/** A pane: its torn outline's points, and its strength. */
-interface Pane {
-  outline: Outline
-  alpha: number
-}
-
-/** A pane's torn edge: a point every so many px along each side, nudged in or out up to `TEAR`. */
-const TEAR_STEP = 8
-const TEAR = 1.5
-/** The panes' seed: the same panes in every window, on every launch and after every resize. */
-const PANES_SEED = 0.5
-
-/**
- * Panes laid out from a seed: each its size and strength, somewhere on the canvas, its four sides
- * torn. The same seed lays the same panes.
- */
-function layPanes({ count, size, alphas }: Panes, seed: number, width: number, height: number): Pane[] {
-  const layout = seededFrom(seed)
-  return Array.from({ length: count }, () => {
-    const [w, h] = [between(size, layout), between(size, layout)]
-    const [x, y] = [layout() * Math.max(0, width - w), layout() * Math.max(0, height - h)]
-    const alpha = between(alphas, layout)
-    const corners = [
-      [x, y],
-      [x + w, y],
-      [x + w, y + h],
-      [x, y + h],
-    ] as const
-    const outline = corners.flatMap(([ax, ay], i) => {
-      const [bx, by] = corners[(i + 1) % 4]!
-      const side = Math.hypot(bx - ax, by - ay)
-      const steps = Math.max(1, Math.round(side / TEAR_STEP))
-      // Square to the side, so the tear nudges the edge in or out; a side of no length isn't torn.
-      const [nx, ny] = side ? [-(by - ay) / side, (bx - ax) / side] : [0, 0]
-      return Array.from({ length: steps }, (_, s) => {
-        const tear = s ? (layout() * 2 - 1) * TEAR : 0
-        return [ax + ((bx - ax) * s) / steps + nx * tear, ay + ((by - ay) * s) / steps + ny * tear] as const
-      })
-    })
-    return { outline, alpha }
-  })
-}
-
-/** A band's soft edge: the boxes it is painted as, about one middle, each a share of its height. */
-const BAND_LAYERS = [1, 0.6, 0.3]
-
-/**
- * Noise: its panes, if it has any, then its marks, specks or hairlines, then its band, if it has one,
- * rolling down over them and coming in again from above the top once it has rolled off the bottom.
- */
-function noise(
-  { color: variable, alphas, marks, panes, band }: NoiseAtmosphere,
-  random: () => number,
-): Painter {
-  const markPainter =
-    marks.kind === 'specks' ? specks(marks, alphas, random) : hairlines(marks, alphas, random)
-  let laid: Pane[] = []
-  let width = 0
-  let height = 0
-  /** The band's top: none without a band, or until the canvas first has a size. */
-  let bandTop: number | undefined
-  let colors = { marks: '', panes: '' }
-
-  return {
-    recolor(colorOf) {
-      colors = { marks: colorOf(variable), panes: panes ? colorOf(panes.color) : '' }
-    },
-    resize(w, h) {
-      ;[width, height] = [w, h]
-      // Anywhere along its roll the first time, so a new canvas doesn't always start it at the top;
-      // a resize leaves it where it is.
-      if (band && bandTop === undefined) bandTop = random() * (height + band.height) - band.height
-      if (panes) laid = layPanes(panes, PANES_SEED, width, height)
-      markPainter.resize(width, height)
-    },
-    paint(ctx, dt) {
-      const step = Math.min(dt, MAX_DT) / STEP
-      ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = colors.panes
-      // Without their color (an empty one would leave the canvas's last fill in place), none.
-      for (const { outline, alpha } of colors.panes ? laid : []) {
-        ctx.globalAlpha = alpha
-        ctx.beginPath()
-        trace(ctx, outline)
-        ctx.fill()
-      }
-      // The timer runs a hair early or late: a mark counts the nearest whole tick, or static would
-      // freeze whole on every early one.
-      markPainter.paint(ctx, Math.round(step), colors.marks)
       if (!band || bandTop === undefined) return
-      ctx.fillStyle = colors.marks
       bandTop += band.fall * step
       if (bandTop > height) bandTop -= height + band.height
       const middle = bandTop + band.height / 2

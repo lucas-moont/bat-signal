@@ -7,7 +7,7 @@
 export type Wings = 'up' | 'down'
 
 /** A drawing's points, in order round its edge. */
-export type Outline = readonly (readonly [number, number])[]
+type Outline = readonly (readonly [number, number])[]
 
 /**
  * Each frame's left half on a 12x6 box centered on the body, from the top of the head round the
@@ -59,7 +59,7 @@ const OUTLINES: Record<Wings, Outline> = { up: mirrored(HALVES.up), down: mirror
 const BOX_WIDTH = 12
 
 /** A number for a path: two decimals at most, and no "-0". */
-export const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
+const pathNumber = (value: number) => String(Number(value.toFixed(2)) || 0)
 
 /**
  * The points round a bat in flight `width` wide, its body at (cx, cy), in its frame of the

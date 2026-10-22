@@ -1,14 +1,12 @@
 // The worn Theme's emblem (shared/emblems.ts): in the masthead, on the disc and in the intro,
-// with its finish (VENGEANCE's scratched metal, SERIOUS HOUSE's pencil scribble) and on its plate
-// if it has one (PALE MOONLIGHT's oval, lit with the disc); Bat-Clawd wears the same outline on his
-// chest.
+// with its finish (VENGEANCE's scratched metal) and on its plate if it has one (PALE MOONLIGHT's
+// oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
 
 import { useId } from 'react'
-import type { Box, Emblem } from '@shared/emblems'
+import type { Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
-import { ScribbledBat } from './ScribbledBat'
 
 /** The worn Theme's emblem. */
 export const useEmblem = (): Emblem => THEMES[useTheme()].emblem
@@ -21,15 +19,6 @@ export function batAt({ bat }: Emblem, cx: number, cy: number, width: number, he
   const kx = width / bat.width
   const ky = height === undefined ? kx : height / bat.height
   return `translate(${cx - (bat.x + bat.width / 2) * kx} ${cy - (bat.y + bat.height / 2) * ky}) scale(${kx} ${ky})`
-}
-
-/**
- * The box an emblem is drawn in: round the bat, or its plate, with a unit of air on every side. The
- * size a place gives is this box's.
- */
-export function emblemBox({ bat, plate }: Emblem): Box {
-  const edge = plate?.box ?? bat
-  return { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
 }
 
 /**
@@ -55,9 +44,11 @@ export function BatEmblem({
   /** An outline under the bat's fill, in this color (a lit lens too pale to hold its shape alone). */
   outline?: string
 }) {
-  const emblem = useEmblem()
-  const { path, bat, finish, plate } = emblem
-  const box = emblemBox(emblem)
+  const { path, bat, finish, plate } = useEmblem()
+  // The box around the bat, or its plate, with a unit of air on every side: the size a place
+  // gives is the emblem's.
+  const edge = plate?.box ?? bat
+  const box = { x: edge.x - 1, y: edge.y - 1, width: edge.width + 2, height: edge.height + 2 }
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
   const light = useId()
@@ -119,9 +110,8 @@ export function BatEmblem({
           />
         </>
       )}
-      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. A
-          scribbled bat has none: its strokes miss the edge, some past it, some short of it. */}
-      {outline && finish !== 'scribble' && (
+      {/* Behind the bat and outside its finish: a worn bat's filter would clip and streak it. */}
+      {outline && (
         <path
           d={path}
           fill="none"
@@ -130,11 +120,7 @@ export function BatEmblem({
           strokeLinejoin="round"
         />
       )}
-      {finish === 'scribble' ? (
-        <ScribbledBat emblem={emblem} ink={fill} unitPx={size / box.width} />
-      ) : (
-        <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
-      )}
+      <path d={path} fill={fill} filter={finish === 'wear' ? `url(#${wear})` : undefined} />
     </svg>
   )
 }
