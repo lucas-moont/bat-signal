@@ -38,8 +38,8 @@ export interface MoonBackdrop {
   radius: number
   /** Whether it is a jack-o'-lantern: a stem, two eyes and a grin cut through it. Not by default. */
   carved?: boolean
-  /** The variable a carved moon's candle lights its eyes and grin in from inside; empty without one. */
-  glow?: string
+  /** The variable a carved moon's candle lights its eyes and grin in from inside; unlit without one. */
+  candle?: string
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
@@ -350,6 +350,6 @@ export const HOLIDAY_NIGHT: AshAtmosphere = {
     at: [0.72, 68],
     radius: 34,
     carved: true,
-    glow: '--candle',
+    candle: '--candle',
   },
 }

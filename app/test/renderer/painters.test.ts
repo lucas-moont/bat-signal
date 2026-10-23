@@ -1369,11 +1369,11 @@ describe('the moon behind the motion', () => {
     expect(ears.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('lights its carving from inside in its glow, if it has one, the stem left out', () => {
-    const lit = moon({ ...MOON, glow: '--candle' })
+  it('lights its carving from inside by its candle, if it has one, the stem left out', () => {
+    const lit = moon({ ...MOON, candle: '--candle' })
     expect(lit.fills).toHaveLength(2)
-    const [body, glow] = lit.fills as [(typeof lit.fills)[number], (typeof lit.fills)[number]]
-    expect(glow.shapes).toEqual(body.shapes.slice(1))
+    const [body, flame] = lit.fills as [(typeof lit.fills)[number], (typeof lit.fills)[number]]
+    expect(flame.shapes).toEqual(body.shapes.slice(1))
     expect(moon().fills).toHaveLength(1)
   })
 

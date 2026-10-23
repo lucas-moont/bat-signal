@@ -135,7 +135,7 @@ const FACE: readonly Points[] = [
 const CUTS: readonly Points[] = [STEM, ...FACE]
 
 /** A moon, carved or not: painted whole on every paint, since it never moves. */
-function moon({ color: variable, alpha, at, radius, carved, glow }: MoonBackdrop): Painter {
+function moon({ color: variable, alpha, at, radius, carved, candle: flame }: MoonBackdrop): Painter {
   let width = 0
   let height = 0
   let color = ''
@@ -143,7 +143,7 @@ function moon({ color: variable, alpha, at, radius, carved, glow }: MoonBackdrop
   return {
     recolor(colorOf) {
       color = colorOf(variable)
-      candle = glow ? colorOf(glow) : ''
+      candle = flame ? colorOf(flame) : ''
     },
     resize(w, h) {
       ;[width, height] = [w, h]
