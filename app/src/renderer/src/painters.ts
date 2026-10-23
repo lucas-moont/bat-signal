@@ -479,12 +479,15 @@ const PUFF_RINGS = [1, 0.7, 0.4]
 /**
  * Smoke: a few puffs rise from the bottom edge, each swelling and fading to nothing over its life,
  * swaying on the clock as snow does. They leave the street one after another, so the smoke never
- * pulses; a puff that is gone leaves again from the street, in a column of its own.
+ * pulses; a puff that is gone leaves again from the street, in a column of its own. A wind carries
+ * them sideways as they rise, round from one side to the other, and an aspect flattens them.
  */
 function smoke(
-  { color: variable, puffs: count, size, alpha, rise, life, sway }: SmokeAtmosphere,
+  { color: variable, puffs: count, size, alpha, rise, life, sway, wind = 0, aspect = 1 }: SmokeAtmosphere,
   random: () => number,
 ): Painter {
+  /** How far past either side a puff may be blown before it comes back at the other: its widest. */
+  const reach = size[1] / 2
   /** A puff's life in ticks of the clock. */
   const lifeTicks = life / STEP
   let puffs: Puff[] = []
@@ -520,13 +523,16 @@ function smoke(
         }
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
-        const x = p.x + swayAt(sway, ticks, p.phase)
+        // Blown along by the wind, and round again once past a side.
+        const span = width + 2 * reach
+        const blown = p.x + wind * p.age + swayAt(sway, ticks, p.phase) + reach
+        const x = (((blown % span) + span) % span) - reach
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
         ctx.globalAlpha = (alpha * (1 - t)) / PUFF_RINGS.length
         for (const ring of PUFF_RINGS) {
           ctx.beginPath()
-          ctx.arc(x, y, radius * ring, 0, 2 * Math.PI)
+          ctx.ellipse(x, y, radius * ring, radius * ring * aspect, 0, 0, 2 * Math.PI)
           ctx.fill()
         }
       }

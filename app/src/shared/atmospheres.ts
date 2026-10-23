@@ -96,7 +96,8 @@ export interface AshAtmosphere extends Scene {
 
 /**
  * Smoke off the street: soft round puffs rise from the bottom edge, a few at a time, each swelling
- * and fading to nothing as it rises, swaying a little on the clock.
+ * and fading to nothing as it rises, swaying a little on the clock. On a wind, and flattened, they
+ * are fog or cloud banks drifting across the panel.
  */
 export interface SmokeAtmosphere extends Scene {
   kind: 'smoke'
@@ -117,6 +118,13 @@ export interface SmokeAtmosphere extends Scene {
   life: number
   /** How far it sways either way as it rises, in px. */
   sway: number
+  /**
+   * How far a wind carries it sideways a tick, in px (under 0 from the right): a puff blown past
+   * one side comes back in at the other. None by default.
+   */
+  wind?: number
+  /** A puff's height for its width: under 1, a flat bank of fog or cloud. Round by default. */
+  aspect?: number
 }
 
 /**
