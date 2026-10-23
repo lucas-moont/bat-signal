@@ -1,0 +1,169 @@
+/*
+ * HOLIDAY, after Jeph Loeb and Tim Sale's Batman: The Long Halloween (coloured by Gregory Wright):
+ * its palette and faces (docs/research/themes/long-halloween.md, section 4; the decisions in
+ * jury-wave-3.md, section 9). A year of holidays on a wine-black night: the blinds' wine light in
+ * the Roman's office, the Signal's lens grey for what waits on you, newsprint white for what runs,
+ * and the jack-o'-lantern's orange kept for the one thing that needs you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: the page's black at the blinds' hue; --surface: the blinds, darkened.
+ * - --signal: the #13 cover's rotting pumpkin; --signal-hot: the #1 cover's lantern, lifted until it
+ *   reads as text. The orange is this Theme's alone (jury section 9, decision 1).
+ * - --moon: the pumpkin moon of Sale's 2021 Deluxe cover, a dim orange at all times, an unlit
+ *   relative of the alarm at least 15 ΔE00 from its fill (jury section 9, decision 15).
+ */
+:root[data-theme='the-long-halloween-1996'],
+[data-theme='the-long-halloween-1996'] {
+  --abyss: #0a0507;
+  --smoke: #10080b;
+  --surface: #1c0b14;
+  --raised: #2e1222;
+  --line: #4a2338;
+  --surface-deep: #13080e;
+  --frame: #22101a;
+  --header-fade: #13080e;
+  --sheet-top: #22101a;
+  --shadow: #000000;
+
+  /* The Alarm color, the jack-o'-lantern, and its dark body, which marks only the lit lens's rim. */
+  --blood: #5a2408;
+  --signal: #d05600;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #fe7500;
+  --on-signal: var(--abyss);
+  --ink-hot: var(--signal-hot);
+  /* The Signal's lens, lifted at its hue: what waits on you. */
+  --ink-soft: #a9bcbf;
+  /* Newsprint white marks what runs: the stamp word carries the tier. */
+  --ink-live: var(--bone);
+  --ink: #d3c8ca;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is orange but the moon's dim relative. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 14%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--bone);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: BLESSING? and BOTCHED in the lantern's orange, A WORD? and MESSAGE in the
+     lens's grey. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--bone);
+  --in-progress-glow: color-mix(in srgb, var(--bone) 40%, transparent);
+
+  /* Quit's hover stays a shadow: orange is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: color-mix(in srgb, var(--ink-soft) 55%, var(--surface));
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+
+  --clawd: #d77757;
+
+  --bone: #efe8e6;
+  --ash: #a8979e;
+  --bone-dim: #d8cfcf;
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in Sale's suit (long-halloween.md, section 8): a blue cowl and a blue mantle over his
+     shoulders, the lit chest blue-grey, the book's small round Signal bat on it, a gold capsule
+     belt, and a huge blue bell of a cape. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #2b5770;
+  --cowl-edge: color-mix(in srgb, var(--bone) 24%, transparent);
+  --cowl-shine: #3d6f8a;
+  --suit: #6a88a2;
+  --gloves: var(--cowl);
+  --belt: #b88f25;
+  --buckle: #7e6132;
+  --cape: #22495c;
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: var(--abyss);
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: the Signal's bat in the lens's grey. */
+  --emblem: #778c8e;
+
+  /* The Signal disc. Unlit: wine glass, the bat a shade in it. Lit: a jack-o'-lantern in the sky,
+     soft stops from its hot heart to its rind, the bat in the dark across it. */
+  --disc-bat: var(--raised);
+  --glass-shine: var(--surface);
+  --glass: var(--abyss);
+  --disc-rim-inner: #060304;
+  --disc-rim-outer: var(--line);
+  --lens-core: #ffd08a;
+  --lens-rim: var(--blood);
+  --lens-bat: var(--abyss);
+  --lens-bat-edge: transparent;
+  --lens-shade: 0 0 transparent;
+  --notice-top: #1a0a12;
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #2a1120;
+  --notice-hover-foot: #170910;
+
+  /* The blinds' wine light from the upper left (the #1 page, sampled), the film grain, a pumpkin
+     moon in a dim orange, and low fog drifting across under it. */
+  --blinds: #480a2b;
+  --haze: color-mix(in srgb, var(--blinds) 12%, transparent);
+  --haze-edge: color-mix(in srgb, var(--blinds) 4%, transparent);
+  --haze-inset: -30% 25% auto -30%;
+  --grain-opacity: 0.04;
+  --searchlight: var(--bone);
+  --moon: #7a3a12;
+  --fog: var(--bone);
+
+  /* Grenze Gotisch, a blackletter with a plain lowercase, sets the wordmark and the headlines, as
+     the covers set "in Thirteen Parts"; Federo, a 1909 grotesque near the covers' holiday labels,
+     sets the stamps and the dateline; Barlow does the work and the report. */
+  --font-display: 'Grenze Gotisch', 'Old English Text MT', serif;
+  --display-weight: 500;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: 'Federo', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-body);
+  --font-headline: var(--font-display);
+  --headline-weight: 500;
+  --font-dateline: var(--font-type);
+  --dateline-weight: 400;
+  --font-stamp: var(--font-type);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 17px;
+  --folder-name-tracking: 0.5px;
+  --wordmark-size: 22px;
+  --wordmark-tracking: 0.5px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23fe7500' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23a9bcbf' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* The covers' labels sit straight in their boxes. */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+
+  /* Lit: a lantern, its glow soft from the heart out. */
+  --disc-lens: radial-gradient(
+    circle at 50% 50% in srgb,
+    var(--lens-core) 0%,
+    var(--lens-core) 22%,
+    var(--signal-hot) 48%,
+    var(--signal) 100%
+  );
+}
