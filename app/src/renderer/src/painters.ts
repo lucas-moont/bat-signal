@@ -55,6 +55,22 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
   }
 }
 
+/**
+ * A shape in straight lines added to the path as its own closed shape: its points `scale` times as
+ * far from (cx, cy).
+ */
+function trace(
+  ctx: CanvasRenderingContext2D,
+  points: readonly (readonly [number, number])[],
+  cx: number,
+  cy: number,
+  scale = 1,
+) {
+  ctx.moveTo(cx + points[0]![0] * scale, cy + points[0]![1] * scale)
+  for (let p = 1; p < points.length; p++) ctx.lineTo(cx + points[p]![0] * scale, cy + points[p]![1] * scale)
+  ctx.closePath()
+}
+
 /** The painter of an Atmosphere's backdrop: a still drawing, the same picture on every paint. */
 export function backdropFor(backdrop: Backdrop): Painter {
   switch (backdrop.kind) {
@@ -106,18 +122,6 @@ const CUTS = [
     [-0.4, 0.52],
   ],
 ] as const
-
-/** A shape in straight lines added to the path as its own closed shape, its points `scale` times as far from (cx, cy). */
-function trace(
-  ctx: CanvasRenderingContext2D,
-  points: readonly (readonly [number, number])[],
-  cx: number,
-  cy: number,
-  scale = 1,
-) {
-  points.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, cx + x * scale, cy + y * scale))
-  ctx.closePath()
-}
 
 /** A moon, carved or not: painted whole on every paint, since it never moves. */
 function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Painter {
@@ -564,6 +568,9 @@ interface Puff {
 /** A puff's soft edge: the discs it is painted as, each a share of its width, the widest first. */
 const PUFF_RINGS = [1, 0.7, 0.4]
 
+/** The share of its life a puff on a wind takes to fade in. */
+const FADE_IN = 0.2
+
 /**
  * Smoke: a few puffs rise from the bottom edge, each swelling and fading to nothing over its life,
  * swaying on the clock as snow does. They leave the street one after another, so the smoke never
@@ -574,8 +581,11 @@ function smoke(
   { color: variable, puffs: count, size, alpha, rise, life, sway, wind = 0, aspect = 1 }: SmokeAtmosphere,
   random: () => number,
 ): Painter {
-  /** How far past either side a puff may be blown before it comes back at the other: its widest. */
-  const reach = size[1] / 2
+  /**
+   * How far past either side a puff may be blown before it comes back at the other: as wide as it
+   * ever is, and as far as it sways, so it is wholly off the canvas when it comes round.
+   */
+  const reach = Math.max(...size) / 2 + sway
   /** The way round a puff is blown: the canvas and that reach past either side. */
   let span = 0
   /** A puff's life in ticks of the clock. */
@@ -619,10 +629,12 @@ function smoke(
         const x = (((blown % span) + span) % span) - reach
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
-        ctx.globalAlpha = (alpha * (1 - t)) / PUFF_RINGS.length
+        // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.
+        const fade = wind ? Math.min(1, t / FADE_IN) * (1 - t) : 1 - t
+        ctx.globalAlpha = (alpha * fade) / PUFF_RINGS.length
         for (const ring of PUFF_RINGS) {
           ctx.beginPath()
-          ctx.ellipse(x, y, radius * ring, radius * ring * aspect, 0, 0, 2 * Math.PI)
+          ctx.ellipse(x, y, radius * ring, radius * ring * Math.abs(aspect), 0, 0, 2 * Math.PI)
           ctx.fill()
         }
       }
