@@ -453,29 +453,56 @@ interface Drift {
 const BEAT: readonly Wings[] = ['up', 'down']
 
 /**
- * A calendar page: its height for its width; its month's share of that height, torn off across
- * its top by a pixel's gap; and its width when it is edge-on, in px.
+ * A calendar page: its height for its width; its month's share of that height, cut off across its
+ * top by a pixel's gap; and how deep the teeth of its torn bottom edge go, as a share of its height.
  */
-const PAGE = { tall: 1.25, month: 0.25, gap: 1, edge: 1.5 }
+const PAGE = { tall: 1.25, month: 0.25, gap: 1, tear: 0.15 }
 
-/** The frames of a page's tumble, a tick each: face-on, then edge-on. */
-const TUMBLE = ['face', 'edge'] as const
-
-/** A box added to the path as its own closed shape. */
-function box(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
-  ctx.moveTo(x, y)
-  ctx.lineTo(x + w, y)
-  ctx.lineTo(x + w, y + h)
-  ctx.lineTo(x, y + h)
-  ctx.closePath()
+/**
+ * A page of `size` about its centre, leaning `angle` radians: its month, then its leaf with the
+ * bottom edge torn in two teeth, each a shape of its own.
+ */
+function page(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, angle: number) {
+  const [w, h] = [size / 2, (size * PAGE.tall) / 2]
+  const month = 2 * h * PAGE.month
+  const tear = 2 * h * PAGE.tear
+  const [cos, sin] = [Math.cos(angle), Math.sin(angle)]
+  const lean = (points: (readonly [number, number])[]) =>
+    points.map(([x, y]) => [x * cos - y * sin, x * sin + y * cos] as const)
+  trace(
+    ctx,
+    lean([
+      [-w, -h],
+      [w, -h],
+      [w, -h + month],
+      [-w, -h + month],
+    ]),
+    cx,
+    cy,
+  )
+  const top = -h + month + PAGE.gap
+  trace(
+    ctx,
+    lean([
+      [-w, top],
+      [w, top],
+      [w, h - tear / 2],
+      [w / 2, h],
+      [0, h - tear],
+      [-w / 2, h],
+      [-w, h - tear / 2],
+    ]),
+    cx,
+    cy,
+  )
 }
 
 /**
  * Ash: motes in depths, blown sideways more than they fall, each depth's ash and its dust filled as
  * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
  * along it, whichever way the wind blows. With bats in place of the motes, they keep to their band,
- * each drawn on its arc, flapping every tick, neighbours a beat apart. With pages, each turns
- * edge-on every other tick as it falls, neighbours a turn apart.
+ * each drawn on its arc, flapping every tick, neighbours a beat apart. With pages, each swings from
+ * side to side of its line as it falls, neighbours out of step.
  */
 function ash(
   { color: variable, dust, density, depths, bats, pages }: AshAtmosphere,
@@ -516,12 +543,10 @@ function ash(
    */
   const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, phase: number) => {
     if (pages) {
-      const tall = size * PAGE.tall
-      if (frameAt(TUMBLE, beats, phase) === 'edge')
-        return box(ctx, x + (size - PAGE.edge) / 2, y, PAGE.edge, tall)
-      const month = tall * PAGE.month
-      box(ctx, x, y, size, month)
-      return box(ctx, x, y + month + PAGE.gap, size, tall - month - PAGE.gap)
+      // Its swing, from its own place in it (a golden-ratio step from its neighbour's), and its lean
+      // into it.
+      const turn = Math.sin(2 * Math.PI * (beats / (pages.period * FPS) + phase * 0.618))
+      return page(ctx, x + size / 2 + pages.swing * turn, y + (size * PAGE.tall) / 2, size, pages.tilt * turn)
     }
     if (!bats) return ctx.rect(x, y, size, size)
     // Out past the panel's side: not drawn till it comes back.

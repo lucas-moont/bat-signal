@@ -97,7 +97,7 @@ export interface LitWindowsAtmosphere extends Scene {
  * that differ in strength, size and speed, a share of them dust. Or bats on the wind in its place
  * (BLUE COLLAR's colony): a few in a band of the panel, flapping every tick, each on an arc that
  * rises and dips as it crosses; the drawing BECOME A BAT's swarm flies (shared/bats.ts). Or the
- * pages of a calendar, tumbling as they fall (HOLIDAY's).
+ * pages of a calendar, swinging from side to side as they fall (HOLIDAY's).
  */
 export interface AshAtmosphere extends Scene {
   kind: 'ash'
@@ -122,10 +122,11 @@ export interface AshAtmosphere extends Scene {
   bats?: { band: readonly [number, number]; arc: number; away: number }
   /**
    * The leaves of a tear-off calendar in place of the flakes (HOLIDAY's): each its depth's size
-   * wide and a quarter taller, its month torn across its top, turning edge-on every other tick as
-   * it falls.
+   * wide and a quarter taller, its month cut off across its top, its bottom edge torn ragged,
+   * swinging `swing` px either way of its line and back every `period` seconds as it falls, out of
+   * step with its neighbours, and leaning into its swing up to `tilt` radians.
    */
-  pages?: true
+  pages?: { swing: number; period: number; tilt: number }
 }
 
 /**
