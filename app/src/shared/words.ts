@@ -881,7 +881,7 @@ const holidayCountdown = (now: Date) => {
   return days === 0 ? name : days === 1 ? `${name} TOMORROW` : `${name} IN ${days} DAYS`
 }
 
-/** HOLIDAY's all-clear: a quiet night, on the Signal's tooltip and in the empty panel alike. */
+/** HOLIDAY's all-clear on the Signal's tooltip (the empty panel wishes you a quiet holiday). */
 const NO_HOLIDAY = 'No holiday tonight.'
 
 /**

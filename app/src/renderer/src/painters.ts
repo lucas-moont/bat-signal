@@ -85,7 +85,8 @@ const PUMPKIN = 0.88
 /**
  * A jack-o'-lantern's cuts, in radii from the moon's centre (y down): its stem standing on the
  * body's top, then two furious eyes slanting down to the middle and a grin cut in the shape of the
- * bat (the Deluxe cover's), all inside the body, so the even-odd rule leaves them empty.
+ * bat (the Deluxe cover's). The stem stands outside the body, so it fills; the face is inside it, so
+ * the even-odd rule leaves it empty.
  */
 const STEM = [
   [-0.08, -PUMPKIN - 0.22],
