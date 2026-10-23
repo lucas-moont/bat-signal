@@ -121,6 +121,9 @@
   --grain-opacity: 0.04;
   --searchlight: var(--bone);
   --moon: #7a3a12;
+  /* The candle inside the moon, lighting its eyes and its bat-shaped grin: 17 ΔE00 from the alarm's
+     fill as seen through the moon's strength, so it stays the alarm's unlit relative. */
+  --candle: #ffc870;
   --pages: var(--bone);
 
   /* Grenze Gotisch, a blackletter with a plain lowercase, sets the wordmark and the headlines, as
