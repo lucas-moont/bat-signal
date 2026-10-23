@@ -93,13 +93,42 @@ export interface LitWindowsAtmosphere extends Scene {
 }
 
 /**
+ * Bats in place of the flakes: the band their lines lie in, its top and bottom in px from the
+ * panel's top; how far a bat rises above its line and dips below it as it crosses, in px (its
+ * wings reach a quarter of its width further); and how far it flies on past the panel's edge
+ * before it comes back, in px, so only a few of the colony are in the panel at once.
+ */
+export interface Colony {
+  band: readonly [number, number]
+  arc: number
+  away: number
+}
+
+/**
+ * The leaves of a tear-off calendar in place of the flakes (HOLIDAY's): each its depth's size wide
+ * and a quarter taller, its month cut off across its top, its bottom edge torn ragged; hung from
+ * its top, it swings like a pendulum as it falls, out of step with its neighbours.
+ */
+export interface Pages {
+  /** How far it swings either way of its line, in px. */
+  swing: number
+  /** Seconds for a whole swing, out and back. */
+  period: number
+  /** How far it leans at the end of a swing, in radians: its bottom trails out past its top. */
+  tilt: number
+}
+
+/**
  * Ash blown on a desert wind: flakes cross the panel at a shallow slant, left to right, in depths
  * that differ in strength, size and speed, a share of them dust. Or bats on the wind in its place
  * (BLUE COLLAR's colony): a few in a band of the panel, flapping every tick, each on an arc that
  * rises and dips as it crosses; the drawing BECOME A BAT's swarm flies (shared/bats.ts). Or the
  * pages of a calendar, swinging from side to side as they fall (HOLIDAY's).
  */
-export interface AshAtmosphere extends Scene {
+export type AshAtmosphere = AshScene & ({ bats?: Colony; pages?: never } | { pages?: Pages; bats?: never })
+
+/** What an ash Atmosphere carries in place of its flakes: bats (a colony) or a calendar's pages, never both. */
+interface AshScene extends Scene {
   kind: 'ash'
   /** The variable the ash, the bats or the pages are filled in. */
   color: string
@@ -113,20 +142,8 @@ export interface AshAtmosphere extends Scene {
    * right).
    */
   depths: readonly { alpha: number; size: number; wind: number; fall: number }[]
-  /**
-   * Bats in place of the flakes: the band their lines lie in, its top and bottom in px from the
-   * panel's top; how far a bat rises above its line and dips below it as it crosses, in px (its
-   * wings reach a quarter of its width further); and how far it flies on past the panel's edge
-   * before it comes back, in px, so only a few of the colony are in the panel at once.
-   */
-  bats?: { band: readonly [number, number]; arc: number; away: number }
-  /**
-   * The leaves of a tear-off calendar in place of the flakes (HOLIDAY's): each its depth's size
-   * wide and a quarter taller, its month cut off across its top, its bottom edge torn ragged,
-   * swinging `swing` px either way of its line and back every `period` seconds as it falls, out of
-   * step with its neighbours, and leaning into its swing up to `tilt` radians.
-   */
-  pages?: { swing: number; period: number; tilt: number }
+  bats?: Colony
+  pages?: Pages
 }
 
 /**
