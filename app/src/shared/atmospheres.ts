@@ -23,19 +23,21 @@ interface Scene {
 }
 
 /**
- * A moon in the sky: its centre, across the panel as a share of its width and down from its top in
- * px, and its radius in px. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe
- * cover): a little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
+ * A moon in the sky. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe cover): a
+ * little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
  */
 export interface MoonBackdrop {
   kind: 'moon'
   /** The variable it is filled in. */
   color: string
-  /** Its strength. */
+  /** Its strength (alpha), from 0 to 1. */
   alpha: number
+  /** Its centre: across the panel as a share of its width (0 to 1), and down from its top in px. */
   at: readonly [number, number]
+  /** Its radius across, in px (a carved moon is a little less tall). */
   radius: number
-  carved?: true
+  /** Whether it is a jack-o'-lantern: a stem, two eyes and a grin cut through it. Not by default. */
+  carved?: boolean
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
