@@ -1285,7 +1285,7 @@ describe('the moon behind the motion', () => {
     radius: 30,
     carved: true,
   }
-  const colorOf = (variable: string) => ({ '--moon': '#7a3a12' })[variable] ?? ''
+  const colorOf = (variable: string) => ({ '--moon': '#7a3a12', '--candle': '#e8a040' })[variable] ?? ''
 
   const moon = (backdrop: MoonBackdrop = MOON, width = 320) => {
     const painter = backdropFor(backdrop)
@@ -1349,6 +1349,36 @@ describe('the moon behind the motion', () => {
 
   // Still: nothing moves, so a tick paints the same picture, and the page only asks for one after
   // a resize or new colors.
+  // The Deluxe cover's lantern (the maintainer, on screen): its eyes furious, slanting down to the
+  // middle; its grin cut in the shape of the bat, its head and ears notched into the grin's top.
+  it("carves furious eyes and a grin in the bat's shape", () => {
+    const [, left, right, grin] = moon().fills[0]!.shapes as [Shape, Shape, Shape, Shape]
+    const { x } = moon().fills[0]!.discs[0]!
+    // Each eye's top corner nearest the middle is lower than its outer one.
+    const topNearMiddle = (eye: Shape, side: number) => {
+      const top = [...eye].sort((a, b) => a[1] - b[1]).slice(0, 2)
+      const [inner, outer] = [...top].sort((a, b) => Math.abs(a[0] - x) - Math.abs(b[0] - x))
+      return inner![1] > outer![1] && Math.sign(inner![0] - x) === side
+    }
+    expect(topNearMiddle(left, -1)).toBe(true)
+    expect(topNearMiddle(right, 1)).toBe(true)
+    // The grin is the bat: symmetric, its ears the two points along its top nearest the middle,
+    // rising above the shoulders either side of them.
+    const mirrored = new Set(grin.map(([px, py]) => `${(2 * x - px).toFixed(2)},${py.toFixed(2)}`))
+    expect(new Set(grin.map(([px, py]) => `${px.toFixed(2)},${py.toFixed(2)}`))).toEqual(mirrored)
+    const topEdge = grin.filter(([, py]) => py < Math.min(...grin.map(([, gy]) => gy)) + 6)
+    const ears = topEdge.filter(([px]) => Math.abs(px - x) < 6)
+    expect(ears.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('lights its carving from inside in its glow, if it has one, the stem left out', () => {
+    const lit = moon({ ...MOON, glow: '--candle' })
+    expect(lit.fills).toHaveLength(2)
+    const [body, glow] = lit.fills as [(typeof lit.fills)[number], (typeof lit.fills)[number]]
+    expect(glow.shapes).toEqual(body.shapes.slice(1))
+    expect(moon().fills).toHaveLength(1)
+  })
+
   it('paints the same picture every time', () => {
     const { painter, fills } = moon()
     const again = recorder()
