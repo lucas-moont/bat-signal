@@ -453,44 +453,47 @@ interface Drift {
 const BEAT: readonly Wings[] = ['up', 'down']
 
 /**
- * A calendar page: its height for its width; its month's share of that height, cut off across its
+ * A calendar leaf: its height for its width; its month's share of that height, cut off across its
  * top by a pixel's gap; and how deep the teeth of its torn bottom edge go, as a share of its height.
  */
-const PAGE = { tall: 1.25, month: 0.25, gap: 1, tear: 0.15 }
+const LEAF = { tall: 1.25, month: 0.25, gap: 1, tear: 0.15 }
+
+/** How far apart neighbouring pages are in their swing: a golden-ratio share of it, so none fall in step. */
+const SWING_STEP = 0.618
 
 /**
- * A page of `size` about its centre, leaning `angle` radians: its month, then its leaf with the
- * bottom edge torn in two teeth, each a shape of its own.
+ * A page of `size` hanging from the middle of its top edge at (cx, cy), leaning `angle` radians:
+ * its month, then its leaf with the bottom edge torn in two teeth, each a shape of its own.
  */
 function page(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, angle: number) {
-  const [w, h] = [size / 2, (size * PAGE.tall) / 2]
-  const month = 2 * h * PAGE.month
-  const tear = 2 * h * PAGE.tear
+  const [w, tall] = [size / 2, size * LEAF.tall]
+  const month = tall * LEAF.month
+  const tear = tall * LEAF.tear
   const [cos, sin] = [Math.cos(angle), Math.sin(angle)]
   const lean = (points: (readonly [number, number])[]) =>
     points.map(([x, y]) => [x * cos - y * sin, x * sin + y * cos] as const)
   trace(
     ctx,
     lean([
-      [-w, -h],
-      [w, -h],
-      [w, -h + month],
-      [-w, -h + month],
+      [-w, 0],
+      [w, 0],
+      [w, month],
+      [-w, month],
     ]),
     cx,
     cy,
   )
-  const top = -h + month + PAGE.gap
+  const top = month + LEAF.gap
   trace(
     ctx,
     lean([
       [-w, top],
       [w, top],
-      [w, h - tear / 2],
-      [w / 2, h],
-      [0, h - tear],
-      [-w / 2, h],
-      [-w, h - tear / 2],
+      [w, tall - tear / 2],
+      [w / 2, tall],
+      [0, tall - tear],
+      [-w / 2, tall],
+      [-w, tall - tear / 2],
     ]),
     cx,
     cy,
@@ -521,12 +524,14 @@ function ash(
   /** Where the motes are blown: the whole canvas, or the bats' band. */
   let [top, bottom] = [0, 0]
   /** How far past the canvas's sides they go before coming back: the bats' way out, none for ash. */
-  const away = bats?.away ?? 0
+  const away = bats?.away ?? (pages ? pages.swing + Math.max(...depths.map((d) => d.size)) : 0)
   /**
    * Whole ticks of the clock since it began, each counted to the nearest: a tick that comes a hair
    * early or late still turns the wings, so a beat never holds or skips.
    */
   let beats = 0
+  /** Ticks of the clock since it began, fractional when a tick comes late: the pages' swing runs on it. */
+  let ticks = 0
   let colors = { ash: '', dust: '' }
 
   /** Each depth's bat in each frame of the wingbeat, at (0, 0): drawn once, moved into place. */
@@ -543,10 +548,10 @@ function ash(
    */
   const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, phase: number) => {
     if (pages) {
-      // Its swing, from its own place in it (a golden-ratio step from its neighbour's), and its lean
-      // into it.
-      const turn = Math.sin(2 * Math.PI * (beats / (pages.period * FPS) + phase * 0.618))
-      return page(ctx, x + size / 2 + pages.swing * turn, y + (size * PAGE.tall) / 2, size, pages.tilt * turn)
+      // Its swing, from its own place in it, and its lean.
+      const turn = Math.sin(2 * Math.PI * (ticks / (pages.period * FPS) + phase * SWING_STEP))
+      // As a pendulum: swung right, its bottom trails right of its top.
+      return page(ctx, x + size / 2 + pages.swing * turn, y, size, -pages.tilt * turn)
     }
     if (!bats) return ctx.rect(x, y, size, size)
     // Out past the panel's side: not drawn till it comes back.
@@ -566,6 +571,7 @@ function ash(
       bottom = Math.min(bats?.band[1] ?? h, h)
       top = Math.min(bats?.band[0] ?? 0, bottom)
       beats = 0
+      ticks = 0
       layers = drifts(
         scatter(
           {
@@ -584,12 +590,13 @@ function ash(
     paint(ctx, dt) {
       const step = Math.min(dt, MAX_DT) / STEP
       beats += Math.round(step)
+      ticks += step
       ctx.clearRect(0, 0, width, height)
       for (const { depth, dust: isDust, motes } of layers) {
         const { alpha, size, wind, fall } = depth
         // A mote is gone once its whole square has left the top, a page once its whole leaf has; a
         // bat's line, once it has left the band.
-        const rise = bats ? 0 : pages ? size * PAGE.tall : size
+        const rise = bats ? 0 : pages ? size * (LEAF.tall + 1) : size
         ctx.globalAlpha = alpha
         ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()
