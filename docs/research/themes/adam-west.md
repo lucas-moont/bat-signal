@@ -27,7 +27,7 @@ Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on
 
 ## 2. References
 
-The folder is `C:/Users/thewo/AppData/Local/Temp/claude/C--Users-thewo-Documents-BatCaver-Code-Extension/bb2270e0-bcee-4ba5-a059-2f645fa77ff4/scratchpad/refs-west/`, with an `INDEX.md` listing 53 images: number, file, source URL (with the second for video frames), episode or edition, what it shows, and the decision it informs. Scripts are in the sibling `tools-west/`, boards in `boards-west/`, raw downloads in `dl-west/`. Nothing from it enters the repository.
+The images sit in a scratch folder (`refs-west/`) that never enters the repository; scripts and boards sit beside it. Its index of all 53 images (number, file, source URL, edition, what it shows, which decision it informs) is committed as [`references/adam-west.md`](references/adam-west.md), so every `[nn]` here can be traced.
 
 | Kind | Entries | Source and edition |
 |---|---|---|
@@ -445,7 +445,7 @@ Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly
 - Wikipedia, ["Batusi"](https://en.wikipedia.org/wiki/Batusi): first in "Hi Diddle Riddle", again in "The Pharaoh's in a Rut"; the horizontal V across the eyes; the mention in *The Lego Batman Movie*.
 - Warner Bros. Entertainment, ["Batman: The Complete Television Series | Trailer"](https://www.youtube.com/watch?v=BTGAXBeYDcM), July 2014.
 - Wikimedia Commons, ABC publicity stills of Adam West (1965–68) and "Batman for U.S. Savings Bonds, ca. 1966", public domain; URLs in the folder's `INDEX.md`.
-- Episode and film frames: the YouTube uploads listed with their URLs and seconds in `INDEX.md`.
+- Episode and film frames: the YouTube uploads listed with their URLs and seconds in [`references/adam-west.md`](references/adam-west.md).
 - Fonts: [Luckiest Guy](https://github.com/google/fonts/tree/main/apache/luckiestguy) (Apache-2.0), [Bowlby One SC](https://github.com/google/fonts/tree/main/ofl/bowlbyonesc), [Lilita One](https://github.com/google/fonts/tree/main/ofl/lilitaone), [Titan One](https://github.com/google/fonts/tree/main/ofl/titanone), [Passion One](https://github.com/google/fonts/tree/main/ofl/passionone) (OFL-1.1).
 - In this repo: [`wave-3-brief.md`](wave-3-brief.md), [`claims-wave-3.md`](claims-wave-3.md), [`wave-2-brief.md`](wave-2-brief.md), [`jury-wave-2.md`](jury-wave-2.md), [`animated-series.md`](animated-series.md), [`long-halloween.md`](long-halloween.md), [`arkham-games.md`](arkham-games.md), [`burton-1989.md`](burton-1989.md), [`dkr-rework.md`](dkr-rework.md); `app/src/renderer/src/styles/themes/*.css`, `app/src/shared/suits.ts`, `outfits.ts`, `atmospheres.ts`, `emblems.ts`, `words.ts`, `app/test/stampWidth.test.ts`; `DESIGN.md`, `CONTEXT.md`, `PRODUCT.md`, ADR 0001; SERIOUS HOUSE's `suits.ts` and stylesheet on `origin/feat/123-serious-house`.
 - Scratch tools (not in the repo), in `tools-west/`: `sample.py`, `crops.py` (colour), `pal.py`, `grounds.py`, `navy.py`, `alarms.py`, `palette.py` (ΔE00, contrast), `stampfit.py`, `typeboard.py`, `outlines.ts`, `suits_board.py`, `index.py`. Boards in `boards-west/`: `outlines.png`, `suits.png`, `type.png`, `refs-contact.jpg`.

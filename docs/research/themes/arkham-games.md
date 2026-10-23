@@ -434,7 +434,7 @@ Against WATCHFUL PROTECTOR the Theme passes with exactly 3. A3 (beams) and T2 (S
 - Steam store API, `store.steampowered.com/api/appdetails?appids=35140`, `200260`, `208650`: the official screenshots and library art.
 - Interface In Game, `interfaceingame.com/games/batman-arkham-asylum/`, `…-city/`, `…-knight/`: UI captures.
 - Fontsource API, `api.fontsource.org/v1/fonts/<id>`, checked 2026-10-22: Oxanium, Teko, Staatliches, Saira Condensed, Chakra Petch, Rajdhani, Cinzel, Black Ops One, Russo One (all OFL-1.1).
-- The full reference list with URLs: `refs-arkham-games/INDEX.md` (scratch).
+- The full reference list with URLs: [`references/arkham-games.md`](references/arkham-games.md) (the images stay in the scratch folder `refs-arkham-games/`).
 - In this repo: [`wave-3-brief.md`](wave-3-brief.md), [`claims-wave-3.md`](claims-wave-3.md), [`wave-2-brief.md`](wave-2-brief.md), [`jury-wave-2.md`](jury-wave-2.md), `arkham-horror-references.md` on `origin/feat/123-serious-house`, [`burton-1989.md`](burton-1989.md), [`dkr-rework.md`](dkr-rework.md), [`nolan.md`](nolan.md), [`bat-clawd-nolan-suit.md`](bat-clawd-nolan-suit.md), `app/src/renderer/src/styles/themes/*.css`, `app/src/shared/suits.ts`, `atmospheres.ts`, `words.ts`, `app/test/stampWidth.test.ts`, `themeContrast.test.ts`, `DESIGN.md`, ADR 0001.
 - Colour maths: WCAG 2.x relative luminance and CIEDE2000 (Sharma, Wu and Dalal, 2005), in our own scripts (`tools-arkham-games/colors.py`, `palette.py`, `tables.py`).
 

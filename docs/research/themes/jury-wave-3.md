@@ -433,7 +433,7 @@ Two PRs per Theme, engine then Theme, as in Wave 2. A shared piece is built by t
 
 ## 7. Questions for the maintainer
 
-Each board is in `C:/Users/thewo/AppData/Local/Temp/claude/C--Users-thewo-Documents-BatCaver-Code-Extension/bb2270e0-bcee-4ba5-a059-2f645fa77ff4/scratchpad/boards-jury/`, with the options labelled in the image and the source frames beside them. The HTML each was rendered from sits next to it.
+Each board was shown to the maintainer from the session's scratch folder (`boards-jury/`), with the options labelled in the image and the source frames beside them; the boards are not committed, since they hold frames from the works (ADR 0001). The references they crop are indexed in [`references/`](references/).
 
 1. **Orange: who keeps it?** (`jury-1-orange.jpg`) A: HOLIDAY keeps the jack-o'-lantern `#fe7500`; TAS takes its rim blue `#8b88ff`, and its rim at rest goes neutral. B: TAS keeps the red sky; HOLIDAY moves to the lantern's yellow-orange `#ff8c1a` (12.8 apart; TAS 9.7 from Clawd). C: both as drafted, 7.0 apart, a second recorded exception. *Recommended: A. HOLIDAY's source owns orange most strongly and has no fallback; TAS's own dossier names B as its answer if another orange stays. HOLIDAY keeps its aura: BECOME A BAT already ships one at 1.01:1.*
 2. **The yellow oval.** (`jury-2-oval.jpg`) A: TAS, West and Lego all keep a bright oval that never lights, told apart by their suits. B: J1, TAS dims its oval to `#907e38`. C: West alone keeps an oval. *Recommended: A, with Lego's wordmark in Bone (its yellow is 3.7 from PALE MOONLIGHT's gold alarm). Every lit frame of the three works has the oval, and none of them lights.*

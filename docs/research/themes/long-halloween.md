@@ -23,7 +23,7 @@ Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long H
 
 ## 2. References
 
-The folder is `C:/Users/thewo/AppData/Local/Temp/claude/C--Users-thewo-Documents-BatCaver-Code-Extension/bb2270e0-bcee-4ba5-a059-2f645fa77ff4/scratchpad/refs-tlh/`, with an `INDEX.md` that lists all 36 images: number, file, URL, issue and edition, what it shows and which decision it informs. Scripts are in the sibling `tools-tlh/`; raw downloads in `dl-tlh/`. Nothing from it enters the repository.
+The images sit in a scratch folder (`refs-tlh/`) that never enters the repository; scripts and boards sit beside it. Its index of all 36 images (number, file, source URL, edition, what it shows, which decision it informs) is committed as [`references/long-halloween.md`](references/long-halloween.md), so every `[nn]` here can be traced.
 
 What it holds:
 - **All thirteen covers** as printed [02–14], five of them also as textless art [23–27].
@@ -443,7 +443,7 @@ Scored with jury Wave 1 §1's rules (C = clearly different, ~ = close, = = same)
 - DC.com, ["What you need to know about The Long Halloween saga"](https://www.dc.com/blog/2025-10-06/what-you-need-to-know-about-the-long-halloween-saga), 6 October 2025, and its images.
 - Coffee for Two, ["My Misspent Youth — Batman: The Long Halloween"](https://coffee-for-two.com/2022/06/20/my-misspent-youth-batman-the-long-halloween-by-jeph-loeb-and-tim-sale/), 20 June 2022 (page images only).
 - Fontsource API: [grenze-gotisch](https://api.fontsource.org/v1/fonts/grenze-gotisch), [sofia-sans-extra-condensed](https://api.fontsource.org/v1/fonts/sofia-sans-extra-condensed), [federo](https://api.fontsource.org/v1/fonts/federo), [unifrakturmaguntia](https://api.fontsource.org/v1/fonts/unifrakturmaguntia) (all OFL-1.1).
-- Every image, with its URL and edition: `C:/Users/thewo/AppData/Local/Temp/claude/C--Users-thewo-Documents-BatCaver-Code-Extension/bb2270e0-bcee-4ba5-a059-2f645fa77ff4/scratchpad/refs-tlh/INDEX.md`. The scripts (`colour.py`, `sample.py`, `field.py`, `near.py`, `check.py`, `stampfit.py`, `grid.py`, `typeboard.py`) and the type board (`board-type.png`) are in the sibling `tools-tlh/`.
+- Every image, with its URL and edition: [`references/long-halloween.md`](references/long-halloween.md). The scripts (`colour.py`, `sample.py`, `field.py`, `near.py`, `check.py`, `stampfit.py`, `grid.py`, `typeboard.py`) and the type board stayed in the session's scratch folder (`tools-tlh/`).
 - In this repo: [`wave-3-brief.md`](wave-3-brief.md), [`wave-2-brief.md`](wave-2-brief.md), [`claims-wave-3.md`](claims-wave-3.md), [`jury-wave-2.md`](jury-wave-2.md), [`year-one.md`](year-one.md), [`dkr-rework.md`](dkr-rework.md), [`burton-1989.md`](burton-1989.md); `DESIGN.md`, `CONTEXT.md`, ADR 0001; `app/src/shared/suits.ts`, `atmospheres.ts`, `emblems.ts`, `words.ts`, `themes.ts`; `app/src/renderer/src/styles/themes/*.css`; `app/test/stampWidth.test.ts`; SERIOUS HOUSE's `suits.ts` and stylesheet on `origin/feat/123-serious-house`.
 
 No images are included in this note. The covers, pages and crops reproduce copyrighted art, so they stay in the scratch folder outside the repository.
