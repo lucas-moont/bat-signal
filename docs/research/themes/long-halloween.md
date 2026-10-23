@@ -254,6 +254,21 @@ No lettering from the book is used. Comicraft's balloon and caption faces are co
 
 All fit, with at least 16px to spare in every room (PERMISSION in the watch strip is the tightest). Federo at 11px fits too (PERMISSION 83.2 / 87 at the narrowest).
 
+**As built (#146): Federo 400 at 11px, no tilt, a 1px border** (jury section 9, decision 12), measured by `stampWidth.test.ts` itself, needed / room:
+
+| Word | Margin (101) | Narrowest (87) | Strip (72) |
+|---|---|---|---|
+| BLESSING? | 80.9 | 73.0 | 57.8 |
+| BOTCHED | 76.5 | 70.3 | 53.9 |
+| A WORD? | 72.5 | 66.4 | 50.5 |
+| MESSAGE | 72.4 | 66.2 | 50.4 |
+| ON ICE | 59.8 | 54.5 | 39.5 |
+| NEEDS YOU (the widest) | 86.7 | 78.8 | 62.8 |
+| WORKING / IDLE / SHELL | 76.0 / 43.1 / 52.0 | 69.8 / 39.6 / 47.6 | 53.5 / 25.2 / 32.9 |
+| CASE OPENED (notice card only, 272) | 104.3 | | |
+
+All fit, NEEDS YOU at the narrowest the tightest (8.2px to spare).
+
 ## 6. Voice
 
 **Frame: the Roman's table.** The book opens at a family wedding where Falcone asks a favour, and its killer works through his family. The Voice is the Roman's household speaking to a guest it respects: courteous, quiet, Old-World, a little menacing, and always counting the days to the next holiday. It is neither Bruce's journal (VENGEANCE), Gordon's notebook (BECOME A BAT), a newsroom (PALE MOONLIGHT), an ops room (WATCHFUL PROTECTOR), Alfred (KNIGHTMARE), television (ANCIENT GRACE), a work site (BLUE COLLAR) nor the house (SERIOUS HOUSE). Batman, Gordon and Dent do not speak in it.
