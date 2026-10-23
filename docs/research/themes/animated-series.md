@@ -2,7 +2,7 @@
 
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Animated Series* (Bruce Timm and Eric Radomski, Warner Bros. Animation, Fox Kids, from 1992), the original series only. *The New Batman Adventures* (1997) and its redesign are out (maintainer, LUC-85). It covers palette, type, Voice, Lexicon, Bat-Clawd, the emblem, the disc and the Atmosphere, measured against the seven shipped Themes and the paused SERIOUS HOUSE. Wave 3, round 1 ([`wave-3-brief.md`](wave-3-brief.md) §5–7), issue #143, Linear LUC-85 (Theme issue LUC-86). Terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
-**Decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ.** The decided palette is §3.9.
+**Decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ.** The decided palette is §4.8.
 
 Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image, named by its number in the reference folder (`[12]`). **Measured** = taken off that image with a script (colour medians, pixel boxes). **Inferred** = our reading of what those facts imply. **P** = proposed by us, with no single source.
 
@@ -10,14 +10,14 @@ Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on
 
 - **The Theme in one sentence:** Gotham painted out of black paper, a black Deco skyline under a red sky, Bat-Clawd in the grey suit and blue cape with a blue rim of light, and the sky burning red when something needs you.
 - **Display name:** **DARK DECO.** Credit: "after *Batman: The Animated Series* (1992)". The producers' own name for the show's look, film noir plus Art Deco ([Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series), citing the creators). Second choice: **I AM THE NIGHT** (an episode title and a line of the show's Batman), but it is the other half of the line VENGEANCE alludes to, so the two names would read as a pair.
-- **The central finding, with numbers: the red sky is Clawd's hue.** Every opening-title sky we sampled sits at hue 43–49 (LCh). Clawd `#d77757` sits at 45. A lit red-sky Alarm that passes 4.5:1 lands **9.7 ΔE00** from Clawd. Darker reds clear him but fail contrast. The other two colours of the show are worse: its searchlight yellow sits 5.9–7.7 from PALE MOONLIGHT's gold and 9.2 from BLUE COLLAR's lemon, and its cape blue sits 5.5 from WATCHFUL PROTECTOR's Blue Flame. So the Alarm is a choice between costs (§3.3; decided in §3.9):
+- **The central finding, with numbers: the red sky is Clawd's hue.** Every opening-title sky we sampled sits at hue 43–49 (LCh). Clawd `#d77757` sits at 45. A lit red-sky Alarm that passes 4.5:1 lands **9.7 ΔE00** from Clawd. Darker reds clear him but fail contrast. The other two colours of the show are worse: its searchlight yellow sits 5.9–7.7 from PALE MOONLIGHT's gold and 9.2 from BLUE COLLAR's lemon, and its cape blue sits 5.5 from WATCHFUL PROTECTOR's Blue Flame. So the Alarm is a choice between costs (§4.2; decided in §4.8):
   - **A, recommended: the red sky.** `#ff6420` lit, `#bc3203` as the fill, the sky's dark `#5a1601` as its unlit shade. At rest the sky is that dark red, low behind the skyline. When something needs you it lights. Cost: 9.7 from Clawd (BECOME A BAT's alarm ships at 10.4), 11.2 from SERIOUS HOUSE's scarlet, 16.5 from VENGEANCE's red; the fills sit 7.6 and 8.1 from theirs.
   - **B: the rim blue, pushed off Blue Flame.** `#8b88ff` lit (12.2 from Blue Flame), with the red sky lit at rest as plain light. Cost: the show's blue rim light, its other signature, can no longer sit on Bat-Clawd at rest (the Costume Rule keeps the alarm's hue off him), and a blue lit disc stands beside WATCHFUL PROTECTOR's.
-- **Ground: black paper, neutral.** Radomski had every background painted light on black paper ([Art of the Title](https://www.artofthetitle.com/title/batman-the-animated-series/); [Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). The ground is that paper: `#0a0a0b` / `#161617` / `#2a2a2c`, chroma under 2. No shipped Theme has a neutral ground, but near-blacks sit close: the surface is 2.6 from VENGEANCE's and 3.0 from SERIOUS HOUSE's, the raised tone 7.1 from WATCHFUL PROTECTOR's. A plum-black alternative cleared every shipped ground but was inferred, not sampled, and is withdrawn: it sits 1.5 from Long Halloween's draft (§10).
+- **Ground: black paper, neutral.** Radomski had every background painted light on black paper ([Art of the Title](https://www.artofthetitle.com/title/batman-the-animated-series/); [Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). The ground is that paper: `#0a0a0b` / `#161617` / `#2a2a2c`, chroma under 2. No shipped Theme has a neutral ground, but near-blacks sit close: the surface is 2.6 from VENGEANCE's and 3.0 from SERIOUS HOUSE's, the raised tone 7.1 from WATCHFUL PROTECTOR's. A plum-black alternative cleared every shipped ground but was inferred, not sampled, and is withdrawn: it sits 1.5 from Long Halloween's draft (§11).
 - **Inks:** waiting is the police searchlight's yellow `#fee06b` (sampled, 7.7 from BECOME A BAT's canary and from PALE MOONLIGHT's gold); working is the lightning-lit rim `#b7dbfe` (sampled, 10.9 from PALE MOONLIGHT's steel).
 - **Chest, three options:** **C1, the oval at rest** in a flat cel yellow `#c9a53c` with a black rim and a floating black bat. It never lights. Measured on two colour models: the oval is about **1.4:1** and the bat fills about **75%** of its width, where PALE MOONLIGHT's is 1.75:1 and its bat fills the width. Cost: the yellow sits 8.5 from PALE MOONLIGHT's lit gold. **C1b, the oval dimmed** to the shade [53] photographs (`#907e38`), PALE MOONLIGHT's unlit-brass pattern: 15.6–23.5 from its golds, but only 1.43:1 on the suit, so the black rim carries it. **C2, no oval:** a black bat on the blue-grey suit, backed only by silhouette frames where the oval disappears [03] [04] [10]. No frame of the series shows the suit without the oval. Cost: the chest joins ANCIENT GRACE's and BECOME A BAT's black-bat-on-grey.
 - **Bat-Clawd:** blue-grey suit `#5a6589`, blue cape `#1a3570` (the only blue cape in the app), blue-black cowl, a blue rim of light on cowl and cape, a half-row of cape blue as a collar between his jaw and his chest, a cel-yellow belt. Alarmed, he goes black against the red sky with only his eyes and his rim, as in the opening [07] [09] [10].
-- **Signature pose, two options:** **S1, the landing** [05] [06]: he drops in and lands crouched, the cape spread to the roof on both sides. At 54px a low dome 23 units wide, unlike every shipped Signature and unlike SERIOUS HOUSE's tall needle silhouette. **S2, out of the black** [02] [26]: the cape closed, the head turned, a red disc behind it. Recommended: S1. Both are drawn beside the seven shipped outlines on a board (§7.4).
+- **Signature pose, two options:** **S1, the landing** [05] [06]: he drops in and lands crouched, the cape spread to the roof on both sides. At 54px a low dome 23 units wide, unlike every shipped Signature and unlike SERIOUS HOUSE's tall needle silhouette. **S2, out of the black** [02] [26]: the cape closed, the head turned, a red disc behind it. Recommended: S1. Both are drawn beside the seven shipped outlines on a board (§8.4).
 - **Type:** display **Federo** (a revival of 1909 Feder Grotesk, monoline, the closest open face to the title cards' Deco caps), stamps **Mohave** SemiBold (the pulp-noir condensed caps of cards like "Beware the Gray Ghost"). Both OFL-1.1. Alternative display: **Marcellus SC**, the serif of "I Am the Night", which clears PALE MOONLIGHT's Deco register.
 - **Voice: the title card.** Each Case is set like an episode's card: a short title, in the display face, no narrator and no broadcast. ANCIENT GRACE speaks as TV news; Adam West (round 2) will speak through a narrator. This Theme speaks in cards and says almost nothing. Lexicon: Case · PAGING YOU · GO AHEAD? · BUSTED · ANSWER ME · NEW LEAD · HELD UP.
 - **Atmosphere: a new kind, `skyline`.** A black Deco skyline along the bottom with a few lit windows, a red sky band behind it, and one moving thing: a police blimp drifting across with its two searchlights sweeping [13] [17]. Under Alarm A the haze behind it, the red sky, lights with the alarm (an engine ask: the canvas stops when the pointer leaves, the haze does not).
@@ -62,20 +62,19 @@ The images sit in a scratch folder (`refs-tas/`) outside the repository. Its ind
 4. **[31] "Ext. Gotham Towers – Sunset", Nothing to Fear** (`31-bg-ntf-b02.jpg`): a Deco tower painted out of black, light coaxed from the dark.
 5. **[19] Batman Main Models no. 1, revised Apr 1991** (`19-model-09-batman-main.jpg`): Timm's model: the oval, the belt, the deep-scalloped cape.
 
-## 3. Visual identity, sources and palette
+## 3. Visual identity and sources
 
-The brief's headings 2 (visual identity) and 3 (palette) are merged here because every palette value is argued from the sources in 3.1, and References now sit at §2; the other headings follow the brief's order.
-
-### 3.1 What makes it recognisable
 
 1. **Light painted onto black.** "Radomski issued a standing order to the animation department that all backgrounds be painted using light colors on black paper (as opposed to the industry standard of dark colors on white paper)" ([Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). Art of the Title says he wanted "true black background paper" ([Huls, 2017](https://www.artofthetitle.com/title/batman-the-animated-series/)). Radomski himself: "starting in the dark and coaxing the imagery out with light and color", a technique that "allows the viewers imagination to fill in the blanks" and "allowed us to suggest more detail and atmosphere then actually existed (or we could afford)" ([The World's Finest interview, 2012](https://dcanimated.com/btas/btas-backstage/btas-backstage-interviews/btas-interview-eric-radomski/)). Read: [29]–[35] are exactly this, with no outlines, planes of light on black.
 2. **Dark Deco.** "The distinctive visual combination of 'noir' imagery and Art Deco design was dubbed 'Dark Deco' by the producers" ([Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). It adds 1940s cars, "police 'blimps'" and film-noir sources (same page).
 3. **The red sky and the silhouette.** Art of the Title: "the blood-red skies carry the threat of perpetual violence"; the opening shows no title, and ends with Batman on a rooftop facing the camera, "a force of nature like the lighting behind him" ([Huls](https://www.artofthetitle.com/title/batman-the-animated-series/)). Timm: "We figured anybody in any language would be able to look at it and go, 'Oh, it's Batman'" (same). Read: [03]–[13] are black shapes on an orange-red sky, edged in blue light, with white eyes.
 4. **Timm's angular suit.** Grey body, blue cape, cowl, gloves, boots and trunks, a yellow oval with a black bat, a yellow belt with capsule pouches (Read: [19], [23], [53]). Timm wrote that "the more lines on a character, the less time an animator has to draw those lines correctly" (Dini and Kidd, *Batman Animated*, 1998, as cited by [Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)).
 5. **The title cards.** "Each episode features a unique intertitle" ([Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)); "classic film-like title cards for each episode", lettered after early 20th-century pulp and noir ([Huls](https://www.artofthetitle.com/title/batman-the-animated-series/)). Read: [42]–[50], each a black card with one light and a different hand of lettering.
-6. **The music.** The opening uses Danny Elfman's theme from the 1989 film; Shirley Walker wrote additional music and a later theme in a similar style ([Huls](https://www.artofthetitle.com/title/batman-the-animated-series/); [Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). The brief's "Shirley Walker's orchestral title card" is only half right (§12). No sound of it ships (§11).
+6. **The music.** The opening uses Danny Elfman's theme from the 1989 film; Shirley Walker wrote additional music and a later theme in a similar style ([Huls](https://www.artofthetitle.com/title/batman-the-animated-series/); [Wikipedia](https://en.wikipedia.org/wiki/Batman:_The_Animated_Series)). The brief's "Shirley Walker's orchestral title card" is only half right (§13). No sound of it ships (§12).
 
-### 3.2 The palette, sampled
+## 4. Palette
+
+### 4.1 The palette, sampled
 
 `sample.py` keeps the pixels of a hue band or a box and reports four values: the **median**, the **most chromatic** (median of the top 5% by C\*), the **darkest** and the **brightest** (median of the bottom or top 5% by L\*). All LCh are CIE D65.
 
@@ -104,7 +103,7 @@ The brief's headings 2 (visual identity) and 3 (palette) are merged here because
 
 Measured, and the reason for the TL;DR's warning: every opening sky lands at **h 43–49**; the episode skies [37] [38] are redder (h 21–33). Clawd's orange is h 45.
 
-### 3.3 The Alarm color
+### 4.2 The Alarm color
 
 **A, recommended: the red sky, lit only when something needs you.** The sky is the show's light. Its unlit shade, the dark red behind the skyline, sits at rest, as VENGEANCE's Dried Blood and PALE MOONLIGHT's unlit brass do; the sky lights only for the alarm.
 
@@ -127,7 +126,7 @@ Also measured for A: the unlit sky `#5a1601` is 7.1 from SERIOUS HOUSE's `--bloo
 
 Why A despite 9.7: the alarm hue appears only lit, in stamps, on the disc and in the aura; at rest nothing near him is that bright. BECOME A BAT's trade-paperback red shipped at 10.4 from Clawd and 6.1 from KNIGHTMARE's crimson, an exception recorded by the maintainer ([`jury-wave-2.md`](jury-wave-2.md) §9). A would be a second such exception, and the maintainer should see it on screen beside Bat-Clawd before agreeing.
 
-### 3.4 The grounds
+### 4.3 The grounds
 
 | Option | abyss / surface / raised | LCh of surface | Closest surface | Closest raised | Source |
 |---|---|---|---|---|---|
@@ -136,9 +135,9 @@ Why A despite 9.7: the alarm hue appears only lit, in stamps, on the disc and in
 | Red-black (rejected) | `#1e0b06` / `#30120a` | 9 / 32 / 44 | KNIGHTMARE 3.0 | KNIGHTMARE 5.1, VENGEANCE 5.3 | the sky's darkest |
 | Night violet (rejected) | `#120f1f` / `#1e1a33` | 11 / 297 | BLUE COLLAR 4.5 | BLUE COLLAR 2.8 | [29] [33] skies |
 
-G1 is the literal method of the show and the only family no Theme has. Its cost is the near-black problem every Theme shares: the surface is a near-twin of VENGEANCE's. The palette axis still scores C against VENGEANCE through the alarm and the working ink (§10). G2 clears everything but is our mix, not a sample; it also leans toward the Joker's purple, which the Arkham games may want.
+G1 is the literal method of the show and the only family no Theme has. Its cost is the near-black problem every Theme shares: the surface is a near-twin of VENGEANCE's. The palette axis still scores C against VENGEANCE through the alarm and the working ink (§11). G2 clears everything but is our mix, not a sample; it also leans toward the Joker's purple, which the Arkham games may want.
 
-### 3.5 Token map (Palette A, ground G1)
+### 4.4 Token map (Palette A, ground G1)
 
 Every variable a shipped Theme sets (109, read from `the-dark-knight-returns-1986.css`), plus the new ones this Theme needs. `var(--x)` means the token takes another token's value.
 
@@ -202,17 +201,17 @@ Every variable a shipped Theme sets (109, read from `the-dark-knight-returns-198
 | `--lens-bat` | `var(--abyss)` | | |
 | `--lens-bat-edge` | `var(--cowl-edge)` | | The bat's blue rim on the lit disc. No shipped Theme uses this token (all set it transparent) |
 | `--lens-shade` | as ANCIENT GRACE | | |
-| `--disc-lens` | radial `--lens-core` → `--signal-hot` 50% → `--signal` → `--blood`, under a black skyline band (an inline SVG data URL) | P | §8 |
+| `--disc-lens` | radial `--lens-core` → `--signal-hot` 50% → `--signal` → `--blood`, under a black skyline band (an inline SVG data URL) | P | §9 |
 | `--haze` / `--haze-edge` | `--blood` at 30% / 10%; `--signal` at 35% / 12% while something needs you (engine ask 2) | | The sky low behind the panel; the red sky that lights for the alarm |
 | `--haze-inset` | `auto -10% -30% -10%` | | From the horizon, below |
 | `--grain-opacity` | `0.05` | | The painted paper |
 | `--searchlight` | `var(--ink-soft)` | | The intro's searchlight is the blimp's yellow [13] |
-| `--font-display` / `--font-headline` / `--font-dateline` | `'Federo'` | §4 | |
+| `--font-display` / `--font-headline` / `--font-dateline` | `'Federo'` | §5 | |
 | `--display-weight` / `--headline-weight` / `--dateline-weight` | `400` | | |
-| `--font-stamp` | `'Mohave'` | §4 | |
+| `--font-stamp` | `'Mohave'` | §5 | |
 | `--stamp-weight` | `600` | | |
 | `--font-body` / `--font-type` / `--font-report` / `--font-label` | Barlow Semi Condensed | shared | |
-| `--font-case-title` | `var(--font-display)` | | A Case's title is its title card (§5) |
+| `--font-case-title` | `var(--font-display)` | | A Case's title is its title card (§6) |
 | `--font-mono` | JetBrains Mono | shared | |
 | `--case-title-weight` | `400` | | Federo has one weight |
 | `--heading-case` | `uppercase` | | |
@@ -224,15 +223,15 @@ Every variable a shipped Theme sets (109, read from `the-dark-knight-returns-198
 | `--stamp-border` / `--stamp-size` / `--stamp-mask` | `1px` / `12px` / `none` | | |
 | **new:** `--sky` | `var(--blood)` (A) | | The sky band at rest |
 | **new:** `--skyline` / `--blimp` | `#050505` | | The Atmosphere's silhouettes |
-| **new:** `--window` | `var(--ink-soft)` | | Lit windows, at low alpha |
+| **new:** `--window` | `var(--bone)` | | Lit windows, at low alpha. Not yellow: yellow is the decided alarm (§4.8) |
 | **new:** `--beam` | `var(--bone)` | | The blimp's searchlights, 6–8% |
 | **new:** `--disc-bat-edge` | `var(--cowl-edge)` | | The unlit disc's bat rim (engine ask) |
 
-### 3.6 What `--signal` paints
+### 4.5 What `--signal` paints
 
 Only the alarm: lit stamps (GO AHEAD?, BUSTED), the lit disc and the lit sky band, the count box, the aura. The wordmark is Bone. Focus rings, toggles and progress take `--accent` and `--ink-live`. The red sky is never lit at rest; at rest it is `--blood` at low alpha, like VENGEANCE's glow from below.
 
-### 3.7 WCAG contrast (computed)
+### 4.6 WCAG contrast (computed)
 
 Every text colour on all 11 grounds, Palette A on G1. Aliases share their source's row: `--signal-hot` and `--stamp-hot` are `--ink-hot`; `--accent` is `--bone`; `--bone-dim` is `--ink`; `--brick` and `--stamp-soft` are `--ink-soft`; `--in-progress` is `--ink-live`; `--ash-dim`, `--chevron` and `--stamp-quiet` are `--ash`.
 
@@ -247,7 +246,7 @@ Every text colour on all 11 grounds, Palette A on G1. Aliases share their source
 
 All pass 4.5:1; the tightest are `--ink-hot` (4.57) and `--ash` (4.61) on the hover ground. `--on-signal` (Bone) on `--signal`: 4.81. On G2 (plum) every minimum rises (lowest 5.46). Palette B on G1: lowest 4.55 (`#8b88ff` on the hover ground), its orange waiting ink 6.46.
 
-### 3.8 ΔE00 against every Theme (Palette A, G1)
+### 4.7 ΔE00 against every Theme (Palette A, G1)
 
 | Theme | abyss | surface | raised | alarm hot | alarm fill | working | waiting | suit | bone |
 |---|---|---|---|---|---|---|---|---|---|
@@ -263,7 +262,7 @@ All pass 4.5:1; the tightest are `--ink-hot` (4.57) and `--ash` (4.61) on the ho
 
 Inside the Theme: alarm to waiting 39.0, alarm to working 47.2, waiting to working 45.9. The waiting yellow is also 7.7 from PALE MOONLIGHT's gold alarm (a waiting ink beside another Theme's alarm, the Wave 1 §10.5 case). The blue cape `#1a3570` is at least 22.3 from every shipped cape and suit.
 
-### 3.9 Decided 2026-10-23: the yellow alarm
+### 4.8 Decided 2026-10-23: the yellow alarm
 
 The maintainer gave orange to HOLIDAY and made this Theme's alarm the series' searchlight yellow, under a new rule: colours every version of Batman shares may recur across Themes, so the 7.7 from PALE MOONLIGHT's gold is accepted ([`jury-wave-3.md`](jury-wave-3.md) §9, items 1, 2, 10 and 12). Costed here; every number is ΔE00 computed from hex.
 
@@ -302,7 +301,7 @@ One near pair the record should note: **BLUE COLLAR's lemon, 9.2**, just under t
 - Contrast on all 11 grounds (G1), every text token recomputed: Bone and `--ink-live` min 11.16, `--ink` 7.68, `--ink-hot` 10.37, **`--ink-soft` 9.40**, `--ash` 4.61 (the tightest, unchanged), each on `--notice-hover-top`. No exception.
 - `--waiting-rule` follows the waiting ink: `#2a3f6a` (P, the rim in shadow).
 
-**The blue rim and the cobalt cape.** [`jury-wave-3.md`](jury-wave-3.md) §3.6 tied them to Alarm B: under a blue alarm, the cape `#1a3570` was the alarm's unlit relative (16.3 from B's fill). B is off, so the question is gone. The cape (80.8 from the yellow alarm) and the rim `#3f63c9` (69.7) are ordinary suit colours again, and the rim stays on Bat-Clawd at rest, as §7.1 draws it. Nothing in the suit changes.
+**The blue rim and the cobalt cape.** [`jury-wave-3.md`](jury-wave-3.md) §3.6 tied them to Alarm B: under a blue alarm, the cape `#1a3570` was the alarm's unlit relative (16.3 from B's fill). B is off, so the question is gone. The cape (80.8 from the yellow alarm) and the rim `#3f63c9` (69.7) are ordinary suit colours again, and the rim stays on Bat-Clawd at rest, as §8.1 draws it. Nothing in the suit changes.
 
 **The bright oval (§9.2) under the Alarm-color rule.** The rule as decided (§9.6): an unlit relative may dress the suit at about 15 or more from the fill, the aura only when alarmed.
 
@@ -314,6 +313,21 @@ One near pair the record should note: **BLUE COLLAR's lemon, 9.2**, just under t
 
 The oval sits **at the line**: 15.0 from the fill, 14.6 from the lit ink. It is not a dark relative, as PALE MOONLIGHT's brass is (27.2 from its fill); it is a bright yellow. If ~15 is the floor, it passes by a hair. If the board shows the oval reading as lit, the fallback `#c4a03a` keeps it bright and clears 16. The lit disc must not look like the oval at rest: it is a pale beam with a white core and a black skyline, not a yellow oval with a bat (that is PALE MOONLIGHT's lit lens). Decide on screen: the oval at rest beside a lit stamp and a lit disc.
 
+**Checked as a rule, not only as a number.** CONTEXT.md: the Alarm color "appears nowhere else". Under a yellow alarm four things at rest are yellow or near it. Their state, and the options:
+
+| At rest | Hex | vs fill `#fee055` / hot `#fee06b` | Verdict |
+|---|---|---|---|
+| Lit windows, intro searchlight | were `#fee06b` | 0 | Moved to Bone (below). Done |
+| Blimp beams | Bone | | Never yellow |
+| Belt | `#be9336` | 20.6 / 20.1 | A relative at 15+, as PALE MOONLIGHT's brass belt. Stays |
+| Oval | `#c9a53c` | **15.0 / 14.6** | Under 15 from the lit ink: fails a strict reading |
+
+- **(a) Keep the yellow alarm; push the oval to a relative at 15+ from both.** `#c4a03a` clears it by a hair (16.5 / 16.1, 2.31:1 on the suit). **`#b8963a`** clears it plainly (**19.7 / 19.2**), still reads as a bright cel yellow (L\* 64 against the alarm's 90; 2.04:1 on the suit, the bat 7.24:1 on it), and is the nearest of all these to the cel as photographed ([53] `#9f8531`: 6.6). It is 14.6 from the official licensed art [56], which is lighter. The dimmed `#907e38` (29.0) also passes but reads as brass (1.43:1 on the suit). The belt stays `#be9336`.
+- **(b) Back to the rim blue B** (`#8b88ff`): the oval and belt are free again, but it reopens §9.1, sits 10.9 from West's violet and 12.2 from Blue Flame, and the cobalt cape becomes its unlit relative (16.3 from its fill).
+- **(c) A paler alarm**, the beam's white-yellow core (`#fff3a0`): 19.5 from the oval as drafted, but **4.7** from BECOME A BAT's canary waiting ink. Rejected. Dropping the oval (C2) contradicts §9.2 and every lit frame.
+
+**Recommended: (a) with `#b8963a`.** It keeps the decided alarm and a bright oval, clears the rule with room, and is closer to the 1992 cel than the drafted oval was.
+
 **What else changes, now that yellow is the alarm:**
 - **The Atmosphere's yellow goes.** The skyline's lit windows (`--window`) and the intro's `--searchlight` were the waiting yellow; at rest they would now show the Alarm color. Both become Bone at low alpha. The blimp's beams were already Bone.
 - **The red sky becomes plain light, lit at rest:** `--haze` `#b42f04` (S [04], most chromatic sky) at about 22%, `--haze-edge` at 8%. Engine ask 2 (the haze following a needs-you state) is dropped. That red sits 25.3 from HOLIDAY's lit orange and 12.6 from its fill, as one Theme's resting light against another's alarm.
@@ -321,9 +335,9 @@ The oval sits **at the line**: 15.0 from the fill, 14.6 from the lit ink. It is 
 - **Aura:** `aura: 'alarmed'`, as BLUE COLLAR and BECOME A BAT ship it. A yellow halo during the Signature reveal would sit beside the bright oval and read as lit.
 - **Type** (§9.12): Marcellus SC for display and stamps; Federo goes to HOLIDAY's stamps; Mohave is dropped.
 
-## 4. Type
+## 5. Type
 
-The title cards change their lettering every episode [42]–[50]: tall monoline Deco caps ("Prophecy of Doom" [46], "Shadow of the Bat" [49]), a heavy condensed gothic ("Beware the Gray Ghost" [45]), a plain serif ("I Am the Night" [48]), brush hands ("Nothing to Fear" [43]). The series logo is wide-spaced thin Deco caps [26]. Their typefaces are not named by any source we found (§12). The font choices below rest on the frames only; the one official title card is [57] ("Two-Face", tall condensed caps). The proposal picks the two families the cards use most, without copying a card.
+The title cards change their lettering every episode [42]–[50]: tall monoline Deco caps ("Prophecy of Doom" [46], "Shadow of the Bat" [49]), a heavy condensed gothic ("Beware the Gray Ghost" [45]), a plain serif ("I Am the Night" [48]), brush hands ("Nothing to Fear" [43]). The series logo is wide-spaced thin Deco caps [26]. Their typefaces are not named by any source we found (§13). The font choices below rest on the frames only; the one official title card is [57] ("Two-Face", tall condensed caps). The proposal picks the two families the cards use most, without copying a card.
 
 A board sets the cards' lettering beside 15 open candidates, with PERMISSION measured in each (`boards-tas/fonts.png`, scratch).
 
@@ -336,7 +350,7 @@ A board sets the cards' lettering beside 15 open candidates, with PERMISSION mea
 
 **Alternative display: Marcellus SC** (OFL-1.1), a serif with flared caps, close to "I Am the Night" [48]. It is not Deco, which is its point: PALE MOONLIGHT's Limelight is Art Deco display, so Federo against Limelight scores "~" on the Type axis (same register), and Marcellus SC would score C. Also considered: Poiret One (closest to the thin logo [26], but too light at 20px), League Gothic and Bebas Neue (condensed gothics, too close to VENGEANCE's Anton), Six Caps and Dorsa (too narrow to read at stamp size). None of these is taken by a shipped Theme or by SERIOUS HOUSE.
 
-## 5. Voice
+## 6. Voice
 
 **Frame: the title card.** Each episode opens on a black card with a short title in its own lettering and one light behind it, and nothing is said. The Voice is that: short noun-phrase titles, set in the display face, no narrator, no anchor, no "live". It is terse because the show is.
 
@@ -358,7 +372,7 @@ Sample lines (P = ours):
 - Stalled sentence: "Held up. Nothing new from Claude for a while." (P)
 - One line, once a session, as the caption of the Signature click: **"I am the night."** Four words of the show's Batman, from "Nothing to Fear" (1992): Wikiquote lists "I am vengeance, I am the night, I AM BATMAN!" under that episode ([Wikiquote](https://en.wikiquote.org/wiki/Batman:_The_Animated_Series)). VENGEANCE's name echoes the first three words, so the caption keeps only "I am the night." It is the only quoted line.
 
-## 6. Lexicon
+## 7. Lexicon
 
 | Standard | Themed | Check |
 |---|---|---|
@@ -372,11 +386,11 @@ Sample lines (P = ours):
 
 Widths in Mohave 600 at 12px and 0.12em (PIL, approximate): PAGING YOU 66, GO AHEAD? 61.5, ANSWER ME 64.5, NEW LEAD 53, HELD UP 45, BUSTED 42, CASE OPENED 74, PERMISSION 68. `stampWidth.test.ts` decides. The tray and toasts keep the standard words.
 
-## 7. Bat-Clawd
+## 8. Bat-Clawd
 
 The body keeps its pixels, white eyes and orange jaw (DESIGN.md, Costume Rule). One unit is about 1.9px at 54px.
 
-### 7.1 The suit (refs [19] [23] [53]; pieces checked against the official [56]; the colour from the frames [01] [06] [08])
+### 8.1 The suit (refs [19] [23] [53]; pieces checked against the official [56]; the colour from the frames [01] [06] [08])
 
 | Piece | Grid | Colour | Reads at 54px? |
 |---|---|---|---|
@@ -391,15 +405,15 @@ The body keeps its pixels, white eyes and orange jaw (DESIGN.md, Costume Rule). 
 | Cape | behind, from the shoulders | `--cape` `#1a3570` with the blue rim; 1.54:1 on the surface, the rim carries it | Yes |
 | Cape hem | **three deep scallops a side**, each about 1.5 units deep, sharp points between [19] [20] [04] | | The depth counts (1.5 units). Against PALE MOONLIGHT's shallow arcs it is the depth and the blue that tell them apart; decide on screen |
 
-### 7.2 The chest: two options
+### 8.2 The chest: two options
 
 - **C1, the oval at rest** [19] [23] [53]. An oval 4.2 × 3 units (1.4:1) at (8, 7), y 5.5–8.5, a 0.5-unit black rim, filled `--emblem-plate` `#c9a53c` (2.44:1 on the suit), with the bat inset at 75% of the oval's width (3.2 × about 1.9 units) in `--chest` black (8.67:1 on the yellow). The ears and scallops of the bat are under a unit: at 54px it reads as a dark wedge in a yellow oval. **It never lights**: when something needs you the aura and the sky light, not the oval. Measured on [53] and [23]: the yellow fill is 1.37–1.40:1, the bat 75% of its width, floating with yellow all round. PALE MOONLIGHT's oval is 1.75:1 and its bat touches the rim. Cost: the at-rest yellow is 8.5 from PALE MOONLIGHT's lit gold and 9.3 from its fill, so beside it in the picker it may read as PALE MOONLIGHT lit. Wave 1 barred the oval only as an alarm; this keeps to that.
 - **C1b, the oval dimmed** [51] [53]. The same oval and inset bat, filled with the oval as [53] photographs it, `#907e38` (S [53], median of the oval), the way PALE MOONLIGHT keeps its unlit brass: the oval is there, in shadow, and never lights. [51] shows the oval half in the cape's shadow. Measured: 15.6 from PALE MOONLIGHT's `--ink-soft`, 16.5 from its lit fill, 23.5 from its gold, 16.9 from its brass, so it removes C1's 8.5 cost. The black bat reads on it at 5.07:1. Its cost is the suit: only 1.43:1 on `#5a6589`, so it reads by its hue and lives or dies by the black rim, as PALE MOONLIGHT's oval did (jury wave 1 §6). It is the most literal reading of the brief's "the oval unlit at rest".
-- **C2, no oval.** A black bat 4.5 × 3 units at (8, 6.9) on the suit (3.55:1). Backing: only frames where the suit is in shadow or silhouette [03] [04] [10] [51]. No frame, model or cel of the 1992 series shows the suit lit without the oval. Cost: the chest joins ANCIENT GRACE's and BECOME A BAT's black bat on grey; the blue cape, collar and rim still separate the whole figure (§10).
+- **C2, no oval.** A black bat 4.5 × 3 units at (8, 6.9) on the suit (3.55:1). Backing: only frames where the suit is in shadow or silhouette [03] [04] [10] [51]. No frame, model or cel of the 1992 series shows the suit lit without the oval. Cost: the chest joins ANCIENT GRACE's and BECOME A BAT's black bat on grey; the blue cape, collar and rim still separate the whole figure (§11).
 
 Recommended: **C1 or C1b** (decide on screen: C1 is the cel as painted, C1b keeps further from PALE MOONLIGHT's gold), because the oval is the 1992 suit and its difference from PALE MOONLIGHT's (rounder, the bat inset, flat cel yellow, never lit) is real at the disc and masthead sizes. Decide both on screen, beside PALE MOONLIGHT's.
 
-### 7.3 Poses
+### 8.3 Poses
 
 | Mood | Pose | Source | Grid notes |
 |---|---|---|---|
@@ -408,7 +422,7 @@ Recommended: **C1 or C1b** (decide on screen: C1 is the cel as painted, C1b keep
 | alarmed | **Black on red**: the suit, belt and chest all go `--cowl` black; only the white eyes, the orange jaw, the blue rim and the red aura show, the cape flung open behind | [07] [09] [10] | A per-pose legend; no engine work. The aura in the alarm red is the lit sky behind him. SERIOUS HOUSE is a silhouette at rest; this one only when alarmed |
 | perch | the Signature | | |
 
-### 7.4 The Signature pose
+### 8.4 The Signature pose
 
 A board renders the held step of all seven shipped Signatures from `suits.ts`, the shared sleeping pose and PALE MOONLIGHT's giant bat, beside both drafts, at 54px and 3x (`boards-tas/outlines.png`, scratch; `tools-tas/outlines.ts` bundles the real `suits.ts`).
 
@@ -423,11 +437,11 @@ A board renders the held step of all seven shipped Signatures from `suits.ts`, t
 
 Rejected: the opening's last shot [01] (a front-on stand, taken twice, with the cape blown right like KNIGHTMARE's coat and lightning behind like ANCIENT GRACE's bolt), and the giant bat [04] (PALE MOONLIGHT's alarmed pose).
 
-The click caption is "I am the night." once a session (§5).
+The click caption is "I am the night." once a session (§6).
 
-## 8. Emblem and the disc
+## 9. Emblem and the disc
 
-**The bat** (C1's chest and the masthead), drawn by us after [53] [23] [19]: wings spread almost level, the tips at the outer corners slightly raised and pointed, two tall ears close together with a flat crown, two scallops under each wing, a long central point below. About 1.5:1 measured on [53] (1.75:1 on [23], a smaller sample). It floats inside the oval at 75% of its width. This is not BAT_1989 (which fills its oval) nor the bat of the show's licensing art ([logos page, image 12](https://dcanimated.com/WF/batman/btas/backstage/logosgraphicdesigns/12.gif), not in the folder), whose wings meet the ring. The shape must be traced from a sharper source before the build (§12).
+**The bat** (C1's chest and the masthead), drawn by us after [53] [23] [19]: wings spread almost level, the tips at the outer corners slightly raised and pointed, two tall ears close together with a flat crown, two scallops under each wing, a long central point below. About 1.5:1 measured on [53] (1.75:1 on [23], a smaller sample). It floats inside the oval at 75% of its width. This is not BAT_1989 (which fills its oval) nor the bat of the show's licensing art ([logos page, image 12](https://dcanimated.com/WF/batman/btas/backstage/logosgraphicdesigns/12.gif), not in the folder), whose wings meet the ring. The shape must be traced from a sharper source before the build (§13).
 
 **The masthead:** the bat inside the oval's rim, both in `--ash`, no yellow (option E1), or the bat alone (E2). Decide on screen.
 
@@ -438,18 +452,18 @@ The click caption is "I am the night." once a session (§5).
 
 Tray and toast icons stay the default emblem (jury wave 1 §2).
 
-## 9. Atmosphere
+## 10. Atmosphere
 
 **A new kind, `skyline`** (engine ask). A still scene with one moving thing.
 
-- **Still:** a black Deco skyline (`--skyline`) along the bottom 25–30% of the panel: stepped setbacks, spires, a few lit windows in `--window` at 20–30% alpha [05] [17] [18]. Behind it, a sky band from the skyline up to about 55% of the height, a vertical gradient from `--sky` to transparent. At rest `--sky` is `--blood`, the unlit red.
+- **Still:** a black Deco skyline (`--skyline`) along the bottom 25–30% of the panel: stepped setbacks, spires, a few lit windows in `--window` (Bone) at 20–30% alpha [05] [17] [18]. Behind it, a sky band from the skyline up to about 55% of the height, a vertical gradient from `--sky` to transparent. At rest `--sky` is `--blood`, the unlit red.
 - **What moves:** a police blimp (`--blimp`, about 14 × 5px with a gondola) drifting across the upper third at about 1px every two ticks, its two searchlight beams (`--beam` Bone at 6–8%, cones about 10° wide) sweeping a few degrees as it goes [13] [17]. One crossing, then a long gap (about a minute). Shared 8 fps clock, the same gating as every Theme (moves while the pointer is over the window and for a few seconds after news; nothing under reduced motion).
 - **The light:** red, low, from the horizon behind the skyline. Under Alarm A, **the red sky lights while something needs you**, as the opening paints it. It cannot be the canvas that lights: the canvas runs only while the pointer is over the window and for a few seconds after news, and never under reduced motion, so it would be gone exactly when the alarm waits. So it is the CSS haze, which is always there (VENGEANCE's red glow is its haze too): `--haze` and `--haze-edge` switch from `--blood` to `--signal` (at about 35% / 12%) while something needs you, and the canvas skyline sits over it, black against whichever sky is behind. Engine ask 2: a needs-you state the haze can read (a class or attribute on the panel's root). Without it, the sky stays unlit and only the disc, stamps and aura light.
 - **Against the neighbours:** VENGEANCE has rain and a red glow from below: here nothing falls, the light is a sky band behind cut-out towers, and it lights only for the alarm. WATCHFUL PROTECTOR has lit-window slabs (glass grids, mercury light, one window switching): here the towers are black silhouettes with stepped Deco tops, a red band, and a blimp crossing. The intro's searchlight already sweeps (`BatSignalIntro.css`); the blimp's beams are smaller and dimmer. Bats as weather (BLUE COLLAR) and static (ANCIENT GRACE) are not used.
 
 **The look in the 320x440 panel** (answering brief §6): the Deco lives in two places only, the skyline and the type. PALE MOONLIGHT owns Art Deco as ornament and gold; this Theme takes Deco as black silhouettes and monoline caps, with no ornament on the panel's chrome. The cards are lit from above and fade to black (`--notice-top` → `--notice-foot`), light coaxed out of black paper. An optional engine ask: a 1px rim of `--cowl-edge` on a card's top edge, the show's edge light; without it, `--line` stays neutral.
 
-## 10. Distinctiveness
+## 11. Distinctiveness
 
 Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly different, ~ = close, = = same; at least 3 C against every Theme. Palette A, G1, C1, S1, Federo / Mohave.
 
@@ -466,22 +480,22 @@ Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly
 
 **Against the other round-1 drafts**, measured from their `## Claims` blocks once they appeared ([`long-halloween.md`](long-halloween.md), [`arkham-games.md`](arkham-games.md); this dossier's choices were made before reading them):
 
-- **Three orange alarms.** Long Halloween's jack-o'-lantern `#fe7500` and the Arkham games' detective orange `#fe7400` are **0.3** apart. This Theme's red sky `#ff6420` is **7.0** and **6.7** from them (fills 11.0 and 12.7). All three sit at Clawd's hue. Only one of the three can keep an orange; if either of the others keeps it, **Alarm B (the rim blue, 51.2 from both) becomes this Theme's recommendation**, with its cost (§3.3).
+- **Three orange alarms.** Long Halloween's jack-o'-lantern `#fe7500` and the Arkham games' detective orange `#fe7400` are **0.3** apart. This Theme's red sky `#ff6420` is **7.0** and **6.7** from them (fills 11.0 and 12.7). All three sit at Clawd's hue. Only one of the three can keep an orange; if either of the others keeps it, **Alarm B (the rim blue, 51.2 from both) becomes this Theme's recommendation**, with its cost (§4.2).
 - **G2 plum is withdrawn.** Long Halloween's wine-black `#1c0b14` / `#2e1222` sits **1.5 / 1.2** from it. G1 black paper sits 10.0 / 16.1 from Long Halloween and 10.8 / 18.0 from the Arkham games' green.
 - **Two crouches.** The Arkham games' Signature is a crouch on a gargoyle, about 9 units tall, the cape falling on one side, lopsided. S1 here is symmetric, a dome about 23 units wide and 9.6 tall, the cape on both sides to the roof. Different outlines at 54px, the same idea; put both on one board. If the maintainer wants one crouch only, S2 is this Theme's fallback.
 - **Two blue-and-grey suits.** Long Halloween's draft has a blue cowl, blue-grey suit, blue mantle and a gold capsule belt, which is close to this suit (Sale drew the classic suit too). Its long ears (to y −1) and huge pooling cape separate the silhouettes; the colours need a side-by-side check.
 - **Federo** is Long Halloween's stamp option. If it takes Federo, this Theme moves to Marcellus SC for display.
 - **Searchlights.** The Arkham games propose an optional `searchlights` painter; this Theme's blimp beams could share it, the blimp being ours.
 
-## 11. Legal note
+## 12. Legal note
 
 - **Trademarks (DC, Warner Bros.):** the bat-in-oval, "Batman", "Gotham". Credit the emblem as the other Themes do. The series' logo ("BATMAN" in wide Deco caps, "The Animated Series" in script [26]) is not used, and our wordmark stays "BAT-SIGNAL" in Federo.
 - **Copyright to avoid:** any frame, cel, model sheet or background (the reference folder stays out of the repository); tracing a model sheet or a title card; the title cards' lettering; Danny Elfman's theme and Shirley Walker's music (the mood may be orchestral, the notes may not); Kevin Conroy's voice; dialogue beyond "I am the night." and the episode titles used as short phrases ("Nothing to fear", the allusion in "Paging you").
 - **Style, free to use:** Art Deco and film noir as genres; light painted on black; a red sky; a police airship; white eyes on a black mask; our own words.
-- **"Dark Deco"** is the producers' descriptive phrase. We found no trademark on it (§12).
+- **"Dark Deco"** is the producers' descriptive phrase. We found no trademark on it (§13).
 - **Fonts:** Federo, Mohave (and Marcellus SC if chosen) are OFL-1.1; bundle their licences.
 
-## 12. Unverified items
+## 13. Unverified items
 
 - **The title cards' typefaces.** No source names them, official or not. Federo and Mohave are chosen by eye from the board.
 - **Official colour.** The only official full-colour suit [56] is a modern licensed print: lighter and bluer than the frames. Our suit values follow the frames; *Batman Animated* (1998), which reproduces Timm's model sheets, was not consulted.
@@ -495,7 +509,7 @@ Scored by the jury's rules ([`jury-wave-2.md`](jury-wave-2.md) §1): C = clearly
 - **Federo and Mohave widths** are PIL measurements at whole pixel sizes; `stampWidth.test.ts` decides.
 - **The Wave 1 claim on Art Deco.** [`wave-2-brief.md`](wave-2-brief.md) §3 lists "Art Deco" as PALE MOONLIGHT's; [`wave-3-brief.md`](wave-3-brief.md) §5 gives Art Deco Gotham to this Theme. This dossier splits it (ornament and gold there, silhouette and monoline type here); the maintainer confirms.
 
-## 13. Sources
+## 14. Sources
 
 - The World's Finest (dcanimated.com), *Batman: The Animated Series* sections: [intro and credits](https://dcanimated.com/btas/btas-media/btas-media-intro-credits/), [model sheets](https://dcanimated.com/btas/btas-backstage/btas-backstage-models/), [backgrounds](https://dcanimated.com/btas/btas-backstage/btas-backstage-backgrounds/), [style guide](https://dcanimated.com/btas/btas-backstage/btas-backstage-style-guide/), [HD title cards](https://dcanimated.com/btas/btas-media/btas-media-hd-title-cards/), [gallery](https://dcanimated.com/btas/btas-media/btas-media-gallery/), [logos and graphic designs](https://dcanimated.com/btas/btas-backstage/btas-backstage-logos/). Every image is listed with its URL in the folder's `INDEX.md`.
 - Official images and listings: DC Shop, [title sequence storyboard print](https://shop.dc.com/products/batman-the-animated-series-title-sequence-storyboard-mightyprint-wall-art) ("drawn by Bruce Timm in 1992"), [Batman standee](https://shop.dc.com/products/batman-the-animated-series-batman-life-size-cardboard-cutout-standee), ["Two-Face" framed stills](https://shop.dc.com/products/batman-the-animated-series-two-face-framed-wall-art) ("Dark Deco"); Warner Bros. Home Entertainment's 2018 Blu-ray press release and image on [Blu-ray.com](https://m.blu-ray.com/news/newsitem.php?id=23673).
@@ -515,7 +529,7 @@ Decided state, 2026-10-23 ([`jury-wave-3.md`](jury-wave-3.md) §9).
 - Waiting ink (ink-soft) / working ink (ink-live): lightning-lit rim #b7dbfe (S [01]; min 9.40:1 on all 11 grounds; nearest other ink PALE MOONLIGHT's steel 10.9) / Bone #ebe9e4
 - Display / stamp / report faces: Marcellus SC / Marcellus SC / Barlow Semi Condensed (§9.12)
 - Suit in one line: blue-grey suit #5a6589, cobalt cape, gloves, boots and trunks #1a3570, blue-black cowl #0b1030, a blue rim of light #3f63c9 at rest (no longer an alarm relative), a cape-blue collar under the jaw, gold belt #be9336 (20.6 from the fill), three deep scallops a side; alarmed, all black but eyes, jaw and rim, with the yellow aura
-- Chest emblem and disc in one line: a bright 1.4:1 oval #c9a53c with an inset black bat, never lit (§9.2), 15.0 from the alarm's fill, at the rule's line (fallback #c4a03a, 16.5); disc unlit black paper with the bat's blue rim, lit as a searchlight lens (white core into the yellow) with a black Deco skyline and the bat
+- Chest emblem and disc in one line: a bright 1.4:1 oval #b8963a with an inset black bat, never lit (§9.2), 19.7 / 19.2 from the alarm's fill and ink (the drafted #c9a53c sat at 15.0 / 14.6, under the rule); disc unlit black paper with the bat's blue rim, lit as a searchlight lens (white core into the yellow) with a black Deco skyline and the bat
 - Signature in one line, and its outline at 54px: S1 the landing: he drops onto a roof and crouches, the cape spread to the roof both sides; a low dome about 23 units wide, ears near its top (both crouches stay, §9.5)
 - Atmosphere (kind, and what moves): new kind `skyline`: a still black Deco skyline with a few Bone windows over a red sky lit at rest (the haze, #b42f04); a police blimp drifts across with two Bone searchlight beams (the searchlights are TAS's, §9.5)
 - Voice in one line, and the Lexicon's seven words: the title card: short titles in the display face, no narrator, no broadcast, one line "I am the night."; Case · PAGING YOU · GO AHEAD? · BUSTED · ANSWER ME · NEW LEAD · HELD UP (with jury-wave-3.md §4's fixes)
