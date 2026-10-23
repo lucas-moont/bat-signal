@@ -589,7 +589,7 @@ describe('the colony', () => {
   })
 })
 
-// HOLIDAY's torn calendar (long-halloween.md, section 10; jury-wave-3.md, section 9, decision 15):
+// HOLIDAY's torn calendar (long-halloween.md, section 10; jury-wave-3.md, section 9, decision 16):
 // the ash painter drops the leaves of a tear-off calendar in place of its motes, under its pumpkin
 // moon, and each one swings from side to side as it falls, as a torn leaf does (the maintainer's ask).
 describe('the calendar pages', () => {
@@ -620,9 +620,13 @@ describe('the calendar pages', () => {
   const firstPages = (frames: { shapes: Shape[] }[][]) =>
     frames.map((fills) => fills.map((f) => pagesOf(f.shapes)[0]!))
 
-  /** A calendar with no wind, so a page's sideways moves are its swing alone. */
+  /** A calendar with no wind and no fall, so a page's moves are its swing alone. */
   const still = () => {
-    const painter = painterFor({ ...PAGES, depths: PAGES.depths.map((d) => ({ ...d, wind: 0 })) }, seeded())
+    // Nor any fall: a page that fell off the bottom would come back somewhere new.
+    const painter = painterFor(
+      { ...PAGES, depths: PAGES.depths.map((d) => ({ ...d, wind: 0, fall: 0 })) },
+      seeded(),
+    )
     painter.recolor(colorOf)
     painter.resize(320, 440)
     return painter
@@ -683,17 +687,48 @@ describe('the calendar pages', () => {
       }
   })
 
-  // A falling leaf leans into its swing (the maintainer's ask): never past its tilt.
-  it('leans into its swing, never past its tilt', () => {
+  // A falling leaf swings like a pendulum hung from its top (the maintainer's ask): swung right, its
+  // bottom trails right of its top, and it never leans past its tilt.
+  it('swings like a pendulum hung from its top, never leaning past its tilt', () => {
     const tilt = 0.3
-    const painter = painterFor({ ...PAGES, pages: { ...PAGES.pages!, tilt } }, seeded())
+    const painter = painterFor(
+      {
+        ...PAGES,
+        depths: PAGES.depths.map((d) => ({ ...d, wind: 0, fall: 0 })),
+        pages: { ...PAGES.pages!, tilt },
+      },
+      seeded(),
+    )
     painter.recolor(colorOf)
     painter.resize(320, 440)
-    /** The angle of a page's top edge: its month's first two corners. */
-    const lean = (shape: Shape) => Math.atan2(shape[1]![1] - shape[0]![1], shape[1]![0] - shape[0]![0])
-    const leans = fillsOver(painter, period).map((fills) => lean(fills[0]!.shapes[0]!))
-    for (const a of leans) expect(Math.abs(a)).toBeLessThanOrEqual(tilt + 1e-9)
-    expect(Math.max(...leans.map(Math.abs))).toBeGreaterThan(tilt / 2)
+    /** A page's top: the middle of its month's first two corners, and the angle between them. */
+    const top = (shape: Shape) => ({
+      x: (shape[0]![0] + shape[1]![0]) / 2,
+      lean: Math.atan2(shape[1]![1] - shape[0]![1], shape[1]![0] - shape[0]![0]),
+    })
+    const tops = fillsOver(painter, period).map((fills) => top(fills[0]!.shapes[0]!))
+    const line = (Math.max(...tops.map((t) => t.x)) + Math.min(...tops.map((t) => t.x))) / 2
+    for (const { x, lean } of tops) {
+      expect(Math.abs(lean)).toBeLessThanOrEqual(tilt + 1e-9)
+      // Right of its line, it leans so its bottom trails right: its top edge rises to the right.
+      if (Math.abs(x - line) > 0.5) expect(Math.sign(lean)).toBe(-Math.sign(x - line))
+    }
+    expect(Math.max(...tops.map((t) => Math.abs(t.lean)))).toBeGreaterThan(tilt / 2)
+  })
+
+  // Wholly off the canvas before it comes round, even swung and leaning toward the side it left by.
+  it('comes back in at the far side only once wholly past the near one', () => {
+    const painter = painterFor({ ...PAGES, pages: { ...PAGES.pages!, swing: 6, tilt: 0.35 } }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const frames = fillsOver(painter, 400).map((fills) => fills.flatMap((f) => pagesOf(f.shapes)))
+    for (let t = 1; t < frames.length; t++)
+      frames[t]!.forEach((page, i) => {
+        const was = frames[t - 1]![i]!
+        // Came round from the right (not fallen back to the top, somewhere new): where it was, it
+        // was off the canvas already.
+        if (page.x < was.x - 160 && page.y > was.y - 1) expect(was.x).toBeGreaterThanOrEqual(320 - 1e-9)
+      })
   })
 
   // Not as one: neighbours swing out of step, so the calendar never sways like a curtain.
