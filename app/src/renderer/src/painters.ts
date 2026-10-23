@@ -158,7 +158,7 @@ function moon({ color: variable, alpha, at, radius, carved, glow }: MoonBackdrop
       if (carved) for (const cut of CUTS) trace(ctx, cut, cx, cy, radius)
       ctx.fill('evenodd')
       // The candle inside, lighting the eyes and the grin.
-      if (carved && glow) {
+      if (carved && candle) {
         ctx.fillStyle = candle
         ctx.beginPath()
         for (const cut of FACE) trace(ctx, cut, cx, cy, radius)
