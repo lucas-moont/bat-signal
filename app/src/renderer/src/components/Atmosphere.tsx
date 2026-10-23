@@ -85,6 +85,14 @@ export const isShown = (
   { on, moving, calm }: { on: boolean; moving: boolean; calm: boolean },
 ): boolean => moving || (on && (still === true || (still === 'calm' && calm)))
 
+/** How the Atmosphere's motion, and its backdrop, come and go. */
+const FADE = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 1.2 },
+}
+
 /** How long the Atmosphere keeps moving after the pointer leaves or something changes. */
 const LINGER_MS = 8000
 
@@ -144,28 +152,14 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
       <AnimatePresence>
         {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
         {on && backdrop && (
-          <motion.div
-            key="backdrop"
-            className="atmosphere__backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
-          >
+          <motion.div key="backdrop" className="atmosphere__backdrop" {...FADE}>
             <Painted key={theme} make={() => backdropFor(backdrop)} moving={false} />
           </motion.div>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {shown && (
-          <motion.div
-            key="atmosphere"
-            className="atmosphere__layer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
-          >
+          <motion.div key="atmosphere" className="atmosphere__layer" {...FADE}>
             <Painted key={theme} make={() => painterFor(atmosphere)} moving={moving} />
           </motion.div>
         )}
