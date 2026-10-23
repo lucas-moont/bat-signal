@@ -871,9 +871,16 @@ const HOLIDAYS: readonly { name: string; on: (year: number) => Date }[] = [
  */
 const holidayCountdown = (now: Date) => {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const next = HOLIDAYS.map((h) => ({ name: h.name, on: h.on(today.getFullYear()) })).find(
-    (h) => h.on >= today,
-  ) ?? { name: HOLIDAYS[0]!.name, on: HOLIDAYS[0]!.on(today.getFullYear() + 1) }
+  // The year's first holiday still to come, or next year's first.
+  const year = today.getFullYear()
+  let next = { name: HOLIDAYS[0]!.name, on: HOLIDAYS[0]!.on(year + 1) }
+  for (const { name, on } of HOLIDAYS) {
+    const day = on(year)
+    if (day >= today) {
+      next = { name, on: day }
+      break
+    }
+  }
   // Rounded: a day the clocks change on is an hour long or short.
   const days = Math.round((next.on.getTime() - today.getTime()) / 86_400_000)
   return days === 0 ? next.name : days === 1 ? `${next.name} TOMORROW` : `${next.name} IN ${days} DAYS`
