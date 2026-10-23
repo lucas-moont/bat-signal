@@ -3,6 +3,7 @@ import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
+  HOLIDAY_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
@@ -134,5 +135,50 @@ describe("BLUE COLLAR's suit", () => {
     const stand = scriptAt(signature, Infinity).pose
     for (const step of watch) expect(step.pose).toBe(stand)
     expect(watch.filter((step) => step.look !== 0)).toHaveLength(2)
+  })
+})
+
+// HOLIDAY's suit (long-halloween.md, section 8, and its built note): the long ears in every pose,
+// the jack-o'-lantern only while something needs the user, and the long cape's light and folds on
+// the cloth, a gust lifting its hem or not.
+describe("HOLIDAY's suit", () => {
+  const { poses, watch } = HOLIDAY_SUIT
+  const signature = HOLIDAY_SUIT.signature!
+  const every = [
+    ...poses.sleeping,
+    ...poses.flying,
+    ...poses.alarmed,
+    ...signature.map((step) => step.pose),
+    ...watch.map((step) => step.pose),
+  ]
+  const layers = (p: Pose) => [...p.behind, ...p.front]
+  /** The ears: the one shape behind him whose path rises above the frame's top. */
+  const ears = (p: Pose) =>
+    p.behind.filter((layer) => layer.kind === 'path' && /-0\.9/.test(layer.d) && layer.fill)
+  const lantern = (p: Pose) => layers(p).some((layer) => 'fill' in layer && layer.fill === 'var(--signal)')
+  /** The lowest point a path reaches (its numbers run x, y). */
+  const lowest = (d: string) => Math.max(...(d.match(/-?[\d.]+/g) ?? []).map(Number).filter((_, i) => i % 2))
+
+  it('wears the long ears in every pose', () => {
+    for (const p of every) expect(ears(p)).toHaveLength(1)
+  })
+
+  it('lights the jack-o-lantern only when alarmed', () => {
+    expect(poses.alarmed.every(lantern)).toBe(true)
+    expect(every.filter(lantern)).toHaveLength(poses.alarmed.length)
+  })
+
+  // The sweep's light along its top and its folds end on its hem, the gust's lifted one too.
+  it("keeps the swept cape's light and folds on the cloth", () => {
+    for (const p of every) {
+      const cape = p.behind.find((layer) => layer.kind === 'cape')
+      if (cape?.kind !== 'cape') continue
+      const on = p.behind.filter(
+        (layer) =>
+          layer.kind === 'path' && (layer.className === 'clawd__rib' || layer.fill === 'var(--cowl-shine)'),
+      )
+      for (const layer of on)
+        if (layer.kind === 'path') expect(lowest(layer.d)).toBeLessThanOrEqual(lowest(cape.d))
+    }
   })
 })
