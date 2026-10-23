@@ -25,7 +25,7 @@ Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on
 
 ## 2. References
 
-The folder is `…/scratchpad/refs-tas/` (outside the repository), with an `INDEX.md` listing 58 images: number, file, source URL, episode or edition, what it shows, and the decision it informs. [01]–[54] come from The World's Finest (dcanimated.com), a fan site that hosts Warner Bros. Animation material; [55]–[58] are official (DC's shop, Warner Bros. Home Entertainment's press image). No fan art.
+The images sit in a scratch folder (`refs-tas/`) outside the repository. Its index of all 58 images is committed as [`references/animated-series.md`](references/animated-series.md): number, file, source URL, episode or edition, what it shows, and the decision it informs: number, file, source URL, episode or edition, what it shows, and the decision it informs. [01]–[54] come from The World's Finest (dcanimated.com), a fan site that hosts Warner Bros. Animation material; [55]–[58] are official (DC's shop, Warner Bros. Home Entertainment's press image). No fan art.
 
 | Kind | Entries | Edition |
 |---|---|---|
