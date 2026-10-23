@@ -205,9 +205,9 @@ const pose = (
 })
 
 /** Sitting, wrapped in a cape closed in front of him: only his gloved hands and boots show. */
-const seated = (map: OutfitMap, wrapped: string, edge: Layer = COWL_EDGE): Pose => ({
+const seated = (map: OutfitMap, wrapped: string, behind: Layer[] = [COWL_EDGE]): Pose => ({
   map,
-  behind: [edge],
+  behind,
   front: [
     {
       kind: 'rects',
@@ -1172,7 +1172,7 @@ const THE_LEAP: Script = [
 export const ANCIENT_GRACE_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [seated(GRACE_SEATED, TAILS.wrapped, GRACE_COWL_EDGE)],
+    sleeping: [seated(GRACE_SEATED, TAILS.wrapped, [GRACE_COWL_EDGE])],
     flying: [drop(TAILS.canopyA), drop(TAILS.canopyB)],
     alarmed: [caped],
   },
@@ -1559,9 +1559,7 @@ const GUST: readonly Step[] = [
 export const HOLIDAY_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [
-      { ...seated(HOLIDAY_SEATED, BELL.wrapped, HOLIDAY_EDGE), behind: [...LONG_EARS, HOLIDAY_EDGE] },
-    ],
+    sleeping: [seated(HOLIDAY_SEATED, BELL.wrapped, [...LONG_EARS, HOLIDAY_EDGE])],
     // Two frames on the flying cadence: the hem lifts on the air.
     flying: [holidayFlying(BELL.trailA), holidayFlying(BELL.trailB)],
     alarmed: [lantern],
