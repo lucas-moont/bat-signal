@@ -9,7 +9,8 @@
  * - --signal: the #13 cover's rotting pumpkin; --signal-hot: the #1 cover's lantern, lifted until it
  *   reads as text. The orange is this Theme's alone (jury section 9, decision 1).
  * - --moon: the pumpkin moon of Sale's 2021 Deluxe cover, a dim orange at all times, an unlit
- *   relative of the alarm at least 15 ΔE00 from its fill (jury section 9, decision 15).
+ *   relative of the alarm at least 15 ΔE00 from its fill (jury section 9, decision 15); --candle,
+ *   the light inside its carving, kept as far (decision 17).
  */
 :root[data-theme='the-long-halloween-1996'],
 [data-theme='the-long-halloween-1996'] {
@@ -37,7 +38,7 @@
   --ink-live: var(--bone);
   --ink: #d3c8ca;
 
-  /* Emphasis that is not an alarm is Bone: nothing at rest is orange but the moon's dim relative. */
+  /* Emphasis that is not an alarm is Bone: nothing at rest is orange but the moon and its candle. */
   --accent: var(--bone);
   --accent-hot: var(--bone);
   --accent-deep: var(--line);
@@ -74,7 +75,7 @@
   --chevron: var(--ash);
 
   /* Bat-Clawd in Sale's suit (long-halloween.md, section 8): a blue cowl and a blue mantle over his
-     shoulders, the lit chest blue-grey, the book's small round Signal bat on it, a gold capsule
+     shoulders, the lit chest blue-grey, the classic bat of the book's Signal small on it, a gold capsule
      belt, and a huge blue bell of a cape. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
@@ -121,8 +122,9 @@
   --grain-opacity: 0.04;
   --searchlight: var(--bone);
   --moon: #7a3a12;
-  /* The candle inside the moon, lighting its eyes and its bat-shaped grin: 17 ΔE00 from the alarm's
-     fill as seen through the moon's strength, so it stays the alarm's unlit relative. */
+  /* The candle inside the moon, lighting its eyes and its bat-shaped grin. As seen through the
+     moon's strength (#a47c4b), 17.2 ΔE00 from the alarm's fill and 24.3 from the lit lens's core, so
+     at rest it reads as neither (jury section 9, decision 17). */
   --candle: #ffc870;
   --pages: var(--bone);
 

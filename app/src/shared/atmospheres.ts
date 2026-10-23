@@ -328,8 +328,9 @@ export const BLUE_COLLAR_COLONY: AshAtmosphere = {
 }
 
 /**
- * HOLIDAY's Halloween night (jury-wave-3.md, section 9, decisions 15 and 16): a still pumpkin moon in
- * a dim orange, upper right, after Sale's 2021 Deluxe cover, and under it a tear-off calendar's
+ * HOLIDAY's Halloween night (jury-wave-3.md, section 9, decisions 15 to 17): a still pumpkin moon in
+ * a dim orange, upper right, after Sale's 2021 Deluxe cover, its furious eyes and bat-shaped grin lit
+ * by a candle, and under it a tear-off calendar's
  * pages, torn and falling, swinging from side to side in three depths of Bone (the middle size of
  * three, picked on screen, #146).
  */
