@@ -19,7 +19,7 @@ This brief follows [`wave-2-brief.md`](wave-2-brief.md). Its §2 (the rules ever
 3. **Lego Batman turns the whole app into pieces**: plastic, studs, brick corners on the panel and the disc, Bat-Clawd as a minifigure. It is the wave's biggest engine change.
 4. **References first**, one claims table, and the three rounds of §7.
 
-From LUC-85 and the theme issues, already decided: **Adam West stays dark** (a night navy like the animated opening of the series; the comedy lives in the Voice and in "POW!" and "BAM!" balloons; the Batusi as the Signature; no exception to the dark rule). Lego Batman's working name is **VERY DARK GREY** (LUC-96). The Animated Series has the red sky and the Art Deco painted on black paper (LUC-86). The Long Halloween has Tim Sale's hard contrast, the holidays and the long ears (LUC-87).
+From LUC-85 and the theme issues, already decided: **Adam West stays dark** (a night navy like the animated opening of the series, as LUC-89 put it; the West dossier measured that the opening is pop colour and the navy comes from the closing credits and the dusk cards, and the jury kept the navy from there, [`jury-wave-3.md`](jury-wave-3.md) §9, decision 7; the comedy lives in the Voice and in "POW!" and "BAM!" balloons; the Batusi as the Signature; no exception to the dark rule). Lego Batman's working name is **VERY DARK GREY** (LUC-96). The Animated Series has the red sky and the Art Deco painted on black paper (LUC-86). The Long Halloween has Tim Sale's hard contrast, the holidays and the long ears (LUC-87).
 
 ## 3. The seven shipped Themes, as built
 
