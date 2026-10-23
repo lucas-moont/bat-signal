@@ -1,6 +1,6 @@
 # Theme dossier: Batman: The Long Halloween (1996–97)
 
-> **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For HOLIDAY: it keeps the jack-o'-lantern orange, **with its aura** (BECOME A BAT already ships one closer to Clawd); its stamps move to Federo; and its Atmosphere is no longer the pages of §10 but a still pumpkin moon in a dim orange with low fog drifting sideways (§9, decisions 1, 12 and 15). So `--pages`, the "Calendar" Atmosphere label and hint in §6, and the Atmosphere scores in §11 are redone at the build.
+> **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For HOLIDAY: it keeps the jack-o'-lantern orange, **with its aura** (BECOME A BAT already ships one closer to Clawd); its stamps move to Federo; and its Atmosphere is a still pumpkin moon in a dim orange over the pages of §10, which no longer tumble but swing from side to side, torn and leaning; no fog (§9, decisions 1, 12, 15 and 16). The "Calendar" Atmosphere label and hint in §6 and the Atmosphere scores in §11 are redone at the build.
 
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long Halloween*, thirteen issues by Jeph Loeb (story) and Tim Sale (art), coloured by Gregory Wright, lettered by Comicraft (Richard Starkings), edited by Archie Goodwin; DC, cover dates December 1996 to December 1997. Wave 3, round 1, issue #143, Linear LUC-85 and LUC-87. It follows [`wave-3-brief.md`](wave-3-brief.md), the rules of [`wave-2-brief.md`](wave-2-brief.md) §2 and the headings of its §6, and it is checked against [`claims-wave-3.md`](claims-wave-3.md), the seven shipped stylesheets (`app/src/renderer/src/styles/themes/*.css`, `main` at v1.3.0) and SERIOUS HOUSE as kept on `feat/123-serious-house`. The terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
@@ -18,7 +18,7 @@ Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long H
 - **Voice: the Roman's table.** A mob boss's courtesy, quiet and Old-World, counting the holidays. **Lexicon:** Case and Needs you stay; BLESSING? (Permission), BOTCHED (Error), A WORD (Waiting), MESSAGE (New reply), ON ICE (Stalled).
 - **Bat-Clawd:** Wright's Batman blue on the cowl, the cape and the gloves; a blue-grey lit suit [24]; the cape's blue mantle over his shoulders under the orange jaw; the book's Signal bat small and black on his chest; the gold capsule belt (or a blue one, decided on screen beside BECOME A BAT's canary). **Long ears**: triangles two units wide at the base, flush with the cowl's sides, to y −0.8, just under the frame's top. **A huge cape** that pools on the ground in a bell, wider than any other.
 - **Signature pose: three real options,** recommended first. **B. The long cape** (the collected edition's cover [22][01]): three-quarter, one glove at his shoulder gathering the cape, the cape swept down to the ground at his left, a right triangle at 54px. **A. "Gentlemen."** (#1 p. 27 [16][31]): front-on before the Signal's huge round lens, a disc at 54px. **C. Father's Day** (#9 cover [10]): profile at a grave, the cape pooled in a bell. Each outline is in §8.3.
-- **Atmosphere: torn calendar pages** falling and tumbling [22][01], lit Bone, under a wine light from the upper left. Alternative: the venetian blinds of #1 p. 1 [15], still bars with a light that sweeps across them now and then.
+- **Atmosphere: torn calendar pages** (now swinging, not tumbling, under a pumpkin moon: §9 decision 16 of the jury) falling and tumbling [22][01], lit Bone, under a wine light from the upper left. Alternative: the venetian blinds of #1 p. 1 [15], still bars with a light that sweeps across them now and then.
 - **Engine asks:** one. A page sprite on the ash painter (as BLUE COLLAR's bats are), or a `blinds` kind if the alternative wins. The holiday dateline is a table in `words.ts`, not an engine change.
 
 ## 2. References
@@ -363,7 +363,7 @@ The Signal page [33] (Batman seen from behind) is out: the Costume Rule needs hi
 
 ## 10. Atmosphere
 
-**A. Calendar pages (recommended).** After [22] and [01]: the leaves of a tear-off calendar, falling.
+**A. Calendar pages (recommended).** *(Superseded: the pages ship swinging, not tumbling, under a pumpkin moon; jury §9, decision 16.)* After [22] and [01]: the leaves of a tear-off calendar, falling.
 - *What moves:* about six pages in the default panel, each a small leaf (5–7px by 6–8px) with a darker band across its top (the month), in `--pages` (Bone) at 0.16, 0.22 and 0.30 in three depths.
 - *How:* they fall slowly (1–2px a tick), drift a little to the right (0.5–1.5px), and **tumble**: every other tick a page is drawn edge-on (a 1.5px sliver), so it flips as it falls. No numbers drawn: they would be under a pixel.
 - *Light:* a wine haze (`--blinds` at 12%) from the upper-left corner, as the blinds' light falls in [15].
@@ -457,6 +457,6 @@ No images are included in this note. The covers, pages and crops reproduce copyr
 - Suit in one line: Batman-blue cowl and huge bell cape, blue-grey suit under a blue mantle, long triangular ears, gold belt (blue if TAS keeps gold)
 - Chest emblem and disc in one line: the book's round Signal bat (about 1.3:1), small and black on the chest; the disc lit as a jack-o'-lantern
 - Signature in one line, and its outline at 54px: "The long cape" (the trade's cover): a right triangle, upright edge right, the upper left open
-- Atmosphere (kind, and what moves): ~~ash painter with a page sprite: torn calendar pages falling and tumbling~~ **decided: a still pumpkin moon in a dim orange, and low fog drifting sideways (jury §9, decision 15)**, under a wine light from the upper left
+- Atmosphere (kind, and what moves): ~~ash painter with a page sprite: torn calendar pages falling and tumbling~~ **decided: a still pumpkin moon in a dim orange, and the pages back, torn, falling and swinging from side to side, with no fog (jury §9, decisions 15 and 16)**, under a wine light from the upper left
 - Voice in one line, and the Lexicon's seven words: the Roman's table, counting the days to the next holiday; Case · Needs you · BLESSING? · BOTCHED · A WORD · MESSAGE · ON ICE
-- Engine asks: ~~a page sprite on the ash painter~~ the shared still layer and `smoke`'s `wind` and `aspect` (LUC-118); the holiday dateline is a table in `words.ts`
+- Engine asks: the shared still layer (LUC-118) and the pages on the ash painter, swinging; the holiday dateline is a table in `words.ts`

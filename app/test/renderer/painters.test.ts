@@ -129,6 +129,21 @@ const COLONY: AshAtmosphere = {
   bats: { band: [70, 90], arc: 6, away: 0 },
 }
 
+/**
+ * A tear-off calendar's pages: two depths falling 1 and 2px a tick, drifting a little right, each
+ * swinging 3px either way and back every two seconds, upright (the tilt has tests of its own).
+ */
+const PAGES: AshAtmosphere = {
+  kind: 'ash',
+  color: '--pages',
+  density: 0.05,
+  depths: [
+    { alpha: 0.16, size: 5, wind: 0.5, fall: 1 },
+    { alpha: 0.3, size: 7, wind: 1.5, fall: 2 },
+  ],
+  pages: { swing: 3, period: 2, tilt: 0 },
+}
+
 /** Smoke: four puffs swelling from 12 to 40px as they rise 2px a tick and fade over four seconds. */
 const SMOKE: SmokeAtmosphere = {
   kind: 'smoke',
@@ -571,6 +586,187 @@ describe('the colony', () => {
     const [first, next] = ticks(1)
     const ways = first!.map((f, d) => Math.sign(read(next![d]!.shapes[0]!).cx - read(f.shapes[0]!).cx))
     expect(ways).toEqual(COLONY.depths.map((d) => Math.sign(d.wind)))
+  })
+})
+
+// HOLIDAY's torn calendar (long-halloween.md, section 10; jury-wave-3.md, section 9, decision 16):
+// the ash painter drops the leaves of a tear-off calendar in place of its motes, under its pumpkin
+// moon, and each one swings from side to side as it falls, as a torn leaf does (the maintainer's ask).
+describe('the calendar pages', () => {
+  const COUNT = Math.round(((320 * 440) / 1000) * PAGES.density)
+  const colorOf = (variable: string) => ({ '--pages': '#efe8e6' })[variable] ?? ''
+
+  const calendar = () => {
+    const painter = painterFor(PAGES, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+
+  const box = (shape: Shape) => {
+    const [xs, ys] = [shape.map(([x]) => x), shape.map(([, y]) => y)]
+    const [x, y] = [Math.min(...xs), Math.min(...ys)]
+    return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }
+  }
+
+  /** The pages a fill draws, in order: each as its month and its leaf below it (two shapes). */
+  const pagesOf = (shapes: Shape[]) =>
+    Array.from({ length: shapes.length / 2 }, (_, i) => {
+      const [a, b] = [box(shapes[2 * i]!), box(shapes[2 * i + 1]!)]
+      return { x: a.x, y: a.y, w: a.w, h: b.y + b.h - a.y, month: a.h, gap: b.y - (a.y + a.h) }
+    })
+
+  /** The first page of each depth, in each frame: the same pages throughout. */
+  const firstPages = (frames: { shapes: Shape[] }[][]) =>
+    frames.map((fills) => fills.map((f) => pagesOf(f.shapes)[0]!))
+
+  /** A calendar with no wind and no fall, so a page's moves are its swing alone. */
+  const still = () => {
+    // Nor any fall: a page that fell off the bottom would come back somewhere new.
+    const painter = painterFor(
+      { ...PAGES, depths: PAGES.depths.map((d) => ({ ...d, wind: 0, fall: 0 })) },
+      seeded(),
+    )
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+  const swing = PAGES.pages!.swing
+  const period = PAGES.pages!.period * FPS
+
+  it('drops as many pages as its density asks, and no squares', () => {
+    for (const fills of fillsOver(calendar(), 20)) {
+      expect(fills.flatMap((f) => pagesOf(f.shapes))).toHaveLength(COUNT)
+      for (const f of fills) expect(f.rects).toHaveLength(0)
+    }
+  })
+
+  it('fills each depth in its strength, in the color it is given', () => {
+    const fills = fillsOver(calendar(), 0)[0]!
+    expect(fills.map((f) => f.alpha)).toEqual(PAGES.depths.map((d) => d.alpha))
+    for (const f of fills) expect(f.color).toBe('#efe8e6')
+  })
+
+  // A leaf a quarter taller than wide, the month torn across its top by a pixel's gap: at 5 to 7px
+  // no number could be drawn, so the gap is what says "calendar".
+  it('draws a page as a leaf its size wide, a quarter taller, its month torn off across the top', () => {
+    for (const fills of fillsOver(calendar(), 3))
+      fills.forEach((f, d) => {
+        const { size } = PAGES.depths[d]!
+        for (const page of pagesOf(f.shapes)) {
+          expect(page.w).toBeCloseTo(size)
+          expect(page.h).toBeCloseTo(size * 1.25)
+          expect(page.gap).toBeCloseTo(1)
+          expect(page.month).toBeGreaterThan(0)
+          expect(page.month).toBeLessThan(page.h / 2)
+        }
+      })
+  })
+
+  it('swings each page from side to side as it falls, as far as its swing either way', () => {
+    const xs = firstPages(fillsOver(still(), 2 * period)).map((pages) => pages[0]!.x)
+    expect(Math.max(...xs) - Math.min(...xs)).toBeLessThanOrEqual(2 * swing + 1e-9)
+    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(1.5 * swing)
+  })
+
+  it('swings back to where it began once a period', () => {
+    const xs = firstPages(fillsOver(still(), period)).map((pages) => pages[0]!.x)
+    expect(xs.at(-1)).toBeCloseTo(xs[0]!)
+  })
+
+  // Torn from the pad: its bottom edge is ragged, not cut straight.
+  it('tears each leaf ragged along its bottom edge', () => {
+    for (const { shapes } of fillsOver(calendar(), 0)[0]!)
+      for (let i = 1; i < shapes.length; i += 2) {
+        const leaf = shapes[i]!
+        const bottom = Math.max(...leaf.map(([, y]) => y))
+        const ragged = leaf.filter(([, y]) => y > bottom - 0.25 * box(leaf).h)
+        // Up and down along it: more than two points, at more than one height.
+        expect(ragged.length).toBeGreaterThan(3)
+        expect(new Set(ragged.map(([, y]) => y.toFixed(3))).size).toBeGreaterThan(1)
+      }
+  })
+
+  // A falling leaf swings like a pendulum hung from its top (the maintainer's ask): swung right, its
+  // bottom trails right of its top, and it never leans past its tilt.
+  it('swings like a pendulum hung from its top, never leaning past its tilt', () => {
+    const tilt = 0.3
+    const painter = painterFor(
+      {
+        ...PAGES,
+        depths: PAGES.depths.map((d) => ({ ...d, wind: 0, fall: 0 })),
+        pages: { ...PAGES.pages!, tilt },
+      },
+      seeded(),
+    )
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    /** A page's top: the middle of its month's first two corners, and the angle between them. */
+    const top = (shape: Shape) => ({
+      x: (shape[0]![0] + shape[1]![0]) / 2,
+      lean: Math.atan2(shape[1]![1] - shape[0]![1], shape[1]![0] - shape[0]![0]),
+    })
+    const tops = fillsOver(painter, period).map((fills) => top(fills[0]!.shapes[0]!))
+    const line = (Math.max(...tops.map((t) => t.x)) + Math.min(...tops.map((t) => t.x))) / 2
+    for (const { x, lean } of tops) {
+      expect(Math.abs(lean)).toBeLessThanOrEqual(tilt + 1e-9)
+      // Right of its line, it leans so its bottom trails right: its top edge rises to the right.
+      if (Math.abs(x - line) > 0.5) expect(Math.sign(lean)).toBe(-Math.sign(x - line))
+    }
+    expect(Math.max(...tops.map((t) => Math.abs(t.lean)))).toBeGreaterThan(tilt / 2)
+  })
+
+  // Wholly off the canvas before it comes round, even swung and leaning toward the side it left by.
+  it('comes back in at the far side only once wholly past the near one', () => {
+    const painter = painterFor({ ...PAGES, pages: { ...PAGES.pages!, swing: 6, tilt: 0.35 } }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const frames = fillsOver(painter, 400).map((fills) => fills.flatMap((f) => pagesOf(f.shapes)))
+    for (let t = 1; t < frames.length; t++)
+      frames[t]!.forEach((page, i) => {
+        const was = frames[t - 1]![i]!
+        // Came round from the right (not fallen back to the top, somewhere new): where it was, it
+        // was off the canvas already.
+        if (page.x < was.x - 160 && page.y > was.y - 1) expect(was.x).toBeGreaterThanOrEqual(320 - 1e-9)
+      })
+  })
+
+  // Not as one: neighbours swing out of step, so the calendar never sways like a curtain.
+  it('swings its pages out of step', () => {
+    const [first, next] = fillsOver(still(), 1)
+    const moves = first!
+      .flatMap((f, d) => pagesOf(f.shapes).map((a, i) => Math.sign(pagesOf(next![d]!.shapes)[i]!.x - a.x)))
+      .filter((m) => m !== 0)
+    expect(new Set(moves).size).toBe(2)
+  })
+
+  // Pages fall more than they drift: snow's way down, with ash's lean (long-halloween.md, section 10).
+  it('falls each depth about its pace, drifting right with the wind', () => {
+    const painter = painterFor({ ...PAGES, pages: { swing: 0, period: 2, tilt: 0 } }, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const [first, next] = firstPages(fillsOver(painter, 1))
+    PAGES.depths.forEach(({ wind, fall }, d) => {
+      const [a, b] = [first![d]!, next![d]!]
+      const [ax, bx] = [a.x, b.x]
+      expect(b.y - a.y).toBeGreaterThanOrEqual(fall * 0.8 - 1e-9)
+      expect(b.y - a.y).toBeLessThanOrEqual(fall * 1.2 + 1e-9)
+      expect(bx - ax).toBeGreaterThanOrEqual(wind * 0.8 - 1e-9)
+      expect(bx - ax).toBeLessThanOrEqual(wind * 1.2 + 1e-9)
+    })
+  })
+
+  it('keeps falling: a page that leaves the bottom comes back above the top', () => {
+    const last = fillsOver(calendar(), 600)
+      .at(-1)!
+      .flatMap((f) => pagesOf(f.shapes))
+    expect(last).toHaveLength(COUNT)
+    for (const page of last) {
+      expect(page.x).toBeGreaterThan(-10)
+      expect(page.x).toBeLessThan(320 + 10)
+      expect(page.y).toBeGreaterThan(-10)
+      expect(page.y).toBeLessThan(440 + 10)
+    }
   })
 })
 
