@@ -30,6 +30,7 @@ import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
+  HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
   VENGEANCE_SUIT,
@@ -150,8 +151,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     ground: '#0a0507',
     words: HOLIDAY_WORDS,
     emblem: emblem(BAT_1996, 'none'),
-    // A first draft: Year One's suit stands in until HOLIDAY's own is drawn (#146).
-    suit: BECOME_A_BAT_SUIT,
+    suit: HOLIDAY_SUIT,
     atmosphere: HOLIDAY_NIGHT,
   },
 }
