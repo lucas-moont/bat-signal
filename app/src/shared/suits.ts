@@ -1430,10 +1430,13 @@ const HOLIDAY_ARMS_OUT = holidayMap(['.gSSSSSSSSSSSSg.', SUIT])
 const HOLIDAY_SEATED = holidayMap([SUIT, SUIT, SUIT], [])
 const HOLIDAY_REACHING = holidayMap([REACHING, SUIT])
 
-/** The cowl's outline without ears: they are drawn behind it, long. */
+/**
+ * The cowl's outline without ears: they are drawn behind it, long, outlined on their own. Across
+ * their roots it runs under the head's cells, so it draws no seam over them.
+ */
 const HOLIDAY_EDGE: Layer = {
   kind: 'path',
-  d: 'M3 5 L3 2 L5 2 L5 1 L11 1 L11 2 L13 2 L13 5 Z',
+  d: 'M3 5 L3 3 L5 3 L5 1 L11 1 L11 3 L13 3 L13 5 Z',
   className: 'clawd__cowl-edge',
 }
 /**
