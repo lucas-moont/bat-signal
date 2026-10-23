@@ -24,7 +24,7 @@ interface Scene {
 
 /**
  * A moon in the sky. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe cover): a
- * little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
+ * little wider than tall, a stem on top, two furious eyes and a grin in the bat's shape cut through it.
  */
 export interface MoonBackdrop {
   kind: 'moon'
@@ -38,6 +38,8 @@ export interface MoonBackdrop {
   radius: number
   /** Whether it is a jack-o'-lantern: a stem, two eyes and a grin cut through it. Not by default. */
   carved?: boolean
+  /** The variable a carved moon's candle lights its eyes and grin in from inside; empty without one. */
+  glow?: string
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
@@ -341,5 +343,13 @@ export const HOLIDAY_NIGHT: AshAtmosphere = {
     { alpha: 0.4, size: 12, wind: 1, fall: 2 },
   ],
   pages: { swing: 6, period: 3, tilt: 0.35 },
-  backdrop: { kind: 'moon', color: '--moon', alpha: 0.6, at: [0.72, 92], radius: 34, carved: true },
+  backdrop: {
+    kind: 'moon',
+    color: '--moon',
+    alpha: 0.6,
+    at: [0.72, 68],
+    radius: 34,
+    carved: true,
+    glow: '--candle',
+  },
 }
