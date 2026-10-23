@@ -1,5 +1,7 @@
 # Theme dossier: the Arkham games (Rocksteady, 2009–2015)
 
+> **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For FREEFLOW: the amber stays as a recorded exception, with the dark-glass L1 disc; green as drafted; both crouches stay and the searchlights go to TAS, so the Games keep plain rain; the grapnel is the Games' (Lego's flying pose leaves it), and the alarmed counter moves away from West's fight (§9, decisions 3, 5, 11, 14).
+
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after Rocksteady's trilogy, *Batman: Arkham Asylum* (2009), *Batman: Arkham City* (2011) and *Batman: Arkham Knight* (2015), taken as one work (maintainer, LUC-85). It covers palette, type, Voice, Lexicon, Bat-Clawd, the emblem, the disc and the Atmosphere, measured against the seven shipped Themes, the paused SERIOUS HOUSE, and Clawd orange. Wave 3 rules are in [`wave-3-brief.md`](wave-3-brief.md); the dossier's form is [`wave-2-brief.md`](wave-2-brief.md) §6. Terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
 Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image. **Measured** = taken off that image with a script. **Inferred** = our reading of what those facts imply. **Proposed** = our choice. References are cited by number (`[24]` = `24-ac-keyart-gargoyle.jpg`); the scratch folder's `INDEX.md` gives each file's URL, game and source type. The images are scratch only and never committed.
