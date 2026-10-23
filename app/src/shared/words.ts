@@ -842,3 +842,99 @@ export const BLUE_COLLAR_WORDS: Words = {
     mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd holding his cape across him' },
   },
 }
+
+/** The day of the month of a month's nth weekday (0 Sunday … 6 Saturday), counting from 1. */
+const nthWeekday = (year: number, month: number, weekday: number, n: number) =>
+  new Date(year, month, 1 + ((weekday - new Date(year, month, 1).getDay() + 7) % 7) + 7 * (n - 1))
+
+/**
+ * The Long Halloween's named days (long-halloween.md, section 6), in a year's order: the US days the
+ * book turns on, each a year's date. "Roman Holiday" (#11) is no day of the calendar, so it is out.
+ */
+const HOLIDAYS: readonly { name: string; on: (year: number) => Date }[] = [
+  { name: "VALENTINE'S DAY", on: (y) => new Date(y, 1, 14) },
+  { name: "ST. PATRICK'S DAY", on: (y) => new Date(y, 2, 17) },
+  { name: "APRIL FOOL'S DAY", on: (y) => new Date(y, 3, 1) },
+  { name: "MOTHER'S DAY", on: (y) => nthWeekday(y, 4, 0, 2) },
+  { name: "FATHER'S DAY", on: (y) => nthWeekday(y, 5, 0, 3) },
+  { name: 'INDEPENDENCE DAY', on: (y) => new Date(y, 6, 4) },
+  { name: 'LABOR DAY', on: (y) => nthWeekday(y, 8, 1, 1) },
+  { name: 'HALLOWEEN', on: (y) => new Date(y, 9, 31) },
+  { name: 'THANKSGIVING', on: (y) => nthWeekday(y, 10, 4, 4) },
+  { name: 'CHRISTMAS', on: (y) => new Date(y, 11, 25) },
+  { name: "NEW YEAR'S EVE", on: (y) => new Date(y, 11, 31) },
+]
+
+/**
+ * HOLIDAY's dateline: the next of the book's named days, counted in calendar days, never a date or
+ * the time ("HALLOWEEN IN 9 DAYS", "HALLOWEEN TOMORROW", and on the day, "HALLOWEEN").
+ */
+const holidayCountdown = (now: Date) => {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const next = HOLIDAYS.map((h) => ({ name: h.name, on: h.on(today.getFullYear()) })).find(
+    (h) => h.on >= today,
+  ) ?? { name: HOLIDAYS[0]!.name, on: HOLIDAYS[0]!.on(today.getFullYear() + 1) }
+  // Rounded: a day the clocks change on is an hour long or short.
+  const days = Math.round((next.on.getTime() - today.getTime()) / 86_400_000)
+  return days === 0 ? next.name : days === 1 ? `${next.name} TOMORROW` : `${next.name} IN ${days} DAYS`
+}
+
+/** HOLIDAY's all-clear: a quiet night, on the Signal's tooltip and in the empty panel alike. */
+const NO_HOLIDAY = 'No holiday tonight.'
+
+/**
+ * HOLIDAY's words, after Jeph Loeb and Tim Sale's The Long Halloween (long-halloween.md, sections 6
+ * and 7; jury-wave-3.md, section 9): the Roman's table. His household speaks to a guest it
+ * respects, courteous, quiet, Old-World, a little menacing, and always counting the days to the next
+ * holiday. Batman, Gordon and Dent don't speak in it. Case and Needs you stay.
+ */
+export const HOLIDAY_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Blessing?',
+      error: 'Botched',
+      waiting: 'A word?',
+      reply: 'Message',
+      stalled: 'On ice',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // Short enough for its picker folder; no-break spaces keep the book's title whole.
+    theme: { name: 'HOLIDAY', film: "Loeb & Sale's The\u00a0Long\u00a0Halloween" },
+    tagline: 'One holiday at a time.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'A quiet night. Enjoy the holiday.' },
+      unheard: { ...STANDARD_VOICE.empty.unheard, title: "Nobody's talking tonight." },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} open. Nobody's asking favours.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Calendar',
+      dateline: holidayCountdown,
+      signature: 'Waiting on your word',
+      nil: () => "Nobody's waiting on your word tonight.",
+      caseNotes: () => 'Family business',
+      end: (waiting) =>
+        waiting ? 'The family is still waiting on you.' : "That's the calendar. See you next holiday.",
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : `${NO_HOLIDAY} `) + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: "The Roman's table",
+      atmosphere: { label: 'Fog', hint: (t) => `A pumpkin moon and fog behind the ${lower(t.case.many)}` },
+    },
+    // On the perch he stands as on the collected edition's cover.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, his cape swept to the ground' },
+    noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Cross off the day.' },
+  },
+}
