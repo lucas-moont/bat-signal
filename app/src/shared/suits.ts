@@ -1440,8 +1440,7 @@ const HOLIDAY_EDGE: Layer = {
  * Sale's long ears: from roots two units wide on the cowl's sides, from under the narrow brow up to
  * thin tips at the frame's top, three units tall, their outer edges in line with the cowl's sides.
  */
-const LONG_EARS_D =
-  'M3 3 L3 -0.9 L3.5 -0.9 L5 1.4 L5 3 Z M13 3 L13 -0.9 L12.5 -0.9 L11 1.4 L11 3 Z'
+const LONG_EARS_D = 'M3 3 L3 -0.9 L3.5 -0.9 L5 1.4 L5 3 Z M13 3 L13 -0.9 L12.5 -0.9 L11 1.4 L11 3 Z'
 const LONG_EARS: Layer[] = [
   { kind: 'path', d: LONG_EARS_D, className: 'clawd__cowl-edge' },
   { kind: 'path', d: LONG_EARS_D, fill: 'var(--cowl)' },
@@ -1513,8 +1512,11 @@ const lantern = holidayPose(
 /** Flying right, one arm reaching ahead, the bell trailing far behind him. */
 const holidayFlying = (trail: string) => holidayPose(HOLIDAY_REACHING, [{ kind: 'cape', d: trail }])
 
-/** His glove at his right shoulder, gathering the cape. */
-const GATHERING: Layer = { kind: 'rects', px: [[12.6, 5, 1.4, 1.4]], fill: 'var(--gloves)' }
+/** His right arm up at his shoulder, in the suit's blue-grey, its glove gathering the cape. */
+const GATHERING: Layer[] = [
+  { kind: 'rects', px: [[13, 5.6, 1, 1]], fill: 'var(--suit)' },
+  { kind: 'rects', px: [[12.6, 4.9, 1.2, 0.8]], fill: 'var(--gloves)' },
+]
 
 /**
  * The long cape (the collected edition's cover): gathered at his right shoulder, it sweeps down and
@@ -1522,27 +1524,28 @@ const GATHERING: Layer = { kind: 'rects', px: [[12.6, 5, 1.4, 1.4]], fill: 'var(
  * triangle, upright on his right side, open above the slope (long-halloween.md, section 8.3, B).
  */
 const SWEEP = {
-  half:
-    'M14 4.6 L14.2 11 Q11 10.6 8 11 Q5 10.6 2 11 Q0 10.7 -2.4 11 Q-1.6 9.4 0.4 8.6 Q4 6.6 8 5.8 ' +
-    'Q11 5 14 4.6 Z',
-  full:
-    'M14 4.6 L14.2 11 Q11.2 10.6 8.4 11 Q5.2 10.5 2.2 11 Q-1.2 10.5 -5.5 11 Q-3.4 9.8 -1.8 9.4 ' +
-    'Q2.2 7.6 6 6.4 Q10 5 14 4.6 Z',
+  half: 'M14 4 L14.2 11 Q11 10.6 8 11 Q5 10.6 2 11 Q0 10.7 -2.4 11 Q1.6 4.8 14 4 Z',
+  /** Swept to the ground: its top bowing up and out over his left like the cover's, a great curve. */
+  full: 'M14.2 3.4 L14.2 11 Q11.2 10.6 8.4 11 Q5.2 10.5 2.2 11 Q-1.2 10.5 -5.5 11 Q-2.6 3.6 14.2 3.4 Z',
   /** The same, its hem lifted a unit by a gust. */
-  lifted:
-    'M14 4.6 L14.2 10.4 Q11.2 10 8.4 10.4 Q5.2 9.8 2.2 10.2 Q-1.2 9.6 -5.5 10 Q-3.4 9 -1.8 8.8 ' +
-    'Q2.2 7.2 6 6.2 Q10 5 14 4.6 Z',
-  folds: 'M12.4 5.4 Q6 7.6 0.4 10.8 M12.8 6 Q8 8.4 4.6 10.8 M12.6 7 Q10 9 8.6 10.9',
+  lifted: 'M14.2 3.4 L14.2 10.2 Q11.2 9.8 8.4 10.2 Q5.2 9.6 2.2 10 Q-1.2 9.4 -5.5 9.8 Q-2.6 3.4 14.2 3.4 Z',
+  /** The light along its top, as the cover lights it from the moon. */
+  lit: 'M14.2 3.4 Q-2.6 3.6 -5.5 11 Q-1.6 5 14.2 4.4 Z',
+  folds: 'M12.4 5.4 Q4 6.6 -1.6 10.8 M12.8 6.4 Q6.4 8 2.4 10.8 M12.6 7.6 Q9.4 9 7.4 10.9',
 }
-const RIPPLES: Layer = { kind: 'path', d: SWEEP.folds, className: 'clawd__rib' }
-const sweptWith = (cape: string, folds: Layer[] = [RIPPLES]): Pose =>
-  holidayPose(HOLIDAY_STANDING, [{ kind: 'cape', d: cape }, ...folds], [GATHERING])
+/** Its long folds, and the light along its top. */
+const RIPPLES: Layer[] = [
+  { kind: 'path', d: SWEEP.lit, fill: 'var(--cowl-shine)' },
+  { kind: 'path', d: SWEEP.folds, className: 'clawd__rib' },
+]
+const sweptWith = (cape: string, folds: Layer[] = RIPPLES): Pose =>
+  holidayPose(HOLIDAY_STANDING, [{ kind: 'cape', d: cape }, ...folds], GATHERING)
 const DOWN_LEFT = { look: -GAZE, lookY: 0.3 }
 
 /** Four steps: standing in the pooled bell; the glove rises to the shoulder; half swept; swept to the ground. */
 const THE_LONG_CAPE: Script = [
   { pose: holidayPose(HOLIDAY_STANDING, HANGING), look: 0 },
-  { pose: holidayPose(HOLIDAY_STANDING, HANGING, [GATHERING]), look: -GAZE },
+  { pose: holidayPose(HOLIDAY_STANDING, HANGING, GATHERING), look: -GAZE },
   { pose: sweptWith(SWEEP.half, []), ...DOWN_LEFT },
   { pose: sweptWith(SWEEP.full), ...DOWN_LEFT },
 ]
