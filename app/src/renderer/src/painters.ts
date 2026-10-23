@@ -4,7 +4,9 @@
 import type {
   AshAtmosphere,
   Atmosphere,
+  Backdrop,
   LitWindowsAtmosphere,
+  MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
   SmokeAtmosphere,
@@ -50,6 +52,94 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return smoke(atmosphere, random)
     case 'noise':
       return noise(atmosphere, random)
+  }
+}
+
+/** The painter of an Atmosphere's backdrop: a still drawing, the same picture on every paint. */
+export function backdropFor(backdrop: Backdrop): Painter {
+  switch (backdrop.kind) {
+    case 'moon':
+      return moon(backdrop)
+  }
+}
+
+/** A carved moon's height for its width: a pumpkin is a little wider than tall. */
+const PUMPKIN = 0.88
+
+/**
+ * A jack-o'-lantern's cuts, in radii from the moon's centre (y down): its stem standing on the
+ * body's top, two slanted eyes, and a grin with teeth hanging into it; all but the stem inside the
+ * body, so the even-odd rule leaves them empty.
+ */
+const CARVING = {
+  stem: [
+    [-0.08, -PUMPKIN - 0.22],
+    [0.1, -PUMPKIN - 0.18],
+    [0.08, -PUMPKIN],
+    [-0.08, -PUMPKIN],
+  ],
+  eyes: [
+    [
+      [-0.55, 0],
+      [-0.18, -0.38],
+      [-0.15, 0.02],
+    ],
+    [
+      [0.55, 0],
+      [0.18, -0.38],
+      [0.15, 0.02],
+    ],
+  ],
+  grin: [
+    [-0.62, 0.18],
+    [-0.42, 0.36],
+    [-0.28, 0.22],
+    [-0.12, 0.4],
+    [0, 0.24],
+    [0.12, 0.4],
+    [0.28, 0.22],
+    [0.42, 0.36],
+    [0.62, 0.18],
+    [0.4, 0.52],
+    [0, 0.62],
+    [-0.4, 0.52],
+  ],
+} as const
+
+/** A shape in straight lines added to the path, its points in radii about (cx, cy). */
+function polygon(
+  ctx: CanvasRenderingContext2D,
+  points: readonly (readonly [number, number])[],
+  [cx, cy]: readonly [number, number],
+  radius: number,
+) {
+  points.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, cx + x * radius, cy + y * radius))
+  ctx.closePath()
+}
+
+/** A moon, carved or not: painted whole on every paint, since it never moves. */
+function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Painter {
+  let width = 0
+  let height = 0
+  let color = ''
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+    },
+    paint(ctx) {
+      const centre = [at[0] * width, at[1]] as const
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.ellipse(centre[0], centre[1], radius, radius * (carved ? PUMPKIN : 1), 0, 0, 2 * Math.PI)
+      if (carved)
+        for (const cut of [CARVING.stem, ...CARVING.eyes, CARVING.grin]) polygon(ctx, cut, centre, radius)
+      ctx.fill('evenodd')
+    },
   }
 }
 

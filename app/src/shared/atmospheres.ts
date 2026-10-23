@@ -1,7 +1,8 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
 // 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, WATCHFUL PROTECTOR's lit windows, ash on a
 // desert wind, smoke off the street, noise on a screen; each kind has its painter
-// (renderer/src/painters.ts).
+// (renderer/src/painters.ts). Behind its motion, a scene may have a backdrop: a still drawing, as
+// HOLIDAY's moon.
 
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
@@ -14,7 +15,31 @@ interface Scene {
    * with its motion; by default it leaves either way.
    */
   still?: boolean | 'calm'
+  /**
+   * A still drawing behind its motion, painted once (again only after a resize or new colors): it
+   * stays while the Atmosphere is on, moving or not, under reduced motion too.
+   */
+  backdrop?: Backdrop
 }
+
+/**
+ * A moon in the sky: its centre, across the panel as a share of its width and down from its top in
+ * px, and its radius in px. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe
+ * cover): a little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
+ */
+export interface MoonBackdrop {
+  kind: 'moon'
+  /** The variable it is filled in. */
+  color: string
+  /** Its strength. */
+  alpha: number
+  at: readonly [number, number]
+  radius: number
+  carved?: true
+}
+
+/** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
+export type Backdrop = MoonBackdrop
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {
