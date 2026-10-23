@@ -1,6 +1,6 @@
 # References: The LEGO Batman Movie (2017) and the Lego Batman games
 
-Scratch only. Never commit, trace or ship these images (ADR 0001). Gathered 2026-10-22 for `docs/research/themes/lego-batman.md`.
+The index of a scratch folder. The images it lists are never committed, traced or shipped (ADR 0001); this list of sources is. Gathered 2026-10-22 for `docs/research/themes/lego-batman.md`.
 
 Film frames were cut with ffmpeg from official uploads (Warner Bros., Warner Bros. Entertainment, HBO Max Family). Two uploads exist only at 640x360, so their samples are used for hue, not detail. Game images are the publisher's Steam store screenshots, one Commons file (CC BY 4.0) and two Wikipedia non-free files. No fan art. Samples: `../tools-lego/sample.py` and `crops.py`; boards in `../boards-lego/`.
 

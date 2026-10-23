@@ -1,6 +1,6 @@
 # References: Batman: The Long Halloween (Loeb, Sale, Wright, 1996–97)
 
-For the dossier `docs/research/themes/long-halloween.md` (Wave 3, round 1, LUC-85 / LUC-87). Gathered 2026-10-22. These images are copyrighted art. They stay here, outside the repository, for our sampling and for the maintainer's boards. Never commit, trace into the repo, or ship them (ADR 0001).
+For the dossier `docs/research/themes/long-halloween.md` (Wave 3, round 1, LUC-85 / LUC-87). Gathered 2026-10-22. These images are copyrighted art. They stay in a scratch folder, outside the repository, for our sampling and for the maintainer's boards, and are never committed, traced or shipped (ADR 0001); only this list of sources is committed.
 
 Raw downloads (the Back Issue #60 PDF, unused crops, fan-wiki files not kept) are in `../dl-tlh/`. Scripts are in `../tools-tlh/` and were run with `python -I` from that folder.
 

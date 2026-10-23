@@ -1,6 +1,6 @@
 # References: the Arkham games (Rocksteady, 2009-2015)
 
-Scratch only. Never commit, trace or ship these images (ADR 0001). Gathered 2026-10-22 for `docs/research/themes/arkham-games.md`.
+The index of a scratch folder. The images it lists are never committed, traced or shipped (ADR 0001); this list of sources is. Gathered 2026-10-22 for `docs/research/themes/arkham-games.md`.
 
 Source types, strongest first: **Steam store** (the publisher's own store screenshots and library art, listed by `store.steampowered.com/api/appdetails`); **Interface In Game** (a site that archives UI captures, 1080p or 4K, from the games themselves); **Wikipedia** (fair-use uploads of the covers and screenshots); press images; and three captures that are **not publisher images** (35 and 36 are player captures; 46 is an in-game capture on Screen Rant). They show the game as played. No fan art, no mods. Colour samples from `../tools-arkham-games/sample.py` are in `../meta-arkham-games/samples1.txt`.
 

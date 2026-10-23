@@ -1,6 +1,6 @@
 # References: Batman (ABC, 1966-68) and Batman (1966 film)
 
-Scratch only. Never commit, trace or ship these images (ADR 0001). Gathered 2026-10-22 for `docs/research/themes/adam-west.md`.
+The index of a scratch folder. The images it lists are never committed, traced or shipped (ADR 0001); this list of sources is. Gathered 2026-10-22 for `docs/research/themes/adam-west.md`.
 
 Frames were cut with ffmpeg from the uploads named in each row: the show itself (broadcast or the 2014 remaster) and the 1966 film, not fan art. Add one official Warner Bros. trailer for the 2014 Blu-ray, five ABC publicity stills and one Treasury short that Wikimedia Commons holds as public domain. Edition caveat: SD uploads and the HD remaster grade colour differently (the chest oval reads yellow #c89948 in [21] and orange #b65d35 in [16]), so samples are used for hue more than lightness. Samples: `../tools-west/sample.py` and `crops.py`; boards in `../boards-west/`.
 
