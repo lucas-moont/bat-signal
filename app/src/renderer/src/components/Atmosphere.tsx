@@ -15,15 +15,7 @@ import './Atmosphere.css'
  * A canvas its painter paints: a step on every tick of the shared clock (which stops while hidden)
  * while it moves; still, it keeps its last frame, painted again only after a resize or new colors.
  */
-function Painted({
-  make,
-  moving,
-  className = 'atmosphere__canvas',
-}: {
-  make: () => Painter
-  moving: boolean
-  className?: string
-}) {
+function Painted({ make, moving }: { make: () => Painter; moving: boolean }) {
   // The scene lives as long as the canvas; a Theme change mounts a new one (keyed by its Theme).
   const [painter] = useState(make)
   const canvas = useRef<HTMLCanvasElement>(null)
@@ -81,7 +73,7 @@ function Painted({
     }
   }, [painter])
 
-  return <canvas ref={canvas} className={className} aria-hidden />
+  return <canvas ref={canvas} className="atmosphere__canvas" aria-hidden />
 }
 
 /**
@@ -145,18 +137,25 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
   const theme = useTheme()
   const atmosphere = THEMES[theme].atmosphere
   const shown = isShown(atmosphere.still, { on, moving, calm })
+  const { backdrop } = atmosphere
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
-      {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
-      {on && atmosphere.backdrop && (
-        <Painted
-          key={theme}
-          make={() => backdropFor(atmosphere.backdrop!)}
-          moving={false}
-          className="atmosphere__canvas atmosphere__backdrop"
-        />
-      )}
+      <AnimatePresence>
+        {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
+        {on && backdrop && (
+          <motion.div
+            key="backdrop"
+            className="atmosphere__backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2 }}
+          >
+            <Painted key={theme} make={() => backdropFor(backdrop)} moving={false} />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {shown && (
           <motion.div
