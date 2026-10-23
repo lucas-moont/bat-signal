@@ -931,7 +931,10 @@ export const HOLIDAY_WORDS: Words = {
     settings: {
       ...STANDARD_VOICE.settings,
       kicker: "The Roman's table",
-      atmosphere: { label: 'Fog', hint: (t) => `A pumpkin moon and fog behind the ${lower(t.case.many)}` },
+      atmosphere: {
+        label: 'Calendar',
+        hint: (t) => `Torn pages under a pumpkin moon behind the ${lower(t.case.many)}`,
+      },
     },
     // On the perch he stands as on the collected edition's cover.
     mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, his cape swept to the ground' },

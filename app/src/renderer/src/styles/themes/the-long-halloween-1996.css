@@ -113,7 +113,7 @@
   --notice-hover-foot: #170910;
 
   /* The blinds' wine light from the upper left (the #1 page, sampled), the film grain, a pumpkin
-     moon in a dim orange, and low fog drifting across under it. */
+     moon in a dim orange, and a calendar's torn pages falling under it. */
   --blinds: #480a2b;
   --haze: color-mix(in srgb, var(--blinds) 12%, transparent);
   --haze-edge: color-mix(in srgb, var(--blinds) 4%, transparent);
@@ -121,7 +121,7 @@
   --grain-opacity: 0.04;
   --searchlight: var(--bone);
   --moon: #7a3a12;
-  --fog: var(--bone);
+  --pages: var(--bone);
 
   /* Grenze Gotisch, a blackletter with a plain lowercase, sets the wordmark and the headlines, as
      the covers set "in Thirteen Parts"; Federo, a 1909 grotesque near the covers' holiday labels,
