@@ -453,12 +453,34 @@ interface Drift {
 const BEAT: readonly Wings[] = ['up', 'down']
 
 /**
+ * A calendar page: its height for its width; its month's share of that height, torn off across
+ * its top by a pixel's gap; and its width when it is edge-on, in px.
+ */
+const PAGE = { tall: 1.25, month: 0.25, gap: 1, edge: 1.5 }
+
+/** The frames of a page's tumble, a tick each: face-on, then edge-on. */
+const TUMBLE = ['face', 'edge'] as const
+
+/** A box added to the path as its own closed shape. */
+function box(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.moveTo(x, y)
+  ctx.lineTo(x + w, y)
+  ctx.lineTo(x + w, y + h)
+  ctx.lineTo(x, y + h)
+  ctx.closePath()
+}
+
+/**
  * Ash: motes in depths, blown sideways more than they fall, each depth's ash and its dust filled as
  * a path each a tick. A mote that leaves at one edge comes back at the opposite one, somewhere new
  * along it, whichever way the wind blows. With bats in place of the motes, they keep to their band,
- * each drawn on its arc, flapping every tick, neighbours a beat apart.
+ * each drawn on its arc, flapping every tick, neighbours a beat apart. With pages, each turns
+ * edge-on every other tick as it falls, neighbours a turn apart.
  */
-function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, random: () => number): Painter {
+function ash(
+  { color: variable, dust, density, depths, bats, pages }: AshAtmosphere,
+  random: () => number,
+): Painter {
   /** Whether each of a depth's drifts is dust: ash, and dust if it has any. */
   const dustiness = dust ? [false, true] : [false]
   const drifts = (lists: Mote[][] = []): Drift[] =>
@@ -493,6 +515,14 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
    * from its phase (its place in its depth, so neighbours beat a frame apart).
    */
   const draw = (ctx: CanvasRenderingContext2D, { x, y }: Mote, size: number, phase: number) => {
+    if (pages) {
+      const tall = size * PAGE.tall
+      if (frameAt(TUMBLE, beats, phase) === 'edge')
+        return box(ctx, x + (size - PAGE.edge) / 2, y, PAGE.edge, tall)
+      const month = tall * PAGE.month
+      box(ctx, x, y, size, month)
+      return box(ctx, x, y + month + PAGE.gap, size, tall - month - PAGE.gap)
+    }
     if (!bats) return ctx.rect(x, y, size, size)
     // Out past the panel's side: not drawn till it comes back.
     if (x > width || x < -size) return
@@ -532,8 +562,9 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
       ctx.clearRect(0, 0, width, height)
       for (const { depth, dust: isDust, motes } of layers) {
         const { alpha, size, wind, fall } = depth
-        // A mote is gone once its whole square has left the top; a bat's line, once it has left the band.
-        const rise = bats ? 0 : size
+        // A mote is gone once its whole square has left the top, a page once its whole leaf has; a
+        // bat's line, once it has left the band.
+        const rise = bats ? 0 : pages ? size * PAGE.tall : size
         ctx.globalAlpha = alpha
         ctx.fillStyle = isDust ? colors.dust : colors.ash
         ctx.beginPath()

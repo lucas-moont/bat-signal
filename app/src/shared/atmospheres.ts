@@ -96,11 +96,12 @@ export interface LitWindowsAtmosphere extends Scene {
  * Ash blown on a desert wind: flakes cross the panel at a shallow slant, left to right, in depths
  * that differ in strength, size and speed, a share of them dust. Or bats on the wind in its place
  * (BLUE COLLAR's colony): a few in a band of the panel, flapping every tick, each on an arc that
- * rises and dips as it crosses; the drawing BECOME A BAT's swarm flies (shared/bats.ts).
+ * rises and dips as it crosses; the drawing BECOME A BAT's swarm flies (shared/bats.ts). Or the
+ * pages of a calendar, tumbling as they fall (HOLIDAY's).
  */
 export interface AshAtmosphere extends Scene {
   kind: 'ash'
-  /** The variable the ash, or the bats, are filled in. */
+  /** The variable the ash, the bats or the pages are filled in. */
   color: string
   /** The dust among the ash, if any: its variable, and its share of the flakes. */
   dust?: { color: string; share: number }
@@ -119,6 +120,12 @@ export interface AshAtmosphere extends Scene {
    * before it comes back, in px, so only a few of the colony are in the panel at once.
    */
   bats?: { band: readonly [number, number]; arc: number; away: number }
+  /**
+   * The leaves of a tear-off calendar in place of the flakes (HOLIDAY's): each its depth's size
+   * wide and a quarter taller, its month torn across its top, turning edge-on every other tick as
+   * it falls.
+   */
+  pages?: true
 }
 
 /**
