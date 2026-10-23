@@ -10,6 +10,7 @@ import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
+  HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
   STANDARD_WORDS,
@@ -292,5 +293,60 @@ describe("BLUE COLLAR's words", () => {
     expect(voice.settings.kicker).toBe('Toolbox')
     expect(voice.settings.atmosphere.label).toBe('Bats')
     expect(voice.settings.atmosphere.hint(terms)).toBe('Bats over Gotham behind the cases')
+  })
+})
+
+describe("HOLIDAY's words", () => {
+  const { terms, voice } = HOLIDAY_WORDS
+
+  // The Roman's table (long-halloween.md, sections 6 and 7; jury-wave-3.md, section 9, decision 13):
+  // Case and Needs you stay; a blessing asked for, a job botched, a word wanted, a message, a job on
+  // ice. BLESSING? and A WORD? keep their question marks: bare, they read as granted and as a pause.
+  it("speak the Roman household's Lexicon", () => {
+    expect(terms.case).toEqual(STANDARD_TERMS.case)
+    expect(terms.needsYou).toEqual(STANDARD_TERMS.needsYou)
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Blessing?',
+      error: 'Botched',
+      waiting: 'A word?',
+      reply: 'Message',
+      stalled: 'On ice',
+    })
+  })
+
+  // The book's named days, counted: never a date, never the time.
+  it.each([
+    [new Date(2026, 9, 22, 2, 14), 'HALLOWEEN IN 9 DAYS'],
+    [new Date(2026, 9, 30, 23, 59), 'HALLOWEEN TOMORROW'],
+    [new Date(2026, 9, 31, 0, 1), 'HALLOWEEN'],
+    // Thanksgiving is the fourth Thursday of November: the 26th in 2026.
+    [new Date(2026, 10, 1, 12, 0), 'THANKSGIVING IN 25 DAYS'],
+    [new Date(2026, 11, 26, 12, 0), "NEW YEAR'S EVE IN 5 DAYS"],
+    // Past New Year's Eve, the year turns: Valentine's Day.
+    [new Date(2027, 0, 1, 12, 0), "VALENTINE'S DAY IN 44 DAYS"],
+    // Mother's Day is the second Sunday of May: the 9th in 2027.
+    [new Date(2027, 3, 2, 12, 0), "MOTHER'S DAY IN 37 DAYS"],
+    // Labor Day is the first Monday of September: the 7th in 2026.
+    [new Date(2026, 6, 5, 12, 0), 'LABOR DAY IN 64 DAYS'],
+  ])('dates its calendar by the next holiday (%s)', (now, line) => {
+    expect(voice.report.name).toBe('Calendar')
+    expect(voice.report.dateline(now)).toBe(line)
+  })
+
+  it('counts by the calendar, not by the hour, across a change of clocks', () => {
+    // US clocks fall back on 1 November 2026; Thanksgiving is still 25 days off on the 1st.
+    expect(voice.report.dateline(new Date(2026, 10, 1, 23, 30))).toBe('THANKSGIVING IN 25 DAYS')
+  })
+
+  it('keeps the family waiting while anything waits on you', () => {
+    expect(voice.report.end(2)).toBe('The family is still waiting on you.')
+    expect(voice.report.end(0)).toBe("That's the calendar. See you next holiday.")
+  })
+
+  it('wishes you a quiet holiday when all is clear', () => {
+    expect(voice.empty.quiet.title).toBe('A quiet night. Enjoy the holiday.')
+    expect(voice.signal.openTip(false)).toMatch(/^No holiday tonight\. /)
+    expect(voice.signal.openTip(true)).not.toMatch(/holiday/)
   })
 })
