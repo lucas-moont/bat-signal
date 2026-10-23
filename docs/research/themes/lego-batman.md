@@ -25,7 +25,7 @@ Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on
 
 ## 2. References
 
-The folder is `C:/Users/thewo/AppData/Local/Temp/claude/C--Users-thewo-Documents-BatCaver-Code-Extension/bb2270e0-bcee-4ba5-a059-2f645fa77ff4/scratchpad/refs-lego/`, with an `INDEX.md` listing 60 images: number, file, source URL (with the second for video frames), source and edition, what it shows, and the decision it informs. Scripts are in the sibling `tools-lego/`, boards in `boards-lego/`, raw downloads in `dl-lego/`. Nothing from it enters the repository.
+The images sit in a scratch folder (`refs-lego/`) that never enters the repository; scripts and boards sit beside it. Its index of all 60 images (number, file, source URL, edition, what it shows, which decision it informs) is committed as [`references/lego-batman.md`](references/lego-batman.md), so every `[nn]` here can be traced.
 
 | Kind | Entries | Source |
 |---|---|---|
@@ -130,7 +130,7 @@ The Pure Black Ground Rule binds VENGEANCE only; G1 is dark, never light.
 
 | Hue | First passing colour | Nearest taken (ΔE00) |
 |---|---|---|
-| 20–40 (the Batcomputer's red [36], the button [33]) | `#fe848c`–`#fe876a` | BECOME A BAT's alarm 8.2–9.8, Clawd 8.1, KNIGHTMARE's ink 7.6 |
+| 20–40 (the Batcomputer's red [36], the button [33]) | `#fe848c`–`#fe876a` | BECOME A BAT's alarm 8.2–9.8, Clawd 8.1 (at `#fe876a`; 11.0 at R's `#fe857c`), KNIGHTMARE's ink 7.6 |
 | 50–100 (orange to the cards' yellow [17]) | `#ff8851`–`#c8a501` | TAS 7.6, HOLIDAY 4.9, FREEFLOW 3.1, West's oval 4.1 |
 | 110–140 (lime) | `#9eb307`–`#0dc335` | BLUE COLLAR's lemon 9.5, SERIOUS HOUSE's green 9.4 (and no source in the film) |
 | 150–250 (green to the screens' cyan [36] [38]) | | West's green 2.8–7.0, WATCHFUL PROTECTOR 7.6–10.8, ANCIENT GRACE 3.8–7.6 |
@@ -142,12 +142,12 @@ On a darker ground (raised = the suit itself, `#2e2f36`) the same sweep leaves r
 | Option | `--signal-hot` / `--signal` | Source | Clawd | Nearest taken colours | Min contrast on the 11 grounds |
 |---|---|---|---|---|---|
 | **M, the Batcave neon (recommended)** | `#fe79d0` / `#b8267d` | S [33] neon `#b7408b`–`#ce5ea0` (h 343), [35] [39]; lifted to L* 69 at h 341 | 31.8 | BLUE COLLAR's *waiting* mauve 11.5; West's alarm 16.9; HOLIDAY's waiting 17.4; every other alarm 19 or more | 4.57 (`--raised`) |
-| R, the Batcomputer red | `#fe857c` / `#c72f31` | S [36] [31], lifted | 8.1 | BECOME A BAT's alarm 8.2, SERIOUS HOUSE 9.1 | 4.57 |
+| R, the Batcomputer red | `#fe857c` / `#c72f31` | S [36] [31], lifted | 11.0 | BECOME A BAT's alarm 8.2, SERIOUS HOUSE 9.1 | 4.57 |
 | Y, the title cards' yellow | `#f2c21c` | S [17] [45] | 33.6 | **PALE MOONLIGHT's gold alarm 3.7** | 6.45 |
 
 **Why M.** It is in the film, in the very frame that shows the chest [33]: a hot-pink neon bat lights the Batcave behind Batman and Alfred, and again in [35] and [39]. It is the only hue the sweep leaves open. Its costs, stated: it crosses round 3's "avoid pinks" line, against BLUE COLLAR's mauve (`#d79bbd`, a waiting ink, 11.5 away, a different role) and newsprint magenta, which the Wave 2 jury left unclaimed after BECOME A BAT took red. And a magenta is cooler than a red: it must be the hottest thing in the palette while the yellow belt sits at rest. Decide on screen whether the yellow belt beside a lit magenta disc still reads magenta as the alarm.
 
-R and Y are listed to show the cost, not proposed: R is the film's own alarm colour but sits 8.1 from Clawd and 8.2 from BECOME A BAT; Y is the film's identity colour and is PALE MOONLIGHT's gold (and round 3 bars the yellow oval as an alarm).
+R and Y are listed to show the cost, not proposed: R is the film's own alarm colour but sits 11.0 from Clawd and 8.2 from BECOME A BAT; Y is the film's identity colour and is PALE MOONLIGHT's gold (and round 3 bars the yellow oval as an alarm).
 
 ### 4.4 What `--signal` paints, and the inks
 
@@ -543,7 +543,7 @@ No images are included in this note. The frames and stills reproduce copyrighted
 ## Claims
 - Display name: VERY DARK GREY (alternatives BLACK AND YELLOW, NINE-PACK); credit "The LEGO® Batman Movie (2017)"
 - Ground (abyss / surface / raised), with L* C* h of surface: the suit's grey #24252a / #2e2f36 / #3b3d45; surface L* 19.6 C* 4.8 h 286, the lightest ground in the app (8.8 / 7.0 from TAS's black paper, 8.7 / 9.7 from WATCHFUL PROTECTOR, 10.9 from VENGEANCE's surface and 9.6 from its #000000: texture, not hue, separates them)
-- Alarm (signal / signal-hot): M, the Batcave's neon magenta #b8267d / #fe79d0 (31.8 from Clawd; crosses round 3's "no pinks" line: 11.5 from BLUE COLLAR's waiting mauve, 16.9 from West's violet, 19+ from every other alarm); R (Batcomputer red #fe857c, 8.1 from Clawd) and Y (the cards' yellow #f2c21c, 3.7 from PALE MOONLIGHT's gold) costed, not proposed
+- Alarm (signal / signal-hot): M, the Batcave's neon magenta #b8267d / #fe79d0 (31.8 from Clawd; crosses round 3's "no pinks" line: 11.5 from BLUE COLLAR's waiting mauve, 16.9 from West's violet, 19+ from every other alarm); R (Batcomputer red #fe857c, 11.0 from Clawd) and Y (the cards' yellow #f2c21c, 3.7 from PALE MOONLIGHT's gold) costed, not proposed
 - Waiting ink (ink-soft) / working ink (ink-live): screen ice #88eef6 (9.1 from ANCIENT GRACE's alarm, 10.0 from WATCHFUL PROTECTOR's mercury) / Bone #eceef2; the cards' yellow #f2c21c as the accent (wordmark) at rest, not the alarm
 - Display / stamp / report faces: Russo One / Changa One 11px (alternative Tilt Warp) / Rubik; Rubik 800 for headlines and the dateline
 - Suit in one line: black moulded cowl #141519 with a plastic shine, standard ears, white eyes and orange jaw (the film's lenses and jaw), grey torso #454852 (S-A; or black, S-B), printed abs at 78px only, a chunky yellow pouch belt #ecb038, a stiff black cloth cape in a bell to the floor; no minifigure body, head or C hands
