@@ -843,7 +843,7 @@ export const BLUE_COLLAR_WORDS: Words = {
   },
 }
 
-/** The day of the month of a month's nth weekday (0 Sunday … 6 Saturday), counting from 1. */
+/** The date of a month's nth weekday (0 Sunday … 6 Saturday), counting from 1. */
 const nthWeekday = (year: number, month: number, weekday: number, n: number) =>
   new Date(year, month, 1 + ((weekday - new Date(year, month, 1).getDay() + 7) % 7) + 7 * (n - 1))
 
@@ -939,7 +939,7 @@ export const HOLIDAY_WORDS: Words = {
       ...STANDARD_VOICE.settings,
       kicker: "The Roman's table",
       atmosphere: {
-        label: 'Calendar',
+        label: 'Halloween',
         hint: (t) => `Torn pages under a pumpkin moon behind the ${lower(t.case.many)}`,
       },
     },
