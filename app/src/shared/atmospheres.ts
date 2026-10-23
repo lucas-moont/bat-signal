@@ -324,3 +324,22 @@ export const BLUE_COLLAR_COLONY: AshAtmosphere = {
   ],
   bats: { band: [64, 74], arc: 4, away: 160 },
 }
+
+/**
+ * HOLIDAY's Halloween night (jury-wave-3.md, section 9, decision 15): low fog banks drifting across
+ * the bottom of the panel, wide and flat, fading in and out, under a still pumpkin moon in a dim
+ * orange after Sale's 2021 Deluxe cover. Its numbers are first drafts, to be picked on screen (#146).
+ */
+export const HOLIDAY_FOG: SmokeAtmosphere = {
+  kind: 'smoke',
+  color: '--fog',
+  puffs: 8,
+  size: [150, 230],
+  alpha: 0.12,
+  rise: 0.25,
+  life: 40,
+  sway: 0,
+  wind: 1,
+  aspect: 0.28,
+  backdrop: { kind: 'moon', color: '--moon', alpha: 0.6, at: [0.72, 92], radius: 34, carved: true },
+}
