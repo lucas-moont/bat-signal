@@ -26,7 +26,7 @@ Its emblem is the book's own pencil Bat-Signal, in scribble. Its texture is McKe
 
 ## Wave 3
 
-Filled in from each dossier's `## Claims` block. Full blocks at the end of [`animated-series.md`](animated-series.md), [`long-halloween.md`](long-halloween.md) and [`arkham-games.md`](arkham-games.md).
+Filled in from each dossier's `## Claims` block. Full blocks at the end of [`animated-series.md`](animated-series.md), [`long-halloween.md`](long-halloween.md), [`arkham-games.md`](arkham-games.md), [`adam-west.md`](adam-west.md) and [`lego-batman.md`](lego-batman.md).
 
 | Theme | Round | Ground (surface) | Alarm (signal-hot) | Waiting / working ink | Display / stamp / report | Suit | Signature | Atmosphere | Words |
 |---|---|---|---|---|---|---|---|---|---|
@@ -50,7 +50,7 @@ Filled in from each dossier's `## Claims` block. Full blocks at the end of [`ani
 
 - **Violet.** SAME BAT-TIME's alarm is satin violet, next to a violet satin suit. BLUE COLLAR's ground is violet too (its surface 9.3 from West's navy).
 - **The yellow oval and belt** are TAS's yellow (2.9 and 3.0 apart). West proposes J1: TAS dims its oval, HOLIDAY takes a blue belt.
-- **A third green.** West's waiting ink is SFX green, beside the games' green ground and SERIOUS HOUSE's green working ink (11.7 and 14.3 apart).
+- **A third green.** West's waiting ink is SFX green, beside SERIOUS HOUSE's green working ink (11.7 apart) and the games' pale green waiting ink (14.3), over the games' green ground.
 - **The opening is not navy** (measured): the navy is the dusk cast cards, the credits sky and the Signal on clouds.
 
 Round 3 (Lego Batman) also avoids violet, navy, Luckiest Guy and Bowlby One SC, the Batusi's raised arms and the serial narrator.
@@ -64,5 +64,5 @@ The classic suit is the exception. Adam West's 1966 suit *is* grey with a blue c
 - **The yellow oval has four claimants:** PALE MOONLIGHT's plate (shipped), TAS's C1, West's and Lego's (6.0 from TAS's, 3.9 from West's).
 - **Magenta** crosses the "no pinks" line (11.5 from BLUE COLLAR's waiting mauve); the dossier finds it the only free hue on a lighter grey.
 - **Texture, not hue,** separates Lego's grey from TAS's black paper (8.8 / 7.0): studs, tiles and corners would be mandatory.
-- **Legal** (lego-batman.md §12): studs and plastic shine are free as texture (CJEU C-48/09 P, 2010); the minifigure's shape is a valid EU mark (T-395/14, T-396/14, 2015), so Bat-Clawd keeps his body and hands; the word LEGO only in the credit, the logo never.
+- **Legal** (the legal table in `lego-batman.md` §3.2, and its Legal note, §13): studs and plastic shine are free as texture (CJEU C-48/09 P, 2010); the minifigure's shape is a valid EU mark (T-395/14, T-396/14, 2015), so Bat-Clawd keeps his body and hands; the word LEGO only in the credit, the logo never.
 
