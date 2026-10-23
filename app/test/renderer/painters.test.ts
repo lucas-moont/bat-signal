@@ -676,6 +676,9 @@ describe('the smoke', () => {
   it('paints round puffs and keeps them in their column when it asks for no wind', () => {
     for (const frame of fillsOver(smoke(), 10))
       for (const { discs } of frame) for (const d of discs) expect(d.ry).toBe(d.r)
+    // One life of the first puff: it sways about its column, never further.
+    const xs = frames(SMOKE.life * FPS - 1).map((frame) => frame[0]!.x)
+    expect(Math.max(...xs) - Math.min(...xs)).toBeLessThanOrEqual(2 * SMOKE.sway)
   })
 
   // Fog and cloud banks (jury-wave-3.md, section 6): low, wide puffs a wind carries across the panel.
@@ -711,6 +714,38 @@ describe('the smoke', () => {
       // It came round at least once.
       expect(xs.some((x, i) => i > 0 && Math.sign(x - xs[i - 1]!) !== Math.sign(wind))).toBe(true)
     })
+
+    // A bank is born wide: if it were born at full strength it would blink on mid-panel.
+    it('fades a bank in as it is born, as well as out as it dies', () => {
+      const brief = { ...FOG, life: 2 }
+      const lives = frames(2 * brief.life * FPS, 1 / FPS, smoke(brief)).map((frame) => frame[0]!)
+      // Reborn: back at the bottom edge, where it is born.
+      const born = lives.findIndex((p, i) => i > 0 && p.y > lives[i - 1]!.y)
+      expect(born).toBeGreaterThan(0)
+      expect(lives[born]!.alpha).toBeLessThan(brief.alpha * 0.25)
+      expect(Math.max(...lives.map((p) => p.alpha))).toBeLessThanOrEqual(brief.alpha + 1e-9)
+    })
+
+    // Puffs that shrink, or sway far: still wholly off the canvas when they come round.
+    it.each([[{ size: [120, 40] as const, sway: 0 }], [{ size: [12, 20] as const, sway: 15 }]])(
+      'comes round only once it is wholly past the side (%o)',
+      (shape) => {
+        const painter = smoke({ ...FOG, ...shape, life: 600, wind: 3 })
+        const lives = frames(300, 1 / FPS, painter).map((frame) => frame[0]!)
+        let wrapped = 0
+        lives.forEach((p, i) => {
+          // Come round: back across most of the canvas in one tick (a sway step is far shorter).
+          if (i === 0 || p.x >= lives[i - 1]!.x - 160) return
+          wrapped++
+          // Where the wind would have carried it this tick, it is wholly past the right side; where it
+          // comes back, wholly before the left one, a tick's wind from coming in.
+          const was = lives[i - 1]!
+          expect(was.x + 3 - was.r).toBeGreaterThanOrEqual(320 - 1e-9)
+          expect(p.x + p.r).toBeLessThanOrEqual(3 + 1e-9)
+        })
+        expect(wrapped).toBeGreaterThan(0)
+      },
+    )
 
     it('flattens its puffs by its aspect, as wide as ever', () => {
       for (const frame of fillsOver(smoke(FOG), 5))
