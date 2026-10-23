@@ -18,7 +18,7 @@ Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long H
 - **Voice: the Roman's table.** A mob boss's courtesy, quiet and Old-World, counting the holidays. **Lexicon:** Case and Needs you stay; BLESSING? (Permission), BOTCHED (Error), A WORD (Waiting), MESSAGE (New reply), ON ICE (Stalled).
 - **Bat-Clawd:** Wright's Batman blue on the cowl, the cape and the gloves; a blue-grey lit suit [24]; the cape's blue mantle over his shoulders under the orange jaw; the book's Signal bat small and black on his chest; the gold capsule belt (or a blue one, decided on screen beside BECOME A BAT's canary). **Long ears**: triangles two units wide at the base, flush with the cowl's sides, to y −0.8, just under the frame's top. **A huge cape** that pools on the ground in a bell, wider than any other.
 - **Signature pose: three real options,** recommended first. **B. The long cape** (the collected edition's cover [22][01]): three-quarter, one glove at his shoulder gathering the cape, the cape swept down to the ground at his left, a right triangle at 54px. **A. "Gentlemen."** (#1 p. 27 [16][31]): front-on before the Signal's huge round lens, a disc at 54px. **C. Father's Day** (#9 cover [10]): profile at a grave, the cape pooled in a bell. Each outline is in §8.3.
-- **Atmosphere: torn calendar pages** falling and tumbling [22][01], lit Bone, under a wine light from the upper left. Alternative: the venetian blinds of #1 p. 1 [15], still bars with a light that sweeps across them now and then.
+- **Atmosphere: torn calendar pages** (now swinging, not tumbling, under a pumpkin moon: §9 decision 16 of the jury) falling and tumbling [22][01], lit Bone, under a wine light from the upper left. Alternative: the venetian blinds of #1 p. 1 [15], still bars with a light that sweeps across them now and then.
 - **Engine asks:** one. A page sprite on the ash painter (as BLUE COLLAR's bats are), or a `blinds` kind if the alternative wins. The holiday dateline is a table in `words.ts`, not an engine change.
 
 ## 2. References
@@ -363,7 +363,7 @@ The Signal page [33] (Batman seen from behind) is out: the Costume Rule needs hi
 
 ## 10. Atmosphere
 
-**A. Calendar pages (recommended).** After [22] and [01]: the leaves of a tear-off calendar, falling.
+**A. Calendar pages (recommended).** *(Superseded: the pages ship swinging, not tumbling, under a pumpkin moon; jury §9, decision 16.)* After [22] and [01]: the leaves of a tear-off calendar, falling.
 - *What moves:* about six pages in the default panel, each a small leaf (5–7px by 6–8px) with a darker band across its top (the month), in `--pages` (Bone) at 0.16, 0.22 and 0.30 in three depths.
 - *How:* they fall slowly (1–2px a tick), drift a little to the right (0.5–1.5px), and **tumble**: every other tick a page is drawn edge-on (a 1.5px sliver), so it flips as it falls. No numbers drawn: they would be under a pixel.
 - *Light:* a wine haze (`--blinds` at 12%) from the upper-left corner, as the blinds' light falls in [15].
