@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
-import { emblem, WINGS } from '../../src/shared/emblems'
+import { BAT_1996, emblem, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -154,5 +154,32 @@ describe('a bat on his chest', () => {
     expect(box.h).toBeCloseTo((7 * bat.bat.height) / bat.bat.width)
     expect(box.x + box.w / 2).toBeCloseTo(8)
     expect(box.y + box.h / 2).toBeCloseTo(7)
+  })
+})
+
+// HOLIDAY's bat (#146): the classic bat in The Long Halloween's Signal, measured on #1 p. 27 and
+// redrawn with the maintainer on screen. Drawn as a left half and mirrored, like every Theme's bat.
+describe("HOLIDAY's bat", () => {
+  /** The path's points, as [x, y] pairs, in order (a curve's control point and its end both). */
+  const points = (d: string) => {
+    const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
+    return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
+  }
+
+  it('is symmetric about the middle of its grid', () => {
+    const all = points(BAT_1996).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
+    const mirrored = points(BAT_1996).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
+    expect(new Set(mirrored)).toEqual(new Set(all))
+  })
+
+  // Its wingtips, outer claws and tail reach the frame's edges; its wings, about two thirds of it.
+  it('fills the 48 units of its frame from wingtip to tail, wider than tall', () => {
+    const xs = points(BAT_1996).map(([x]) => x)
+    const ys = points(BAT_1996).map(([, y]) => y)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(0)
+    expect(Math.max(...ys)).toBe(48)
+    const width = Math.max(...xs) - Math.min(...xs)
+    expect(width / 48).toBeGreaterThan(1.4)
+    expect(width / 48).toBeLessThan(1.8)
   })
 })
