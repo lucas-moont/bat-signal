@@ -7,7 +7,7 @@ This brief follows [`wave-2-brief.md`](wave-2-brief.md). Its §2 (the rules ever
 ## 1. What Wave 2 taught us
 
 - **A dossier's prose is not the work.** ANCIENT GRACE shipped from its dossier and the maintainer sent it back: the chest emblem, Bat-Clawd's anatomy, the Signature pose and the colour did not look like the comic ([`dkr-rework.md`](dkr-rework.md)). SERIOUS HOUSE's first boards were stopped for the same reason, and the Theme is now paused ([`arkham-horror-references.md`](#4-the-paused-theme-serious-house) on its branch). BLUE COLLAR's stand went back four times over the cape's drape until it matched the #1 cover at 1:1.
-- **So Wave 3 works references first** (maintainer, 2026-10-22). Before a dossier proposes a colour, a suit or a pose, it gathers images of the work itself and lists them (§6). Every palette hex names the frame, page or game capture it was sampled from. The emblem, suit and Signature sections each cite the references they follow.
+- **So Wave 3 works references first** (maintainer, 2026-10-22). Before a dossier proposes a colour, a suit or a pose, it gathers images of the work itself and lists them (§7). Every palette hex names the frame, page or game capture it was sampled from. The emblem, suit and Signature sections each cite the references they follow.
 - **Parallel dossiers converge.** Year One was the only Wave 2 dossier that read the others as they appeared, and it avoided all of them but one. Wave 3 keeps one claims table, [`claims-wave-3.md`](claims-wave-3.md), and writes in three rounds (§7).
 - **The jury's numbers are not the maintainer's eye.** Every visual choice is still decided on screen, from labelled boards with the source references beside the options. A dossier proposes two or three real options where it is unsure; it does not need to be final.
 - **Some Themes change the whole app.** SERIOUS HOUSE needed horror, not a recolour. Lego Batman is the same scale (§3). Name every engine ask, since each becomes an engine PR before the Theme PR.
@@ -15,7 +15,7 @@ This brief follows [`wave-2-brief.md`](wave-2-brief.md). Its §2 (the rules ever
 ## 2. The maintainer's answers at the opening (LUC-85, 2026-10-22)
 
 1. **The Arkham games are the whole trilogy.** The dossier picks what defines the series across Asylum, City and Knight, not one game.
-2. **The Animated Series is the 1992 series only.** *The New Batman Adventures* (1997) redesign is out. The yellow oval goes to the jury (§5).
+2. **The Animated Series is the 1992 series only.** *The New Batman Adventures* (1997) redesign is out. The yellow oval goes to the jury (§6).
 3. **Lego Batman turns the whole app into pieces**: plastic, studs, brick corners on the panel and the disc, Bat-Clawd as a minifigure. It is the wave's biggest engine change.
 4. **References first**, one claims table, and the three rounds of §7.
 
@@ -87,6 +87,8 @@ Each dossier starts from its own territory. It may argue for crossing a line, bu
 **Three rounds.** Round 1: *The Animated Series*, *The Long Halloween* and *the Arkham games*, written at the same time from their territories (§5). Their claims are merged into [`claims-wave-3.md`](claims-wave-3.md). Round 2: *Adam West*, which reads round 1. Round 3: *Lego Batman*, which reads both. Then the jury.
 
 **References first.** Each dossier gathers its references before it proposes anything:
+
+(After the jury, each `INDEX.md` was committed as `references/<dossier>.md`: text and URLs only, so every `[nn]` can be traced once the scratch folder is gone. The images themselves are still never committed.)
 
 - In a new, empty scratch folder of its own, never in the repository. The images are for us and the maintainer's boards; ADR 0001 forbids committing them, tracing them or shipping them.
 - With an `INDEX.md` that lists every image: its number, the file name, the URL it came from, the edition or episode or game, what it shows, and which decision it informs (palette sample, emblem, suit, Signature, lettering, Atmosphere, Voice).
