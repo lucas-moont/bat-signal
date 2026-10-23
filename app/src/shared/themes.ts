@@ -17,6 +17,7 @@ import {
   BAT_1986,
   BAT_1987,
   BAT_1989,
+  BAT_1996,
   BAT_2008,
   BAT_2016,
   BLOCK_2024,
@@ -148,8 +149,8 @@ export const THEMES: Record<ThemeId, Theme> = {
     flag: 'holiday',
     ground: '#0a0507',
     words: HOLIDAY_WORDS,
-    // A first draft: Year One's bat and suit stand in until HOLIDAY's own are drawn (#146).
-    emblem: emblem(BAT_1987, 'none'),
+    emblem: emblem(BAT_1996, 'none'),
+    // A first draft: Year One's suit stands in until HOLIDAY's own is drawn (#146).
     suit: BECOME_A_BAT_SUIT,
     atmosphere: HOLIDAY_NIGHT,
   },

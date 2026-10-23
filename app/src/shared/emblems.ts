@@ -133,3 +133,19 @@ export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): E
   }
   return { path, bat, finish, plate }
 }
+
+/**
+ * HOLIDAY's bat, after Jeph Loeb and Tim Sale's The Long Halloween (1996-97): the classic bat in the
+ * book's Bat-Signal, on the same 120x48 grid. Its wing was measured on #1 p. 27, where the lamp's
+ * bat shows whole behind him, and the rest drawn with the maintainer on screen (#146): a head a
+ * little oval between short ears; each wing's top a round window under a fine tip that points in at
+ * the head; full outer edges; underneath, two claws a side curling in toward the middle, the outer
+ * ones as low as the arrowhead tail. Drawn as a left half and mirrored at x = 60.
+ */
+export const BAT_1996 =
+  'M60 6.1 L57.4 6.1 L56 0.7 Q52.7 6.6 54.1 11.9 L45.4 11.9 Q36.4 11.9 35.2 7.7 Q34.5 3.7 38.1 ' +
+  '0.8 Q28.4 2.8 24.6 11.9 Q22.1 20.5 24.9 29.9 Q26.5 42.7 33.5 48 Q30.3 38.6 32.6 29.3 Q36.8 ' +
+  '32.8 40.1 39.8 Q39.4 32.1 44.8 28.8 Q52.4 37.5 60 48 Q67.6 37.5 75.2 28.8 Q80.6 32.1 79.9 ' +
+  '39.8 Q83.2 32.8 87.4 29.3 Q89.7 38.6 86.5 48 Q93.5 42.7 95.1 29.9 Q97.9 20.5 95.4 11.9 Q91.6 ' +
+  '2.8 81.9 0.8 Q85.5 3.7 84.8 7.7 Q83.6 11.9 74.6 11.9 L65.9 11.9 Q67.3 6.6 64 0.7 L62.6 6.1 ' +
+  'L60 6.1 Z'
