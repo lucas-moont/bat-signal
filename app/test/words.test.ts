@@ -349,4 +349,11 @@ describe("HOLIDAY's words", () => {
     expect(voice.signal.openTip(false)).toMatch(/^No holiday tonight\. /)
     expect(voice.signal.openTip(true)).not.toMatch(/holiday/)
   })
+
+  // The Atmosphere's own name, not the report's: the Calendar is the night report.
+  it('names its Atmosphere after the night, apart from the Calendar', () => {
+    expect(voice.settings.atmosphere.label).toBe('Halloween')
+    expect(voice.settings.atmosphere.label).not.toBe(voice.report.name)
+    expect(voice.settings.atmosphere.hint(terms)).toBe('Torn pages under a pumpkin moon behind the cases')
+  })
 })
