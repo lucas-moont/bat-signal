@@ -474,3 +474,24 @@ What Wave 3 now sits next to, so its return starts from it:
 - **Its emblem** (the pencil Bat-Signal drawn from life, ADR 0001's exception) meets no Wave 3 bat. TLH's round Signal bat (1.3:1) is the nearest kind; compare them at 64px.
 
 ## 9. The maintainer's decisions
+
+Taken on 2026-10-23, from the boards in §7, seen on screen.
+
+**A new rule first.** The maintainer, on question 1: colours that recur across versions of Batman may recur across Themes. The distance floors still apply to the alarm and to the grounds, but a colour every version shares (the yellow oval, the gold belt, the classic blue-grey suit, a black-paper night) is not a collision in itself. Several answers below follow from it.
+
+1. **Orange: The Long Halloween keeps it** (HOLIDAY `#fe7500`, aura kept as BECOME A BAT ships one). **The Animated Series' alarm becomes yellow**, the series' searchlight yellow, which the new rule allows beside PALE MOONLIGHT's gold. TAS needs a new waiting ink at its build, since its searchlight yellow was that ink.
+2. **The yellow oval: A.** TAS, West and Lego all keep a bright oval that never lights, told apart by their suits. Lego's wordmark in Bone.
+3. **Green: A**, as drafted. Check on screen that a green waiting stamp does not read as "fine".
+4. **The classic suit three times: A**, as drafted, gold belts in all three.
+5. **Crouches and searchlights: A.** Both crouches stay; the searchlights go to TAS (the police blimp), the Games keep plain rain.
+6. **The Alarm color's unlit relative at rest: A.** A dark relative of the alarm may dress the suit when the work's suit is that colour, at about 15 or more from the fill, with the aura only when alarmed. West keeps the violet satin and the violet alarm. To be written into `CONTEXT.md` with PALE MOONLIGHT's brass as the first case.
+7. **West's navy: A.** The credits navy (G1). "Adam West stays dark navy" stands; its source is the closing credits, the dusk cards and the Signal on clouds, not the animated opening.
+8. **Lego's magenta: A**, the Batcave neon `#fe79d0`.
+9. **Lego's scope: more than P1.** The maintainer finds P1 still too subtle: the app should look more like plastic and pieces (strong shine, relief, pieces that fit together). New boards at Lego's build, beyond P1, before the engine PR. The legal table (`lego-batman.md` §3.2) and the CPU measurement before merge stand. The building-instructions report stays open for those boards.
+10. **TAS's ground: A**, black paper, the series' own method, as a recorded exception (and under the new rule). Restate the floor rule for Wave 4.
+11. **Lego's torso in black** (S-B, the film's "IN BLACK"); **the Games keep the amber** as a recorded exception, with the dark-glass L1 disc so the two lit discs differ by form.
+12. **Type swaps: yes.** TAS takes Marcellus SC for display and stamps; HOLIDAY stamps in Federo.
+13. **Lexicon fixes: yes**, as §4 lists them, with the on-screen checks.
+14. **Poses: yes.** Lego's flying pose leaves the grapnel to the Games; the Games' alarmed counter gets a shape away from West's fight.
+
+Display names are still decided on screen, at each Theme's build.
