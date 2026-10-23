@@ -1,22 +1,23 @@
-// The Theme's Atmosphere (VENGEANCE's is rain), film grain and a haze of the Theme's light (from a
-// street below, unless the Theme's falls from above) behind everything, in the Theme's colors.
+// The Theme's Atmosphere (VENGEANCE's is rain), over its backdrop if it has one (a still drawing,
+// HOLIDAY's moon), film grain and a haze of the Theme's light (from a street below, unless the
+// Theme's falls from above) behind everything, in the Theme's colors.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
 import { THEMES } from '@shared/themes'
 import { useIsCalm } from '../calm'
-import { painterFor } from '../painters'
+import { backdropFor, painterFor, type Painter } from '../painters'
 import { useTheme } from '../theme'
 import { useEveryTick } from '../ticker'
 import './Atmosphere.css'
 
 /**
- * The Atmosphere's canvas, painted a step on every tick of the shared clock (which stops while
- * hidden) while it moves; still, it keeps its last frame.
+ * A canvas its painter paints: a step on every tick of the shared clock (which stops while hidden)
+ * while it moves; still, it keeps its last frame, painted again only after a resize or new colors.
  */
-function Painted({ atmosphere, moving }: { atmosphere: AtmosphereData; moving: boolean }) {
+function Painted({ make, moving }: { make: () => Painter; moving: boolean }) {
   // The scene lives as long as the canvas; a Theme change mounts a new one (keyed by its Theme).
-  const [painter] = useState(() => painterFor(atmosphere))
+  const [painter] = useState(make)
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const last = useRef<number | null>(null)
@@ -84,6 +85,14 @@ export const isShown = (
   { on, moving, calm }: { on: boolean; moving: boolean; calm: boolean },
 ): boolean => moving || (on && (still === true || (still === 'calm' && calm)))
 
+/** How the Atmosphere's motion, and its backdrop, come and go. */
+const FADE = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 1.2 },
+}
+
 /** How long the Atmosphere keeps moving after the pointer leaves or something changes. */
 const LINGER_MS = 8000
 
@@ -136,20 +145,22 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
   const theme = useTheme()
   const atmosphere = THEMES[theme].atmosphere
   const shown = isShown(atmosphere.still, { on, moving, calm })
+  const { backdrop } = atmosphere
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
       <AnimatePresence>
+        {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
+        {on && backdrop && (
+          <motion.div key="backdrop" className="atmosphere__backdrop" {...FADE}>
+            <Painted key={theme} make={() => backdropFor(backdrop)} moving={false} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
         {shown && (
-          <motion.div
-            key="atmosphere"
-            className="atmosphere__layer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
-          >
-            <Painted key={theme} atmosphere={atmosphere} moving={moving} />
+          <motion.div key="atmosphere" className="atmosphere__layer" {...FADE}>
+            <Painted key={theme} make={() => painterFor(atmosphere)} moving={moving} />
           </motion.div>
         )}
       </AnimatePresence>

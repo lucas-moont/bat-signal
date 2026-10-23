@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { FPS } from '../../src/renderer/src/clockRate'
-import { painterFor, type Painter } from '../../src/renderer/src/painters'
+import { backdropFor, painterFor, type Painter } from '../../src/renderer/src/painters'
 import { batOutline, type Wings } from '../../src/shared/bats'
 import {
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
+  type MoonBackdrop,
   type AshAtmosphere,
   type NoiseAtmosphere,
   type SmokeAtmosphere,
@@ -18,7 +19,8 @@ type Square = { x: number; y: number; size: number }
 
 type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
 
-type Disc = { x: number; y: number; r: number }
+/** A disc, or an ellipse: its width's half is `r`, its height's half `ry`. */
+type Disc = { x: number; y: number; r: number; ry: number }
 
 /** A shape drawn in straight lines: its points in order round its edge. */
 type Shape = (readonly [number, number])[]
@@ -31,7 +33,14 @@ type Shape = (readonly [number, number])[]
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
-  const fills: { alpha: number; color: string; rects: Square[]; discs: Disc[]; shapes: Shape[] }[] = []
+  const fills: {
+    alpha: number
+    color: string
+    rule?: CanvasFillRule
+    rects: Square[]
+    discs: Disc[]
+    shapes: Shape[]
+  }[] = []
   const boxes: Box[] = []
   const outlines: Box[] = []
   const cleared = { times: 0 }
@@ -62,8 +71,10 @@ function recorder() {
     closePath: () => {},
     stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
-    arc: (x: number, y: number, r: number) => discs.push({ x, y, r }),
-    fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs, shapes }),
+    arc: (x: number, y: number, r: number) => discs.push({ x, y, r, ry: r }),
+    ellipse: (x: number, y: number, r: number, ry: number) => discs.push({ x, y, r, ry }),
+    fill: (rule?: CanvasFillRule) =>
+      fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rule, rects, discs, shapes }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
@@ -661,6 +672,86 @@ describe('the smoke', () => {
     expect(risen(2 / FPS)).toBeCloseTo(2 * risen(1 / FPS))
     expect(risen(5)).toBeCloseTo(risen(2 / FPS))
   })
+
+  it('paints round puffs and keeps them in their column when it asks for no wind', () => {
+    for (const frame of fillsOver(smoke(), 10))
+      for (const { discs } of frame) for (const d of discs) expect(d.ry).toBe(d.r)
+    // One life of the first puff: it sways about its column, never further.
+    const xs = frames(SMOKE.life * FPS - 1).map((frame) => frame[0]!.x)
+    expect(Math.max(...xs) - Math.min(...xs)).toBeLessThanOrEqual(2 * SMOKE.sway)
+  })
+
+  // Fog and cloud banks (jury-wave-3.md, section 6): low, wide puffs a wind carries across the panel.
+  describe('on a wind', () => {
+    /** Fog: long-lived puffs, three times as wide as tall, rising a hair and blown 3px a tick. */
+    const FOG: SmokeAtmosphere = { ...SMOKE, life: 60, rise: 0.1, sway: 0, wind: 3, aspect: 1 / 3 }
+
+    it('drifts its puffs across the panel with the wind, a tick at a time', () => {
+      const [first, next] = frames(1, 1 / FPS, smoke(FOG))
+      first!.forEach((a, i) => {
+        const b = next![i]!
+        if (b.x < a.x) return // blown past the right side, and back in at the left
+        expect(b.x - a.x).toBeCloseTo(FOG.wind!)
+      })
+    })
+
+    it('drifts as far as the time between ticks, up to two ticks', () => {
+      const blown = (dt: number) => {
+        const [first, next] = frames(1, dt, smoke(FOG))
+        return next![1]!.x - first![1]!.x
+      }
+      expect(blown(2 / FPS)).toBeCloseTo(2 * blown(1 / FPS))
+      expect(blown(5)).toBeCloseTo(blown(2 / FPS))
+    })
+
+    it.each([3, -3])('brings a puff blown past one side back in at the other (wind %spx)', (wind) => {
+      const reach = FOG.size[1] / 2
+      const xs = frames(400, 1 / FPS, smoke({ ...FOG, wind })).map((frame) => frame[0]!.x)
+      for (const x of xs) {
+        expect(x).toBeGreaterThanOrEqual(-reach)
+        expect(x).toBeLessThanOrEqual(320 + reach)
+      }
+      // It came round at least once.
+      expect(xs.some((x, i) => i > 0 && Math.sign(x - xs[i - 1]!) !== Math.sign(wind))).toBe(true)
+    })
+
+    // A bank is born wide: if it were born at full strength it would blink on mid-panel.
+    it('fades a bank in as it is born, as well as out as it dies', () => {
+      const brief = { ...FOG, life: 2 }
+      const lives = frames(2 * brief.life * FPS, 1 / FPS, smoke(brief)).map((frame) => frame[0]!)
+      // Reborn: back at the bottom edge, where it is born.
+      const born = lives.findIndex((p, i) => i > 0 && p.y > lives[i - 1]!.y)
+      expect(born).toBeGreaterThan(0)
+      expect(lives[born]!.alpha).toBeLessThan(brief.alpha * 0.25)
+      expect(Math.max(...lives.map((p) => p.alpha))).toBeLessThanOrEqual(brief.alpha + 1e-9)
+    })
+
+    // Puffs that shrink, or sway far: still wholly off the canvas when they come round.
+    it.each([[{ size: [120, 40] as const, sway: 0 }], [{ size: [12, 20] as const, sway: 15 }]])(
+      'comes round only once it is wholly past the side (%o)',
+      (shape) => {
+        const painter = smoke({ ...FOG, ...shape, life: 600, wind: 3 })
+        const lives = frames(300, 1 / FPS, painter).map((frame) => frame[0]!)
+        let wrapped = 0
+        lives.forEach((p, i) => {
+          // Come round: back across most of the canvas in one tick (a sway step is far shorter).
+          if (i === 0 || p.x >= lives[i - 1]!.x - 160) return
+          wrapped++
+          // Where the wind would have carried it this tick, it is wholly past the right side; where it
+          // comes back, wholly before the left one, a tick's wind from coming in.
+          const was = lives[i - 1]!
+          expect(was.x + 3 - was.r).toBeGreaterThanOrEqual(320 - 1e-9)
+          expect(p.x + p.r).toBeLessThanOrEqual(3 + 1e-9)
+        })
+        expect(wrapped).toBeGreaterThan(0)
+      },
+    )
+
+    it('flattens its puffs by its aspect, as wide as ever', () => {
+      for (const frame of fillsOver(smoke(FOG), 5))
+        for (const { discs } of frame) for (const d of discs) expect(d.ry).toBeCloseTo(d.r * FOG.aspect!)
+    })
+  })
 })
 
 describe('the noise', () => {
@@ -983,5 +1074,97 @@ describe('the lit windows', () => {
     painter.paint(ctx, 1 / FPS)
     expect(cleared.times).toBe(1)
     expect(boxes.some((b) => b.color === '#111111')).toBe(true)
+  })
+})
+
+// A still drawing behind the motion, painted once (jury-wave-3.md, section 6, item 2): HOLIDAY's
+// pumpkin moon first (jury section 9, decision 15); TAS's skyline and West's Signal join it later.
+describe('the moon behind the motion', () => {
+  /** A carved moon three quarters across, 80px down, 30px across its middle, faint. */
+  const MOON: MoonBackdrop = {
+    kind: 'moon',
+    color: '--moon',
+    alpha: 0.35,
+    at: [0.75, 80],
+    radius: 30,
+    carved: true,
+  }
+  const colorOf = (variable: string) => ({ '--moon': '#7a3a12' })[variable] ?? ''
+
+  const moon = (backdrop: MoonBackdrop = MOON, width = 320) => {
+    const painter = backdropFor(backdrop)
+    painter.recolor(colorOf)
+    painter.resize(width, 440)
+    const { ctx, fills, cleared } = recorder()
+    painter.paint(ctx, 0)
+    return { painter, fills, cleared }
+  }
+
+  it('paints its moon where it is asked, as wide as it asks, in its color and strength', () => {
+    const { fills } = moon()
+    expect(fills).toHaveLength(1)
+    const [{ color, alpha, discs }] = fills as [(typeof fills)[number]]
+    expect(color).toBe('#7a3a12')
+    expect(alpha).toBe(0.35)
+    expect(discs).toHaveLength(1)
+    expect(discs[0]!.x).toBeCloseTo(0.75 * 320)
+    expect(discs[0]!.y).toBeCloseTo(80)
+    expect(discs[0]!.r).toBeCloseTo(30)
+  })
+
+  it('keeps its place across the panel as the panel widens', () => {
+    expect(moon(MOON, 400).fills[0]!.discs[0]!.x).toBeCloseTo(0.75 * 400)
+  })
+
+  it('paints a plain moon round, with nothing cut out of it', () => {
+    const plain = moon({ ...MOON, carved: undefined }).fills[0]!
+    expect(plain.discs[0]!.ry).toBeCloseTo(plain.discs[0]!.r)
+    expect(plain.shapes).toHaveLength(0)
+  })
+
+  // A pumpkin: wider than tall, a stem on top, two eyes and a toothed grin cut through it, the
+  // cuts left empty by the even-odd rule (long-halloween.md; Sale's 2021 Deluxe cover).
+  it('carves a pumpkin: wider than tall, a stem, two eyes and a grin cut through it', () => {
+    const { discs, shapes, rule } = moon().fills[0]!
+    const { x, y, r, ry } = discs[0]!
+    expect(ry).toBeLessThan(r)
+    expect(rule).toBe('evenodd')
+    const inside = ([px, py]: readonly [number, number]) =>
+      ((px - x) / r) ** 2 + ((py - y) / ry) ** 2 <= 1 + 1e-9
+    const [stem, ...cuts] = shapes
+    // The stem stands on the top, above the body.
+    expect(Math.min(...stem!.map(([, py]) => py))).toBeLessThan(y - ry)
+    // Two eyes and a grin, each wholly inside the body, so each cut is a hole.
+    expect(cuts).toHaveLength(3)
+    for (const cut of cuts) for (const point of cut) expect(inside(point)).toBe(true)
+    const [left, right, grin] = cuts as [Shape, Shape, Shape]
+    const meanX = (shape: Shape) => shape.reduce((sum, [px]) => sum + px, 0) / shape.length
+    const meanY = (shape: Shape) => shape.reduce((sum, [, py]) => sum + py, 0) / shape.length
+    expect(meanX(left)).toBeLessThan(x)
+    expect(meanX(right)).toBeGreaterThan(x)
+    expect(meanY(grin)).toBeGreaterThan(Math.max(meanY(left), meanY(right)))
+    // Teeth: the grin's edge goes up and down more than twice.
+    const turns = grin.filter(
+      (_, i) =>
+        i > 0 && i < grin.length - 1 && (grin[i]![1] - grin[i - 1]![1]) * (grin[i + 1]![1] - grin[i]![1]) < 0,
+    )
+    expect(turns.length).toBeGreaterThan(2)
+  })
+
+  // Still: nothing moves, so a tick paints the same picture, and the page only asks for one after
+  // a resize or new colors.
+  it('paints the same picture every time', () => {
+    const { painter, fills } = moon()
+    const again = recorder()
+    painter.paint(again.ctx, 1 / FPS)
+    expect(again.fills).toEqual(fills)
+  })
+
+  it('paints in its new color once recolored', () => {
+    const { painter } = moon()
+    painter.recolor(() => '#3d1b13')
+    const again = recorder()
+    painter.paint(again.ctx, 0)
+    expect(again.fills[0]!.color).toBe('#3d1b13')
   })
 })

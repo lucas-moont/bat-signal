@@ -1,7 +1,8 @@
 // A Theme's Atmosphere (CONTEXT.md) as data: what its canvas paints behind the panel, on the shared
 // 8 fps clock: VENGEANCE's rain, PALE MOONLIGHT's snow, WATCHFUL PROTECTOR's lit windows, ash on a
 // desert wind, smoke off the street, noise on a screen; each kind has its painter
-// (renderer/src/painters.ts).
+// (renderer/src/painters.ts). Behind its motion, a scene may have a backdrop: a still drawing, as
+// HOLIDAY's moon.
 
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
@@ -14,7 +15,33 @@ interface Scene {
    * with its motion; by default it leaves either way.
    */
   still?: boolean | 'calm'
+  /**
+   * A still drawing behind its motion, painted once (again only after a resize or new colors): it
+   * stays while the Atmosphere is on, moving or not, under reduced motion too.
+   */
+  backdrop?: Backdrop
 }
+
+/**
+ * A moon in the sky. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe cover): a
+ * little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
+ */
+export interface MoonBackdrop {
+  kind: 'moon'
+  /** The variable it is filled in. */
+  color: string
+  /** Its strength (alpha), from 0 to 1. */
+  alpha: number
+  /** Its centre: across the panel as a share of its width (0 to 1), and down from its top in px. */
+  at: readonly [number, number]
+  /** Its radius across, in px (a carved moon is a little less tall). */
+  radius: number
+  /** Whether it is a jack-o'-lantern: a stem, two eyes and a grin cut through it. Not by default. */
+  carved?: boolean
+}
+
+/** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
+export type Backdrop = MoonBackdrop
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {
@@ -96,7 +123,8 @@ export interface AshAtmosphere extends Scene {
 
 /**
  * Smoke off the street: soft round puffs rise from the bottom edge, a few at a time, each swelling
- * and fading to nothing as it rises, swaying a little on the clock.
+ * and fading to nothing as it rises, swaying a little on the clock. On a wind, and flattened, they
+ * are fog or cloud banks drifting across the panel.
  */
 export interface SmokeAtmosphere extends Scene {
   kind: 'smoke'
@@ -117,6 +145,13 @@ export interface SmokeAtmosphere extends Scene {
   life: number
   /** How far it sways either way as it rises, in px. */
   sway: number
+  /**
+   * How far a wind carries it sideways a tick, in px (under 0 from the right): a puff blown past
+   * one side comes back in at the other. None by default.
+   */
+  wind?: number
+  /** A puff's height for its width: under 1, a flat bank of fog or cloud. Round by default. */
+  aspect?: number
 }
 
 /**

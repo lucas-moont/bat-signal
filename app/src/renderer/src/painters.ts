@@ -4,7 +4,9 @@
 import type {
   AshAtmosphere,
   Atmosphere,
+  Backdrop,
   LitWindowsAtmosphere,
+  MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
   SmokeAtmosphere,
@@ -50,6 +52,99 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return smoke(atmosphere, random)
     case 'noise':
       return noise(atmosphere, random)
+  }
+}
+
+/**
+ * A shape in straight lines added to the path as its own closed shape: its points `scale` times as
+ * far from (cx, cy).
+ */
+function trace(
+  ctx: CanvasRenderingContext2D,
+  points: readonly (readonly [number, number])[],
+  cx: number,
+  cy: number,
+  scale = 1,
+) {
+  ctx.moveTo(cx + points[0]![0] * scale, cy + points[0]![1] * scale)
+  for (let p = 1; p < points.length; p++) ctx.lineTo(cx + points[p]![0] * scale, cy + points[p]![1] * scale)
+  ctx.closePath()
+}
+
+/** The painter of an Atmosphere's backdrop: a still drawing, the same picture on every paint. */
+export function backdropFor(backdrop: Backdrop): Painter {
+  switch (backdrop.kind) {
+    case 'moon':
+      return moon(backdrop)
+  }
+}
+
+/** A carved moon's height for its width: a pumpkin is a little wider than tall. */
+const PUMPKIN = 0.88
+
+/**
+ * A jack-o'-lantern's cuts, in radii from the moon's centre (y down): its stem standing on the
+ * body's top, two slanted eyes, and a grin with teeth hanging into it; all but the stem inside the
+ * body, so the even-odd rule leaves them empty.
+ */
+const CUTS = [
+  // The stem.
+  [
+    [-0.08, -PUMPKIN - 0.22],
+    [0.1, -PUMPKIN - 0.18],
+    [0.08, -PUMPKIN],
+    [-0.08, -PUMPKIN],
+  ],
+  // The eyes, left and right.
+  [
+    [-0.55, 0],
+    [-0.18, -0.38],
+    [-0.15, 0.02],
+  ],
+  [
+    [0.55, 0],
+    [0.18, -0.38],
+    [0.15, 0.02],
+  ],
+  // The grin: its top edge toothed, its bottom edge round.
+  [
+    [-0.62, 0.18],
+    [-0.42, 0.36],
+    [-0.28, 0.22],
+    [-0.12, 0.4],
+    [0, 0.24],
+    [0.12, 0.4],
+    [0.28, 0.22],
+    [0.42, 0.36],
+    [0.62, 0.18],
+    [0.4, 0.52],
+    [0, 0.62],
+    [-0.4, 0.52],
+  ],
+] as const
+
+/** A moon, carved or not: painted whole on every paint, since it never moves. */
+function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Painter {
+  let width = 0
+  let height = 0
+  let color = ''
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+    },
+    paint(ctx) {
+      const [cx, cy] = [at[0] * width, at[1]]
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.ellipse(cx, cy, radius, radius * (carved ? PUMPKIN : 1), 0, 0, 2 * Math.PI)
+      if (carved) for (const cut of CUTS) trace(ctx, cut, cx, cy, radius)
+      ctx.fill('evenodd')
+    },
   }
 }
 
@@ -403,10 +498,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
-    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
-    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
-    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
-    ctx.closePath()
+    trace(ctx, outlines.get(size)![frameAt(BEAT, beats, phase)], cx, cy)
   }
 
   return {
@@ -476,15 +568,26 @@ interface Puff {
 /** A puff's soft edge: the discs it is painted as, each a share of its width, the widest first. */
 const PUFF_RINGS = [1, 0.7, 0.4]
 
+/** The share of its life a puff on a wind takes to fade in. */
+const FADE_IN = 0.2
+
 /**
  * Smoke: a few puffs rise from the bottom edge, each swelling and fading to nothing over its life,
  * swaying on the clock as snow does. They leave the street one after another, so the smoke never
- * pulses; a puff that is gone leaves again from the street, in a column of its own.
+ * pulses; a puff that is gone leaves again from the street, in a column of its own. A wind carries
+ * them sideways as they rise, round from one side to the other, and an aspect flattens them.
  */
 function smoke(
-  { color: variable, puffs: count, size, alpha, rise, life, sway }: SmokeAtmosphere,
+  { color: variable, puffs: count, size, alpha, rise, life, sway, wind = 0, aspect = 1 }: SmokeAtmosphere,
   random: () => number,
 ): Painter {
+  /**
+   * How far past either side a puff may be blown before it comes back at the other: as wide as it
+   * ever is, and as far as it sways, so it is wholly off the canvas when it comes round.
+   */
+  const reach = Math.max(...size) / 2 + sway
+  /** The way round a puff is blown: the canvas and that reach past either side. */
+  let span = 0
   /** A puff's life in ticks of the clock. */
   const lifeTicks = life / STEP
   let puffs: Puff[] = []
@@ -500,6 +603,7 @@ function smoke(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
+      span = width + 2 * reach
       ticks = 0
       puffs = Array.from({ length: count }, (_, i) => ({
         x: random() * width,
@@ -520,13 +624,17 @@ function smoke(
         }
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
-        const x = p.x + swayAt(sway, ticks, p.phase)
+        // Blown along by the wind, and round again once past a side.
+        const blown = p.x + wind * p.age + swayAt(sway, ticks, p.phase) + reach
+        const x = (((blown % span) + span) % span) - reach
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
-        ctx.globalAlpha = (alpha * (1 - t)) / PUFF_RINGS.length
+        // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.
+        const fade = wind ? Math.min(1, t / FADE_IN) * (1 - t) : 1 - t
+        ctx.globalAlpha = (alpha * fade) / PUFF_RINGS.length
         for (const ring of PUFF_RINGS) {
           ctx.beginPath()
-          ctx.arc(x, y, radius * ring, 0, 2 * Math.PI)
+          ctx.ellipse(x, y, radius * ring, radius * ring * Math.abs(aspect), 0, 0, 2 * Math.PI)
           ctx.fill()
         }
       }

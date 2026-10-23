@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CalmContext } from '../../src/renderer/src/calm'
 import { Atmosphere, isShown } from '../../src/renderer/src/components/Atmosphere'
-import type { AshAtmosphere, LitWindowsAtmosphere } from '../../src/shared/atmospheres'
+import type { AshAtmosphere, LitWindowsAtmosphere, SmokeAtmosphere } from '../../src/shared/atmospheres'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (on: boolean, calm = false) =>
@@ -101,5 +101,41 @@ describe('an Atmosphere at rest', () => {
 
   it('is never on the page while it is off', () => {
     expect(isShown(true, { on: false, moving: false, calm: true })).toBe(false)
+  })
+})
+
+// A still drawing behind the motion (HOLIDAY's moon behind its fog): it stays whenever the
+// Atmosphere is on, moving or not, under reduced motion too, since nothing in it moves.
+describe('an Atmosphere with a backdrop', () => {
+  standInTheme({
+    atmosphere: {
+      kind: 'smoke',
+      color: '--smoke',
+      puffs: 3,
+      size: [40, 80],
+      alpha: 0.1,
+      rise: 0.1,
+      life: 30,
+      sway: 0,
+      wind: 2,
+      aspect: 0.3,
+      backdrop: { kind: 'moon', color: '--bone', alpha: 0.2, at: [0.75, 80], radius: 30 },
+    } satisfies SmokeAtmosphere,
+  })
+
+  it('paints its backdrop under the motion while it is on', () => {
+    const page = draw(true)
+    expect(page).toContain('atmosphere__backdrop')
+    expect(page.indexOf('atmosphere__backdrop')).toBeLessThan(page.indexOf('atmosphere__layer'))
+  })
+
+  it('keeps its backdrop under reduced motion, when the fog has left', () => {
+    const page = draw(true, true)
+    expect(page).toContain('atmosphere__backdrop')
+    expect(page).not.toContain('atmosphere__layer')
+  })
+
+  it('takes its backdrop away when it is off', () => {
+    expect(draw(false)).not.toContain('atmosphere__backdrop')
   })
 })

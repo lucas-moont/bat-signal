@@ -13,7 +13,9 @@
   background: radial-gradient(closest-side in srgb, var(--haze), var(--haze-edge) 55%, transparent);
 }
 
-.atmosphere__layer {
+/* The motion, and under it the backdrop (a still drawing, if the Atmosphere has one). */
+.atmosphere__layer,
+.atmosphere__backdrop {
   position: absolute;
   inset: 0;
 }
