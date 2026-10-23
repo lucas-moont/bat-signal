@@ -402,7 +402,7 @@ Two PRs per Theme, engine then Theme, as in Wave 2. A shared piece is built by t
 2. **Shared: Atmosphere options on existing painters**, gated as today: the shared 8 fps clock, under the pointer and for a few seconds after news, `still: 'calm'`, nothing under reduced motion.
    - On `smoke`: `wind` (sideways drift) and `aspect` (wide flat puffs), for West's clouds.
    - A **still layer drawn once**, which `noise` lost when SERIOUS HOUSE's panes were reverted in #141. It carries West's pale Signal, TAS's skyline silhouettes, and SERIOUS HOUSE's panes when it returns.
-   - On `ash`: a two-frame page sprite beside BLUE COLLAR's bat, for TLH.
+   - ~~On `ash`: a two-frame page sprite beside BLUE COLLAR's bat, for TLH.~~ Dropped by decision 15: HOLIDAY now uses this item's still layer (for its pumpkin moon) and `smoke`'s `wind` and `aspect` (for its fog), so those serve TLH as well as West and TAS.
    - On `noise`: a band at an angle, with no marks and a pause between passes, for Lego's sheen (A2).
 3. **TAS: the `skyline` kind.** A sky band, the silhouettes on the still layer, and one blimp with two beams on the clock. The haze that follows the needs-you state drops if question 1 goes to A. The intro's searchlight cone stays distinct: the beams are thin, two, and never carry a bat.
 4. **West: the POW! balloon.** A starburst beside a fresh stamp on the notice card, three steps on the 8 fps clock, never in the report margin, the watch strip, a toast or the tray, and off under reduced motion. It is the only new component in the wave.
@@ -452,7 +452,7 @@ Each board was shown to the maintainer from the session's scratch folder (`board
 
 **Decide on screen** (not questions; each in its Theme's build, from a labelled image):
 - TAS's alarmed pose under B, and its cowl with a neutral rim.
-- TLH's orange aura beside the jaw, its pages' tumble beside PALE MOONLIGHT's snow, and its ears beside SERIOUS HOUSE's.
+- TLH's orange aura beside the jaw and its ears beside SERIOUS HOUSE's; after decision 15, its moon beside its own lit disc (two orange rounds), and its fog beside BECOME A BAT's smoke, KNIGHTMARE's ash and SAME BAT-TIME's clouds. (The pages' tumble beside PALE MOONLIGHT's snow was seen, and the pages dropped.)
 - The Games' belt (1.13:1), and its rain beside VENGEANCE's.
 - West's brows at 78px, the balloon's size, and the clouds as bands.
 - Lego's dinner for one as a long perch, the studs at real size, and A2's sheen beside ANCIENT GRACE's roll band.
@@ -495,5 +495,6 @@ Taken on 2026-10-23, from the boards in §7, seen on screen.
 12. **Type swaps: yes.** TAS takes Marcellus SC for display and stamps; HOLIDAY stamps in Federo.
 13. **Lexicon fixes: yes**, as §4 lists them, with the on-screen checks.
 14. **Poses: yes.** Lego's flying pose leaves the grapnel to the Games; the Games' alarmed counter gets a shape away from West's fight.
+15. **HOLIDAY's Atmosphere** (2026-10-23, at its build, after seeing the pages beside PALE MOONLIGHT's snow, which read too alike): the calendar pages are dropped for a Halloween night, **a still pumpkin moon** with a carved face after Sale's 2021 Deluxe cover (by the book's own artist, though a later edition: the dossier's index marks it secondary), and **low fog drifting sideways**. The moon's colour was put to a board with three options: A, Bone and never orange; B, Bone at rest and lit orange only when something needs you (a new engine hook); C, a dim orange at all times. **The maintainer chose C.** So the Alarm-color rule (`CONTEXT.md`, `DESIGN.md`) now lets an unlit relative of the alarm sit in the Atmosphere, not only on the suit, at about 15 ΔE00 from the alarm's fill or more. The board's dim orange, `#7a3a12` at 35% over the surface (`#3d1b13` as seen), is 35.4 from the fill `#d05600` and 48.8 from `#fe7500`; even opaque, `#7a3a12` is 19.9 from the fill. The build picks the moon's colour on screen within that floor, and checks it beside the lit disc. The fog is not BECOME A BAT's smoke: wide flat banks (`aspect`) carried sideways (`wind`) along the bottom, not round puffs rising off the street; and it is not SAME BAT-TIME's clouds: those are bands across a navy sky past the Signal's bat, this hugs the floor under a carved moon in wine light. Engine: the shared still layer and the smoke's `wind` and `aspect` (LUC-118). The dossier's `--pages` variable, its "Calendar" Atmosphere label and hint, and its §11 Atmosphere scores are redone at the build; the scores against BECOME A BAT, KNIGHTMARE and SAME BAT-TIME are checked on screen.
 
 Display names are still decided on screen, at each Theme's build.

@@ -31,7 +31,7 @@ How the panel arranges the same content, independent of the Theme: the case file
 _Avoid_: Theme, view, mode
 
 **Alarm color**:
-The one color a Theme keeps for "something needs you"; it appears nowhere else. It is the hottest color in the Theme's palette, and a red that suits the palette when the palette has no color that reads as an alarm. A dark, unlit relative of it may dress Bat-Clawd's suit when the work's suit is that colour, at least about 15 ΔE00 from the alarm's fill, with the aura shown only when alarmed (PALE MOONLIGHT's brass plate and belt; SAME BAT-TIME's violet satin; `docs/research/themes/jury-wave-3.md` §9, decision 6).
+The one color a Theme keeps for "something needs you"; it appears nowhere else. It is the hottest color in the Theme's palette, and a red that suits the palette when the palette has no color that reads as an alarm. A dark, unlit relative of it may dress Bat-Clawd's suit, or sit in the Atmosphere, when the work has that colour there (in the work itself, or in its own artist's art for a later edition), at least about 15 ΔE00 from the alarm's fill, with the aura shown only when alarmed (PALE MOONLIGHT's brass plate and belt; SAME BAT-TIME's violet satin; HOLIDAY's pumpkin moon; `docs/research/themes/jury-wave-3.md` §9, decisions 6 and 15).
 _Avoid_: Accent, brand color, "red"
 
 **Accent**:
