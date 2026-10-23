@@ -84,53 +84,67 @@ const PUMPKIN = 0.88
 
 /**
  * A jack-o'-lantern's cuts, in radii from the moon's centre (y down): its stem standing on the
- * body's top, two slanted eyes, and a grin with teeth hanging into it; all but the stem inside the
- * body, so the even-odd rule leaves them empty.
+ * body's top, then two furious eyes slanting down to the middle and a grin cut in the shape of the
+ * bat (the Deluxe cover's). The stem stands outside the body, so it fills; the face is inside it, so
+ * the even-odd rule leaves it empty.
  */
-const CUTS = [
-  // The stem.
-  [
-    [-0.08, -PUMPKIN - 0.22],
-    [0.1, -PUMPKIN - 0.18],
-    [0.08, -PUMPKIN],
-    [-0.08, -PUMPKIN],
-  ],
+const STEM = [
+  [-0.08, -PUMPKIN - 0.22],
+  [0.1, -PUMPKIN - 0.18],
+  [0.08, -PUMPKIN],
+  [-0.08, -PUMPKIN],
+] as const
+/** The left half of the bat the grin is cut as: from its head down its left side to its tail. */
+const GRIN_LEFT = [
+  [0, 0.24],
+  [-0.04, 0.24],
+  [-0.08, 0.14],
+  [-0.13, 0.25],
+  [-0.2, 0.27],
+  [-0.62, 0.14],
+  [-0.6, 0.36],
+  [-0.5, 0.5],
+  [-0.42, 0.4],
+  [-0.32, 0.54],
+  [-0.22, 0.44],
+] as const
+/** A shape's points, in order round its edge. */
+type Points = readonly (readonly [number, number])[]
+const FACE: readonly Points[] = [
   // The eyes, left and right.
   [
-    [-0.55, 0],
-    [-0.18, -0.38],
-    [-0.15, 0.02],
+    [-0.6, -0.3],
+    [-0.14, -0.04],
+    [-0.3, 0.06],
+    [-0.52, 0],
   ],
   [
-    [0.55, 0],
-    [0.18, -0.38],
-    [0.15, 0.02],
+    [0.6, -0.3],
+    [0.14, -0.04],
+    [0.3, 0.06],
+    [0.52, 0],
   ],
-  // The grin: its top edge toothed, its bottom edge round.
+  // The grin: the bat's left half, its tail, then its right half back up to its head.
   [
-    [-0.62, 0.18],
-    [-0.42, 0.36],
-    [-0.28, 0.22],
-    [-0.12, 0.4],
-    [0, 0.24],
-    [0.12, 0.4],
-    [0.28, 0.22],
-    [0.42, 0.36],
-    [0.62, 0.18],
-    [0.4, 0.52],
-    [0, 0.62],
-    [-0.4, 0.52],
+    ...GRIN_LEFT,
+    [0, 0.64],
+    ...GRIN_LEFT.slice(1)
+      .reverse()
+      .map(([x, y]) => [-x, y] as const),
   ],
-] as const
+]
+const CUTS: readonly Points[] = [STEM, ...FACE]
 
 /** A moon, carved or not: painted whole on every paint, since it never moves. */
-function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Painter {
+function moon({ color: variable, alpha, at, radius, carved, candle: flame }: MoonBackdrop): Painter {
   let width = 0
   let height = 0
   let color = ''
+  let candle = ''
   return {
     recolor(colorOf) {
       color = colorOf(variable)
+      candle = flame ? colorOf(flame) : ''
     },
     resize(w, h) {
       ;[width, height] = [w, h]
@@ -144,6 +158,13 @@ function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Pai
       ctx.ellipse(cx, cy, radius, radius * (carved ? PUMPKIN : 1), 0, 0, 2 * Math.PI)
       if (carved) for (const cut of CUTS) trace(ctx, cut, cx, cy, radius)
       ctx.fill('evenodd')
+      // The candle inside, lighting the eyes and the grin.
+      if (carved && candle) {
+        ctx.fillStyle = candle
+        ctx.beginPath()
+        for (const cut of FACE) trace(ctx, cut, cx, cy, radius)
+        ctx.fill()
+      }
     },
   }
 }

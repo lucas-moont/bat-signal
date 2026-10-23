@@ -34,6 +34,12 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 | <img src="docs/screenshots/yearone-night-report.png" width="170" alt="BECOME A BAT's Notebook, dated October 15 as Year One dates a scene: its headings in canary caption boxes, written in an upright printed hand, a red pen under each request"> | <img src="docs/screenshots/grace-night-report.png" width="170" alt="ANCIENT GRACE's Bulletin, dated LIVE with the time: Your segment, cyan and blue stamps in the margin, a cyan or blue pen under each request"> | <img src="docs/screenshots/collar-night-report.png" width="170" alt="BLUE COLLAR's Shift notes, dated NIGHT SHIFT with the time, written in a designed hand: Needs your hands, lemon and mauve stamps in the margin, a straight lemon or mauve pen under each request"> |
 | <img src="docs/screenshots/yearone-clawd-alarmed.png" width="170" alt="BECOME A BAT's Bat-Clawd in the first suit, grey with a black collar, a canary belt and a small black bat, his cape flung open in a red glow"> | <img src="docs/screenshots/grace-clawd-alarmed.png" width="170" alt="ANCIENT GRACE's Bat-Clawd as the old man, huge shoulders rising to his jaw, in the grey second suit with its wide black bat, his black cape over his shoulders and open in front, in a cyan glow"> | <img src="docs/screenshots/collar-clawd-alarmed.png" width="170" alt="BLUE COLLAR's Bat-Clawd in the teal working suit, black spiked shoulder pads, striped forearms, an olive belt and black trunks, the chest block raised over his shoulder as an axe, in a lemon glow"> |
 
+| HOLIDAY<br><sub>after Jeph Loeb and<br>Tim Sale's<br><i>The Long Halloween</i> (1996)</sub> |
+|:---:|
+| <img src="docs/screenshots/holiday-needs-you.png" width="170" alt="HOLIDAY: the same requests on a wine-black night, BLESSING? and BOTCHED in jack-o'-lantern orange, A WORD? and MESSAGE in the Signal lens's grey, a pumpkin moon behind the tabs and a calendar's torn pages falling"> |
+| <img src="docs/screenshots/holiday-night-report.png" width="170" alt="HOLIDAY's Calendar, dated by the next holiday (HALLOWEEN IN 8 DAYS): Waiting on your word, orange and grey stamps in the margin"> |
+| <img src="docs/screenshots/holiday-clawd-alarmed.png" width="170" alt="HOLIDAY's Bat-Clawd in Sale's suit, a blue cowl with long ears, a blue mantle, the Signal's bat on his blue-grey chest, a gold belt, his blue cape thrown open, a jack-o'-lantern lit at his foot, in an orange glow"> |
+
 ## A closer look
 
 | Needs you | A case | A notice from the disc |

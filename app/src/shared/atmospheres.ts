@@ -24,7 +24,7 @@ interface Scene {
 
 /**
  * A moon in the sky. Carved, it is a jack-o'-lantern (HOLIDAY's, after Sale's 2021 Deluxe cover): a
- * little wider than tall, a stem on top, two eyes and a toothed grin cut through it.
+ * little wider than tall, a stem on top, two furious eyes and a grin in the bat's shape cut through it.
  */
 export interface MoonBackdrop {
   kind: 'moon'
@@ -38,6 +38,8 @@ export interface MoonBackdrop {
   radius: number
   /** Whether it is a jack-o'-lantern: a stem, two eyes and a grin cut through it. Not by default. */
   carved?: boolean
+  /** The variable a carved moon's candle lights its eyes and grin in from inside; unlit without one. */
+  candle?: string
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
@@ -323,4 +325,32 @@ export const BLUE_COLLAR_COLONY: AshAtmosphere = {
     { alpha: 0.55, size: 22, wind: -5, fall: 0 },
   ],
   bats: { band: [64, 74], arc: 4, away: 160 },
+}
+
+/**
+ * HOLIDAY's Halloween night (jury-wave-3.md, section 9, decisions 15 to 17): a still pumpkin moon in
+ * a dim orange, upper right, after Sale's 2021 Deluxe cover, its furious eyes and bat-shaped grin lit
+ * by a candle, and under it a tear-off calendar's
+ * pages, torn and falling, swinging from side to side in three depths of Bone (the middle size of
+ * three, picked on screen, #146).
+ */
+export const HOLIDAY_NIGHT: AshAtmosphere = {
+  kind: 'ash',
+  color: '--pages',
+  density: 0.045,
+  depths: [
+    { alpha: 0.22, size: 8, wind: 0.3, fall: 1 },
+    { alpha: 0.3, size: 10, wind: 0.65, fall: 1.5 },
+    { alpha: 0.4, size: 12, wind: 1, fall: 2 },
+  ],
+  pages: { swing: 6, period: 3, tilt: 0.35 },
+  backdrop: {
+    kind: 'moon',
+    color: '--moon',
+    alpha: 0.6,
+    at: [0.72, 68],
+    radius: 34,
+    carved: true,
+    candle: '--candle',
+  },
 }

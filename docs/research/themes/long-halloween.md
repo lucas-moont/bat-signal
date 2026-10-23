@@ -2,6 +2,8 @@
 
 > **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For HOLIDAY: it keeps the jack-o'-lantern orange, **with its aura** (BECOME A BAT already ships one closer to Clawd); its stamps move to Federo; and its Atmosphere is a still pumpkin moon in a dim orange over the pages of §10, which no longer tumble but swing from side to side, torn and leaning; no fog (§9, decisions 1, 12, 15 and 16). The "Calendar" Atmosphere label and hint in §6 and the Atmosphere scores in §11 are redone at the build.
 
+> **Built in #146** (engine PRs #151 and #152, then the Theme's), each visual choice picked on screen beside the references: the moon placed upper right, then raised so its grin shows; its eyes furious, its grin cut in the bat's shape, lit by a candle (`--candle`); the pages the middle of three sizes; the bat (`BAT_1996`) measured on #1 p. 27 and redrawn over twelve rounds as the classic bat the book's Signal shows; the ears as tall as the frame allows; the long cape bowing up over his left, lit along its top, his arm in the suit's blue-grey. CPU (the whole app, three runs each, 30 s after 15 s to settle), HOLIDAY against VENGEANCE: panel at rest 0.11 against 0.11 to 0.12%; panel alarmed 0.45 to 0.48 against 0.48 to 0.51%; perch at rest 0.08 to 0.10 against 0.07 to 0.08%; perch alarmed 0.18 to 0.20 against 0.15 to 0.20%. Within noise.
+
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long Halloween*, thirteen issues by Jeph Loeb (story) and Tim Sale (art), coloured by Gregory Wright, lettered by Comicraft (Richard Starkings), edited by Archie Goodwin; DC, cover dates December 1996 to December 1997. Wave 3, round 1, issue #143, Linear LUC-85 and LUC-87. It follows [`wave-3-brief.md`](wave-3-brief.md), the rules of [`wave-2-brief.md`](wave-2-brief.md) §2 and the headings of its §6, and it is checked against [`claims-wave-3.md`](claims-wave-3.md), the seven shipped stylesheets (`app/src/renderer/src/styles/themes/*.css`, `main` at v1.3.0) and SERIOUS HOUSE as kept on `feat/123-serious-house`. The terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
 **Provenance key.** **Read** = seen by us on a reference image, named by its number in the reference folder (`[12]`). **Measured** = taken off that image by a script: a region's median, its most chromatic 5%, its darkest 5% and its brightest 5% (`sample.py`), or a cover's flat field, the fullest colour bin of a box (`field.py`). **Inferred** = our reading. **P** = proposed by us. ΔE00 is CIEDE2000 and contrast is WCAG 2, both computed by our own script; it reproduces Sharma, Wu and Dalal's test pairs (2.0425 and 1.0000) and the juries' figures (14.6 for `#ff405f`–`#e3121b`, 6.1 for `#f2605e`–`#ff405f`).
@@ -251,6 +253,21 @@ No lettering from the book is used. Comicraft's balloon and caption faces are co
 | CASE OPENED (notice card only, 272) | 83.1 | | |
 
 All fit, with at least 16px to spare in every room (PERMISSION in the watch strip is the tightest). Federo at 11px fits too (PERMISSION 83.2 / 87 at the narrowest).
+
+**As built (#146): Federo 400 at 11px, no tilt, a 1px border** (jury section 9, decision 12), measured by `stampWidth.test.ts` itself, needed / room:
+
+| Word | Margin (101) | Narrowest (87) | Strip (72) |
+|---|---|---|---|
+| BLESSING? | 80.9 | 73.0 | 57.8 |
+| BOTCHED | 76.5 | 70.3 | 53.9 |
+| A WORD? | 72.5 | 66.4 | 50.5 |
+| MESSAGE | 72.4 | 66.2 | 50.4 |
+| ON ICE | 59.8 | 54.5 | 39.5 |
+| NEEDS YOU (the widest) | 86.7 | 78.8 | 62.8 |
+| WORKING / IDLE / SHELL | 76.0 / 43.1 / 52.0 | 69.8 / 39.6 / 47.6 | 53.5 / 25.2 / 32.9 |
+| CASE OPENED (notice card only, 272) | 104.3 | | |
+
+All fit, NEEDS YOU at the narrowest the tightest (8.2px to spare).
 
 ## 6. Voice
 

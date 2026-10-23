@@ -4,6 +4,10 @@ All notable changes to Bat-Signal are documented here. The format follows [Keep 
 
 ## [Unreleased]
 
+### Added
+
+- **HOLIDAY**, an eighth Theme and the first of the classics, after Jeph Loeb and Tim Sale's *The Long Halloween* (1996). A year of holidays on a wine-black night: the jack-o'-lantern's orange only when something needs you, and the Signal lens's grey for what waits. It speaks at the Roman's table, with BLESSING?, BOTCHED, A WORD?, MESSAGE and ON ICE, and the night report becomes the Calendar, dated by the days to the next of the book's holidays ("HALLOWEEN IN 8 DAYS"). Behind the panel a pumpkin moon hangs in a dim orange and a calendar's torn pages fall, swinging from side to side. Bat-Clawd wears Sale's suit: a blue cowl with long ears, a blue mantle, the book's Signal bat on his chest, a gold belt and a huge bell of a cape; when something needs you a jack-o'-lantern lights at his feet, and the intro and a click play **The long cape**, swept from his shoulder to the ground.
+
 ## [1.3.0] - 2026-10-22
 
 Three comic Themes join the four films, and Bat-Signal runs on Linux.

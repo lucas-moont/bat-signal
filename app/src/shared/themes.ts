@@ -6,6 +6,7 @@ import {
   ANCIENT_GRACE_STATIC,
   BECOME_A_BAT_SMOKE,
   BLUE_COLLAR_COLONY,
+  HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
   VENGEANCE_RAIN,
@@ -16,6 +17,7 @@ import {
   BAT_1986,
   BAT_1987,
   BAT_1989,
+  BAT_1996,
   BAT_2008,
   BAT_2016,
   BLOCK_2024,
@@ -28,6 +30,7 @@ import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
+  HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
   VENGEANCE_SUIT,
@@ -38,6 +41,7 @@ import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
+  HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
   STANDARD_WORDS,
@@ -54,6 +58,7 @@ export const THEME_IDS = [
   'batman-year-one-1987',
   'the-dark-knight-returns-1986',
   'absolute-batman-2024',
+  'the-long-halloween-1996',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -139,6 +144,15 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BLOCK_2024, 'none'),
     suit: BLUE_COLLAR_SUIT,
     atmosphere: BLUE_COLLAR_COLONY,
+  },
+  /** Jeph Loeb and Tim Sale's The Long Halloween (1996), HOLIDAY: a wine-black night, the jack-o'-lantern. */
+  'the-long-halloween-1996': {
+    flag: 'holiday',
+    ground: '#0a0507',
+    words: HOLIDAY_WORDS,
+    emblem: emblem(BAT_1996, 'none'),
+    suit: HOLIDAY_SUIT,
+    atmosphere: HOLIDAY_NIGHT,
   },
 }
 
