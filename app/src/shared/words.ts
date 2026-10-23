@@ -873,17 +873,12 @@ const holidayCountdown = (now: Date) => {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   // The year's first holiday still to come, or next year's first.
   const year = today.getFullYear()
-  let next = { name: HOLIDAYS[0]!.name, on: HOLIDAYS[0]!.on(year + 1) }
-  for (const { name, on } of HOLIDAYS) {
-    const day = on(year)
-    if (day >= today) {
-      next = { name, on: day }
-      break
-    }
-  }
+  const coming = HOLIDAYS.find((holiday) => holiday.on(year) >= today)
+  const { name } = coming ?? HOLIDAYS[0]!
+  const on = coming ? coming.on(year) : HOLIDAYS[0]!.on(year + 1)
   // Rounded: a day the clocks change on is an hour long or short.
-  const days = Math.round((next.on.getTime() - today.getTime()) / 86_400_000)
-  return days === 0 ? next.name : days === 1 ? `${next.name} TOMORROW` : `${next.name} IN ${days} DAYS`
+  const days = Math.round((on.getTime() - today.getTime()) / 86_400_000)
+  return days === 0 ? name : days === 1 ? `${name} TOMORROW` : `${name} IN ${days} DAYS`
 }
 
 /** HOLIDAY's all-clear: a quiet night, on the Signal's tooltip and in the empty panel alike. */
