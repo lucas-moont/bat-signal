@@ -1347,8 +1347,6 @@ describe('the moon behind the motion', () => {
     expect(turns.length).toBeGreaterThan(2)
   })
 
-  // Still: nothing moves, so a tick paints the same picture, and the page only asks for one after
-  // a resize or new colors.
   // The Deluxe cover's lantern (the maintainer, on screen): its eyes furious, slanting down to the
   // middle; its grin cut in the shape of the bat, its head and ears notched into the grin's top.
   it("carves furious eyes and a grin in the bat's shape", () => {
@@ -1379,6 +1377,8 @@ describe('the moon behind the motion', () => {
     expect(moon().fills).toHaveLength(1)
   })
 
+  // Still: nothing moves, so a tick paints the same picture, and the page only asks for one after
+  // a resize or new colors.
   it('paints the same picture every time', () => {
     const { painter, fills } = moon()
     const again = recorder()
