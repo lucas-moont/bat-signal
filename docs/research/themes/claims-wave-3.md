@@ -34,7 +34,7 @@ Filled in from each dossier's `## Claims` block. Full blocks at the end of [`ani
 | The Long Halloween (HOLIDAY) | 1 | wine-black #1c0b14 | jack-o'-lantern orange #fe7500 | lens grey-green #a9bcbf / bone | Grenze Gotisch / Sofia Sans Extra Condensed / Barlow | blue cowl, huge bell cape, blue-grey suit, long ears, gold belt (or blue) | The long cape: a right triangle | `ash` with a page sprite: torn calendar pages | the Roman's table, counting to the next holiday; BLESSING?, BOTCHED, A WORD, MESSAGE, ON ICE |
 | The Arkham games (FREEFLOW) | 1 | asylum green #0b1a10 (C* 9.4) | menu amber #ffad00 (9.2 from PALE MOONLIGHT's gold) | pale asylum green #b3e8b8 / bone | Oxanium 700 / Oxanium 600 / Barlow | dark-grey armour, black cowl, cape over the shoulders, gauntlet fins, wide flat chest bat | The gargoyle: a lopsided crouch on the perch (fallback: the grapnel) | `rain`, near vertical, green haze from above; optional searchlights | the objective log; Mission, Objective, ACCESS?, FAILED, RESPOND, INCOMING, STALLED |
 | Adam West (SAME BAT-TIME) | 2 | credits navy #011c3a (C* 22.6) | V: satin violet #bb76ff (R Batphone red #fc5936 and G SFX green #3fd18a costed) | SFX green #38c886 / bone | Luckiest Guy / Luckiest Guy 11px / Barlow; Bowlby One SC headlines | lavender suit, violet satin cowl, cape and trunks with a sheen, yellow oval and belt, cape to mid-calf | the Batusi: a front stand, two arm loops beside the head | `smoke` sideways: cloud banks past a still 1966 Signal | the serial narrator; BATPHONE, MAY I?, FOILED, WHAT NOW?, NEW CLUE, HANGING; POW! only as a balloon beside the stamp |
-| Lego Batman | 3 | | | | | | | | |
+| Lego Batman (VERY DARK GREY) | 3 | the suit's grey #2e2f36 (L* 19.6, the lightest ground) | M: Batcave neon magenta #fe79d0 (R red and Y yellow costed) | screen ice #88eef6 / bone; the cards' yellow as the accent at rest | Russo One / Changa One 11px / Rubik | black moulded cowl with a shine, grey torso, yellow pouch belt, stiff bell cape; Bat-Clawd's own body | L1 dinner for one: seated at a long low table with a cloche | `noise`, no marks, an angled sheen across a studded baseplate (or falling pieces) | Batman narrating his own app; NEED A HERO, AUTOGRAPH?, EPIC FAIL, HELLO?, FAN MAIL |
 
 ### Open after round 1, for the jury
 
@@ -56,4 +56,11 @@ Round 3 (Lego Batman) also avoids violet, navy, Luckiest Guy and Bowlby One SC, 
 Round 2 (Adam West) and round 3 (Lego Batman) avoid: orange, amber, asylum green, wine-black and black paper as grounds, the crouches, the searchlights, the yellow chest oval (TAS's option C1, pending the jury), Federo, Grenze Gotisch, Sofia Sans Extra Condensed, Mohave and Oxanium.
 
 The classic suit is the exception. Adam West's 1966 suit *is* grey with a blue cowl and cape, a yellow belt and a yellow oval, so his dossier can't avoid it without breaking fidelity. It must say what tells his version apart (the satin sheen, the short ears, the painted eyebrows, the cape's cut, the TV lighting) and what TAS and HOLIDAY would have to give up if the three stay.
+
+### Open after round 3
+
+- **The yellow oval has four claimants:** PALE MOONLIGHT's plate (shipped), TAS's C1, West's and Lego's (6.0 from TAS's, 3.9 from West's).
+- **Magenta** crosses the "no pinks" line (11.5 from BLUE COLLAR's waiting mauve); the dossier finds it the only free hue on a lighter grey.
+- **Texture, not hue,** separates Lego's grey from TAS's black paper (8.8 / 7.0): studs, tiles and corners would be mandatory.
+- **Legal** (lego-batman.md §12): studs and plastic shine are free as texture (CJEU C-48/09 P, 2010); the minifigure's shape is a valid EU mark (T-395/14, T-396/14, 2015), so Bat-Clawd keeps his body and hands; the word LEGO only in the credit, the logo never.
 
