@@ -18,7 +18,8 @@ type Square = { x: number; y: number; size: number }
 
 type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
 
-type Disc = { x: number; y: number; r: number }
+/** A disc, or an ellipse: its width's half is `r`, its height's half `ry`. */
+type Disc = { x: number; y: number; r: number; ry: number }
 
 /** A shape drawn in straight lines: its points in order round its edge. */
 type Shape = (readonly [number, number])[]
@@ -62,7 +63,8 @@ function recorder() {
     closePath: () => {},
     stroke: () => strokes.push({ alpha: ctx.globalAlpha, color: ctx.strokeStyle, segments }),
     rect: (x: number, y: number, size: number) => rects.push({ x, y, size }),
-    arc: (x: number, y: number, r: number) => discs.push({ x, y, r }),
+    arc: (x: number, y: number, r: number) => discs.push({ x, y, r, ry: r }),
+    ellipse: (x: number, y: number, r: number, ry: number) => discs.push({ x, y, r, ry }),
     fill: () => fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rects, discs, shapes }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
@@ -660,6 +662,51 @@ describe('the smoke', () => {
     }
     expect(risen(2 / FPS)).toBeCloseTo(2 * risen(1 / FPS))
     expect(risen(5)).toBeCloseTo(risen(2 / FPS))
+  })
+
+  it('paints round puffs and keeps them in their column when it asks for no wind', () => {
+    for (const frame of fillsOver(smoke(), 10))
+      for (const { discs } of frame) for (const d of discs) expect(d.ry).toBe(d.r)
+  })
+
+  // Fog and cloud banks (jury-wave-3.md, section 6): low, wide puffs a wind carries across the panel.
+  describe('on a wind', () => {
+    /** Fog: long-lived puffs, three times as wide as tall, rising a hair and blown 3px a tick. */
+    const FOG: SmokeAtmosphere = { ...SMOKE, life: 60, rise: 0.1, sway: 0, wind: 3, aspect: 1 / 3 }
+
+    it('drifts its puffs across the panel with the wind, a tick at a time', () => {
+      const [first, next] = frames(1, 1 / FPS, smoke(FOG))
+      first!.forEach((a, i) => {
+        const b = next![i]!
+        if (b.x < a.x) return // blown past the right side, and back in at the left
+        expect(b.x - a.x).toBeCloseTo(FOG.wind!)
+      })
+    })
+
+    it('drifts as far as the time between ticks, up to two ticks', () => {
+      const blown = (dt: number) => {
+        const [first, next] = frames(1, dt, smoke(FOG))
+        return next![1]!.x - first![1]!.x
+      }
+      expect(blown(2 / FPS)).toBeCloseTo(2 * blown(1 / FPS))
+      expect(blown(5)).toBeCloseTo(blown(2 / FPS))
+    })
+
+    it.each([3, -3])('brings a puff blown past one side back in at the other (wind %spx)', (wind) => {
+      const reach = FOG.size[1] / 2
+      const xs = frames(400, 1 / FPS, smoke({ ...FOG, wind })).map((frame) => frame[0]!.x)
+      for (const x of xs) {
+        expect(x).toBeGreaterThanOrEqual(-reach)
+        expect(x).toBeLessThanOrEqual(320 + reach)
+      }
+      // It came round at least once.
+      expect(xs.some((x, i) => i > 0 && Math.sign(x - xs[i - 1]!) !== Math.sign(wind))).toBe(true)
+    })
+
+    it('flattens its puffs by its aspect, as wide as ever', () => {
+      for (const frame of fillsOver(smoke(FOG), 5))
+        for (const { discs } of frame) for (const d of discs) expect(d.ry).toBeCloseTo(d.r * FOG.aspect!)
+    })
   })
 })
 
