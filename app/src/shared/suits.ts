@@ -1532,12 +1532,16 @@ const SWEEP = {
   /** The light along its top, as the cover lights it from the moon. */
   lit: 'M14.2 3.4 Q-2.6 3.6 -5.5 11 Q-1.6 5 14.2 4.4 Z',
   folds: 'M12.4 5.4 Q4 6.6 -1.6 10.8 M12.8 6.4 Q6.4 8 2.4 10.8 M12.6 7.6 Q9.4 9 7.4 10.9',
+  /** The light and the folds on the lifted cape, ending on its higher hem. */
+  liftedLit: 'M14.2 3.4 Q-2.6 3.4 -5.5 9.8 Q-1.6 4.8 14.2 4.4 Z',
+  liftedFolds: 'M12.4 5.4 Q4 6.4 -1.6 9.6 M12.8 6.4 Q6.4 7.8 2.4 9.9 M12.6 7.6 Q9.4 8.8 7.4 10',
 }
 /** Its long folds, and the light along its top. */
-const RIPPLES: Layer[] = [
-  { kind: 'path', d: SWEEP.lit, fill: 'var(--cowl-shine)' },
-  { kind: 'path', d: SWEEP.folds, className: 'clawd__rib' },
+const ripples = (lit: string, folds: string): Layer[] => [
+  { kind: 'path', d: lit, fill: 'var(--cowl-shine)' },
+  { kind: 'path', d: folds, className: 'clawd__rib' },
 ]
+const RIPPLES = ripples(SWEEP.lit, SWEEP.folds)
 const sweptWith = (cape: string, folds: Layer[] = RIPPLES): Pose =>
   holidayPose(HOLIDAY_STANDING, [{ kind: 'cape', d: cape }, ...folds], GATHERING)
 const DOWN_LEFT = { look: -GAZE, lookY: 0.3 }
@@ -1552,7 +1556,7 @@ const THE_LONG_CAPE: Script = [
 
 /** Once a watch, a gust lifts the hem a unit and lets it fall. */
 const GUST: readonly Step[] = [
-  { pose: sweptWith(SWEEP.lifted), ...DOWN_LEFT },
+  { pose: sweptWith(SWEEP.lifted, ripples(SWEEP.liftedLit, SWEEP.liftedFolds)), ...DOWN_LEFT },
   { pose: sweptWith(SWEEP.full), ...DOWN_LEFT },
 ]
 
