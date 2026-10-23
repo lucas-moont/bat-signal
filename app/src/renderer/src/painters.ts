@@ -71,26 +71,27 @@ const PUMPKIN = 0.88
  * body's top, two slanted eyes, and a grin with teeth hanging into it; all but the stem inside the
  * body, so the even-odd rule leaves them empty.
  */
-const CARVING = {
-  stem: [
+const CUTS = [
+  // The stem.
+  [
     [-0.08, -PUMPKIN - 0.22],
     [0.1, -PUMPKIN - 0.18],
     [0.08, -PUMPKIN],
     [-0.08, -PUMPKIN],
   ],
-  eyes: [
-    [
-      [-0.55, 0],
-      [-0.18, -0.38],
-      [-0.15, 0.02],
-    ],
-    [
-      [0.55, 0],
-      [0.18, -0.38],
-      [0.15, 0.02],
-    ],
+  // The eyes, left and right.
+  [
+    [-0.55, 0],
+    [-0.18, -0.38],
+    [-0.15, 0.02],
   ],
-  grin: [
+  [
+    [0.55, 0],
+    [0.18, -0.38],
+    [0.15, 0.02],
+  ],
+  // The grin: its top edge toothed, its bottom edge round.
+  [
     [-0.62, 0.18],
     [-0.42, 0.36],
     [-0.28, 0.22],
@@ -104,16 +105,17 @@ const CARVING = {
     [0, 0.62],
     [-0.4, 0.52],
   ],
-} as const
+] as const
 
-/** A shape in straight lines added to the path, its points in radii about (cx, cy). */
-function polygon(
+/** A shape in straight lines added to the path as its own closed shape, its points `scale` times as far from (cx, cy). */
+function trace(
   ctx: CanvasRenderingContext2D,
   points: readonly (readonly [number, number])[],
-  [cx, cy]: readonly [number, number],
-  radius: number,
+  cx: number,
+  cy: number,
+  scale = 1,
 ) {
-  points.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, cx + x * radius, cy + y * radius))
+  points.forEach(([x, y], i) => (i ? ctx.lineTo : ctx.moveTo).call(ctx, cx + x * scale, cy + y * scale))
   ctx.closePath()
 }
 
@@ -130,14 +132,13 @@ function moon({ color: variable, alpha, at, radius, carved }: MoonBackdrop): Pai
       ;[width, height] = [w, h]
     },
     paint(ctx) {
-      const centre = [at[0] * width, at[1]] as const
+      const [cx, cy] = [at[0] * width, at[1]]
       ctx.clearRect(0, 0, width, height)
       ctx.globalAlpha = alpha
       ctx.fillStyle = color
       ctx.beginPath()
-      ctx.ellipse(centre[0], centre[1], radius, radius * (carved ? PUMPKIN : 1), 0, 0, 2 * Math.PI)
-      if (carved)
-        for (const cut of [CARVING.stem, ...CARVING.eyes, CARVING.grin]) polygon(ctx, cut, centre, radius)
+      ctx.ellipse(cx, cy, radius, radius * (carved ? PUMPKIN : 1), 0, 0, 2 * Math.PI)
+      if (carved) for (const cut of CUTS) trace(ctx, cut, cx, cy, radius)
       ctx.fill('evenodd')
     },
   }
@@ -493,10 +494,7 @@ function ash({ color: variable, dust, density, depths, bats }: AshAtmosphere, ra
     if (x > width || x < -size) return
     const along = (x + size) / (width + size)
     const [cx, cy] = [x + size / 2, y - bats.arc * Math.sin(2 * Math.PI * along)]
-    const outline = outlines.get(size)![frameAt(BEAT, beats, phase)]
-    ctx.moveTo(cx + outline[0]![0], cy + outline[0]![1])
-    for (let p = 1; p < outline.length; p++) ctx.lineTo(cx + outline[p]![0], cy + outline[p]![1])
-    ctx.closePath()
+    trace(ctx, outlines.get(size)![frameAt(BEAT, beats, phase)], cx, cy)
   }
 
   return {
@@ -578,6 +576,8 @@ function smoke(
 ): Painter {
   /** How far past either side a puff may be blown before it comes back at the other: its widest. */
   const reach = size[1] / 2
+  /** The way round a puff is blown: the canvas and that reach past either side. */
+  let span = 0
   /** A puff's life in ticks of the clock. */
   const lifeTicks = life / STEP
   let puffs: Puff[] = []
@@ -593,6 +593,7 @@ function smoke(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
+      span = width + 2 * reach
       ticks = 0
       puffs = Array.from({ length: count }, (_, i) => ({
         x: random() * width,
@@ -614,7 +615,6 @@ function smoke(
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
         // Blown along by the wind, and round again once past a side.
-        const span = width + 2 * reach
         const blown = p.x + wind * p.age + swayAt(sway, ticks, p.phase) + reach
         const x = (((blown % span) + span) % span) - reach
         // It leaves with its center on the bottom edge, half of it still below.
