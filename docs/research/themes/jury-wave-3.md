@@ -495,5 +495,6 @@ Taken on 2026-10-23, from the boards in §7, seen on screen.
 12. **Type swaps: yes.** TAS takes Marcellus SC for display and stamps; HOLIDAY stamps in Federo.
 13. **Lexicon fixes: yes**, as §4 lists them, with the on-screen checks.
 14. **Poses: yes.** Lego's flying pose leaves the grapnel to the Games; the Games' alarmed counter gets a shape away from West's fight.
+15. **HOLIDAY's Atmosphere** (2026-10-23, at its build, after seeing the pages beside PALE MOONLIGHT's snow): the calendar pages are dropped for a Halloween night: **a still pumpkin moon**, its carved face after Sale's 2021 Deluxe cover, and **low fog drifting sideways**. The moon is **a dim orange at all times** (option C of the board), so the Alarm-color rule in `CONTEXT.md` now lets an unlit relative of the alarm sit in the Atmosphere too, not only on the suit. Engine: the shared still layer and the smoke's `wind` and `aspect` (LUC-118). Against SAME BAT-TIME, whose clouds also drift past a still image: HOLIDAY's fog hugs the panel's bottom under the cards, under a carved moon, in wine light; West's clouds are bands in a navy sky past the Signal's bat.
 
 Display names are still decided on screen, at each Theme's build.

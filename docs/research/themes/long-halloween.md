@@ -1,6 +1,6 @@
 # Theme dossier: Batman: The Long Halloween (1996–97)
 
-> **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For HOLIDAY: it keeps the jack-o'-lantern orange, **with its aura** (BECOME A BAT already ships one closer to Clawd); its stamps move to Federo (§9, decisions 1 and 12).
+> **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For HOLIDAY: it keeps the jack-o'-lantern orange, **with its aura** (BECOME A BAT already ships one closer to Clawd); its stamps move to Federo; and its Atmosphere is no longer the pages of §10 but a still pumpkin moon in a dim orange with low fog drifting sideways (§9, decisions 1, 12 and 15).
 
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after *Batman: The Long Halloween*, thirteen issues by Jeph Loeb (story) and Tim Sale (art), coloured by Gregory Wright, lettered by Comicraft (Richard Starkings), edited by Archie Goodwin; DC, cover dates December 1996 to December 1997. Wave 3, round 1, issue #143, Linear LUC-85 and LUC-87. It follows [`wave-3-brief.md`](wave-3-brief.md), the rules of [`wave-2-brief.md`](wave-2-brief.md) §2 and the headings of its §6, and it is checked against [`claims-wave-3.md`](claims-wave-3.md), the seven shipped stylesheets (`app/src/renderer/src/styles/themes/*.css`, `main` at v1.3.0) and SERIOUS HOUSE as kept on `feat/123-serious-house`. The terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
 
