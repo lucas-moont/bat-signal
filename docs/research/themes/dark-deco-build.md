@@ -48,6 +48,8 @@ The opening's tall pans show the whole sky (Measured, [17] [18], y as a share of
 | Markings | "POLICE" in dark red (`#5b1305`) | "POLICE" in black, with a star |
 | Lights and beams | **two lamps at the nose, two beams each**, yellow, soft and see-through, laid over the clouds without lighting them; the near pair spread about ±30–35° from vertical, the far ones narrow (1.3–3.5% of the width), near vertical, **crossing each other** | red beacons on top; **one** pale greenish-white beam (`#85877a`) |
 
+**How they move, from the storyboard** (Timm's opening boards as Art of the Title scans them [73]–[75]): the opening starts on the WB shield among clouds, which goes black, lights two lamps and becomes the near blimp [73]; the three blimps and their six beams sit on one board marked "START PAN" with no mark of drift or sweep [74], and Art of the Title describes "the hovering police blimps" as the camera descends; the only beam the boards move travels once across the ground to its target and "fills" the shot [75]. So the camera moves and **the blimps hover**; a beam that moves travels to a target rather than sweeping back and forth (Inferred). Speeds stay ours (P).
+
 The opening's beams are the alarm's own yellow (`#fee06b` was sampled from them, [13]), so under the Alarm color rule the beams stay Bone, as decided; the episodes' pale beam supports that. A faithful hull is black against the red with no rim (Inferred).
 
 ### 2.4 The towers
