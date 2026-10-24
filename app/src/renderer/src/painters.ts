@@ -184,8 +184,9 @@ function moon({ color: variable, alpha, at, radius, carved, candle: flame }: Moo
   }
 }
 
-/** The skyline's seed: the same city every time it is drawn. */
-const SKYLINE_SEED = 1992
+/** The skyline's seeds (in [0, 1), as seededFrom takes them): the same city, and the same lit
+ * windows in it, every time it is drawn. */
+const SKYLINE_SEED = { city: 0.1992, windows: 0.0716 }
 
 /** A lit window of the skyline: a dot taller than wide, in px. */
 const WINDOW = { w: 1.5, h: 2 }
@@ -203,7 +204,7 @@ interface Tower {
  * rising toward the tallest. Its towers, for the windows lit in them.
  */
 function decoSkyline(width: number, height: number, [low, high]: readonly [number, number]) {
-  const random = seededFrom(SKYLINE_SEED)
+  const random = seededFrom(SKYLINE_SEED.city)
   const outline: [number, number][] = [[-1, height]]
   const towers: Tower[] = []
   const up = (x: number, h: number) => outline.push([x, height - h])
@@ -267,7 +268,7 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
       const drawn = decoSkyline(w, h, city.height)
       outline = drawn.outline
       // The windows in the same towers every time, from a seed of their own.
-      const random = seededFrom(SKYLINE_SEED + 1)
+      const random = seededFrom(SKYLINE_SEED.windows)
       windows = Array.from({ length: city.windows.count }, () => {
         const tower = drawn.towers[Math.floor(random() * drawn.towers.length)]!
         return {
