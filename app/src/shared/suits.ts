@@ -1657,7 +1657,7 @@ const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
 
 /** The cape's hem in deep hooked points, three a side (left half; mirrored for the right). */
 const HOOKED = {
-  hanging: 'M3 4.8 L0.6 5.2 Q-0.6 7 -0.9 11 L-0.9 8.8 L1.2 11 L1.2 8.8 L3.3 11 L3.3 8.8 L5.4 11 L5.4 5 Z',
+  hanging: 'M3 4.8 L2 5.2 Q1.4 7.6 1.3 11 L1.3 9.8 L2.6 11 L2.6 9.8 L3.9 11 L5.2 11 L5.2 5 Z',
   wrapped:
     'M2.6 6.2 L13.4 6.2 L14.4 10.9 L13 9 L11.4 10.9 L10 9 L8.6 10.9 L8 9.4 L7.4 10.9 L6 9 L4.6 10.9 L3 9 L1.6 10.9 Z',
   /** Spread from the hands at his shoulders, legs together under it: the storyboard's drop [97]. */
@@ -1675,9 +1675,18 @@ const DECO_LIGHT = {
   wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.5 6.3 L1 5.7 L3 6.1 Z',
   wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.7 5.7 L1 5.5 L3 5.9 Z',
   openLeft: 'M3.4 5 L0 5.2 L-2.2 8.6 L-1.2 8.6 L0.8 5.9 L3.4 5.9 Z',
-  hanging: 'M3 4.8 L0.6 5.2 Q-0.3 6.2 -0.6 7.4 Q0.8 5.9 3.4 5.8 Z',
+  hanging: 'M3 4.8 L2 5.2 Q1.7 6.2 1.6 7.2 Q2.6 5.9 3.4 5.8 Z',
 }
 const lit = (d: string, mirrored = false): Layer => ({ kind: 'path', d, fill: 'var(--cowl-shine)', mirrored })
+/**
+ * The cape's back, seen between his legs: lit navy, so his black boots stand out in front of it (the
+ * maintainer: in black it read as cut off), its hem in hooked points between his feet.
+ */
+const DECO_BACK: Layer = {
+  kind: 'path',
+  d: 'M3.4 5 L12.6 5 L12.6 11 L11.6 10.2 L10.4 11 L9.2 10.2 L8 11 L6.8 10.2 L5.6 11 L4.4 10.2 L3.4 11 Z',
+  fill: 'var(--cowl-shine)',
+}
 
 const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: Layer[] = DECO_CHEST) =>
   pose(map, [...TIMM_EARS, ...behind], front, { chest, edge: DECO_EDGE })
@@ -1687,25 +1696,38 @@ const decoFlying = (wing: string, light: string) =>
   decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
 /** Alarmed: in his suit, the cape flung open behind him, the aura lit (the maintainer kept him in it). */
 const decoAlarmed = decoPose(DECO_STANDING, [
-  BACK,
+  DECO_BACK,
   { kind: 'cape', d: HOOKED.openLeft, mirrored: true },
   lit(DECO_LIGHT.openLeft, true),
 ])
 /** His arms crossed high over his chest, in his black gloves, his upper arms in the suit's grey. */
+/**
+ * His upper arms down his sides and his forearms crossed over his chest, each edged in the rim's blue
+ * so they read as arms on the suit (the maintainer, on screen).
+ */
 const CROSSED: Layer[] = [
   {
     kind: 'rects',
     px: [
-      [3, 7.3, 2, 0.8],
-      [11, 7.3, 2, 0.8],
+      [2.3, 5.3, 1.6, 2.9],
+      [12.1, 5.3, 1.6, 2.9],
+      [2.6, 7.1, 10.8, 1.2],
+    ],
+    fill: 'var(--cowl-edge)',
+  },
+  {
+    kind: 'rects',
+    px: [
+      [2.5, 5.5, 1.2, 2.5],
+      [12.3, 5.5, 1.2, 2.5],
     ],
     fill: 'var(--suit)',
   },
-  { kind: 'rects', px: [[4.4, 7.3, 7.2, 0.8]], fill: 'var(--gloves)' },
+  { kind: 'rects', px: [[2.8, 7.3, 10.4, 0.8]], fill: 'var(--gloves)' },
 ]
-/** The cape hanging straight down behind him, lit where the light falls on his shoulders. */
+/** The cape hanging straight down behind him, just wider than he is, lit on his shoulders. */
 const HANGING_CAPE: Layer[] = [
-  BACK,
+  DECO_BACK,
   { kind: 'cape', d: HOOKED.hanging, mirrored: true },
   lit(DECO_LIGHT.hanging, true),
 ]
