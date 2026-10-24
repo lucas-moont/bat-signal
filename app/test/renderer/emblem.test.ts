@@ -78,6 +78,31 @@ describe('an emblem on a plate', () => {
   })
 })
 
+// The Animated Series', Adam West's and Lego Batman's ovals are a bright yellow that never lights
+// (jury-wave-3.md, section 9, decision 2): the Alarm color appears nowhere else.
+describe('a plate that never lights', () => {
+  const PLATE = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2, lights: false }
+  standInTheme({ emblem: emblem(WINGS, 'none', PLATE) })
+
+  it('stays at rest when something needs the user', () => {
+    const markup = draw({ lit: true })
+    expect(markup).not.toContain('<radialGradient')
+    expect(markup).toContain('fill="var(--emblem-plate)" stroke="var(--emblem-plate-rim)"')
+  })
+})
+
+// Adam West's oval has no rim (jury-wave-3.md, section 6, item 1): the plate fills its box.
+describe('a plate with no rim', () => {
+  const PLATE = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 0 }
+  standInTheme({ emblem: emblem(WINGS, 'none', PLATE) })
+
+  it('fills its box and draws no rim', () => {
+    const markup = draw()
+    expect(markup).toMatch(/<ellipse class="emblem__plate" cx="60" cy="24" rx="42" ry="24"/)
+    expect(markup).not.toContain('stroke=')
+  })
+})
+
 describe("VENGEANCE's emblem", () => {
   it('wears scratches that dim the bat by 37.5%, never cutting through it', () => {
     const markup = renderToStaticMarkup(createElement(BatEmblem))

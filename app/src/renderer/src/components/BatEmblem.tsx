@@ -3,7 +3,7 @@
 // oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
 
 import { useId } from 'react'
-import type { Emblem } from '@shared/emblems'
+import { plateGlows, type Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
@@ -39,7 +39,7 @@ export function BatEmblem({
   title?: string
   /** The bat's color: the Theme's emblem color unless a place gives its own (the disc's). */
   fill?: string
-  /** Something needs the user: a plate lights in the Alarm color. */
+  /** Something needs the user: a plate lights in the Alarm color, unless it never does. */
   lit?: boolean
   /** An outline under the bat's fill, in this color (a lit lens too pale to hold its shape alone). */
   outline?: string
@@ -52,6 +52,7 @@ export function BatEmblem({
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
   const light = useId()
+  const glows = !!plate && plateGlows(plate, lit)
   return (
     <svg
       width={size}
@@ -88,7 +89,7 @@ export function BatEmblem({
       )}
       {plate && (
         <>
-          {lit && (
+          {glows && (
             <defs>
               {/* Lit: the Alarm color's light at its middle, fading to the plate's own rest color. */}
               <radialGradient id={light}>
@@ -104,9 +105,8 @@ export function BatEmblem({
             cy={plate.box.y + plate.box.height / 2}
             rx={(plate.box.width - plate.rim) / 2}
             ry={(plate.box.height - plate.rim) / 2}
-            fill={lit ? `url(#${light})` : 'var(--emblem-plate)'}
-            stroke="var(--emblem-plate-rim)"
-            strokeWidth={plate.rim}
+            fill={glows ? `url(#${light})` : 'var(--emblem-plate)'}
+            {...(plate.rim > 0 && { stroke: 'var(--emblem-plate-rim)', strokeWidth: plate.rim })}
           />
         </>
       )}

@@ -16,13 +16,12 @@ import {
 import {
   BAT_1986,
   BAT_1987,
-  BAT_1989,
   BAT_1996,
   BAT_2008,
   BAT_2016,
   BLOCK_2024,
   emblem,
-  OVAL_1989,
+  EMBLEM_1989,
   WINGS,
   type Emblem,
 } from './emblems'
@@ -96,7 +95,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     flag: 'moonlight',
     ground: '#0d0906',
     words: PALE_MOONLIGHT_WORDS,
-    emblem: emblem(BAT_1989, 'none', OVAL_1989),
+    emblem: EMBLEM_1989,
     suit: PALE_MOONLIGHT_SUIT,
     atmosphere: PALE_MOONLIGHT_SNOW,
   },
