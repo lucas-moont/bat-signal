@@ -1497,6 +1497,19 @@ describe('the skyline behind the motion', () => {
     ])
   })
 
+  // The opening's flat streaks [17] stay crisp where its billows are soft (section 2.2).
+  it('blurs a mass by its own softness, if it has one', () => {
+    const streaked: SkylineBackdrop = {
+      ...SKYLINE,
+      clouds: {
+        ...SKYLINE.clouds,
+        masses: [...SKYLINE.clouds.masses, { at: [0.5, 0.6], size: [140, 3], alpha: 0.4, blur: 2.5 }],
+      },
+    }
+    const clouds = painted(320, 440, streaked).fills.filter((f) => f.color === '#sky-shadow')
+    expect(clouds.map((f) => f.filter)).toEqual(['blur(12px)', 'blur(12px)', 'blur(2.5px)'])
+  })
+
   it('draws the towers sharp, over the clouds', () => {
     const r = painted()
     expect(towers(r).every((f) => f.filter === 'none' && f.alpha === 1)).toBe(true)
