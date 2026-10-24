@@ -943,3 +943,64 @@ export const HOLIDAY_WORDS: Words = {
     noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Cross off the day.' },
   },
 }
+
+// --- DARK DECO: Batman: The Animated Series (1992) speaks as its title cards do (animated-series.md,
+// sections 6 and 7): a short title, no narrator and no broadcast, and an episode's end. ---
+
+/**
+ * DARK DECO's words: someone paging you, a request to go ahead, a job busted, a demand for an answer,
+ * a new lead and a job held up; all clear is an episode's title said as a phrase, and the report
+ * fades out as an episode does.
+ */
+export const DARK_DECO_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    needsYou: { label: 'Paging you', count: (n) => `${n} paging you` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Go ahead?',
+      error: 'Busted',
+      waiting: 'Answer me',
+      reply: 'New lead',
+      stalled: 'Held up',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // The makers first, as every credit has them; no-break spaces keep the series' title whole.
+    theme: { name: 'DARK DECO', film: "Timm & Radomski's Batman: The Animated Series" },
+    tagline: 'Gotham, under a red sky.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Nothing to fear.' },
+      unheard: { ...STANDARD_VOICE.empty.unheard, title: 'No word from the city.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} on the card tonight.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: "Tonight's episode",
+      signature: 'Waiting on you',
+      nil: (t) => `Nothing to fear. Every ${lower(t.case.one)} carries on without you.`,
+      caseNotes: (t) => `${t.case.one} card`,
+      end: (waiting) => (waiting ? 'Fade out. Something still needs you.' : 'Fade out.'),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : 'The sky is quiet. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'The Batcave',
+      atmosphere: {
+        label: 'Red sky',
+        hint: (t) => `Police blimps over the city behind the ${lower(t.case.many)}`,
+      },
+    },
+    // On the perch he has just landed, crouched under his cape, as in the opening titles.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, landed under his cape' },
+    noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Roll the credits.' },
+  },
+}
