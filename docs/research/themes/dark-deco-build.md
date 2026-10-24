@@ -75,6 +75,8 @@ The contrast test needs opaque hex grounds, so any gradient is a backdrop (as `-
 
 **Decided (2026-10-24): (a)**, picked on screen by the maintainer beside the opening's frames and VENGEANCE, KNIGHTMARE and HOLIDAY ([`jury-wave-3.md`](jury-wave-3.md) §9, decision 18). It was recommended as (P), with the opening's stack as the backdrop: dark crimson at the top, a red band at about 45% behind the cards, the bright orange only behind the black skyline, and a blue mist band at the skyline's foot, below Bat-Clawd. It is the only option that clears every ground floor, the most literal "the ground may be red", and it passes every ink with room. (b) is the closer reading of a gradient ground but brings back black-paper cards at 2.6 from VENGEANCE. Decide on screen, beside VENGEANCE and KNIGHTMARE.
 
+**Black in the red (decided the same day).** The maintainer then asked for tones of black in the red: not another gradient, but the shadow of clouds as in the references. On a board of four strengths they chose the **medium** one (S2). As mocked, in a 320x440 panel: about ten soft black ellipses blurred by 12px, up to about 75% strong where they frame the top corners [18] and about 45–60% where they cross the lit band above the skyline [03], with three flat streaks 3–4px tall at about 40% [17]; only darker than the sky, never lit. The engine draws them its own way and the GIF decides.
+
 Motion was not observed (§6).
 
 ## 3. The chest bat and the oval
