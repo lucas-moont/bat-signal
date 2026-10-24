@@ -337,12 +337,13 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       ctx.fillRect(0, 0, width, height)
       // The clouds, soft, only ever darker than the sky.
       ctx.fillStyle = colors.clouds
-      ctx.filter = `blur(${clouds.blur}px)`
       for (const {
         at: [x, y],
         size: [rx, ry],
         alpha,
+        blur = clouds.blur,
       } of clouds.masses) {
+        ctx.filter = `blur(${blur}px)`
         ctx.globalAlpha = alpha
         ctx.beginPath()
         ctx.ellipse(x * width, y * height, rx, ry, 0, 0, 2 * Math.PI)

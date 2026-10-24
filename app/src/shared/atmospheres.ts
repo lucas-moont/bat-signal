@@ -59,7 +59,8 @@ export interface SkylineBackdrop {
   /**
    * The clouds: the variable they are filled in, how soft they are (a blur, in px), and each mass, an
    * ellipse: its centre across and down the panel as shares of its size, its half-width and
-   * half-height in px, and its strength (alpha).
+   * half-height in px, its strength (alpha), and its own softness if not the clouds' (a flat streak
+   * stays crisp where a billow is soft).
    */
   clouds: {
     color: string
@@ -68,6 +69,7 @@ export interface SkylineBackdrop {
       at: readonly [x: number, y: number]
       size: readonly [rx: number, ry: number]
       alpha: number
+      blur?: number
     }[]
   }
   /**
