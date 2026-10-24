@@ -4,7 +4,7 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { BAT_1989, emblem, OVAL_1989 } from './emblems'
+import { BAT_1989, emblem, OVAL_1989, type Emblem, type Plate } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -232,6 +232,60 @@ const seated = (map: OutfitMap, wrapped: string, behind: Layer[] = [COWL_EDGE]):
   eyes: 'shut',
 })
 
+/** An oval as a path: centred on (cx, cy), rx by ry. */
+const oval = (cx: number, cy: number, rx: number, ry: number) =>
+  `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0 Z`
+
+/** A plate's oval rx wide either side of (cx, cy), in the plate's proportions. */
+const plateOval = ({ box }: Plate, cx: number, cy: number, rx: number) =>
+  oval(cx, cy, rx, (rx * box.height) / box.width)
+
+/** An emblem's plate, which an oval on his chest is drawn after. */
+const plateOf = ({ plate }: Emblem): Plate => {
+  if (!plate) throw new Error('An emblem with no plate has no oval to wear.')
+  return plate
+}
+
+/**
+ * The Theme's bat across its plate's oval rx wide either side of (cx, cy), spanning the oval inside
+ * its rim as it does on the emblem, so a re-trace carries over to his chest.
+ */
+const plateBat = (emblem: Emblem, cx: number, cy: number, rx: number): Layer => {
+  const { box, rim } = plateOf(emblem)
+  return { kind: 'emblem', cx, cy, width: (2 * rx * emblem.bat.width) / (box.width - 2 * rim) }
+}
+
+/** How far the cowl-black rim of an oval on his chest reaches past its plate, in units. */
+const CHEST_RIM = 0.35
+
+/**
+ * A Theme's emblem as an oval on his chest, rx wide either side of (cx, cy): a cowl-black rim if its
+ * plate has one, the plate (lit in the Alarm color with its light in the middle, if lit and the
+ * plate ever lights), and the Theme's bat across it. PALE MOONLIGHT's brass oval lights when he is
+ * alarmed; The Animated Series' yellow one never does.
+ */
+export function chestPlate(
+  emblem: Emblem,
+  { cx, cy, rx, lit = false }: { cx: number; cy: number; rx: number; lit?: boolean },
+): Layer[] {
+  const plate = plateOf(emblem)
+  const glows = lit && plate.lights !== false
+  const at = (r: number, fill: string): Layer => ({
+    kind: 'path',
+    d: plateOval(plate, cx, cy, r),
+    fill,
+    smooth: true,
+  })
+  return [
+    // PALE MOONLIGHT's rim clears his jaw (y 5) and the belt (y 8.5): the two never merge into one
+    // brass apron.
+    ...(plate.rim > 0 ? [at(rx + CHEST_RIM, 'var(--cowl)')] : []),
+    at(rx, glows ? 'var(--signal)' : 'var(--emblem-plate)'),
+    ...(glows ? [at((rx * 2) / 3, 'var(--signal-hot)')] : []),
+    plateBat(emblem, cx, cy, rx),
+  ]
+}
+
 /** How many steps a beat of his own may take, at the end of his watch. */
 const BEAT_ROOM = 4
 
@@ -387,47 +441,12 @@ const MOON_ARMS_OUT = map([SHOULDERS, '.gSSSSSSSSSSSSg.', SUIT], MOON_BELOW)
 const MOON_ARMS_UP = map([SHOULDERS, SUIT, SUIT], MOON_BELOW)
 const MOON_SEATED = map([SHOULDERS, SUIT, SUIT, SUIT], [])
 
-/** An oval as a path: centred on (cx, cy), rx by ry. */
-const oval = (cx: number, cy: number, rx: number, ry: number) =>
-  `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0 Z`
-
-/** The 1989 emblem's proportions, read from its data so a re-trace carries over to his chest. */
-const OVAL_ASPECT = OVAL_1989.box.height / OVAL_1989.box.width
-/** How wide the bat is across the oval, inside its rim. */
-const BAT_SPAN = emblem(BAT_1989, 'none').bat.width / (OVAL_1989.box.width - 2 * OVAL_1989.rim)
-/** A 1989 oval rx wide either side of (cx, cy), in the emblem's proportions. */
-const oval1989 = (cx: number, cy: number, rx: number) => oval(cx, cy, rx, rx * OVAL_ASPECT)
-/** The 1989 bat across an oval rx wide either side of (cx, cy). */
-const bat1989 = (cx: number, cy: number, rx: number): Layer => ({
-  kind: 'emblem',
-  cx,
-  cy,
-  width: 2 * rx * BAT_SPAN,
-})
-
-/**
- * The 1989 emblem on his chest: a cowl-black rim, the oval in old brass (or lit, the Alarm color
- * with its light in the middle), and the film's own bat across it, reaching the rim.
- */
-const CHEST_OVAL = { cx: 8, cy: 6.9 }
-const chestOval = (lit: boolean): Layer[] => {
-  const { cx, cy } = CHEST_OVAL
-  const light: Layer = { kind: 'path', d: oval1989(cx, cy, 1.5), fill: 'var(--signal-hot)', smooth: true }
-  return [
-    // The rim clears his jaw (y 5) and the belt (y 8.5): the two never merge into one brass apron.
-    { kind: 'path', d: oval1989(cx, cy, 2.6), fill: 'var(--cowl)', smooth: true },
-    {
-      kind: 'path',
-      d: oval1989(cx, cy, 2.25),
-      fill: lit ? 'var(--signal)' : 'var(--emblem-plate)',
-      smooth: true,
-    },
-    ...(lit ? [light] : []),
-    bat1989(cx, cy, 2.25),
-  ]
-}
-const OVAL_AT_REST = chestOval(false)
-const OVAL_LIT = chestOval(true)
+/** The 1989 emblem, its oval and the film's own bat across it, reaching the rim. */
+const MOONLIGHT = emblem(BAT_1989, 'none', OVAL_1989)
+/** The 1989 emblem on his chest: in old brass at rest, lit in the Alarm color when alarmed. */
+const CHEST_OVAL = { cx: 8, cy: 6.9, rx: 2.25 }
+const OVAL_AT_REST = chestPlate(MOONLIGHT, CHEST_OVAL)
+const OVAL_LIT = chestPlate(MOONLIGHT, { ...CHEST_OVAL, lit: true })
 
 /**
  * Keaton's cape, cut from eight panels (burton-1989-cape.md): sharp tips hang at the seams, about two
@@ -491,8 +510,8 @@ const underTheSignal = pose(
   [{ kind: 'cape', d: SCALLOPED.farBehind }],
   [
     { kind: 'path', d: SCALLOPED.nearFront, className: 'clawd__cape' },
-    { kind: 'path', d: oval1989(19, -1.5, 3), fill: 'var(--emblem-plate)', smooth: true },
-    bat1989(19, -1.5, 3),
+    { kind: 'path', d: plateOval(OVAL_1989, 19, -1.5, 3), fill: 'var(--emblem-plate)', smooth: true },
+    plateBat(MOONLIGHT, 19, -1.5, 3),
   ],
   {
     chest: OVAL_AT_REST,
