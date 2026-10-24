@@ -81,6 +81,9 @@ const SHOTS = [
   { name: 'holiday-needs-you', hash: 'demo-holiday', steps: [] },
   { name: 'holiday-night-report', hash: 'demo-report-holiday', steps: [] },
   { name: 'holiday-clawd-alarmed', hash: 'demo-holiday', clip: '.clawd', scale: 5, steps: [] },
+  { name: 'deco-needs-you', hash: 'demo-deco', steps: [] },
+  { name: 'deco-night-report', hash: 'demo-report-deco', steps: [] },
+  { name: 'deco-clawd-alarmed', hash: 'demo-deco', clip: '.clawd', scale: 5, steps: [] },
   // Bat-Clawd up close, cut out of the panel's header in each mood: at 5x, Chromium's largest zoom.
   { name: 'clawd-sleeping', hash: 'demo-quiet', clip: '.clawd', scale: 5, steps: [] },
   { name: 'clawd-flying', hash: 'demo-busy', clip: '.clawd', scale: 5, steps: [] },
