@@ -1679,14 +1679,27 @@ const DECO_LIGHT = {
 }
 const lit = (d: string, mirrored = false): Layer => ({ kind: 'path', d, fill: 'var(--cowl-shine)', mirrored })
 /**
- * The cape's back, seen between his legs: lit navy, so his black boots stand out in front of it (the
- * maintainer: in black it read as cut off), its hem in hooked points between his feet.
+ * The cape's back, seen between his legs: the same black cloth as the rest of it, its hem in hooked
+ * points between his feet; his legs edged in the rim's blue so his black boots read in front of it
+ * (the maintainer, on screen: a lit back read as another thing).
  */
-const DECO_BACK: Layer = {
-  kind: 'path',
-  d: 'M3.4 5 L12.6 5 L12.6 11 L11.6 10.2 L10.4 11 L9.2 10.2 L8 11 L6.8 10.2 L5.6 11 L4.4 10.2 L3.4 11 Z',
-  fill: 'var(--cowl-shine)',
-}
+const DECO_BACK: Layer[] = [
+  {
+    kind: 'path',
+    d: 'M3.4 5 L12.6 5 L12.6 11 L11.6 10.2 L10.4 11 L9.2 10.2 L8 11 L6.8 10.2 L5.6 11 L4.4 10.2 L3.4 11 Z',
+    className: 'clawd__cape-cloth',
+  },
+  {
+    kind: 'rects',
+    px: [
+      [3.8, 9, 1.4, 2.1],
+      [5.8, 9, 1.4, 2.1],
+      [8.8, 9, 1.4, 2.1],
+      [10.8, 9, 1.4, 2.1],
+    ],
+    fill: 'var(--cowl-edge)',
+  },
+]
 
 const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: Layer[] = DECO_CHEST) =>
   pose(map, [...TIMM_EARS, ...behind], front, { chest, edge: DECO_EDGE })
@@ -1696,7 +1709,7 @@ const decoFlying = (wing: string, light: string) =>
   decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
 /** Alarmed: in his suit, the cape flung open behind him, the aura lit (the maintainer kept him in it). */
 const decoAlarmed = decoPose(DECO_STANDING, [
-  DECO_BACK,
+  ...DECO_BACK,
   { kind: 'cape', d: HOOKED.openLeft, mirrored: true },
   lit(DECO_LIGHT.openLeft, true),
 ])
@@ -1727,7 +1740,7 @@ const CROSSED: Layer[] = [
 ]
 /** The cape hanging straight down behind him, just wider than he is, lit on his shoulders. */
 const HANGING_CAPE: Layer[] = [
-  DECO_BACK,
+  ...DECO_BACK,
   { kind: 'cape', d: HOOKED.hanging, mirrored: true },
   lit(DECO_LIGHT.hanging, true),
 ]
