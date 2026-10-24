@@ -205,3 +205,5 @@ Decided on screen at the build (#145; [`jury-wave-3.md`](jury-wave-3.md) §9, de
 ## 7. Built in #145
 
 The engine came first: the never-lit plate (#154) and the `skyline` backdrop with the `blimps` Atmosphere (#156); the Theme is #145's PR. As built, its reds hold the L\* 19.5 ceiling under text by the ground and, in the night report, by a veil only where the sky lights.
+
+**CPU** (2026-10-24, the shown window per demo page, `app.getAppMetrics()`, 15 s to settle and 30 s measured, both orders; percent of one core): panel at rest 0.47 and 0.10 against VENGEANCE's 0.60 and 0.10; perch at rest 0.10 and 0.07 against 0.07 and 0.05; perch alarmed 0.20 and 0.38 against 0.24 and 0.24; panel alarmed, four readings, median 0.66 against VENGEANCE's 0.77 (single readings swung from 0.51 to 1.77, as they do). Within VENGEANCE's noise.
