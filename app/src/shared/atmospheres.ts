@@ -215,6 +215,30 @@ export interface SmokeAtmosphere extends Scene {
 }
 
 /**
+ * Police blimps hovering over a city at night (DARK DECO's, after the opening of Batman: The
+ * Animated Series): black hulls, each with two beams under its nose that lean out either way and
+ * sway a few degrees, never sweeping; drifting so slowly they hover, and round from the other side
+ * once wholly past one.
+ */
+export interface BlimpsAtmosphere extends Scene {
+  kind: 'blimps'
+  /** The variable the hulls are cut out in. */
+  color: string
+  /**
+   * Each blimp: how long it is (px), how far down the panel it hovers and where across it starts
+   * (shares of the panel's height and width), and how far it drifts a tick (px; under 0, from the
+   * right).
+   */
+  fleet: readonly { length: number; at: number; from: number; drift: number }[]
+  /**
+   * The two beams under each nose: their variable and strength (alpha), how far they reach (in hull
+   * lengths), how far each leans out from straight down and sways either way of that (degrees), and
+   * the ticks a sway takes, out and back.
+   */
+  beams: { color: string; alpha: number; reach: number; splay: number; sway: number; period: number }
+}
+
+/**
  * Noise on a screen: marks scattered over the panel that stay put for their life and then appear
  * somewhere else, never falling, born a tick apart so the noise never pulses; and, if it asks for
  * one, a soft band rolling down the panel, as an old set's picture rolls.
@@ -243,7 +267,13 @@ export interface NoiseAtmosphere extends Scene {
 }
 
 export type Atmosphere =
-  RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere | SmokeAtmosphere | NoiseAtmosphere
+  | RainAtmosphere
+  | SnowAtmosphere
+  | LitWindowsAtmosphere
+  | AshAtmosphere
+  | SmokeAtmosphere
+  | NoiseAtmosphere
+  | BlimpsAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {
