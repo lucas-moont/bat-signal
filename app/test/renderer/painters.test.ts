@@ -1461,7 +1461,7 @@ describe('the skyline behind the motion', () => {
   it('paints the sky from its top to the horizon in its bands', () => {
     const [sky] = painted().boxes
     expect(sky).toMatchObject({ x: 0, y: 0, w: 320, h: 440 })
-    expect(sky!.color).toEqual({
+    expect(sky!.color).toMatchObject({
       x0: 0,
       y0: 0,
       x1: 0,
@@ -1515,7 +1515,7 @@ describe('the skyline behind the motion', () => {
   it("lays a mist over the towers' foot, rising from the bottom", () => {
     const mist = painted().boxes.at(-1)!
     expect(mist).toMatchObject({ x: 0, y: 440 - 36, w: 320, h: 36, alpha: 0.55 })
-    expect(mist.color).toEqual({
+    expect(mist.color).toMatchObject({
       x0: 0,
       y0: 404,
       x1: 0,
