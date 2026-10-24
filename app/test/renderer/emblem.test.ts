@@ -213,24 +213,32 @@ describe("HOLIDAY's bat", () => {
   })
 })
 
-// DARK DECO's bat (#145): the chest bat as it aired, traced from the 2018 Blu-ray frame [92] and its
-// oval measured there (dark-deco-build.md, section 3), as the maintainer chose on screen.
+// DARK DECO's bat (#145): the chest bat as it aired, traced from the HD frame [134], the chest square
+// to the camera (dark-deco-build.md, section 3), after the maintainer found the first trace strange.
 describe("DARK DECO's bat", () => {
-  // The oval as the frame measures it, about 1.6:1; it never lights (jury-wave-3.md, section 9).
-  it('sits on an oval of about 1.6:1 that never lights', () => {
-    expect(OVAL_1992.box.width / OVAL_1992.box.height).toBeCloseTo(1.6, 1)
+  const { bat } = emblem(BAT_1992, 'none')
+  const { box, rim } = OVAL_1992
+
+  // The oval as the frames measure it, about 1.6:1 under a thin black line; it never lights.
+  it('sits on an oval of about 1.6:1, a thin rim round it, that never lights', () => {
+    expect(box.width / box.height).toBeCloseTo(1.6, 1)
+    expect(rim / box.height).toBeLessThan(0.04)
     expect(OVAL_1992.lights).toBe(false)
   })
 
-  // It nearly fills the oval, a band of yellow round it but at its ears, which run up into the rim.
-  it('nearly fills its oval, touching the rim only at its ears', () => {
-    const { bat } = emblem(BAT_1992, 'none')
-    const { box, rim } = OVAL_1992
-    expect(bat.width / box.width).toBeGreaterThan(0.78)
-    expect(bat.width / box.width).toBeLessThan(0.86)
-    expect(bat.x).toBeGreaterThan(box.x + rim)
-    expect(bat.x + bat.width).toBeLessThan(box.x + box.width - rim)
-    expect(bat.y).toBeLessThan(box.y + rim)
-    expect(bat.y + bat.height).toBeLessThan(box.y + box.height - rim)
+  // Its wings run out to the rim, as on air; its ears stop short of it.
+  it('meets the rim with its wings, not its ears', () => {
+    expect(bat.x).toBeLessThanOrEqual(box.x + rim)
+    expect(bat.x + bat.width).toBeGreaterThanOrEqual(box.x + box.width - rim)
+    expect(bat.y).toBeGreaterThan(box.y + rim)
+  })
+
+  // Its tail comes down to a point near the oval's foot, below its two round lobes a side.
+  it('ends in a pointed tail near the foot of the oval', () => {
+    const foot = bat.y + bat.height
+    expect(foot).toBeLessThan(box.y + box.height - rim)
+    expect(foot).toBeGreaterThan(box.y + 0.9 * box.height)
+    const tail = points(BAT_1992).filter(([, y]) => y > foot - 4)
+    expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(4)
   })
 })
