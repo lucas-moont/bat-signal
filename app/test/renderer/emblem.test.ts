@@ -226,10 +226,11 @@ describe("DARK DECO's bat", () => {
     expect(OVAL_1992.lights).toBe(false)
   })
 
-  // Its wings run out to the rim, as on air; its ears stop short of it.
+  // Its wings run out to the rim, as on air (into it a little where the oval curves in above its
+  // middle, black on black); its ears stop short of it.
   it('meets the rim with its wings, not its ears', () => {
-    expect(bat.x).toBeLessThanOrEqual(box.x + rim)
-    expect(bat.x + bat.width).toBeGreaterThanOrEqual(box.x + box.width - rim)
+    expect(bat.x).toBeLessThan(box.x + rim + 0.5)
+    expect(bat.x + bat.width).toBeGreaterThan(box.x + box.width - rim - 0.5)
     expect(bat.y).toBeGreaterThan(box.y + rim)
   })
 

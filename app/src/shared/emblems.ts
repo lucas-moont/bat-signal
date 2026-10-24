@@ -169,31 +169,31 @@ export const EMBLEM_1989 = emblem(BAT_1989, 'none', OVAL_1989)
 
 /**
  * DARK DECO's bat, after Batman: The Animated Series (1992), on the same 120x48 grid: the chest bat as
- * it aired, traced from the 2018 Blu-ray frame [92] (dark-deco-build.md, section 3), the maintainer's
- * choice over the model sheet's. The 1989 logo's construction, as Timm's master sheet asks, drawn the
- * show's way: square ears running up into the rim with a square notch between them, wide shallow
- * slots beside the head, a point beside each slot, wings following the oval without reaching it, two
- * shallow round lobes a side and a blunt tail just below the wingtips. Drawn as a left half and
- * mirrored at x = 60, the head rebuilt about the axis (the frame's chest is turned a little).
+ * it aired, traced from the HD frame [134], where the chest faces the camera (dark-deco-build.md,
+ * section 3), after the maintainer found a first trace from a turned chest [92] strange. The 1989
+ * logo's construction drawn the show's way: two pointed ears short of the rim, deep round slots beside
+ * the head, wings running out to the rim, two round lobes a side and a long pointed tail. Measured a
+ * column at a time on its left half and mirrored at x = 60 about the tail's tip.
  */
 export const BAT_1992 =
-  'M60 6.9 L58.8 6.9 L58.3 6.4 L58.3 3.4 L55 3.4 Q53.8 9.2 52.4 11 Q51 12.8 49.3 13.7 Q47.6 14.5 45.9 ' +
-  '14.6 Q44.3 14.7 43.1 14.1 Q41.9 13.5 41.4 12.8 Q40.8 12.1 40.5 10.5 Q40.2 8.9 39.3 8.2 Q35.7 9.8 ' +
-  '34.8 10.4 Q34 10.9 32.1 13.2 Q30.1 15.4 28.4 21.4 Q28.6 24.8 29.4 27.9 Q30.1 31 31.2 32.4 Q32.2 ' +
-  '33.9 34.3 35.9 Q36.3 37.8 38.1 38.5 Q39.9 39.2 43.4 39.3 Q44.2 37.7 44.1 36 Q43.9 34.4 44.6 33.5 ' +
-  'Q45.7 33.5 48.5 35.9 Q50.4 34.9 50.7 34.5 Q51 34 51.8 33.8 Q52.5 33.6 53.3 33.8 Q54.2 34 55.1 34.9 ' +
-  'Q56.1 35.9 56.9 37.4 Q57.6 39 60 40.2 Q62.4 39 63.1 37.4 Q63.9 35.9 64.9 34.9 Q65.8 34 66.7 33.8 ' +
-  'Q67.5 33.6 68.2 33.8 Q69 34 69.3 34.5 Q69.6 34.9 71.5 35.9 Q74.3 33.5 75.4 33.5 Q76.1 34.4 75.9 36 ' +
-  'Q75.8 37.7 76.6 39.3 Q80.1 39.2 81.9 38.5 Q83.7 37.8 85.7 35.9 Q87.8 33.9 88.8 32.4 Q89.9 31 90.6 ' +
-  '27.9 Q91.4 24.8 91.6 21.4 Q89.9 15.4 87.9 13.2 Q86 10.9 85.2 10.4 Q84.3 9.8 80.7 8.2 Q79.8 8.9 ' +
-  '79.5 10.5 Q79.2 12.1 78.6 12.8 Q78.1 13.5 76.9 14.1 Q75.7 14.7 74.1 14.6 Q72.4 14.5 70.7 13.7 Q69 ' +
-  '12.8 67.6 11 Q66.2 9.2 65 3.4 L61.7 3.4 L61.7 6.4 L61.2 6.9 L60 6.9 Z'
+  'M60 7.7 L59.4 7.4 L58.5 5.3 L57.9 4.4 L56.7 4 L56.1 4.2 L54.9 10.1 L53.7 13.4 L52.5 15.7 L49.8 ' +
+  '17.8 L47.4 18.9 L46.5 19 L44.1 18.5 L43.5 18.1 L41.1 15 L40.8 14.4 L39.9 8.3 L38.4 9.8 L33.6 ' +
+  '13.4 L32.4 14.6 L30.3 17.4 L28.5 20.9 L22.8 28.6 L28.5 29 L30.3 32.7 L31.2 33.4 L31.8 34.4 L33.3 ' +
+  '36 L35.4 37.4 L36.3 30.8 L36.6 30 L38.4 28.3 L40.2 28.2 L40.8 28.4 L42 29.2 L43.5 30.9 L46.5 37 ' +
+  'L47.7 38.4 L48.6 38.9 L48.9 38.4 L49.8 33.2 L50.7 31.4 L52.2 29.9 L53.4 29.4 L54 29.6 L54.9 29.2 ' +
+  'L55.8 29.2 L56.4 30.3 L57.3 34 L58.5 37.5 L59.4 43.5 L60 44.8 L60.6 43.5 L61.5 37.5 L62.7 34 ' +
+  'L63.6 30.3 L64.2 29.2 L65.1 29.2 L66 29.6 L66.6 29.4 L67.8 29.9 L69.3 31.4 L70.2 33.2 L71.1 38.4 ' +
+  'L71.4 38.9 L72.3 38.4 L73.5 37 L76.5 30.9 L78 29.2 L79.2 28.4 L79.8 28.2 L81.6 28.3 L83.4 30 ' +
+  'L83.7 30.8 L84.6 37.4 L86.7 36 L88.2 34.4 L88.8 33.4 L89.7 32.7 L91.5 29 L97.2 28.6 L91.5 20.9 ' +
+  'L89.7 17.4 L87.6 14.6 L86.4 13.4 L81.6 9.8 L80.1 8.3 L79.2 14.4 L78.9 15 L76.5 18.1 L75.9 18.5 ' +
+  'L73.5 19 L72.6 18.9 L70.2 17.8 L67.5 15.7 L66.3 13.4 L65.1 10.1 L63.9 4.2 L63.3 4 L62.1 4.4 ' +
+  'L61.5 5.3 L60.6 7.4 Z'
 
 /**
- * The 1992 oval as the frame measures it: about 1.6:1, centred on the grid, a 3.6-unit black rim; a
- * bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
+ * The 1992 oval as the frames measure it: about 1.6:1, centred on the grid, under a thin black line
+ * (1.2 units, [134] [127]); a bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
  */
-export const OVAL_1992 = { box: { x: 21.5, y: 0, width: 77, height: 48 }, rim: 3.6, lights: false }
+export const OVAL_1992 = { box: { x: 21.5, y: 0, width: 77, height: 48 }, rim: 1.2, lights: false }
 
 /** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)
