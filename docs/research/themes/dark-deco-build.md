@@ -73,7 +73,7 @@ The contrast test needs opaque hex grounds, so any gradient is a backdrop (as `-
 - **Bat-Clawd on the red:** on (a)'s surface his orange jaw reads at 5.88:1 (45.4 ΔE00 away), the suit at 3.23, the blue rim at 3.39; the cobalt cape at 1.58, as on black paper (1.54), where the rim already carried it. **On the lit orange band he is lost** (1.65:1, 15.9 ΔE00: the sky is his own hue), and the blue mist would blur him too (8.4 from the suit). So he sits above the lit band, on the dark part of the sky (Measured, Inferred).
 - **The VENGEANCE likeness the maintainer foresaw:** opaque, the sky's lit reds sit **5.5–6.2 ΔE00** from VENGEANCE's alarm fill `#af0006` (`#9e2801`, `#b42f04`), and the brightest orange 7.5 from HOLIDAY's `#d05600`. As a ground, (a) and (b)'s dark reds sit 10–28 away, and as a haze at low strength the colour seen is dark and the likeness mostly goes. The yellow alarm stays the hottest thing on screen in every option (its fill 14.1:1 on (a)'s surface) (Measured).
 
-**Recommended (P): (a)**, with the opening's stack as the backdrop: dark crimson at the top, a red band at about 45% behind the cards, the bright orange only behind the black skyline, and a blue mist band at the skyline's foot, below Bat-Clawd. It is the only option that clears every ground floor, the most literal "the ground may be red", and it passes every ink with room. (b) is the closer reading of a gradient ground but brings back black-paper cards at 2.6 from VENGEANCE. Decide on screen, beside VENGEANCE and KNIGHTMARE.
+**Decided (2026-10-24): (a)**, picked on screen by the maintainer beside the opening's frames and VENGEANCE, KNIGHTMARE and HOLIDAY ([`jury-wave-3.md`](jury-wave-3.md) §9, decision 18). It was recommended as (P), with the opening's stack as the backdrop: dark crimson at the top, a red band at about 45% behind the cards, the bright orange only behind the black skyline, and a blue mist band at the skyline's foot, below Bat-Clawd. It is the only option that clears every ground floor, the most literal "the ground may be red", and it passes every ink with room. (b) is the closer reading of a gradient ground but brings back black-paper cards at 2.6 from VENGEANCE. Decide on screen, beside VENGEANCE and KNIGHTMARE.
 
 Motion was not observed (§6).
 
@@ -197,9 +197,8 @@ Marcellus SC (OFL-1.1, one weight) is closest to the plain serif card "I Am the 
 **Motion was not observed.** The official upload could not be downloaded from this machine: YouTube asked to sign in, and reading the maintainer's Chrome cookies, which they allowed, failed (Chrome's app-bound encryption, yt-dlp issue 10927). The maintainer then chose to go on without the video. In consecutive opening stills the red sky and its clouds hold still while the figures move, and Timm's storyboard [55] marks camera pans over one painting; only the blue street mist changes between frames (Measured). So the clouds' drift, the blimps' drift and bob and the beams' sweep are ours (P), decided on screen from a GIF.
 
 For the maintainer, on screen:
-1. **The ground**: (a) red-black, (b) a gradient with black-paper cards, or (c) black paper, beside VENGEANCE and KNIGHTMARE (§2.5).
-2. **The chest**: a bat this close to `BAT_1989`, told apart by the oval's colour and ratio and its own ears and slots, or no oval at all (C2, which loses every lit frame) (§3.2); the model sheet's slots or the aired drawing's (§3.3); the oval's ratio, 1.66 as aired or 1.55 as the sheet's figure, further from `OVAL_1989`'s 1.75.
-3. **The Signature's held step**: the tent after [94] (§4.1).
-4. **Flying**: the storyboard's wings at shoulder height, beside VENGEANCE's glide (§4.2).
-5. **Gloves and trunks**: black, as in HD, or cape blue, as the dossier drew them (§4.4).
-6. **Stamps at 11px** in Marcellus SC (§5.2).
+1. **The chest**: a bat this close to `BAT_1989`, told apart by the oval's colour and ratio and its own ears and slots, or no oval at all (C2, which loses every lit frame) (§3.2); the model sheet's slots or the aired drawing's (§3.3); the oval's ratio, 1.66 as aired or 1.55 as the sheet's figure, further from `OVAL_1989`'s 1.75.
+2. **The Signature's held step**: the tent after [94] (§4.1).
+3. **Flying**: the storyboard's wings at shoulder height, beside VENGEANCE's glide (§4.2).
+4. **Gloves and trunks**: black, as in HD, or cape blue, as the dossier drew them (§4.4).
+5. **Stamps at 11px** in Marcellus SC (§5.2).
