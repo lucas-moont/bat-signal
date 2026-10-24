@@ -42,8 +42,41 @@ export interface MoonBackdrop {
   candle?: string
 }
 
+/**
+ * A red sky over a black skyline (DARK DECO's, after the opening of Batman: The Animated Series): the
+ * sky in bands from its top to the horizon, soft shadows of cloud only darker than it and never lit,
+ * Deco towers cut out sharp along the foot with a few faint lit windows, and a mist over their foot.
+ * The towers are the same city every time, whatever the panel's size.
+ */
+export interface SkylineBackdrop {
+  kind: 'skyline'
+  /** The sky's bands, each its variable and where it sits down the panel (0 at its top, 1 at its foot). */
+  sky: readonly (readonly [at: number, color: string])[]
+  /**
+   * The clouds: the variable they are filled in, how soft they are (a blur, in px), and each mass, an
+   * ellipse: its centre across and down the panel as shares of its size, its half-width and
+   * half-height in px, and its strength (alpha).
+   */
+  clouds: {
+    color: string
+    blur: number
+    masses: readonly (readonly [x: number, y: number, rx: number, ry: number, alpha: number])[]
+  }
+  /**
+   * The towers: the variable they are cut out in, how tall the lowest roofs and the tallest spire
+   * are above the foot (px), and their lit windows: a variable, a strength and how many.
+   */
+  towers: {
+    color: string
+    height: readonly [low: number, high: number]
+    windows: { color: string; alpha: number; count: number }
+  }
+  /** The mist over the towers' foot: its variable, its strength at the bottom, and how high it rises (px). */
+  mist: { color: string; alpha: number; height: number }
+}
+
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
-export type Backdrop = MoonBackdrop
+export type Backdrop = MoonBackdrop | SkylineBackdrop
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {

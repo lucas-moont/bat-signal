@@ -9,6 +9,7 @@ import type {
   MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
+  SkylineBackdrop,
   SmokeAtmosphere,
   SnowAtmosphere,
 } from '@shared/atmospheres'
@@ -76,6 +77,8 @@ export function backdropFor(backdrop: Backdrop): Painter {
   switch (backdrop.kind) {
     case 'moon':
       return moon(backdrop)
+    case 'skyline':
+      return skyline(backdrop)
   }
 }
 
@@ -165,6 +168,135 @@ function moon({ color: variable, alpha, at, radius, carved, candle: flame }: Moo
         for (const cut of FACE) trace(ctx, cut, cx, cy, radius)
         ctx.fill()
       }
+    },
+  }
+}
+
+/** The skyline's seed: the same city every time it is drawn. */
+const SKYLINE_SEED = 1992
+
+/** A lit window of the skyline: a dot taller than wide, in px. */
+const WINDOW = { w: 1.5, h: 2 }
+
+/** A tower of the skyline: where it stands, how wide, and its roof's height above the foot (px). */
+interface Tower {
+  x: number
+  width: number
+  roof: number
+}
+
+/**
+ * A Deco skyline along the foot of a panel this size, as one outline from the left edge's foot along
+ * the roofs to the right edge's: flat roofs, stepped setbacks, domes and, every fourth tower, a spire
+ * rising toward the tallest. Its towers, for the windows lit in them.
+ */
+function decoSkyline(width: number, height: number, [low, high]: readonly [number, number]) {
+  const random = seededFrom(SKYLINE_SEED)
+  const outline: [number, number][] = [[-1, height]]
+  const towers: Tower[] = []
+  const up = (x: number, h: number) => outline.push([x, height - h])
+  for (let x = -1, i = 0; x < width + 1; i++) {
+    const w = 12 + random() * 22
+    const roof = low + (high - low) * 0.55 * random()
+    const kind = i % 4 === 3 ? 'spire' : (['flat', 'setback', 'dome'] as const)[Math.floor(random() * 3)]!
+    up(x, roof)
+    if (kind === 'setback') {
+      // Two steps in, each a little higher, a third of the way across from either side.
+      const step = w / 3
+      up(x + step / 2, roof)
+      up(x + step / 2, roof + 8)
+      up(x + step, roof + 8)
+      up(x + step, roof + 16)
+      up(x + w - step, roof + 16)
+      up(x + w - step, roof + 8)
+      up(x + w - step / 2, roof + 8)
+      up(x + w - step / 2, roof)
+    } else if (kind === 'dome') {
+      for (let a = 1; a < 8; a++) up(x + (w * a) / 8, roof + Math.sin((Math.PI * a) / 8) * (w / 3))
+    } else if (kind === 'spire') {
+      // A crown on the roof, then a needle toward the tallest spire.
+      const tip = high * (0.8 + 0.2 * random())
+      const mid = x + w / 2
+      up(mid - w / 4, roof)
+      up(mid - w / 4, roof + 10)
+      up(mid - 1.5, roof + 10)
+      up(mid, tip)
+      up(mid + 1.5, roof + 10)
+      up(mid + w / 4, roof + 10)
+      up(mid + w / 4, roof)
+    }
+    up(x + w, roof)
+    towers.push({ x, width: w, roof })
+    x += w
+  }
+  outline.push([outline.at(-1)![0], height])
+  return { outline, towers }
+}
+
+/** A red sky over a black skyline: painted whole on every paint, since it never moves. */
+function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter {
+  let width = 0
+  let height = 0
+  let colors: { sky: string[]; clouds: string; towers: string; windows: string; mist: string } | undefined
+  let outline: [number, number][] = []
+  let windows: { x: number; y: number }[] = []
+  return {
+    recolor(colorOf) {
+      colors = {
+        sky: sky.map(([, variable]) => colorOf(variable)),
+        clouds: colorOf(clouds.color),
+        towers: colorOf(city.color),
+        windows: colorOf(city.windows.color),
+        mist: colorOf(mist.color),
+      }
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      const drawn = decoSkyline(w, h, city.height)
+      outline = drawn.outline
+      // The windows in the same towers every time, from a seed of their own.
+      const random = seededFrom(SKYLINE_SEED + 1)
+      windows = Array.from({ length: city.windows.count }, () => {
+        const tower = drawn.towers[Math.floor(random() * drawn.towers.length)]!
+        return {
+          x: Math.round(tower.x + 2 + random() * Math.max(0, tower.width - 5)),
+          y: Math.round(h - tower.roof + 3 + random() * Math.max(0, tower.roof - 9)),
+        }
+      })
+    },
+    paint(ctx) {
+      if (!width || !colors) return
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = 1
+      const bands = ctx.createLinearGradient(0, 0, 0, height)
+      sky.forEach(([at], i) => bands.addColorStop(at, colors!.sky[i]!))
+      ctx.fillStyle = bands
+      ctx.fillRect(0, 0, width, height)
+      // The clouds, soft, only ever darker than the sky.
+      ctx.fillStyle = colors.clouds
+      ctx.filter = `blur(${clouds.blur}px)`
+      for (const [x, y, rx, ry, alpha] of clouds.masses) {
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        ctx.ellipse(x * width, y * height, rx, ry, 0, 0, 2 * Math.PI)
+        ctx.fill()
+      }
+      ctx.filter = 'none'
+      ctx.globalAlpha = 1
+      ctx.fillStyle = colors.towers
+      ctx.beginPath()
+      trace(ctx, outline, 0, 0)
+      ctx.fill()
+      ctx.fillStyle = colors.windows
+      ctx.globalAlpha = city.windows.alpha
+      for (const { x, y } of windows) ctx.fillRect(x, y, WINDOW.w, WINDOW.h)
+      // The mist, rising from the bottom over the towers' foot.
+      const rising = ctx.createLinearGradient(0, height - mist.height, 0, height)
+      rising.addColorStop(0, 'transparent')
+      rising.addColorStop(1, colors.mist)
+      ctx.fillStyle = rising
+      ctx.globalAlpha = mist.alpha
+      ctx.fillRect(0, height - mist.height, width, mist.height)
     },
   }
 }
