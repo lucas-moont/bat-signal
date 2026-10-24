@@ -194,7 +194,8 @@ const SKYLINE_SEED = { city: 0.1992, windows: 0.0716 }
  * The skyline's Deco vocabulary, in px: how wide a tower may be; how much of the span between the
  * lowest roofs and the tallest spire its roof may rise; a setback's two steps up, each a sixth of its
  * width in from the last; a spire's crown, a quarter of its width either side of its middle, with a
- * needle that rises toward the tallest spire from its base this wide; one tower in so many a spire;
+ * needle that rises toward the tallest spire from its base this wide, and at least so far above the
+ * crown; one tower in so many a spire;
  * and a dome's rise for its width.
  */
 const DECO = {
@@ -210,7 +211,7 @@ const DECO = {
     [1 / 4, 0],
     [1 / 4, 10],
   ],
-  needle: { base: 3, tip: [0.8, 1] },
+  needle: { base: 3, tip: [0.8, 1], above: 10 },
   spireEvery: 4,
   dome: 1 / 3,
 } as const
@@ -262,9 +263,9 @@ function decoSkyline(width: number, height: number, [low, high]: readonly [numbe
       for (let a = 1; a < 8; a++) up(x + (w * a) / 8, roof + Math.sin((Math.PI * a) / 8) * w * DECO.dome)
     else if (kind === 'spire') {
       const [lowest, highest] = DECO.needle.tip
-      const tip = high * (lowest + (highest - lowest) * random())
-      // The crown, then the needle's base on it and its tip in the middle.
+      // The crown, then the needle's base on it and its tip in the middle, always above the crown.
       const crown = DECO.crown.at(-1)![1]
+      const tip = Math.max(high * (lowest + (highest - lowest) * random()), roof + crown + DECO.needle.above)
       mirrored(x, w, roof, [...DECO.crown, [1 / 2 - DECO.needle.base / 2 / w, crown]], tip)
     }
     up(x + w, roof)
