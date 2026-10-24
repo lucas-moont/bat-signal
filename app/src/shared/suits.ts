@@ -1636,17 +1636,19 @@ const DECO_EDGE: Layer = {
 }
 
 /**
- * The 1992 oval on his chest, 5 units across, between the collar and the belt; with his arms crossed
- * under it, a little smaller and higher.
+ * The 1992 oval on his chest, 5 units across, between the collar and the belt, its rim resting on the
+ * belt; with his arms crossed over its foot, a little smaller and higher, clear of his jaw.
  */
 const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
 const DECO_CHEST_HIGH = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.4, rx: 2 })
 
-/**
- * The black cape (left halves; mirrored for the right), each with where the light touches it and
- * turns it navy: along its top as it spreads, over his shoulder as it falls.
- */
-const DECO_CAPE = {
+/** A half of the cape behind him (the left; mirrored for the right), and where the light turns it navy. */
+interface CapeHalf {
+  cloth: string
+  light: string
+}
+/** The black cape, its light along its top as it spreads and over his shoulder as it falls. */
+const DECO_CAPE: Record<'hanging' | 'wing' | 'wingLifted' | 'open', CapeHalf> = {
   /** Hanging close behind him, just past his sides, its hem in one soft scallop. */
   hanging: {
     cloth: 'M3 4.8 L2.4 5.2 Q2 7.8 2 10.9 Q2.7 10.3 3.4 10.9 L5.4 10.9 L5.4 5 Z',
@@ -1667,12 +1669,12 @@ const DECO_CAPE = {
     cloth: 'M4.8 5 L1.2 5.2 Q-0.4 7.6 -1.4 10.9 Q0 10.2 1 10.9 Q2.2 10.2 4.8 10.9 Z',
     light: 'M3.4 5 L1.2 5.2 Q0.4 6.4 -0.2 7.8 Q1.2 6 3.4 5.9 Z',
   },
-  /** Closed round him, asleep, its hem in soft scallops (whole, in front of him). */
-  wrapped:
-    'M2.6 6.2 L13.4 6.2 L14.2 10.9 Q12.6 10.2 11 10.9 Q9.4 10.2 8 10.9 Q6.6 10.2 5 10.9 Q3.4 10.2 1.8 10.9 Z',
 }
+/** The cape closed round him, asleep, its hem in soft scallops (whole, in front of him). */
+const DECO_WRAPPED =
+  'M2.6 6.2 L13.4 6.2 L14.2 10.9 Q12.6 10.2 11 10.9 Q9.4 10.2 8 10.9 Q6.6 10.2 5 10.9 Q3.4 10.2 1.8 10.9 Z'
 /** A cape's two halves behind him, and the navy where the light touches them. */
-const decoCaped = ({ cloth, light }: { cloth: string; light: string }): Layer[] => [
+const decoCaped = ({ cloth, light }: CapeHalf): Layer[] => [
   { kind: 'cape', d: cloth, mirrored: true },
   { kind: 'path', d: light, fill: 'var(--cowl-shine)', mirrored: true },
 ]
@@ -1703,7 +1705,7 @@ const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: L
   pose(map, [...TIMM_EARS, ...behind], front, { chest, edge: DECO_EDGE })
 
 /** Flying, the drop: the cape spread from his hands at his shoulders, two frames lifting its tips. */
-const decoFlying = (wing: (typeof DECO_CAPE)['wing']) => decoPose(DECO_ARMS_OUT, decoCaped(wing))
+const decoFlying = (wing: CapeHalf) => decoPose(DECO_ARMS_OUT, decoCaped(wing))
 /** Alarmed: his arms out as in most Themes, the cape thrown open behind him, the aura lit. */
 const decoAlarmed = decoPose(DECO_ARMS_OUT, [...DECO_BACK, ...decoCaped(DECO_CAPE.open)])
 /**
@@ -1735,7 +1737,7 @@ const HANGING_CAPE = [...DECO_BACK, ...decoCaped(DECO_CAPE.hanging)]
 
 /**
  * Arms crossed, the official key art of the 2004 Volume One DVD, still HBO Max's [76] [77]: standing
- * in his cape, then his forearms crossed over his chest under the oval.
+ * in his cape, then his forearms crossed over his chest at the oval's foot.
  */
 const ARMS_CROSSED: Script = [
   { pose: decoPose(DECO_STANDING, HANGING_CAPE), look: 0 },
@@ -1745,7 +1747,7 @@ const ARMS_CROSSED: Script = [
 export const DARK_DECO_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [seated(DECO_SEATED, DECO_CAPE.wrapped, [...TIMM_EARS, DECO_EDGE])],
+    sleeping: [seated(DECO_SEATED, DECO_WRAPPED, [...TIMM_EARS, DECO_EDGE])],
     flying: [decoFlying(DECO_CAPE.wing), decoFlying(DECO_CAPE.wingLifted)],
     alarmed: [decoAlarmed],
   },
