@@ -251,7 +251,11 @@ const plateBat = ({ bat, plate }: PlatedEmblem, cx: number, cy: number, rx: numb
   width: (2 * rx * bat.width) / (plate.box.width - 2 * plate.rim),
 })
 
-/** How far the cowl-black rim of an oval on his chest reaches past its plate, in units. */
+/**
+ * How far the cowl-black rim of an oval on his chest reaches past its plate, in units: PALE
+ * MOONLIGHT's, which keeps its oval clear of his jaw (y 5) and his belt (y 8.5) so the two never
+ * merge into one brass apron. A Theme that needs another width brings it with its oval.
+ */
 const CHEST_RIM = 0.35
 
 /**
@@ -273,8 +277,6 @@ export function chestPlate(
     smooth: true,
   })
   return [
-    // PALE MOONLIGHT's rim clears his jaw (y 5) and the belt (y 8.5): the two never merge into one
-    // brass apron.
     ...(plate.rim > 0 ? [at(rx + CHEST_RIM, 'var(--cowl)')] : []),
     at(rx, glows ? 'var(--signal)' : 'var(--emblem-plate)'),
     ...(glows ? [at((rx * 2) / 3, 'var(--signal-hot)')] : []),
