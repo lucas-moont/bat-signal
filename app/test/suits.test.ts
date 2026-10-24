@@ -195,14 +195,14 @@ describe('an oval on his chest', () => {
   const at = { cx: 8, cy: 7, rx: 2.1 }
 
   it('lights in the Alarm color when lit, and rests in the plate color', () => {
-    const plate = emblem(WINGS, 'none', OVAL_1989)
-    expect(fills(chestPlate(plate, { ...at, lit: true }))).toContain('var(--signal)')
-    expect(fills(chestPlate(plate, at))).toEqual(['var(--cowl)', 'var(--emblem-plate)', undefined])
+    const plated = emblem(WINGS, 'none', OVAL_1989)
+    expect(fills(chestPlate(plated, { ...at, lit: true }))).toContain('var(--signal)')
+    expect(fills(chestPlate(plated, at))).toEqual(['var(--cowl)', 'var(--emblem-plate)', undefined])
   })
 
   it('never lights if its plate never does', () => {
-    const plate = emblem(WINGS, 'none', { ...OVAL_1989, lights: false })
-    expect(fills(chestPlate(plate, { ...at, lit: true }))).toEqual([
+    const plated = emblem(WINGS, 'none', { ...OVAL_1989, lights: false })
+    expect(fills(chestPlate(plated, { ...at, lit: true }))).toEqual([
       'var(--cowl)',
       'var(--emblem-plate)',
       undefined,
@@ -210,17 +210,17 @@ describe('an oval on his chest', () => {
   })
 
   it('has no rim if its plate has none', () => {
-    const plate = emblem(WINGS, 'none', { ...OVAL_1989, rim: 0 })
-    expect(fills(chestPlate(plate, at))).toEqual(['var(--emblem-plate)', undefined])
+    const plated = emblem(WINGS, 'none', { ...OVAL_1989, rim: 0 })
+    expect(fills(chestPlate(plated, at))).toEqual(['var(--emblem-plate)', undefined])
   })
 
   // The bat spans the plate inside its rim as it does on the emblem: a re-trace carries over.
   it("spans the plate as the emblem's bat does", () => {
-    const plate = emblem(WINGS, 'none', OVAL_1989)
-    const bat = chestPlate(plate, at).at(-1)
+    const plated = emblem(WINGS, 'none', OVAL_1989)
+    const bat = chestPlate(plated, at).at(-1)
     expect(bat).toMatchObject({ kind: 'emblem', cx: 8, cy: 7 })
     expect(bat && 'width' in bat && bat.width).toBeCloseTo(
-      (2 * at.rx * plate.bat.width) / (OVAL_1989.box.width - 2 * OVAL_1989.rim),
+      (2 * at.rx * plated.bat.width) / (OVAL_1989.box.width - 2 * OVAL_1989.rim),
     )
   })
 
