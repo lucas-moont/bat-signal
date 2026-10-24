@@ -982,7 +982,7 @@ export const DARK_DECO_WORDS: Words = {
     report: {
       ...STANDARD_VOICE.report,
       name: "Tonight's episode",
-      signature: 'Waiting on you',
+      signature: 'On hold for you',
       nil: (t) => `Nothing to fear. Every ${lower(t.case.one)} carries on without you.`,
       caseNotes: (t) => `${t.case.one} card`,
       end: (waiting) => (waiting ? 'Fade out. Something still needs you.' : 'Fade out.'),
