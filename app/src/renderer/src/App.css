@@ -238,13 +238,14 @@
   flex: 1;
   min-height: 0;
 }
-/* A Theme's veil behind the night report, which has no cards of its own: still, under the scroll,
-   so it never repaints as the report scrolls (DARK DECO's, over its sky; none elsewhere). */
-.stage:has(.report)::before {
+/* A Theme's veil behind words with no card under them, the night report's or an empty list's: still,
+   under the scroll, so it never repaints as the stage scrolls (DARK DECO's, over its sky; none
+   elsewhere). */
+.stage--bare::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--report-veil);
+  background: var(--bare-veil);
   pointer-events: none;
 }
 .stage__scroll {

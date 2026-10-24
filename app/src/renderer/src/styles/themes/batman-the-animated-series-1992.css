@@ -66,16 +66,17 @@
   --caption-paper: transparent;
   --caption-ink: var(--ash);
   --caption-rule: underline;
-  /* The night report has no cards, so its words sit on the sky: a veil of the ground behind it,
-     held to the panel's foot as DARK_DECO_SKY's bands are (atmospheres.ts; change the two together):
-     70% by the lit band over the towers, the least that keeps --ash at 4.5:1 there under a beam, then
-     less as the sky darkens, none from 300px up (picked on screen, the softest that reads). */
-  --report-veil: linear-gradient(
+  /* Words with no card under them (the night report, an empty list) sit on the sky: a veil of the
+     ground behind them, held to the panel's foot as DARK_DECO_SKY's bands are, up past the crimson
+     band where the sky turns dark. The softest that keeps --ash at 4.5:1 under a beam, checked at
+     every height by bareVeil.test.ts and on screen (4.75:1 at worst). */
+  --bare-veil: linear-gradient(
     to top in srgb,
-    color-mix(in srgb, var(--abyss) 70%, transparent) 53px,
-    color-mix(in srgb, var(--abyss) 60%, transparent) 106px,
-    color-mix(in srgb, var(--abyss) 37%, transparent) 229px,
-    transparent 300px
+    color-mix(in srgb, var(--abyss) 72%, transparent) 53px,
+    color-mix(in srgb, var(--abyss) 64%, transparent) 106px,
+    color-mix(in srgb, var(--abyss) 50%, transparent) 229px,
+    color-mix(in srgb, var(--abyss) 36%, transparent) 343px,
+    transparent 420px
   );
 
   --clawd: #d77757;
