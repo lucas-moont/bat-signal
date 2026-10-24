@@ -1640,7 +1640,7 @@ const DECO_EDGE: Layer = {
  * belt; with his arms crossed over its foot, a little smaller and higher, clear of his jaw.
  */
 const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
-const DECO_CHEST_HIGH = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.4, rx: 2 })
+const DECO_CHEST_HIGH = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.6, rx: 2 })
 
 /** A half of the cape behind him (the left; mirrored for the right), and where the light turns it navy. */
 interface CapeHalf {
