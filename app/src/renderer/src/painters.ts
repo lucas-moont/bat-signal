@@ -275,6 +275,18 @@ function decoSkyline(width: number, height: number, [low, high]: readonly [numbe
   return { outline, towers }
 }
 
+/**
+ * A color at no strength, for a gradient to fade from: a canvas gradient mixes its stops
+ * unpremultiplied, so fading from transparent black greys the middle. A hex color keeps its hue;
+ * anything else fades from transparent.
+ */
+function clearOf(color: string): string {
+  const hex = /^#([\da-f]{6})$/i.exec(color)?.[1]
+  if (!hex) return 'transparent'
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16))
+  return `rgba(${r}, ${g}, ${b}, 0)`
+}
+
 /** A red sky over a black skyline: painted whole on every paint, since it never moves. */
 function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
   /** How high above the foot the sky's gradient starts: its highest band. */
@@ -347,7 +359,7 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       for (const { x, y } of windows) ctx.fillRect(x, y, WINDOW.w, WINDOW.h)
       // The mist, rising from the bottom over the towers' foot.
       const rising = ctx.createLinearGradient(0, height - mist.height, 0, height)
-      rising.addColorStop(0, 'transparent')
+      rising.addColorStop(0, clearOf(colors.mist))
       rising.addColorStop(1, colors.mist)
       ctx.fillStyle = rising
       ctx.globalAlpha = mist.alpha
