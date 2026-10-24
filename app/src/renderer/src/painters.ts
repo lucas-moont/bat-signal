@@ -283,6 +283,8 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
   let height = 0
   let stops: [number, string][] = []
   let colors = { clouds: '', towers: '', windows: '', mist: '' }
+  /** Whether every color is set: a variable the page doesn't set reads as '', which a gradient refuses. */
+  let ready = false
   let outline: [number, number][] = []
   let windows: { x: number; y: number }[] = []
   return {
@@ -295,6 +297,7 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
         windows: colorOf(towers.windows.color),
         mist: colorOf(mist.color),
       }
+      ready = stops.every(([, color]) => color) && Object.values(colors).every(Boolean)
     },
     resize(w, h) {
       ;[width, height] = [w, h]
@@ -312,8 +315,9 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       })
     },
     paint(ctx) {
-      if (!width || !stops.length) return
+      if (!width) return
       ctx.clearRect(0, 0, width, height)
+      if (!ready) return
       ctx.globalAlpha = 1
       const bands = ctx.createLinearGradient(0, height - top, 0, height)
       for (const [at, color] of stops) bands.addColorStop(at, color)
