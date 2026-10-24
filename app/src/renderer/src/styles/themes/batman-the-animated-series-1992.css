@@ -87,7 +87,7 @@
   --ash-dim: var(--ash);
   --chevron: var(--ash);
 
-  /* Bat-Clawd in Timm's suit (animated-series.md, section 8): black, navy only where the light
+  /* Bat-Clawd in Timm's suit (dark-deco-build.md, section 4; jury-wave-3.md, decision 19): black, navy only where the light
      touches his cape and mask, the rim of light on cowl and cape muted to a neutral blue, a blue-grey
      suit, the yellow oval, the gold belt, black gloves and boots. */
   --clawd-eye: var(--bone);

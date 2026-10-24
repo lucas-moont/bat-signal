@@ -504,9 +504,9 @@ Taken on 2026-10-23, from the boards in §7, seen on screen.
 19. **DARK DECO at its build** (2026-10-24, #145), each picked on screen beside the references ([`dark-deco-build.md`](dark-deco-build.md)):
     - **the chest bat as it aired**, traced from the 2018 Blu-ray frame [92] over the model sheet's, on the oval that frame measures (1.60:1, a 3.6-unit black rim), black in the masthead as on the chest and the disc;
     - **Bat-Clawd black, navy only where the light touches**: the maintainer, on screen, "the primary colour is black, and only with the touch of light does the cape and mask turn navy"; the cape longer; gloves, boots and trunks black, as the HD frames and DC's standee show; the cowl's rim the show's blue muted to a neutral (`#4a66b0`), as the Costume Rule asks;
-    - **alarmed, he stays in his suit**, the cape flung open, the aura lit (all black when something needs you "made no sense" to the maintainer);
+    - **alarmed, he stays in his suit**, his arms out as in most Themes, the cape flung open, the aura lit (all black when something needs you "made no sense" to the maintainer);
     - **the Signature: arms crossed**, the official key art of the 2004 Volume One DVD, still HBO Max's [76] [77], after the opening's landing (a tent of cape [94], three shapes) and the red-sky stand [03] (too near KNIGHTMARE's coat at 54px) were seen and set aside;
-    - **the night report reads through a veil**, the softest that keeps `--ash` at 4.5:1 where the sky lights;
+    - **words with no card read through a veil** (the night report, an empty list), the softest that keeps `--ash` at 4.5:1 over the sky under a beam;
     - **the beams more visible** (strength 0.14), and the blimps hovering, as the storyboard draws them;
     - **display name DARK DECO**, free of marks; I AM THE NIGHT is a live Warner mark.
 
