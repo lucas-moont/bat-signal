@@ -10,9 +10,11 @@ import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
+  DARK_DECO_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
+  STANDARD_VOICE,
   STANDARD_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
   withLexicon,
@@ -355,5 +357,52 @@ describe("HOLIDAY's words", () => {
     expect(voice.settings.atmosphere.label).toBe('Halloween')
     expect(voice.settings.atmosphere.label).not.toBe(voice.report.name)
     expect(voice.settings.atmosphere.hint(terms)).toBe('Torn pages under a pumpkin moon behind the cases')
+  })
+})
+
+describe("DARK DECO's words", () => {
+  const { terms, voice } = DARK_DECO_WORDS
+
+  // The title card (animated-series.md, sections 6 and 7; jury-wave-3.md, section 4): Case stays;
+  // someone paging you, a request to go ahead, a job busted, a demand for an answer, a new lead, a
+  // job held up. GO AHEAD? keeps its question mark: bare, it reads as permission already given.
+  it("speak the title card's Lexicon", () => {
+    expect(terms.case).toEqual(STANDARD_TERMS.case)
+    expect(terms.needsYou.label).toBe('Paging you')
+    expect(terms.needsYou.count(1)).toBe('1 paging you')
+    expect(terms.needsYou.count(3)).toBe('3 paging you')
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Go ahead?',
+      error: 'Busted',
+      waiting: 'Answer me',
+      reply: 'New lead',
+      stalled: 'Held up',
+    })
+  })
+
+  // An episode title said as a phrase means all clear; the report ends as an episode does.
+  it('says nothing to fear when all is clear, and fades out at the end', () => {
+    expect(voice.empty.quiet.title).toBe('Nothing to fear.')
+    expect(voice.empty.quiet.hint).toBe(STANDARD_VOICE.empty.quiet.hint)
+    expect(voice.report.end(0)).toBe('Fade out.')
+    expect(voice.report.end(2)).toBe('Fade out. Something still needs you.')
+  })
+
+  // Not West's "No cases tonight.", which opens its own empty line (jury-wave-3.md, section 3.9).
+  it('empties its card in words of its own', () => {
+    expect(voice.empty.noCases.title(terms)).toBe('No cases on the card tonight.')
+    expect(voice.empty.noCases.title(terms)).not.toMatch(/^No cases tonight\./)
+  })
+
+  // The makers' names in front, as every shipped credit has them (jury-wave-3.md, section 3.9).
+  it('credits the series by its makers', () => {
+    expect(voice.theme.name).toBe('DARK DECO')
+    expect(voice.theme.film).toBe("Timm & Radomski's Batman: The Animated Series")
+  })
+
+  it('names its Atmosphere after the sky, with the blimps over the city', () => {
+    expect(voice.settings.atmosphere.label).toBe('Red sky')
+    expect(voice.settings.atmosphere.hint(terms)).toBe('Police blimps over the city behind the cases')
   })
 })
