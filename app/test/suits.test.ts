@@ -248,8 +248,8 @@ describe("DARK DECO's suit", () => {
   const fills = (p: Pose) =>
     [...p.behind, ...p.front].map((layer) => ('fill' in layer ? layer.fill : undefined))
 
-  it('never lights its oval, in any pose', () => {
-    for (const p of every) expect(fills(p)).not.toContain('var(--signal)')
+  it('never lights its oval, in any pose: nothing on him in the Alarm color', () => {
+    for (const p of every) expect(fills(p).filter((fill) => fill?.includes('--signal'))).toEqual([])
   })
 
   it('ends its Signature with his arms crossed over his chest, in his black gloves', () => {
