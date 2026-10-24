@@ -168,27 +168,32 @@ export const BAT_1996 =
 export const EMBLEM_1989 = emblem(BAT_1989, 'none', OVAL_1989)
 
 /**
- * DARK DECO's bat, after Batman: The Animated Series (1992), on the same 120x48 grid: the chest bat of
- * Bruce Timm's master model sheet (Feb–Apr 1991, "please use logo on all models"), the 1989 logo's
- * construction, traced from its header logo and widened to the oval the 2018 remaster shows
- * (dark-deco-build.md, section 3.3): two short ears on a flat crown, a deep slot either side of the
- * head, a point beside each slot, wings following the oval without reaching it, two lobes a side
- * underneath and a tail the lowest point. Drawn as a left half and mirrored at x = 60.
+ * DARK DECO's bat, after Batman: The Animated Series (1992), on the same 120x48 grid: the chest bat as
+ * it aired, traced from the 2018 Blu-ray frame [92] (dark-deco-build.md, section 3), the maintainer's
+ * choice over the model sheet's. The 1989 logo's construction, as Timm's master sheet asks, drawn the
+ * show's way: square ears running up into the rim with a square notch between them, wide shallow
+ * slots beside the head, a point beside each slot, wings following the oval without reaching it, two
+ * shallow round lobes a side and a blunt tail just below the wingtips. Drawn as a left half and
+ * mirrored at x = 60, the head rebuilt about the axis (the frame's chest is turned a little).
  */
 export const BAT_1992 =
-  'M60 7.4 L58.35 7.4 L56.7 4.6 L54.94 5.4 L54.72 14.2 Q54.06 18.4 50.32 18.4 Q46.13 18.4 45.91 14.6 ' +
-  'L45.91 10.6 Q46.02 8.2 46.57 6.4 Q34.14 7.4 28.74 15.2 Q26.32 19 26.65 23.2 Q27.09 28.8 31.83 33.2 ' +
-  'L40.63 39.8 Q36.45 36.6 37.33 31.4 Q38.21 27.4 41.95 27.4 Q45.91 27.6 47.45 34.4 Q48.99 29.8 52.74 29.8 ' +
-  'Q56.92 29.8 57.58 33.6 L60 42 L62.42 33.6 Q63.08 29.8 67.26 29.8 Q71.01 29.8 72.55 34.4 Q74.09 27.6 ' +
-  '78.05 27.4 Q81.79 27.4 82.67 31.4 Q83.55 36.6 79.37 39.8 L88.17 33.2 Q92.91 28.8 93.35 23.2 Q93.68 19 ' +
-  '91.26 15.2 Q85.86 7.4 73.43 6.4 Q73.98 8.2 74.09 10.6 L74.09 14.6 Q73.87 18.4 69.68 18.4 Q65.94 18.4 ' +
-  '65.28 14.2 L65.06 5.4 L63.3 4.6 L61.65 7.4 L60 7.4 Z'
+  'M60 6.9 L58.8 6.9 L58.3 6.4 L58.3 3.4 L55 3.4 Q53.8 9.2 52.4 11 Q51 12.8 49.3 13.7 Q47.6 14.5 45.9 ' +
+  '14.6 Q44.3 14.7 43.1 14.1 Q41.9 13.5 41.4 12.8 Q40.8 12.1 40.5 10.5 Q40.2 8.9 39.3 8.2 Q35.7 9.8 ' +
+  '34.8 10.4 Q34 10.9 32.1 13.2 Q30.1 15.4 28.4 21.4 Q28.6 24.8 29.4 27.9 Q30.1 31 31.2 32.4 Q32.2 ' +
+  '33.9 34.3 35.9 Q36.3 37.8 38.1 38.5 Q39.9 39.2 43.4 39.3 Q44.2 37.7 44.1 36 Q43.9 34.4 44.6 33.5 ' +
+  'Q45.7 33.5 48.5 35.9 Q50.4 34.9 50.7 34.5 Q51 34 51.8 33.8 Q52.5 33.6 53.3 33.8 Q54.2 34 55.1 34.9 ' +
+  'Q56.1 35.9 56.9 37.4 Q57.6 39 60 40.2 Q62.4 39 63.1 37.4 Q63.9 35.9 64.9 34.9 Q65.8 34 66.7 33.8 ' +
+  'Q67.5 33.6 68.2 33.8 Q69 34 69.3 34.5 Q69.6 34.9 71.5 35.9 Q74.3 33.5 75.4 33.5 Q76.1 34.4 75.9 36 ' +
+  'Q75.8 37.7 76.6 39.3 Q80.1 39.2 81.9 38.5 Q83.7 37.8 85.7 35.9 Q87.8 33.9 88.8 32.4 Q89.9 31 90.6 ' +
+  '27.9 Q91.4 24.8 91.6 21.4 Q89.9 15.4 87.9 13.2 Q86 10.9 85.2 10.4 Q84.3 9.8 80.7 8.2 Q79.8 8.9 ' +
+  '79.5 10.5 Q79.2 12.1 78.6 12.8 Q78.1 13.5 76.9 14.1 Q75.7 14.7 74.1 14.6 Q72.4 14.5 70.7 13.7 Q69 ' +
+  '12.8 67.6 11 Q66.2 9.2 65 3.4 L61.7 3.4 L61.7 6.4 L61.2 6.9 L60 6.9 Z'
 
 /**
- * The 1992 oval: about 1.66:1, as the remaster shows it, centred on the grid, a 2-unit black rim; a
+ * The 1992 oval as the frame measures it: about 1.6:1, centred on the grid, a 3.6-unit black rim; a
  * bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
  */
-export const OVAL_1992 = { box: { x: 20, y: 0, width: 80, height: 48 }, rim: 2, lights: false }
+export const OVAL_1992 = { box: { x: 21.5, y: 0, width: 77, height: 48 }, rim: 3.6, lights: false }
 
 /** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)
