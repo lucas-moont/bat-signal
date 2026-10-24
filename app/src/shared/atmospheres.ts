@@ -439,3 +439,65 @@ export const HOLIDAY_NIGHT: AshAtmosphere = {
     candle: '--candle',
   },
 }
+
+/**
+ * DARK DECO's red sky, after the opening of Batman: The Animated Series (dark-deco-build.md, section 2;
+ * jury-wave-3.md, section 9, decision 18): the sky in bands from its black top to the red-orange band
+ * just above the skyline, black cloud shadows in it at the medium strength picked on screen (soft
+ * billows and banks, a few flat streaks kept crisp), black Deco towers with a few Bone windows and a
+ * blue street mist at their foot; over it the storyboard's three police blimps hovering, a near one
+ * and two far, two Bone beams under each, the farthest's leaning in to cross (the beams' strength
+ * picked on screen, "more visible"). Frozen under reduced motion, the sky kept.
+ */
+export const DARK_DECO_SKY: BlimpsAtmosphere = {
+  kind: 'blimps',
+  color: '--blimp',
+  still: 'calm',
+  fleet: [
+    { length: 34, at: 0.2, from: 0.68, drift: 0.25 },
+    { length: 22, at: 0.33, from: 0.18, drift: -0.15 },
+    { length: 15, at: 0.5, from: 0.45, drift: 0.1, splay: -0.12 },
+  ],
+  beams: {
+    color: '--beam',
+    alpha: 0.14,
+    reach: 5,
+    width: 0.08,
+    splay: 0.24,
+    sway: 0.05,
+    period: 12,
+    apart: 0.25,
+  },
+  backdrop: {
+    kind: 'skyline',
+    sky: [
+      { above: 440, color: '--sky-top' },
+      { above: 387, color: '--sky-dark' },
+      { above: 343, color: '--sky-crimson' },
+      { above: 229, color: '--sky' },
+      { above: 106, color: '--sky-lit' },
+      { above: 53, color: '--sky-glow' },
+    ],
+    clouds: {
+      color: '--sky-shadow',
+      blur: 10,
+      masses: [
+        { at: [0.094, 0.091], size: [110, 55], alpha: 0.77 },
+        { at: [0.938, 0.068], size: [120, 60], alpha: 0.77 },
+        { at: [0.5, 0.0], size: [120, 40], alpha: 0.68 },
+        { at: [-0.031, 0.455], size: [80, 40], alpha: 0.51 },
+        { at: [1.031, 0.523], size: [70, 40], alpha: 0.51 },
+        { at: [0.188, 0.723], size: [95, 22], alpha: 0.59 },
+        { at: [0.781, 0.682], size: [90, 24], alpha: 0.55 },
+        { at: [0.5, 0.795], size: [70, 14], alpha: 0.47 },
+        { at: [0.031, 0.83], size: [60, 12], alpha: 0.42 },
+        { at: [0.938, 0.8], size: [55, 12], alpha: 0.42 },
+        { at: [0.281, 0.641], size: [140, 4], alpha: 0.42, blur: 2.5 },
+        { at: [0.719, 0.768], size: [120, 3.5], alpha: 0.42, blur: 2.5 },
+        { at: [0.125, 0.777], size: [90, 3], alpha: 0.38, blur: 2.5 },
+      ],
+    },
+    towers: { color: '--skyline', height: [24, 120], windows: { color: '--window', alpha: 0.35, count: 14 } },
+    mist: { color: '--mist', alpha: 0.55, height: 36 },
+  },
+}

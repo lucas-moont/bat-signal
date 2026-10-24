@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
-import { BAT_1996, emblem, WINGS } from '../../src/shared/emblems'
+import { BAT_1992, BAT_1996, emblem, OVAL_1992, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -182,21 +182,25 @@ describe('a bat on his chest', () => {
   })
 })
 
+/** A path's points, as [x, y] pairs, in order (a curve's control point and its end both). */
+const points = (d: string) => {
+  const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
+  return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
+}
+
+// Every traced bat is drawn as a left half and mirrored at x = 60.
+it.each([
+  ['HOLIDAY', BAT_1996],
+  ['DARK DECO', BAT_1992],
+])("%s's bat is symmetric about the middle of its grid", (_, bat) => {
+  const all = points(bat).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
+  const mirrored = points(bat).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
+  expect(new Set(mirrored)).toEqual(new Set(all))
+})
+
 // HOLIDAY's bat (#146): the classic bat in The Long Halloween's Signal, measured on #1 p. 27 and
 // redrawn with the maintainer on screen. Drawn as a left half and mirrored, like every Theme's bat.
 describe("HOLIDAY's bat", () => {
-  /** The path's points, as [x, y] pairs, in order (a curve's control point and its end both). */
-  const points = (d: string) => {
-    const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
-    return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
-  }
-
-  it('is symmetric about the middle of its grid', () => {
-    const all = points(BAT_1996).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
-    const mirrored = points(BAT_1996).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
-    expect(new Set(mirrored)).toEqual(new Set(all))
-  })
-
   // Its wingtips, outer claws and tail reach the frame's edges; its wings, about two thirds of it.
   it('fills the 48 units of its frame from wingtip to tail, wider than tall', () => {
     const xs = points(BAT_1996).map(([x]) => x)
@@ -206,5 +210,34 @@ describe("HOLIDAY's bat", () => {
     const width = Math.max(...xs) - Math.min(...xs)
     expect(width / 48).toBeGreaterThan(1.4)
     expect(width / 48).toBeLessThan(1.8)
+  })
+})
+
+// DARK DECO's bat (#145): the series' chest symbol, traced from the clean drawing the maintainer
+// supplied [140] (dark-deco-build.md, section 3), after two traces from aired frames read strange.
+describe("DARK DECO's bat", () => {
+  const { bat } = emblem(BAT_1992, 'none')
+  const { box, rim } = OVAL_1992
+
+  // The oval as the drawing measures it, about 1.76:1 under a thin black line; it never lights.
+  it('sits on an oval of about 1.76:1, a thin rim round it, that never lights', () => {
+    expect(box.width / box.height).toBeCloseTo(1.76, 1)
+    expect(rim / box.height).toBeLessThan(0.04)
+    expect(OVAL_1992.lights).toBe(false)
+  })
+
+  // A band of yellow all the way round it: its wings, ears and tail all stop short of the rim.
+  it('keeps a band of yellow between itself and the rim', () => {
+    expect(bat.x).toBeGreaterThan(box.x + rim + 2)
+    expect(bat.x + bat.width).toBeLessThan(box.x + box.width - rim - 2)
+    expect(bat.y).toBeGreaterThan(box.y + rim + 2)
+    expect(bat.y + bat.height).toBeLessThan(box.y + box.height - rim - 2)
+  })
+
+  // Its tail comes down to a single point, its lowest, a little below its wings' lower corners.
+  it('ends in a pointed tail', () => {
+    const foot = bat.y + bat.height
+    const tail = points(BAT_1992).filter(([, y]) => y > foot - 1)
+    expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(3)
   })
 })

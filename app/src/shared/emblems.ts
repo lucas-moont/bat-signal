@@ -166,3 +166,39 @@ export const BAT_1996 =
 
 /** PALE MOONLIGHT's emblem: the 1989 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1989 = emblem(BAT_1989, 'none', OVAL_1989)
+
+/**
+ * DARK DECO's bat, after Batman: The Animated Series (1992), on the same 120x48 grid: the series'
+ * chest symbol, traced from the clean drawing the maintainer supplied [140] (dark-deco-build.md,
+ * section 3) after two traces from aired frames read strange. The 1989 logo's construction: two
+ * pointed ears with a flat notch between them, deep round slots beside the head, the wingtips curling
+ * in over them, two round lobes a side and a pointed tail, a band of yellow all round it. Its outline
+ * followed pixel by pixel on its left half and mirrored at x = 60.
+ */
+export const BAT_1992 =
+  'M60 9.3 L58.6 9.3 L58.4 9.1 L55.7 4.2 L55.6 7 L55.3 11.3 L54.8 14.5 L54.6 15.6 L54.2 16.4 L53.5 ' +
+  '17.2 L52.1 17.9 L50.5 18.2 L48.7 18.3 L47.4 18.1 L46.3 17.8 L44.6 16.9 L43.6 16.1 L43 15.4 L42.4 ' +
+  '14.5 L42.1 14 L41.8 12.8 L41.8 11.3 L42.1 10.1 L42.7 8.4 L44.1 6.2 L42.4 6.7 L39.6 7.7 L35.8 9.3 ' +
+  'L32.8 10.8 L29.7 12.7 L27.4 14.6 L25.6 16.6 L24.4 18.4 L23.4 20.4 L23.2 21.4 L22.9 23 L23 25.2 ' +
+  'L23.5 27.8 L24.2 29.5 L25.5 31.7 L26.9 33.5 L27.6 34.2 L29.2 35.5 L30.8 36.6 L33.5 38.2 L35.8 ' +
+  '39.2 L37.5 39.7 L36.6 38.7 L35.8 37.3 L35.4 35.8 L35.3 34.5 L35.7 33.1 L36.4 32.1 L37 31.6 L38.2 ' +
+  '31 L39.2 30.7 L40.4 30.7 L41.6 30.8 L42.7 31.2 L43.9 31.8 L44.9 32.4 L46.1 33.4 L47.1 34.3 L47.4 ' +
+  '33.7 L48 32.8 L49.1 32 L50 31.7 L50.8 31.5 L52.6 31.4 L53.6 31.7 L54.7 32.2 L55.7 33 L56.9 34.4 ' +
+  'L57.9 36 L58.8 37.6 L59.6 39.9 L60 41.2 L60.4 39.9 L61.2 37.6 L62.1 36 L63.1 34.4 L64.3 33 L65.3 ' +
+  '32.2 L66.4 31.7 L67.4 31.4 L69.2 31.5 L70 31.7 L70.9 32 L72 32.8 L72.6 33.7 L72.9 34.3 L73.9 ' +
+  '33.4 L75.1 32.4 L76.1 31.8 L77.3 31.2 L78.4 30.8 L79.6 30.7 L80.8 30.7 L81.8 31 L83 31.6 L83.6 ' +
+  '32.1 L84.3 33.1 L84.7 34.5 L84.6 35.8 L84.2 37.3 L83.4 38.7 L82.5 39.7 L84.2 39.2 L86.5 38.2 ' +
+  'L89.2 36.6 L90.8 35.5 L92.4 34.2 L93.1 33.5 L94.5 31.7 L95.8 29.5 L96.5 27.8 L97 25.2 L97.1 23 ' +
+  'L96.8 21.4 L96.6 20.4 L95.6 18.4 L94.4 16.6 L92.6 14.6 L90.3 12.7 L87.2 10.8 L84.2 9.3 L80.4 7.7 ' +
+  'L77.6 6.7 L75.9 6.2 L77.3 8.4 L77.9 10.1 L78.2 11.3 L78.2 12.8 L77.9 14 L77.6 14.5 L77 15.4 ' +
+  'L76.4 16.1 L75.4 16.9 L73.7 17.8 L72.6 18.1 L71.3 18.3 L69.5 18.2 L67.9 17.9 L66.5 17.2 L65.8 ' +
+  '16.4 L65.4 15.6 L65.2 14.5 L64.7 11.3 L64.4 7 L64.3 4.2 L61.6 9.1 L61.4 9.3 Z'
+
+/**
+ * The 1992 oval as the drawing measures it: about 1.76:1, centred on the grid, under a thin black
+ * line (1.2 units); a bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
+ */
+export const OVAL_1992 = { box: { x: 17.85, y: 0, width: 84.3, height: 48 }, rim: 1.2, lights: false }
+
+/** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)

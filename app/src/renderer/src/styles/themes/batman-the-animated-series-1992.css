@@ -1,0 +1,204 @@
+/*
+ * DARK DECO, after Bruce Timm and Eric Radomski's Batman: The Animated Series (1992): its palette
+ * and faces (docs/research/themes/animated-series.md, section 4.8; dark-deco-build.md, section 2;
+ * the decisions in jury-wave-3.md, section 9). Gotham under the opening's red sky: a ground made
+ * from the sky's own dark top, black towers and police blimps against it, the lightning-lit rim's
+ * blue for what waits on you, Bone for what runs, and the searchlight's yellow kept for the one
+ * thing that needs you.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss, --surface, --raised: the sky's dark top, crimson (jury section 9, decision 18), so
+ *   nothing written sits on a sky lighter than about L* 19.5.
+ * - --signal, --signal-hot: the police blimp's searchlights [13] (decision 1).
+ * - --emblem-plate: the yellow oval, near the belt's paint as the HD frames show it, which never
+ *   lights (decision 2).
+ */
+:root[data-theme='batman-the-animated-series-1992'],
+[data-theme='batman-the-animated-series-1992'] {
+  --abyss: #1d0701;
+  --smoke: #1e0a06;
+  --surface: #2d0501;
+  --raised: #480e12;
+  --line: #5e1c1e;
+  --surface-deep: #1c0906;
+  --frame: #2a0805;
+  --header-fade: #1c0906;
+  --sheet-top: #360e0e;
+  --shadow: #000000;
+
+  /* The Alarm color, the searchlight, and the beam in shadow, which marks only the lit lens's rim. */
+  --blood: #6b5a1e;
+  --signal: #fee055;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #fee06b;
+  --on-signal: var(--abyss);
+  --ink-hot: var(--signal-hot);
+  /* The lightning-lit rim [01]: what waits on you. */
+  --ink-soft: #b7dbfe;
+  /* Bone marks what runs: the stamp word carries the tier. */
+  --ink-live: var(--bone);
+  --ink: #c4c3c0;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is the searchlight's yellow. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--raised);
+  --progress-deep: var(--line);
+  --progress-hot: var(--bone);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: GO AHEAD? and BUSTED in the searchlight's yellow, ANSWER ME and NEW LEAD in
+     the rim's blue. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--bone);
+  --in-progress-glow: color-mix(in srgb, var(--bone) 40%, transparent);
+
+  /* Quit's hover stays a shadow: yellow is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  /* The rim's blue in shadow. */
+  --waiting-rule: #2a3f6a;
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+  /* Words with no card under them (the night report, an empty list) sit on the sky: a veil of the
+     ground behind them, held to the panel's foot as DARK_DECO_SKY's bands are, up past the crimson
+     band where the sky turns dark. The softest that keeps --ash at 4.5:1 under a beam, checked at
+     every height by bareVeil.test.ts and on screen (4.75:1 at worst). */
+  --bare-veil: linear-gradient(
+    to top in srgb,
+    color-mix(in srgb, var(--abyss) 72%, transparent) 53px,
+    color-mix(in srgb, var(--abyss) 64%, transparent) 106px,
+    color-mix(in srgb, var(--abyss) 50%, transparent) 229px,
+    color-mix(in srgb, var(--abyss) 36%, transparent) 343px,
+    transparent 420px
+  );
+
+  --clawd: #d77757;
+
+  --bone: #ebe9e4;
+  --ash: #97969a;
+  --bone-dim: var(--ink);
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in Timm's suit (dark-deco-build.md, section 4; jury-wave-3.md, decision 19): black, navy only where the light
+     touches his cape and mask, the rim of light on cowl and cape muted to a neutral blue, a blue-grey
+     suit, the yellow oval, the gold belt, black gloves and boots. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #07080e;
+  --cowl-edge: #4a66b0;
+  /* Black, and navy only where the light touches the cape and the mask (the maintainer, on screen). */
+  --cowl-shine: #1a2c5c;
+  --suit: #5a6589;
+  /* Black gloves, boots and trunks, as the HD frames and DC's standee show them. */
+  --gloves: #07080c;
+  --belt: #be9336;
+  --buckle: var(--cowl);
+  --cape: #090b14;
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: #050505;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: the black bat on the yellow oval, which never lights, and its black rim, in the
+     masthead as on his chest and the disc. */
+  --emblem: var(--chest);
+  --emblem-plate: #b8963a;
+  --emblem-plate-rim: var(--chest);
+
+  /* The Signal disc. Unlit: the sky's dark glass, the yellow oval in it with its black bat. Lit: a
+     searchlight's lens, its white heart fading through the beam to its shadow at the rim, the oval
+     and its bat on it. */
+  /* On the oval, which never lights, the bat is black, as on his chest. */
+  --disc-bat: var(--chest);
+  --glass-shine: var(--surface);
+  --glass: var(--abyss);
+  --disc-rim-inner: #0d0300;
+  --disc-rim-outer: var(--line);
+  --lens-core: #fffbe0;
+  --lens-rim: var(--blood);
+  --lens-bat: var(--chest);
+  --lens-bat-edge: transparent;
+  --lens-shade: 0 0 transparent;
+  --notice-top: var(--surface);
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #4f0d13;
+  --notice-hover-foot: #2b0d0a;
+
+  /* The Atmosphere: the opening's sky from its black top to the band lit just above the skyline
+     (dark-deco-build.md, section 2.1), black cloud shadows in it, black towers with Bone windows, a
+     blue street mist at their foot, and black police blimps with Bone beams (never the alarm's
+     yellow). The sky fills the panel over the haze, so the haze stays clear. */
+  --sky-top: #050100;
+  --sky-dark: var(--abyss);
+  --sky-crimson: #2a0901;
+  --sky: #5a1401;
+  --sky-lit: #9e2801;
+  --sky-glow: #c43e02;
+  --sky-shadow: #000000;
+  --skyline: #000000;
+  --window: var(--bone);
+  --mist: #6973a0;
+  --blimp: #000000;
+  --beam: var(--bone);
+  --haze: transparent;
+  --haze-edge: transparent;
+  --haze-inset: auto -20% -35% -20%;
+  --grain-opacity: 0.03;
+  --searchlight: var(--bone);
+
+  /* Marcellus SC, flared roman caps near the title card of I Am the Night [48], sets the wordmark,
+     the headlines, a Case's title as its card, the stamps, and the type (the case numbers, the
+     dateline, the watch strip's note, the log's speakers) in its small caps; Barlow does the work
+     and the report. */
+  --font-display: 'Marcellus SC', 'Trajan Pro', serif;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-display);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-body);
+  --font-headline: var(--font-display);
+  --headline-weight: 400;
+  --font-dateline: var(--font-type);
+  --dateline-weight: 400;
+  --font-stamp: var(--font-type);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-display);
+  --case-title-weight: 400;
+  --folder-name-size: 16px;
+  --folder-name-tracking: 1.5px;
+  --wordmark-size: 19px;
+  --wordmark-tracking: 1px;
+  --wordmark-glow: color-mix(in srgb, var(--bone) 14%, transparent);
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23fee06b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23b7dbfe' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* The title cards set their words straight. Marcellus SC runs wide: at 12px PAGING YOU outgrows
+     the report's margin (dark-deco-build.md, section 5.2). */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+
+  /* Lit: a searchlight's lens, white at its heart, through the beam to its shadow at the rim. */
+  --disc-lens: radial-gradient(
+    circle at 50% 50% in srgb,
+    var(--lens-core) 0%,
+    var(--lens-core) 18%,
+    var(--signal-hot) 46%,
+    var(--signal) 78%,
+    var(--blood) 100%
+  );
+}

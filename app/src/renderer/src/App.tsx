@@ -54,6 +54,8 @@ export function App() {
   // Open on whatever matters: the needs-you list when something is waiting. In the report an open
   // case shows on the case notes, without pinning that choice for later.
   const activeTab: Tab = report && session ? 'cases' : (tab ?? (attention.length ? 'needs' : 'cases'))
+  // Words with no card under them sit on the Atmosphere: the night report's, or an empty list's.
+  const bare = report || (activeTab === 'needs' ? !attention.length : !sessions.length)
   // A drawer whose task, subagent or job left the session is gone too (and must not eat an Esc).
   const activeSheet = session && sheet && sheetExists(session, sheet) ? sheet : null
 
@@ -120,7 +122,7 @@ export function App() {
           onSettings={() => setSettingsOpen(true)}
         />
 
-        <div className="stage">
+        <div className={bare ? 'stage stage--bare' : 'stage'}>
           <div className="stage__scroll">
             {!report && activeTab === 'needs' && pluginSilent(snapshot) && (
               <PluginHint sessions={unheardCount(snapshot)} />
