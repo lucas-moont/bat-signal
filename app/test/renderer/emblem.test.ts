@@ -182,21 +182,25 @@ describe('a bat on his chest', () => {
   })
 })
 
+/** A path's points, as [x, y] pairs, in order (a curve's control point and its end both). */
+const points = (d: string) => {
+  const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
+  return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
+}
+
+// Every Theme's bat is drawn as a left half and mirrored at x = 60.
+it.each([
+  ['HOLIDAY', BAT_1996],
+  ['DARK DECO', BAT_1992],
+])("%s's bat is symmetric about the middle of its grid", (_, bat) => {
+  const all = points(bat).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
+  const mirrored = points(bat).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
+  expect(new Set(mirrored)).toEqual(new Set(all))
+})
+
 // HOLIDAY's bat (#146): the classic bat in The Long Halloween's Signal, measured on #1 p. 27 and
 // redrawn with the maintainer on screen. Drawn as a left half and mirrored, like every Theme's bat.
 describe("HOLIDAY's bat", () => {
-  /** The path's points, as [x, y] pairs, in order (a curve's control point and its end both). */
-  const points = (d: string) => {
-    const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
-    return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
-  }
-
-  it('is symmetric about the middle of its grid', () => {
-    const all = points(BAT_1996).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
-    const mirrored = points(BAT_1996).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
-    expect(new Set(mirrored)).toEqual(new Set(all))
-  })
-
   // Its wingtips, outer claws and tail reach the frame's edges; its wings, about two thirds of it.
   it('fills the 48 units of its frame from wingtip to tail, wider than tall', () => {
     const xs = points(BAT_1996).map(([x]) => x)
@@ -212,17 +216,6 @@ describe("HOLIDAY's bat", () => {
 // DARK DECO's bat (#145): the chest bat as it aired, traced from the 2018 Blu-ray frame [92] and its
 // oval measured there (dark-deco-build.md, section 3), as the maintainer chose on screen.
 describe("DARK DECO's bat", () => {
-  const points = (d: string) => {
-    const n = d.match(/-?\d+(\.\d+)?/g)!.map(Number)
-    return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
-  }
-
-  it('is symmetric about the middle of its grid', () => {
-    const all = points(BAT_1992).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
-    const mirrored = points(BAT_1992).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
-    expect(new Set(mirrored)).toEqual(new Set(all))
-  })
-
   // The oval as the frame measures it, about 1.6:1; it never lights (jury-wave-3.md, section 9).
   it('sits on an oval of about 1.6:1 that never lights', () => {
     expect(OVAL_1992.box.width / OVAL_1992.box.height).toBeCloseTo(1.6, 1)
