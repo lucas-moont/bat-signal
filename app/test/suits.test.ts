@@ -3,7 +3,9 @@ import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
+  chestPlate,
   HOLIDAY_SUIT,
+  PALE_MOONLIGHT_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
@@ -11,6 +13,7 @@ import {
   type Pose,
   type Script,
 } from '../src/shared/suits'
+import { BAT_1989, emblem, OVAL_1989, WINGS } from '../src/shared/emblems'
 import { THEME_IDS, THEMES } from '../src/shared/themes'
 
 const pose = VENGEANCE_SUIT.poses.flying[0]
@@ -180,5 +183,47 @@ describe("HOLIDAY's suit", () => {
       for (const layer of on)
         if (layer.kind === 'path') expect(lowest(layer.d)).toBeLessThanOrEqual(lowest(cape.d))
     }
+  })
+})
+
+// An oval on his chest, as PALE MOONLIGHT wears it and the Wave 3 Themes will (jury-wave-3.md,
+// section 6, item 1): a cowl-black rim, the plate, and the Theme's bat across it.
+describe('an oval on his chest', () => {
+  const fills = (layers: readonly { fill?: string }[]) => layers.map((layer) => layer.fill)
+  const at = { cx: 8, cy: 7, rx: 2.1 }
+  const OVAL = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
+
+  it('lights in the Alarm color when lit, and rests in the plate color', () => {
+    const plate = emblem(WINGS, 'none', OVAL)
+    expect(fills(chestPlate(plate, { ...at, lit: true }))).toContain('var(--signal)')
+    expect(fills(chestPlate(plate, at))).toEqual(['var(--cowl)', 'var(--emblem-plate)', undefined])
+  })
+
+  it('never lights if its plate never does', () => {
+    const plate = emblem(WINGS, 'none', { ...OVAL, lights: false })
+    expect(fills(chestPlate(plate, { ...at, lit: true }))).toEqual(fills(chestPlate(plate, at)))
+  })
+
+  it('has no rim if its plate has none', () => {
+    const plate = emblem(WINGS, 'none', { ...OVAL, rim: 0 })
+    expect(fills(chestPlate(plate, at))).toEqual(['var(--emblem-plate)', undefined])
+  })
+
+  // The bat spans the plate inside its rim as it does on the emblem: a re-trace carries over.
+  it("spans the plate as the emblem's bat does", () => {
+    const plate = emblem(WINGS, 'none', OVAL)
+    const bat = chestPlate(plate, at).at(-1)
+    expect(bat).toMatchObject({ kind: 'emblem', cx: 8, cy: 7 })
+    expect(bat && 'width' in bat && bat.width).toBeCloseTo((2 * at.rx * plate.bat.width) / (84 - 4))
+  })
+
+  it("keeps PALE MOONLIGHT's oval lit only when alarmed", () => {
+    const moon = emblem(BAT_1989, 'none', OVAL_1989)
+    const lit = (p: Pose) => fills(p.front).includes('var(--signal)')
+    expect(PALE_MOONLIGHT_SUIT.poses.alarmed.every(lit)).toBe(true)
+    expect(PALE_MOONLIGHT_SUIT.poses.flying.some(lit)).toBe(false)
+    expect(fills(PALE_MOONLIGHT_SUIT.poses.alarmed[0].front.slice(0, 4))).toEqual(
+      fills(chestPlate(moon, { cx: 8, cy: 6.9, rx: 2.25, lit: true })),
+    )
   })
 })
