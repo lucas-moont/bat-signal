@@ -188,7 +188,7 @@ const points = (d: string) => {
   return Array.from({ length: n.length / 2 }, (_, i) => [n[2 * i]!, n[2 * i + 1]!] as const)
 }
 
-// Every Theme's bat is drawn as a left half and mirrored at x = 60.
+// Every traced bat is drawn as a left half and mirrored at x = 60.
 it.each([
   ['HOLIDAY', BAT_1996],
   ['DARK DECO', BAT_1992],
