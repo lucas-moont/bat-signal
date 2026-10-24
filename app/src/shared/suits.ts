@@ -1665,14 +1665,6 @@ const HOOKED = {
   wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.6 7.4 L-3.2 6.6 L-2.8 9 L-1.2 8.2 L-0.6 10.2 L1.2 9.4 L3 10.2 Z',
   /** Flung open behind him, alarmed (left half). */
   openLeft: 'M3.4 5 L0 5.2 L-4 11.2 L-4 9.2 L-2 11.2 L-2 9.2 L0 11.2 L0 9.2 L2 11.2 L3.4 9.6 Z',
-  /** The tent [94]: fallen round him from his shoulders to the roof on both sides, one cloth. */
-  tent:
-    'M3 5 Q-1.4 6.2 -4.6 11.2 L-4.6 9.6 L-2.6 11.2 L-2.6 9.6 L-0.6 11.2 L-0.6 9.6 L1.4 11.2 L14.6 11.2 ' +
-    'L16.6 9.6 L16.6 11.2 L18.6 9.6 L18.6 11.2 L20.6 9.6 L20.6 11.2 Q17.4 6.2 13 5 Z',
-  /** The tent closing down round him from above, between the drop and the landing. */
-  closing:
-    'M3 4 Q-1 5 -3.4 9.6 L-3.4 8.2 L-1.6 9.6 L-1.6 8.2 L0.2 9.6 L0.2 8.2 L2 9.6 L14 9.6 L15.8 8.2 ' +
-    'L15.8 9.6 L17.6 8.2 L17.6 9.6 L19.4 8.2 L19.4 9.6 Q17 5 13 4 Z',
 }
 
 /**
@@ -1683,15 +1675,13 @@ const DECO_LIGHT = {
   wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.5 6.3 L1 5.7 L3 6.1 Z',
   wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.7 5.7 L1 5.5 L3 5.9 Z',
   openLeft: 'M3.4 5 L0 5.2 L-2.2 8.6 L-1.2 8.6 L0.8 5.9 L3.4 5.9 Z',
-  tent: 'M3 5 Q-1.4 6.2 -3.6 9.6 Q0 6.9 3.4 6.3 L12.6 6.3 Q16 6.9 19.6 9.6 Q17.4 6.2 13 5 Z',
-  closing: 'M3 4 Q-1 5 -2.6 8.2 Q0.2 5.9 3.4 5.3 L12.6 5.3 Q15.8 5.9 18.6 8.2 Q17 5 13 4 Z',
+  hanging: 'M3 4.8 L0.6 5.2 Q-0.3 6.2 -0.6 7.4 Q0.8 5.9 3.4 5.8 Z',
 }
 const lit = (d: string, mirrored = false): Layer => ({ kind: 'path', d, fill: 'var(--cowl-shine)', mirrored })
 
 const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: Layer[] = DECO_CHEST) =>
   pose(map, [...TIMM_EARS, ...behind], front, { chest, edge: DECO_EDGE })
 
-/** Standing, the cape hanging behind him. */
 /** Flying, the drop: the cape spread from his hands at his shoulders, two frames lifting its tips. */
 const decoFlying = (wing: string, light: string) =>
   decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
@@ -1701,18 +1691,36 @@ const decoAlarmed = decoPose(DECO_STANDING, [
   { kind: 'cape', d: HOOKED.openLeft, mirrored: true },
   lit(DECO_LIGHT.openLeft, true),
 ])
-/** The tent: his cape fallen round him to the roof, only the cowl and the top of his shoulders above it. */
-const tent = (cloth: string, light: string): Pose =>
-  decoPose(DECO_STANDING, [], [{ kind: 'path', d: cloth, className: 'clawd__cape' }, lit(light)], [])
+/** His arms crossed high over his chest, in his black gloves, his upper arms in the suit's grey. */
+const CROSSED: Layer[] = [
+  {
+    kind: 'rects',
+    px: [
+      [3, 7.3, 2, 0.8],
+      [11, 7.3, 2, 0.8],
+    ],
+    fill: 'var(--suit)',
+  },
+  { kind: 'rects', px: [[4.4, 7.3, 7.2, 0.8]], fill: 'var(--gloves)' },
+]
+/** The cape hanging straight down behind him, lit where the light falls on his shoulders. */
+const HANGING_CAPE: Layer[] = [
+  BACK,
+  { kind: 'cape', d: HOOKED.hanging, mirrored: true },
+  lit(DECO_LIGHT.hanging, true),
+]
 
 /**
- * The landing (the opening's three frames, [06] [94]): dropping with the cape spread, the cape
- * closing down round him, and landed under its tent to the roof, eyes ahead.
+ * Arms crossed (the official key art of the 2004 Volume One DVD, still HBO Max's, [76] [77]; picked
+ * on screen over the opening's landing and its red-sky stand): standing in his cape, then his arms
+ * crossed high over his chest, the oval above them.
  */
-const THE_LANDING: Script = [
-  { pose: decoFlying(HOOKED.wingLeft, DECO_LIGHT.wingLeft), look: 0, transform: 'translateY(-3px)' },
-  { pose: tent(HOOKED.closing, DECO_LIGHT.closing), look: 0, transform: 'translateY(-1px)' },
-  { pose: tent(HOOKED.tent, DECO_LIGHT.tent), look: 0 },
+const ARMS_CROSSED: Script = [
+  { pose: decoPose(DECO_STANDING, HANGING_CAPE), look: 0 },
+  {
+    pose: decoPose(DECO_STANDING, HANGING_CAPE, CROSSED, chestPlate(EMBLEM_1992, { cx: 8, cy: 6.4, rx: 2 })),
+    look: 0,
+  },
 ]
 
 export const DARK_DECO_SUIT: Suit = {
@@ -1725,8 +1733,8 @@ export const DARK_DECO_SUIT: Suit = {
     ],
     alarmed: [decoAlarmed],
   },
-  // On the perch, landed under the tent, he looks along the roof and back.
-  watch: watchOn(THE_LANDING, [{ look: -GAZE }, { look: GAZE }]),
-  signature: THE_LANDING,
+  // On the perch, his arms crossed, he looks along the roof and back.
+  watch: watchOn(ARMS_CROSSED, [{ look: -GAZE }, { look: GAZE }]),
+  signature: ARMS_CROSSED,
   aura: 'alarmed',
 }
