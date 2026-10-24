@@ -75,7 +75,7 @@ The contrast test needs opaque hex grounds, so any gradient is a backdrop (as `-
 
 **Recommended (P): (a)**, with the opening's stack as the backdrop: dark crimson at the top, a red band at about 45% behind the cards, the bright orange only behind the black skyline, and a blue mist band at the skyline's foot, below Bat-Clawd. It is the only option that clears every ground floor, the most literal "the ground may be red", and it passes every ink with room. (b) is the closer reading of a gradient ground but brings back black-paper cards at 2.6 from VENGEANCE. Decide on screen, beside VENGEANCE and KNIGHTMARE.
 
-_Motion (cloud drift, the blimps' drift and bob, the beams' sweep) is checked on the official video in §2.6._
+Motion was not observed (§6).
 
 ## 3. The chest bat and the oval
 
@@ -163,6 +163,43 @@ Figures in the opening go black on the red, with white eyes: the thugs with a bl
 
 ## 5. HD colour, type and names
 
-_Pending: the dossier's hexes resampled from HD sources, Marcellus SC beside the title cards, the trademark check on DARK DECO, and "I am the night."_
+### 5.1 HD colour changes no decided value
+
+HD here is fan-hosted Blu-ray material on The World's Finest: its lossless DVD-against-Blu-ray pairs of the opening [120]–[127] [129] and HD grabs of *Nothing to Fear* [128] [132]–[139]; the only official HD is two 1280x720 thumbnails, [72] (also filed as [130]) and [131]. Against the nearest HD sample in flat light (Measured, ΔE00):
+
+| Element | Decided | HD, flat light | ΔE00 |
+|---|---|---|---|
+| Belt | `#be9336` | `#b98f34` [139] | 1.4 |
+| Cape | `#1a3570` | `#273c76` [135], `#283b79` [133] | 2.4–2.5 |
+| Cowl's blue band | `#1a3570` | `#263b77` [135] | 2.2 |
+| Oval | `#b8963a` | `#b78d37` / `#bf9334` [139] | 3.0–3.7 |
+| Suit | `#5a6589` | `#595e7a` [139] | 3.6–4.0 |
+| End-credit disc | `#aa1601` | `#9f0000` [126] | 3.2 |
+
+Within HD the same element spreads 3–8 ΔE00 with the scene's lighting, so all of these sit inside it. Most HD episode frames paint the suit greyer and a little violet; moving to them would weaken the black chest bat on the bare suit (3.55 to 2.93:1) and is not recommended. In the episodes the cowl, gloves and trunks are black (`#020202`) with cape-blue highlight lines (§4.4).
+
+**The 2018 remaster regraded the opening's reds** (Measured, the same frame DVD against Blu-ray): the sky from h 38–41 to h 21–28, crimson, 10.0–19.7 ΔE00 away; the searchlight beams from ochre to salmon (11.2); blues barely move (1.8–3.7). So the remaster is a later grade, not a correction: the DVD opening agrees with the dossier's sky (2.7). For the ground (§2.5), it matters only as a direction: option (a)'s surface `#2d0501` already sits 3.8 from an HD episode's red ground `#320007`, and an opaque crimson sky like the remaster's (`#870920`) would sit 6.7 from KNIGHTMARE's alarm fill.
+
+**The searchlight pair stays.** `#fee06b` / `#fee055` come out exactly of [13] again; no HD capture of that shot exists. The episodes' HD searchlights are a deeper gold (`#f1ca33` [132]), 4.2 from PALE MOONLIGHT's gold where the decided pair sits at 7.7, so following them would close on PALE MOONLIGHT. The blimp's beams in the episodes are pale grey [128], which backs the Bone beams.
+
+### 5.2 Marcellus SC, beside the title cards
+
+Marcellus SC (OFL-1.1, one weight) is closest to the plain serif card "I Am the Night" [48] and unlike the Deco monoline, gothic and brush cards (Read); no single face matches the cards, which change lettering every episode. **It is much wider than the Mohave the dossier measured**: PAGING YOU needs 87.8px at 12px against the report margin's 87px, and runs over in the narrow margin and the watch strip; ANSWER ME runs over in the narrow margin. **At 11px every margin and strip word fits**, the tightest PAGING YOU in the narrow margin with 1.3px to spare (Measured with PIL; `stampWidth.test.ts` decides). VENGEANCE already ships 11px stamps. Cinzel is noted for the record only.
+
+### 5.3 Names
+
+- **DARK DECO**: no mark found in USPTO (live or dead), EUIPO or the WIPO Global Brand Database (exact expression), searched 2026-10-24; it is the producers' descriptive phrase.
+- **I AM THE NIGHT**, the dossier's second choice, is a **live mark** of Turner Network Television (a Warner Bros. Discovery company), international registration 1475646 in classes 9 and 41, designating the EU, the UK and 35 more territories (EU expiry 24 May 2029); its US filings are dead. That rules it out as a display name and strengthens DARK DECO. The caption "I am the night." is a quoted, credited line, a different use.
+- **The line** is Batman's in *Nothing to Fear* (1992): "I am vengeance, I am the night, I am Batman!" in Wikiquote's and The World's Finest's transcriptions, which differ only in punctuation. DC's own clip ("I Am Batman", YouTube `osCNQs0IEpg`) has a thumbnail [131] that is the episode's climax frame (Read); it was not played.
 
 ## 6. Open questions
+
+**Motion was not observed.** The official upload could not be downloaded from this machine: YouTube asked to sign in, and reading the maintainer's Chrome cookies, which they allowed, failed (Chrome's app-bound encryption, yt-dlp issue 10927). The maintainer then chose to go on without the video. In consecutive opening stills the red sky and its clouds hold still while the figures move, and Timm's storyboard [55] marks camera pans over one painting; only the blue street mist changes between frames (Measured). So the clouds' drift, the blimps' drift and bob and the beams' sweep are ours (P), decided on screen from a GIF.
+
+For the maintainer, on screen:
+1. **The ground**: (a) red-black, (b) a gradient with black-paper cards, or (c) black paper, beside VENGEANCE and KNIGHTMARE (§2.5).
+2. **The chest**: a bat this close to `BAT_1989`, told apart by the oval's colour and ratio and its own ears and slots, or no oval at all (C2, which loses every lit frame) (§3.2); the model sheet's slots or the aired drawing's (§3.3); the oval's ratio, 1.66 as aired or 1.55 as the sheet's figure, further from `OVAL_1989`'s 1.75.
+3. **The Signature's held step**: the tent after [94] (§4.1).
+4. **Flying**: the storyboard's wings at shoulder height, beside VENGEANCE's glide (§4.2).
+5. **Gloves and trunks**: black, as in HD, or cape blue, as the dossier drew them (§4.4).
+6. **Stamps at 11px** in Marcellus SC (§5.2).
