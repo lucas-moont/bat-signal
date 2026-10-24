@@ -75,6 +75,15 @@ function trace(
   ctx.closePath()
 }
 
+/**
+ * Where something carried across a canvas `width` wide lands: past either side it runs on for
+ * `margin` (as wide as it is, so it is wholly off the canvas), then comes round at the other.
+ */
+function wrapAcross(x: number, width: number, margin: number) {
+  const span = width + 2 * margin
+  return ((((x + margin) % span) + span) % span) - margin
+}
+
 /** The painter of an Atmosphere's backdrop: a still drawing, the same picture on every paint. */
 export function backdropFor(backdrop: Backdrop): Painter {
   switch (backdrop.kind) {
@@ -350,9 +359,7 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
         const reach = beams.reach * length
         // Wholly past a side: the hull, and its beams leaning out under it.
         const margin = length / 2 + reach * Math.sin((beams.splay + beams.sway + BEAM_HALF) * rad)
-        const span = width + 2 * margin
-        const moved = from * width + drift * ticks + margin
-        const x = (((moved % span) + span) % span) - margin
+        const x = wrapAcross(from * width + drift * ticks, width, margin)
         const y = at * height
         // Under the nose, a quarter of the hull ahead of its middle, the way it drifts.
         const nose = { x: x + (drift < 0 ? -1 : 1) * (length / 4), y: y + (length * HULL) / 2 }
@@ -896,8 +903,6 @@ function smoke(
    * ever is, and as far as it sways, so it is wholly off the canvas when it comes round.
    */
   const reach = Math.max(...size) / 2 + sway
-  /** The way round a puff is blown: the canvas and that reach past either side. */
-  let span = 0
   /** A puff's life in ticks of the clock. */
   const lifeTicks = life / STEP
   let puffs: Puff[] = []
@@ -913,7 +918,6 @@ function smoke(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      span = width + 2 * reach
       ticks = 0
       puffs = Array.from({ length: count }, (_, i) => ({
         x: random() * width,
@@ -935,8 +939,7 @@ function smoke(
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
         // Blown along by the wind, and round again once past a side.
-        const blown = p.x + wind * p.age + swayAt(sway, ticks, p.phase) + reach
-        const x = (((blown % span) + span) % span) - reach
+        const x = wrapAcross(p.x + wind * p.age + swayAt(sway, ticks, p.phase), width, reach)
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
         // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.
