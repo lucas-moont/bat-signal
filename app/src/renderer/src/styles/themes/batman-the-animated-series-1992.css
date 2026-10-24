@@ -65,6 +65,17 @@
   --caption-paper: transparent;
   --caption-ink: var(--ash);
   --caption-rule: underline;
+  /* The night report has no cards, so its words sit on the sky: a veil of the ground behind it,
+     held to the panel's foot as DARK_DECO_SKY's bands are (atmospheres.ts; change the two together):
+     70% by the lit band over the towers, the least that keeps --ash at 4.5:1 there under a beam, then
+     less as the sky darkens, none from 300px up (picked on screen, the softest that reads). */
+  --report-veil: linear-gradient(
+    to top in srgb,
+    color-mix(in srgb, var(--abyss) 70%, transparent) 53px,
+    color-mix(in srgb, var(--abyss) 60%, transparent) 106px,
+    color-mix(in srgb, var(--abyss) 37%, transparent) 229px,
+    transparent 300px
+  );
 
   --clawd: #d77757;
 
@@ -186,23 +197,4 @@
     var(--signal) 78%,
     var(--blood) 100%
   );
-}
-
-/*
- * The night report has no cards: its words sit on the sky. A veil of the ground behind it, only
- * where the sky lights, held to the panel's foot as the sky's bands are: none up where the sky is
- * already dark, rising to 70% by the lit band over the towers, the least that keeps --ash at 4.5:1
- * there under a beam (picked on screen, the softest that reads).
- */
-:root[data-theme='batman-the-animated-series-1992'] .report,
-[data-theme='batman-the-animated-series-1992'] .report {
-  background: linear-gradient(
-      to top in srgb,
-      color-mix(in srgb, var(--abyss) 70%, transparent) 0px,
-      color-mix(in srgb, var(--abyss) 70%, transparent) 53px,
-      color-mix(in srgb, var(--abyss) 60%, transparent) 106px,
-      color-mix(in srgb, var(--abyss) 37%, transparent) 229px,
-      transparent 300px
-    )
-    fixed;
 }

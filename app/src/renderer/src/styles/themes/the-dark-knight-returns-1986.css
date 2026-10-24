@@ -66,6 +66,7 @@
   --caption-paper: transparent;
   --caption-ink: var(--ash);
   --caption-rule: underline;
+  --report-veil: none;
 
   --clawd: #d77757;
 
