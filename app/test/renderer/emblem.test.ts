@@ -234,10 +234,10 @@ describe("DARK DECO's bat", () => {
     expect(bat.y + bat.height).toBeLessThan(box.y + box.height - rim - 2)
   })
 
-  // Its tail comes down to a single point, below its two round lobes a side.
+  // Its tail comes down to a single point, its lowest, a little below its wings' lower corners.
   it('ends in a pointed tail', () => {
     const foot = bat.y + bat.height
-    const tail = points(BAT_1992).filter(([, y]) => y > foot - 2)
+    const tail = points(BAT_1992).filter(([, y]) => y > foot - 1)
     expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(3)
   })
 })
