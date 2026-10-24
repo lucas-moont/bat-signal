@@ -100,10 +100,11 @@
   --emblem-plate: #b8963a;
   --emblem-plate-rim: var(--chest);
 
-  /* The Signal disc. Unlit: the sky's dark glass, the bat a shade in it. Lit: a searchlight's lens,
-     its white heart fading through the beam to its shadow at the rim, the bat black on it with the
-     blue rim of light. */
-  --disc-bat: var(--raised);
+  /* The Signal disc. Unlit: the sky's dark glass, the yellow oval in it with its black bat. Lit: a
+     searchlight's lens, its white heart fading through the beam to its shadow at the rim, the oval
+     and its bat on it. */
+  /* On the oval, which never lights, the bat is black, as on his chest. */
+  --disc-bat: var(--chest);
   --glass-shine: var(--surface);
   --glass: var(--abyss);
   --disc-rim-inner: #0d0300;
@@ -111,7 +112,7 @@
   --lens-core: #fffbe0;
   --lens-rim: var(--blood);
   --lens-bat: var(--chest);
-  --lens-bat-edge: var(--cowl-edge);
+  --lens-bat-edge: transparent;
   --lens-shade: 0 0 transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);
