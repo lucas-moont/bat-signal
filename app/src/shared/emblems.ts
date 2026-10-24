@@ -134,6 +134,7 @@ export const plateGlows = (plate: Plate, lit: boolean): boolean => lit && plate.
 /** An emblem from its outline, its box read from the outline's points so a re-trace can't leave it behind. */
 export function emblem(path: string, finish: Emblem['finish']): Emblem
 export function emblem(path: string, finish: Emblem['finish'], plate: Plate): PlatedEmblem
+export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): Emblem
 export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): Emblem {
   const points = [...path.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)]
   const xs = points.map((m) => Number(m[1]))
