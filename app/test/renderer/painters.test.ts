@@ -109,6 +109,9 @@ function recorder() {
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
 
+/** A variable's color, told apart by its name: `--sky` is painted in `#sky`. */
+const colorOf = (variable: string) => variable.replace('--', '#')
+
 /** The same "random" numbers every run. */
 function seeded(seed = 7) {
   return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646
@@ -1458,7 +1461,6 @@ describe('the skyline behind the motion', () => {
     towers: { color: '--skyline', height: [30, 140], windows: { color: '--window', alpha: 0.35, count: 12 } },
     mist: { color: '--mist', alpha: 0.55, height: 36 },
   }
-  const colorOf = (variable: string) => variable.replace('--', '#')
   const painted = (width = 320, height = 440, backdrop = SKYLINE) => {
     const painter = backdropFor(backdrop)
     painter.recolor(colorOf)
@@ -1505,8 +1507,9 @@ describe('the skyline behind the motion', () => {
   })
 
   it('cuts the towers out along the foot, across the whole width, none above the tallest', () => {
-    const ys = points(painted()).map(([, y]) => y)
-    const xs = points(painted()).map(([x]) => x)
+    const drawn = points(painted())
+    const ys = drawn.map(([, y]) => y)
+    const xs = drawn.map(([x]) => x)
     expect(Math.max(...ys)).toBe(440)
     expect(Math.min(...ys)).toBeGreaterThanOrEqual(440 - 140)
     expect(Math.min(...ys)).toBeLessThan(440 - 100)
@@ -1573,7 +1576,6 @@ describe('the skyline behind the motion', () => {
 // sky, the storyboard's three, each with two beams under its nose, leaning out and swaying a little,
 // never sweeping; drifting so slowly that they hover, and on whole ticks only.
 describe('the blimps', () => {
-  const colorOf = (variable: string) => variable.replace('--', '#')
   const blimps = (atmosphere = BLIMPS) => {
     const painter = painterFor(atmosphere, seeded())
     painter.recolor(colorOf)
