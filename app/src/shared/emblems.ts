@@ -102,10 +102,14 @@ export interface Box {
   height: number
 }
 
-/** An oval the bat sits on (PALE MOONLIGHT's), inscribed in its box, with a rim this wide. */
+/**
+ * An oval the bat sits on (PALE MOONLIGHT's), inscribed in its box, with a rim this wide (none at
+ * 0). It lights with the disc unless it is a work's oval that never does (The Animated Series').
+ */
 export interface Plate {
   box: Box
   rim: number
+  lights?: false
 }
 
 /**
