@@ -277,6 +277,8 @@ function decoSkyline(width: number, height: number, [low, high]: readonly [numbe
 
 /** A red sky over a black skyline: painted whole on every paint, since it never moves. */
 function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
+  /** How high above the foot the sky's gradient starts: its highest band. */
+  const top = Math.max(...sky.map(({ above }) => above))
   let width = 0
   let height = 0
   let stops: [number, string][] = []
@@ -285,7 +287,8 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
   let windows: { x: number; y: number }[] = []
   return {
     recolor(colorOf) {
-      stops = sky.map(({ at, color }) => [at, colorOf(color)])
+      // Each band's place on the gradient from the highest band down to the foot.
+      stops = sky.map(({ above, color }) => [(top - above) / top, colorOf(color)])
       colors = {
         clouds: colorOf(clouds.color),
         towers: colorOf(towers.color),
@@ -312,7 +315,7 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       if (!width || !stops.length) return
       ctx.clearRect(0, 0, width, height)
       ctx.globalAlpha = 1
-      const bands = ctx.createLinearGradient(0, 0, 0, height)
+      const bands = ctx.createLinearGradient(0, height - top, 0, height)
       for (const [at, color] of stops) bands.addColorStop(at, color)
       ctx.fillStyle = bands
       ctx.fillRect(0, 0, width, height)

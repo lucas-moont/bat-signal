@@ -50,8 +50,12 @@ export interface MoonBackdrop {
  */
 export interface SkylineBackdrop {
   kind: 'skyline'
-  /** The sky's bands: where each sits down the panel (0 at its top, 1 at its foot) and its variable. */
-  sky: readonly { at: number; color: string }[]
+  /**
+   * The sky's bands, from its top down: how far above the foot each sits (px) and its variable. They
+   * keep that height on a panel of any size, so the lit band stays just above the towers, where no
+   * text sits; above the highest, the sky stays its top's color.
+   */
+  sky: readonly { above: number; color: string }[]
   /**
    * The clouds: the variable they are filled in, how soft they are (a blur, in px), and each mass, an
    * ellipse: its centre across and down the panel as shares of its size, its half-width and
