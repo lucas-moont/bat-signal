@@ -200,9 +200,8 @@ Marcellus SC (OFL-1.1, one weight) is closest to the plain serif card "I Am the 
 
 **Motion was not observed.** The official upload could not be downloaded from this machine: YouTube asked to sign in, and reading the maintainer's Chrome cookies, which they allowed, failed (Chrome's app-bound encryption, yt-dlp issue 10927). The maintainer then chose to go on without the video. In consecutive opening stills the red sky and its clouds hold still while the figures move, and Timm's storyboard [55] marks camera pans over one painting; only the blue street mist changes between frames (Measured). So the clouds' drift, the blimps' drift and bob and the beams' sweep are ours (P), decided on screen from a GIF.
 
-For the maintainer, on screen:
-1. **The chest**: a bat this close to `BAT_1989`, told apart by the oval's colour and ratio and its own ears and slots, or no oval at all (C2, which loses every lit frame) (§3.2); the model sheet's slots or the aired drawing's (§3.3); the oval's ratio, 1.66 as aired or 1.55 as the sheet's figure, further from `OVAL_1989`'s 1.75.
-2. **The Signature's held step**: the tent after [94] (§4.1).
-3. **Flying**: the storyboard's wings at shoulder height, beside VENGEANCE's glide (§4.2).
-4. **Gloves and trunks**: black, as in HD, or cape blue, as the dossier drew them (§4.4).
-5. **Stamps at 11px** in Marcellus SC (§5.2).
+Decided on screen at the build (#145; [`jury-wave-3.md`](jury-wave-3.md) §9, decision 19): the chest bat as it aired [92] on its measured 1.60:1 oval; gloves, boots and trunks black; Bat-Clawd black with navy only where the light touches, the cape longer; alarmed in his suit; the Signature with his arms crossed [76] [77], after the landing's tent and the red-sky stand were seen and set aside; stamps at 11px.
+
+## 7. Built in #145
+
+The engine came first: the never-lit plate (#154) and the `skyline` backdrop with the `blimps` Atmosphere (#156); the Theme is #145's PR. As built, its reds hold the L\* 19.5 ceiling under text by the ground and, in the night report, by a veil only where the sky lights.
