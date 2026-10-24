@@ -31,6 +31,7 @@ import {
   ANCIENT_GRACE_SUIT,
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
+  DARK_DECO_SUIT,
   HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
@@ -166,7 +167,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     ground: '#1d0701',
     words: DARK_DECO_WORDS,
     emblem: EMBLEM_1992,
-    suit: VENGEANCE_SUIT,
+    suit: DARK_DECO_SUIT,
     atmosphere: DARK_DECO_SKY,
   },
 }

@@ -4,7 +4,7 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { EMBLEM_1989, plateGlows, type Plate, type PlatedEmblem } from './emblems'
+import { EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -1591,5 +1591,154 @@ export const HOLIDAY_SUIT: Suit = {
   watch: watchOn(THE_LONG_CAPE, [{ look: -GAZE }, { look: GAZE }], GUST),
   signature: THE_LONG_CAPE,
   // The jack-o'-lantern is the Alarm color and never shows at rest: no aura as he sweeps the cape.
+  aura: 'alarmed',
+}
+
+// --- DARK DECO: Batman as Bruce Timm drew him for The Animated Series (animated-series.md, section 8;
+// dark-deco-build.md, section 4): a blue-black cowl with the cape's blue at its brow and taller ears
+// flush with its sides, the cape's blue round his neck, the blue-grey suit with the yellow oval that
+// never lights, a full unit of gold belt, dark trunks, and the cobalt cape behind him with a hem of
+// deep hooked points. Alarmed, he is black on the red sky but for his eyes, his jaw and his rim. ---
+
+/** His suit's letters, and n for the cape's blue round his neck. */
+const DECO_LEGEND = { ...LEGEND, n: 'var(--cape)' }
+/** Alarmed, black on the red sky: the suit, belt and collar in the cowl's black. */
+const DECO_BLACK = {
+  ...LEGEND,
+  S: 'var(--cowl)',
+  b: 'var(--cowl)',
+  k: 'var(--cowl)',
+  g: 'var(--cowl)',
+  n: 'var(--cowl)',
+  h: 'var(--cowl)',
+}
+/** His head with the ears drawn behind it: no ear tips on the grid. */
+const DECO_HEAD = twice([
+  '................',
+  '....chhccccc....',
+  '...cccccccccc...',
+  '...cccccccccc...',
+  '...cc######cc...',
+])
+/** The cape's blue round his neck, a half-row under his jaw. */
+const DECO_COLLAR = '...nnnnnnnnnn...'
+/** The gold belt, a full unit; the dark trunks; his legs; his boots. */
+const DECO_BELOW = [
+  ...twice(['...bbbbbbbbbb...']),
+  '....g.g..g.g....',
+  '....S.S..S.S....',
+  ...twice(['....g.g..g.g....']),
+]
+/**
+ * His map: the head, the collar's half-row, the suit to the waist with his arms on its second unit,
+ * then the belt, the trunks, his legs and boots (or, seated, the suit down to the cape's hem).
+ */
+const decoMap = (arms = SUIT, legend: OutfitMap['legend'] = DECO_LEGEND, seated = false): OutfitMap => ({
+  top: 0,
+  rows: [
+    ...DECO_HEAD,
+    COLLAR,
+    SUIT,
+    ...twice([arms]),
+    SUIT,
+    SUIT,
+    ...(seated ? twice([SUIT, SUIT]) : DECO_BELOW),
+  ],
+  legend,
+})
+const DECO_STANDING = decoMap()
+const DECO_ARMS_OUT = decoMap('.gSSSSSSSSSSSSg.')
+const DECO_BLACK_STANDING = decoMap(SUIT, DECO_BLACK)
+const DECO_SEATED = decoMap(SUIT, DECO_LEGEND, true)
+
+/** Timm's ears: flush with the cowl's sides, the outer edge straight up, the inner slanting in. */
+const TIMM_EARS_D = 'M3 2 L3 -0.6 L3.4 -0.6 L4.6 1 L4.6 2 Z M13 2 L13 -0.6 L12.6 -0.6 L11.4 1 L11.4 2 Z'
+const TIMM_EARS: Layer[] = [
+  { kind: 'path', d: TIMM_EARS_D, className: 'clawd__cowl-edge' },
+  { kind: 'path', d: TIMM_EARS_D, fill: 'var(--cowl)' },
+]
+const DECO_EDGE: Layer = {
+  kind: 'path',
+  d: 'M3 5 L3 2 L4.6 2 L4.6 1 L11.4 1 L11.4 2 L13 2 L13 5 Z',
+  className: 'clawd__cowl-edge',
+}
+
+/** The 1992 oval on his chest, 5 units across, between the collar and the belt. */
+const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
+
+/** The cape's hem in deep hooked points, three a side (left half; mirrored for the right). */
+const HOOKED = {
+  hanging: 'M3 4.8 L0.6 5.2 Q-0.6 7 -0.9 11 L-0.9 8.8 L1.2 11 L1.2 8.8 L3.3 11 L3.3 8.8 L5.4 11 L5.4 5 Z',
+  wrapped:
+    'M2.6 6.2 L13.4 6.2 L14.4 10.9 L13 9 L11.4 10.9 L10 9 L8.6 10.9 L8 9.4 L7.4 10.9 L6 9 L4.6 10.9 L3 9 L1.6 10.9 Z',
+  /** Spread from the hands at his shoulders, legs together under it: the storyboard's drop [97]. */
+  wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.4 8 L-3 7.2 L-2.6 9.6 L-1 8.8 L-0.4 10.8 L1.4 10 L3 10.8 Z',
+  wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.6 7.4 L-3.2 6.6 L-2.8 9 L-1.2 8.2 L-0.6 10.2 L1.2 9.4 L3 10.2 Z',
+  /** Flung open behind him, alarmed (left half). */
+  openLeft: 'M3.4 5 L0 5.2 L-4 11.2 L-4 9.2 L-2 11.2 L-2 9.2 L0 11.2 L0 9.2 L2 11.2 L3.4 9.6 Z',
+  /** The tent [94]: fallen round him from his shoulders to the roof on both sides, one cloth. */
+  tent:
+    'M3 5 Q-1.4 6.2 -4.6 11.2 L-4.6 9.6 L-2.6 11.2 L-2.6 9.6 L-0.6 11.2 L-0.6 9.6 L1.4 11.2 L14.6 11.2 ' +
+    'L16.6 9.6 L16.6 11.2 L18.6 9.6 L18.6 11.2 L20.6 9.6 L20.6 11.2 Q17.4 6.2 13 5 Z',
+  /** The tent closing down round him from above, between the drop and the landing. */
+  closing:
+    'M3 4 Q-1 5 -3.4 9.6 L-3.4 8.2 L-1.6 9.6 L-1.6 8.2 L0.2 9.6 L0.2 8.2 L2 9.6 L14 9.6 L15.8 8.2 ' +
+    'L15.8 9.6 L17.6 8.2 L17.6 9.6 L19.4 8.2 L19.4 9.6 Q17 5 13 4 Z',
+}
+
+/**
+ * Where the light touches the black cape and turns it navy (the maintainer, on screen: black, navy
+ * only where the light falls): along its top as it spreads, and over his shoulders as it falls.
+ */
+const DECO_LIGHT = {
+  wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.5 6.3 L1 5.7 L3 6.1 Z',
+  wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.7 5.7 L1 5.5 L3 5.9 Z',
+  openLeft: 'M3.4 5 L0 5.2 L-2.2 8.6 L-1.2 8.6 L0.8 5.9 L3.4 5.9 Z',
+  tent: 'M3 5 Q-1.4 6.2 -3.6 9.6 Q0 6.9 3.4 6.3 L12.6 6.3 Q16 6.9 19.6 9.6 Q17.4 6.2 13 5 Z',
+  closing: 'M3 4 Q-1 5 -2.6 8.2 Q0.2 5.9 3.4 5.3 L12.6 5.3 Q15.8 5.9 18.6 8.2 Q17 5 13 4 Z',
+}
+const lit = (d: string, mirrored = false): Layer => ({ kind: 'path', d, fill: 'var(--cowl-shine)', mirrored })
+
+const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: Layer[] = DECO_CHEST) =>
+  pose(map, [...TIMM_EARS, ...behind], front, { chest, edge: DECO_EDGE })
+
+/** Standing, the cape hanging behind him. */
+/** Flying, the drop: the cape spread from his hands at his shoulders, two frames lifting its tips. */
+const decoFlying = (wing: string, light: string) =>
+  decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
+/** Alarmed, black on the red sky, the cape flung open behind: only his eyes, jaw and rim show. */
+const decoAlarmed = decoPose(
+  DECO_BLACK_STANDING,
+  [BACK, { kind: 'cape', d: HOOKED.openLeft, mirrored: true }, lit(DECO_LIGHT.openLeft, true)],
+  [],
+  [],
+)
+/** The tent: his cape fallen round him to the roof, only the cowl and the top of his shoulders above it. */
+const tent = (cloth: string, light: string): Pose =>
+  decoPose(DECO_STANDING, [], [{ kind: 'path', d: cloth, className: 'clawd__cape' }, lit(light)], [])
+
+/**
+ * The landing (the opening's three frames, [06] [94]): dropping with the cape spread, the cape
+ * closing down round him, and landed under its tent to the roof, eyes ahead.
+ */
+const THE_LANDING: Script = [
+  { pose: decoFlying(HOOKED.wingLeft, DECO_LIGHT.wingLeft), look: 0, transform: 'translateY(-3px)' },
+  { pose: tent(HOOKED.closing, DECO_LIGHT.closing), look: 0, transform: 'translateY(-1px)' },
+  { pose: tent(HOOKED.tent, DECO_LIGHT.tent), look: 0 },
+]
+
+export const DARK_DECO_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(DECO_SEATED, HOOKED.wrapped, [...TIMM_EARS, DECO_EDGE])],
+    flying: [
+      decoFlying(HOOKED.wingLeft, DECO_LIGHT.wingLeft),
+      decoFlying(HOOKED.wingLeftLifted, DECO_LIGHT.wingLeftLifted),
+    ],
+    alarmed: [decoAlarmed],
+  },
+  // On the perch, landed under the tent, he looks along the roof and back.
+  watch: watchOn(THE_LANDING, [{ look: -GAZE }, { look: GAZE }]),
+  signature: THE_LANDING,
   aura: 'alarmed',
 }
