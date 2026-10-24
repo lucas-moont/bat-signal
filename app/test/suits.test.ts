@@ -202,7 +202,11 @@ describe('an oval on his chest', () => {
 
   it('never lights if its plate never does', () => {
     const plate = emblem(WINGS, 'none', { ...OVAL_1989, lights: false })
-    expect(fills(chestPlate(plate, { ...at, lit: true }))).toEqual(fills(chestPlate(plate, at)))
+    expect(fills(chestPlate(plate, { ...at, lit: true }))).toEqual([
+      'var(--cowl)',
+      'var(--emblem-plate)',
+      undefined,
+    ])
   })
 
   it('has no rim if its plate has none', () => {
