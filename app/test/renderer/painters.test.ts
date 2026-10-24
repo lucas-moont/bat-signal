@@ -1540,18 +1540,15 @@ describe('the skyline behind the motion', () => {
   })
 
   it("lays a mist over the towers' foot, rising from the bottom", () => {
-    const mist = painted().boxes.at(-1)!
-    expect(mist).toMatchObject({ x: 0, y: 440 - 36, w: 320, h: 36, alpha: 0.55 })
-    expect(mist.color).toMatchObject({
-      x0: 0,
-      y0: 404,
-      x1: 0,
-      y1: 440,
-      stops: [
-        [0, 'transparent'],
-        [1, '#mist'],
-      ],
-    })
+    const mist = painted().boxes.filter((b) => b.color === '#mist')
+    // In thin bands from 36px up down to the bottom, the whole width, stronger as they near it.
+    expect(mist[0]!.y).toBe(440 - 36)
+    expect(mist.at(-1)!.y + mist.at(-1)!.h).toBe(440)
+    expect(mist.every((b) => b.x === 0 && b.w === 320)).toBe(true)
+    const alphas = mist.map((b) => b.alpha)
+    expect(alphas).toEqual([...alphas].sort((a, b) => a - b))
+    expect(alphas.at(-1)).toBeLessThanOrEqual(0.55)
+    expect(alphas[0]).toBeLessThan(0.1)
   })
 
   // A fixed city: the same towers after a resize or new colors, as the backdrop is painted afresh.
@@ -1614,20 +1611,11 @@ describe('the skyline behind the motion', () => {
     }
   })
 
-  // Faded from the mist's own color at no strength, not from transparent black, which a canvas
-  // gradient mixes in and greys the middle of the band.
-  it('fades its mist from its own color', () => {
-    const painter = backdropFor(SKYLINE)
-    painter.recolor((variable) => (variable === '--mist' ? '#6973a0' : namedColor(variable)))
-    painter.resize(320, 440)
-    const r = recorder()
-    painter.paint(r.ctx, 0)
-    expect(r.boxes.at(-1)!.color).toMatchObject({
-      stops: [
-        [0, 'rgba(105, 115, 160, 0)'],
-        [1, '#6973a0'],
-      ],
-    })
+  // In its own color at a rising strength, not a gradient from transparent black, which a canvas
+  // mixes in and greys the middle of the band.
+  it('fades its mist in its own color', () => {
+    const mist = painted().boxes.slice(-6)
+    expect(mist.every((b) => b.color === '#mist')).toBe(true)
   })
 
   it('paints nothing before it has a size, and does not throw', () => {
@@ -1640,8 +1628,8 @@ describe('the skyline behind the motion', () => {
 })
 
 // DARK DECO's police blimps (dark-deco-build.md, section 2.3): black hulls hovering over the red
-// sky (two here; the storyboard has three), each with two beams under its nose, leaning out and swaying a little,
-// never sweeping; drifting so slowly that they hover, and on whole ticks only.
+// sky (two here; the storyboard has three), each with two beams under its nose, leaning out and
+// swaying a little, never sweeping; drifting so slowly that they hover, and on whole ticks only.
 describe('the blimps', () => {
   const blimps = (atmosphere = BLIMPS) => {
     const painter = painterFor(atmosphere, seeded())

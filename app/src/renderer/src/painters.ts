@@ -216,8 +216,11 @@ const DECO = {
   dome: 1 / 3,
 } as const
 
-/** A lit window of the skyline: a dot taller than wide, and its margin inside a tower's edge, in px. */
-const WINDOW = { w: 1.5, h: 2, inset: 3 }
+/** How tall each of the mist's bands is, in px: thin enough to read as one fade. */
+const MIST_BAND = 2
+
+/** A lit window of the skyline: a dot taller than wide, in px (inset in its tower as the glass is, by INSET). */
+const WINDOW = { w: 1.5, h: 2 }
 
 /** A tower of the skyline: where it stands, how wide, and its roof's height above the foot (px). */
 interface Tower {
@@ -276,18 +279,6 @@ function decoSkyline(width: number, height: number, [low, high]: readonly [numbe
   return { outline, towers }
 }
 
-/**
- * A color at no strength, for a gradient to fade from: a canvas gradient mixes its stops
- * unpremultiplied, so fading from transparent black greys the middle. A hex color keeps its hue;
- * anything else fades from transparent.
- */
-function clearOf(color: string): string {
-  const hex = /^#([\da-f]{6})$/i.exec(color)?.[1]
-  if (!hex) return 'transparent'
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16))
-  return `rgba(${r}, ${g}, ${b}, 0)`
-}
-
 /** A red sky over a black skyline: painted whole on every paint, since it never moves. */
 function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
   /** How high above the foot the sky's gradient starts: its highest band. */
@@ -319,11 +310,11 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       // The windows from a seed of their own, each at a share of the way across the panel (so a resize
       // keeps them about where they were, and none past an edge), in the tower standing there.
       const random = seededFrom(SKYLINE_SEED.windows)
-      const room = (span: number, size: number) => Math.max(0, span - 2 * WINDOW.inset - size)
+      const room = (span: number, size: number) => Math.max(0, span - 2 * INSET - size)
       windows = Array.from({ length: towers.windows.count }, () => {
-        const x = Math.round(WINDOW.inset + random() * room(w, WINDOW.w))
+        const x = Math.round(INSET + random() * room(w, WINDOW.w))
         const tower = drawn.towers.find((t) => x < t.x + t.width) ?? drawn.towers.at(-1)!
-        return { x, y: Math.round(h - tower.roof + WINDOW.inset + random() * room(tower.roof, WINDOW.h)) }
+        return { x, y: Math.round(h - tower.roof + INSET + random() * room(tower.roof, WINDOW.h)) }
       })
     },
     paint(ctx) {
@@ -358,13 +349,15 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       ctx.fillStyle = colors.windows
       ctx.globalAlpha = towers.windows.alpha
       for (const { x, y } of windows) ctx.fillRect(x, y, WINDOW.w, WINDOW.h)
-      // The mist, rising from the bottom over the towers' foot.
-      const rising = ctx.createLinearGradient(0, height - mist.height, 0, height)
-      rising.addColorStop(0, clearOf(colors.mist))
-      rising.addColorStop(1, colors.mist)
-      ctx.fillStyle = rising
-      ctx.globalAlpha = mist.alpha
-      ctx.fillRect(0, height - mist.height, width, mist.height)
+      // The mist, rising from the bottom over the towers' foot: thin bands in its own color, stronger
+      // as they near the bottom (a gradient from transparent would grey the band's middle).
+      ctx.fillStyle = colors.mist
+      const layers = Math.ceil(mist.height / MIST_BAND)
+      for (let b = 0; b < layers; b++) {
+        ctx.globalAlpha = (mist.alpha * (b + 1)) / layers
+        const y = height - mist.height + b * MIST_BAND
+        ctx.fillRect(0, y, width, Math.min(MIST_BAND, height - y))
+      }
     },
   }
 }
