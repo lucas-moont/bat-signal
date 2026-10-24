@@ -46,7 +46,8 @@ export interface MoonBackdrop {
  * A red sky over a black skyline (DARK DECO's, after the opening of Batman: The Animated Series): the
  * sky in bands from its top to the horizon, soft shadows of cloud only darker than it and never lit,
  * Deco towers cut out sharp along the foot with a few faint lit windows, and a mist over their foot.
- * The towers are the same city every time, whatever the panel's size.
+ * The towers are the same city every time, whatever the panel's size. It fills the panel, over the
+ * Theme's haze: a Theme with a skyline lights its sky in its bands, and leaves its haze clear.
  */
 export interface SkylineBackdrop {
   kind: 'skyline'
