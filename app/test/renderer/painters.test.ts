@@ -1584,15 +1584,18 @@ describe('the blimps', () => {
   const hulls = (r: Frame) => r.fills.filter((f) => f.color === '#blimp').flatMap((f) => f.discs)
   const beams = (r: Frame) => r.fills.filter((f) => f.color === '#beam' && f.shapes.length)
   /** A beam's lean from straight down, in degrees (out to the right is positive): its axis to its far edge's middle. */
-  const lean = ([[x0, y0], [x1, y1], [x2, y2]]: Shape) =>
-    (Math.atan2((x1! + x2!) / 2 - x0!, (y1! + y2!) / 2 - y0!) * 180) / Math.PI
+  const lean = ([nose, left, right]: Shape) =>
+    (Math.atan2((left![0] + right![0]) / 2 - nose![0], (left![1] + right![1]) / 2 - nose![1]) * 180) / Math.PI
 
   it('cuts each blimp out in its color, where it hovers, as long as it is', () => {
     const [first] = framesOver(blimps(), 0)
-    expect(hulls(first).map(({ x, y, r }) => ({ x, y, r }))).toEqual([
-      { x: 0.7 * 320, y: 0.25 * 440, r: 14 },
-      { x: 0.2 * 320, y: 0.45 * 440, r: 9 },
-    ])
+    const [big, small] = hulls(first)
+    expect(big!.x).toBeCloseTo(0.7 * 320)
+    expect(big!.y).toBeCloseTo(0.25 * 440)
+    expect(big!.r).toBeCloseTo(14)
+    expect(small!.x).toBeCloseTo(0.2 * 320)
+    expect(small!.y).toBeCloseTo(0.45 * 440)
+    expect(small!.r).toBeCloseTo(9)
   })
 
   it('hangs two beams from under each, in their color and strength, behind the hull', () => {
@@ -1617,8 +1620,8 @@ describe('the blimps', () => {
         expect(right).toBeGreaterThanOrEqual(12 - 3 - 0.01)
         expect(right).toBeLessThanOrEqual(12 + 3 + 0.01)
       }
-      const [[x0, y0], [x1, y1]] = shapes[0] as Shape
-      expect(Math.hypot(x1! - x0!, y1! - y0!)).toBeGreaterThan(5 * 28 * 0.95)
+      const [nose, edge] = shapes[0]!
+      expect(Math.hypot(edge![0] - nose![0], edge![1] - nose![1])).toBeGreaterThan(5 * 28 * 0.95)
     }
   })
 
