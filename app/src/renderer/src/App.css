@@ -36,15 +36,16 @@
   flex: none;
 }
 /* The needs-you counter, stamped on the emblem's corner: three pixels under the header's top edge,
-   whatever the emblem's height (the brand sits in the middle of the 54px header). */
+   whatever the emblem's height (the brand sits in the middle of the 54px header). Small, so it marks
+   the bat without covering it (10px, picked on screen, #159). */
 .header__count {
   position: absolute;
   top: calc(50% - 24px);
   left: 7px;
-  min-width: 20px;
-  padding: 2px 5px 1px;
+  min-width: 14px;
+  padding: 1px 3px;
   font-family: var(--font-label);
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1;
   text-align: center;
   color: var(--on-signal);
