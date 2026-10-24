@@ -256,7 +256,7 @@ function Disc({
     >
       {pulsing ? <Glow className="disc__halo" /> : <span className="disc__halo" aria-hidden />}
       <span className="disc__face">
-        {/* The lens lights for news as well; a plate, in the Alarm color, only when something needs you. */}
+        {/* The lens lights for news as well; a plate that lights, in the Alarm color, only when something needs you. */}
         <BatEmblem
           size={44}
           title=""

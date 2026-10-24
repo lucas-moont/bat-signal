@@ -104,7 +104,8 @@ export interface Box {
 
 /**
  * An oval the bat sits on (PALE MOONLIGHT's), inscribed in its box, with a rim this wide (none at
- * 0). It lights with the disc unless it is a work's oval that never does (The Animated Series').
+ * 0). It lights with the disc unless it is a work's oval that never does (The Animated Series'):
+ * then the disc's lens (`--disc-lens`) is the only light on the disc, as its Theme draws it.
  */
 export interface Plate {
   box: Box
@@ -124,7 +125,15 @@ export interface Emblem {
   plate?: Plate
 }
 
+/** An emblem on a plate (PALE MOONLIGHT's), which Bat-Clawd can wear as an oval on his chest. */
+export type PlatedEmblem = Emblem & { plate: Plate }
+
+/** Whether a plate shows the Alarm color: when lit, unless it is a plate that never lights. */
+export const plateGlows = (plate: Plate, lit: boolean): boolean => lit && plate.lights !== false
+
 /** An emblem from its outline, its box read from the outline's points so a re-trace can't leave it behind. */
+export function emblem(path: string, finish: Emblem['finish']): Emblem
+export function emblem(path: string, finish: Emblem['finish'], plate: Plate): PlatedEmblem
 export function emblem(path: string, finish: Emblem['finish'], plate?: Plate): Emblem {
   const points = [...path.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)]
   const xs = points.map((m) => Number(m[1]))
@@ -153,3 +162,6 @@ export const BAT_1996 =
   '39.8 Q83.2 32.8 87.4 29.3 Q89.7 38.6 86.5 48 Q93.5 42.7 95.1 29.9 Q97.9 20.5 95.4 11.9 Q91.6 ' +
   '2.8 81.9 0.8 Q85.5 3.7 84.8 7.7 Q83.6 11.9 74.6 11.9 L65.9 11.9 Q67.3 6.6 64 0.7 L62.6 6.1 ' +
   'L60 6.1 Z'
+
+/** PALE MOONLIGHT's emblem: the 1989 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_1989 = emblem(BAT_1989, 'none', OVAL_1989)

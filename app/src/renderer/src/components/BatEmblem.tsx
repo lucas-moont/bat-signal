@@ -3,7 +3,7 @@
 // oval, lit with the disc); Bat-Clawd wears the same outline on his chest.
 
 import { useId } from 'react'
-import type { Emblem } from '@shared/emblems'
+import { plateGlows, type Emblem } from '@shared/emblems'
 import { THEMES } from '@shared/themes'
 import { PRODUCT } from '@shared/words'
 import { useTheme } from '../theme'
@@ -52,7 +52,7 @@ export function BatEmblem({
   // Their own ids: one shared by every emblem resolves to whichever comes first on the page.
   const wear = useId()
   const light = useId()
-  const glows = lit && plate?.lights !== false
+  const glows = !!plate && plateGlows(plate, lit)
   return (
     <svg
       width={size}
@@ -106,8 +106,7 @@ export function BatEmblem({
             rx={(plate.box.width - plate.rim) / 2}
             ry={(plate.box.height - plate.rim) / 2}
             fill={glows ? `url(#${light})` : 'var(--emblem-plate)'}
-            stroke={plate.rim > 0 ? 'var(--emblem-plate-rim)' : undefined}
-            strokeWidth={plate.rim > 0 ? plate.rim : undefined}
+            {...(plate.rim > 0 && { stroke: 'var(--emblem-plate-rim)', strokeWidth: plate.rim })}
           />
         </>
       )}
