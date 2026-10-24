@@ -149,6 +149,7 @@ describe('a demo page', () => {
     expect(themeFromFlags(new Set(['demo', 'grace']))).toBe('the-dark-knight-returns-1986')
     expect(themeFromFlags(new Set(['demo', 'collar']))).toBe('absolute-batman-2024')
     expect(themeFromFlags(new Set(['demo', 'report', 'holiday']))).toBe('the-long-halloween-1996')
+    expect(themeFromFlags(new Set(['demo', 'deco']))).toBe('batman-the-animated-series-1992')
   })
 
   it('names no Theme without a Theme flag', () => {

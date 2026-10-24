@@ -6,6 +6,7 @@ import {
   ANCIENT_GRACE_STATIC,
   BECOME_A_BAT_SMOKE,
   BLUE_COLLAR_COLONY,
+  DARK_DECO_SKY,
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
@@ -22,6 +23,7 @@ import {
   BLOCK_2024,
   emblem,
   EMBLEM_1989,
+  EMBLEM_1992,
   WINGS,
   type Emblem,
 } from './emblems'
@@ -40,6 +42,7 @@ import {
   ANCIENT_GRACE_WORDS,
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
+  DARK_DECO_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
@@ -58,6 +61,7 @@ export const THEME_IDS = [
   'the-dark-knight-returns-1986',
   'absolute-batman-2024',
   'the-long-halloween-1996',
+  'batman-the-animated-series-1992',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -152,6 +156,18 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_1996, 'none'),
     suit: HOLIDAY_SUIT,
     atmosphere: HOLIDAY_NIGHT,
+  },
+  /**
+   * Bruce Timm and Eric Radomski's Batman: The Animated Series (1992), DARK DECO: the opening's red
+   * sky over black towers and police blimps, the searchlight's yellow.
+   */
+  'batman-the-animated-series-1992': {
+    flag: 'deco',
+    ground: '#1d0701',
+    words: DARK_DECO_WORDS,
+    emblem: EMBLEM_1992,
+    suit: VENGEANCE_SUIT,
+    atmosphere: DARK_DECO_SKY,
   },
 }
 
