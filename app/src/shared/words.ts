@@ -968,7 +968,7 @@ export const DARK_DECO_WORDS: Words = {
   voice: {
     ...STANDARD_VOICE,
     // The makers first, as every credit has them; no-break spaces keep the series' title whole.
-    theme: { name: 'DARK DECO', film: "Timm & Radomski's Batman: The Animated Series" },
+    theme: { name: 'DARK DECO', film: "Timm & Radomski's Batman:\u00a0The\u00a0Animated\u00a0Series" },
     tagline: 'Gotham, under a red sky.',
     empty: {
       ...STANDARD_VOICE.empty,

@@ -398,7 +398,7 @@ describe("DARK DECO's words", () => {
   // The makers' names in front, as every shipped credit has them (jury-wave-3.md, section 3.9).
   it('credits the series by its makers', () => {
     expect(voice.theme.name).toBe('DARK DECO')
-    expect(voice.theme.film).toBe("Timm & Radomski's Batman: The Animated Series")
+    expect(voice.theme.film).toBe("Timm & Radomski's Batman:\u00a0The\u00a0Animated\u00a0Series")
   })
 
   it('names its Atmosphere after the sky, with the blimps over the city', () => {
