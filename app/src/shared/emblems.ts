@@ -166,3 +166,29 @@ export const BAT_1996 =
 
 /** PALE MOONLIGHT's emblem: the 1989 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1989 = emblem(BAT_1989, 'none', OVAL_1989)
+
+/**
+ * DARK DECO's bat, after Batman: The Animated Series (1992), on the same 120x48 grid: the chest bat of
+ * Bruce Timm's master model sheet (Feb–Apr 1991, "please use logo on all models"), the 1989 logo's
+ * construction, traced from its header logo and widened to the oval the 2018 remaster shows
+ * (dark-deco-build.md, section 3.3): two short ears on a flat crown, a deep slot either side of the
+ * head, a point beside each slot, wings following the oval without reaching it, two lobes a side
+ * underneath and a tail the lowest point. Drawn as a left half and mirrored at x = 60.
+ */
+export const BAT_1992 =
+  'M60 7.4 L58.35 7.4 L56.7 4.6 L54.94 5.4 L54.72 14.2 Q54.06 18.4 50.32 18.4 Q46.13 18.4 45.91 14.6 ' +
+  'L45.91 10.6 Q46.02 8.2 46.57 6.4 Q34.14 7.4 28.74 15.2 Q26.32 19 26.65 23.2 Q27.09 28.8 31.83 33.2 ' +
+  'L40.63 39.8 Q36.45 36.6 37.33 31.4 Q38.21 27.4 41.95 27.4 Q45.91 27.6 47.45 34.4 Q48.99 29.8 52.74 29.8 ' +
+  'Q56.92 29.8 57.58 33.6 L60 42 L62.42 33.6 Q63.08 29.8 67.26 29.8 Q71.01 29.8 72.55 34.4 Q74.09 27.6 ' +
+  '78.05 27.4 Q81.79 27.4 82.67 31.4 Q83.55 36.6 79.37 39.8 L88.17 33.2 Q92.91 28.8 93.35 23.2 Q93.68 19 ' +
+  '91.26 15.2 Q85.86 7.4 73.43 6.4 Q73.98 8.2 74.09 10.6 L74.09 14.6 Q73.87 18.4 69.68 18.4 Q65.94 18.4 ' +
+  '65.28 14.2 L65.06 5.4 L63.3 4.6 L61.65 7.4 L60 7.4 Z'
+
+/**
+ * The 1992 oval: about 1.66:1, as the remaster shows it, centred on the grid, a 2-unit black rim; a
+ * bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
+ */
+export const OVAL_1992 = { box: { x: 20, y: 0, width: 80, height: 48 }, rim: 2, lights: false }
+
+/** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)
