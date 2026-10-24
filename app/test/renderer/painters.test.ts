@@ -7,6 +7,7 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type MoonBackdrop,
+  type SkylineBackdrop,
   type AshAtmosphere,
   type NoiseAtmosphere,
   type SmokeAtmosphere,
@@ -17,7 +18,13 @@ type Segment = { x0: number; y0: number; x1: number; y1: number }
 
 type Square = { x: number; y: number; size: number }
 
-type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
+/** A linear gradient: from (x0, y0) to (x1, y1), with its stops, each a place (0 to 1) and a color. */
+type Gradient = { x0: number; y0: number; x1: number; y1: number; stops: [number, string][] }
+
+/** What a fill or a box is painted in: a color, or a gradient. */
+type Paint = string | Gradient
+
+type Box = { x: number; y: number; w: number; h: number; color: Paint; alpha: number }
 
 /** A disc, or an ellipse: its width's half is `r`, its height's half `ry`. */
 type Disc = { x: number; y: number; r: number; ry: number }
@@ -26,7 +33,8 @@ type Disc = { x: number; y: number; r: number; ry: number }
 type Shape = (readonly [number, number])[]
 
 /**
- * A canvas context that records what it is asked to draw, in which color and strength: one list of
+ * A canvas context that records what it is asked to draw, in which color (or gradient), strength and
+ * blur: one list of
  * segments per stroke() (the rain), one list of squares, of discs and of shapes per fill() (the snow,
  * the smoke, the bats), and each box filled or outlined on its own (the lit windows), and how often
  * it is cleared.
@@ -35,7 +43,8 @@ function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
   const fills: {
     alpha: number
-    color: string
+    color: Paint
+    filter: string
     rule?: CanvasFillRule
     rects: Square[]
     discs: Disc[]
@@ -52,7 +61,19 @@ function recorder() {
   const ctx = {
     globalAlpha: 1,
     strokeStyle: '#000000',
-    fillStyle: '#000000',
+    fillStyle: '#000000' as Paint,
+    filter: 'none',
+    createLinearGradient: (x0: number, y0: number, x1: number, y1: number) => {
+      const gradient: Gradient & { addColorStop(at: number, color: string): void } = {
+        x0,
+        y0,
+        x1,
+        y1,
+        stops: [],
+        addColorStop: (at, color) => gradient.stops.push([at, color]),
+      }
+      return gradient
+    },
     clearRect: () => cleared.times++,
     fillRect: (x: number, y: number, w: number, h: number) =>
       boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
@@ -74,7 +95,15 @@ function recorder() {
     arc: (x: number, y: number, r: number) => discs.push({ x, y, r, ry: r }),
     ellipse: (x: number, y: number, r: number, ry: number) => discs.push({ x, y, r, ry }),
     fill: (rule?: CanvasFillRule) =>
-      fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rule, rects, discs, shapes }),
+      fills.push({
+        alpha: ctx.globalAlpha,
+        color: ctx.fillStyle,
+        filter: ctx.filter,
+        rule,
+        rects,
+        discs,
+        shapes,
+      }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
@@ -1392,5 +1421,138 @@ describe('the moon behind the motion', () => {
     const again = recorder()
     painter.paint(again.ctx, 0)
     expect(again.fills[0]!.color).toBe('#3d1b13')
+  })
+})
+
+// DARK DECO's sky, after the opening of Batman: The Animated Series (dark-deco-build.md, section 2):
+// a red sky in bands from its black top to the horizon, shadows of cloud only darker than it, Deco
+// towers cut out in black along the foot with a few lit windows, and a blue mist under them.
+describe('the skyline behind the motion', () => {
+  const SKYLINE: SkylineBackdrop = {
+    kind: 'skyline',
+    sky: [
+      [0, '--sky-top'],
+      [0.45, '--sky'],
+      [0.9, '--sky-lit'],
+    ],
+    clouds: {
+      color: '--sky-shadow',
+      blur: 12,
+      masses: [
+        [0.1, 0.1, 110, 55, 0.75],
+        [0.8, 0.7, 90, 24, 0.5],
+      ],
+    },
+    towers: { color: '--skyline', height: [30, 140], windows: { color: '--window', alpha: 0.35, count: 12 } },
+    mist: { color: '--mist', alpha: 0.55, height: 36 },
+  }
+  const colorOf = (variable: string) => variable.replace('--', '#')
+  const painted = (width = 320, height = 440, backdrop = SKYLINE) => {
+    const painter = backdropFor(backdrop)
+    painter.recolor(colorOf)
+    painter.resize(width, height)
+    const r = recorder()
+    painter.paint(r.ctx, 0)
+    return r
+  }
+  const towers = (r: ReturnType<typeof recorder>) => r.fills.filter((f) => f.color === '#skyline')
+  const points = (r: ReturnType<typeof recorder>) => towers(r).flatMap((f) => f.shapes.flat())
+
+  it('paints the sky from its top to the horizon in its bands', () => {
+    const [sky] = painted().boxes
+    expect(sky).toMatchObject({ x: 0, y: 0, w: 320, h: 440 })
+    expect(sky!.color).toEqual({
+      x0: 0,
+      y0: 0,
+      x1: 0,
+      y1: 440,
+      stops: [
+        [0, '#sky-top'],
+        [0.45, '#sky'],
+        [0.9, '#sky-lit'],
+      ],
+    })
+  })
+
+  it('shades it with soft clouds where they are asked, in their color and strength', () => {
+    const clouds = painted().fills.filter((f) => f.color === '#sky-shadow')
+    expect(clouds.map((f) => f.filter)).toEqual(['blur(12px)', 'blur(12px)'])
+    expect(clouds.map((f) => f.alpha)).toEqual([0.75, 0.5])
+    expect(clouds.map((f) => f.discs[0])).toEqual([
+      { x: 32, y: 44, r: 110, ry: 55 },
+      { x: 256, y: 308, r: 90, ry: 24 },
+    ])
+  })
+
+  it('draws the towers sharp, over the clouds', () => {
+    const r = painted()
+    expect(towers(r).every((f) => f.filter === 'none' && f.alpha === 1)).toBe(true)
+    expect(r.fills.findIndex((f) => f.color === '#skyline')).toBeGreaterThan(
+      r.fills.findLastIndex((f) => f.color === '#sky-shadow'),
+    )
+  })
+
+  it('cuts the towers out along the foot, across the whole width, none above the tallest', () => {
+    const ys = points(painted()).map(([, y]) => y)
+    const xs = points(painted()).map(([x]) => x)
+    expect(Math.max(...ys)).toBe(440)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(440 - 140)
+    expect(Math.min(...ys)).toBeLessThan(440 - 100)
+    expect(Math.min(...xs)).toBeLessThanOrEqual(0)
+    expect(Math.max(...xs)).toBeGreaterThanOrEqual(320)
+  })
+
+  it('lights a few windows in the towers, faintly', () => {
+    const windows = painted().boxes.filter((b) => b.color === '#window')
+    expect(windows).toHaveLength(12)
+    for (const w of windows) {
+      expect(w.alpha).toBe(0.35)
+      expect(w.y).toBeGreaterThanOrEqual(440 - 140)
+      expect(w.y + w.h).toBeLessThanOrEqual(440)
+    }
+  })
+
+  it("lays a mist over the towers' foot, rising from the bottom", () => {
+    const mist = painted().boxes.at(-1)!
+    expect(mist).toMatchObject({ x: 0, y: 440 - 36, w: 320, h: 36, alpha: 0.55 })
+    expect(mist.color).toEqual({
+      x0: 0,
+      y0: 404,
+      x1: 0,
+      y1: 440,
+      stops: [
+        [0, 'transparent'],
+        [1, '#mist'],
+      ],
+    })
+  })
+
+  // A fixed city: the same towers after a resize or new colors, as the backdrop is painted afresh.
+  it('draws the same city after a resize and after new colors', () => {
+    const painter = backdropFor(SKYLINE)
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    const first = recorder()
+    painter.paint(first.ctx, 0)
+    painter.resize(400, 500)
+    painter.resize(320, 440)
+    painter.recolor(colorOf)
+    const again = recorder()
+    painter.paint(again.ctx, 0)
+    expect(points(again)).toEqual(points(first))
+  })
+
+  it('keeps its towers to the foot of a taller panel', () => {
+    const ys = points(painted(320, 600)).map(([, y]) => y)
+    expect(Math.max(...ys)).toBe(600)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(600 - 140)
+  })
+
+  it('paints nothing before it has a size, and does not throw', () => {
+    const painter = backdropFor(SKYLINE)
+    painter.recolor(colorOf)
+    const r = recorder()
+    expect(() => painter.paint(r.ctx, 0)).not.toThrow()
+    expect([...r.boxes, ...r.fills]).toHaveLength(0)
   })
 })
