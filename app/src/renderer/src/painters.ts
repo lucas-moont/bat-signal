@@ -318,21 +318,45 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
   }
 }
 
-/** A hull's height for its length: a cigar, about 3.3:1. */
-const HULL = 0.3
+/**
+ * A blimp's shape, in hull lengths from its middle (x along its way, y down): a hull about 3.3:1;
+ * its tail fin at the back, which `trace` flips with a negative scale (the fin is the same above and
+ * below); and its gondola under the hull.
+ */
+const HULL = {
+  tall: 0.3,
+  fin: [
+    [0.38, 0],
+    [0.58, -0.2],
+    [0.58, 0.2],
+  ],
+  gondola: { w: 0.2, h: 0.08 },
+} as const
 
 /**
  * Police blimps hovering: each drifts by whole ticks, round from the other side once it and its
  * beams are wholly past one, its two beams leaning out under its nose and swaying on the clock.
  */
 function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
+  /**
+   * Each blimp's half-height, how far its beams reach, how far past a side it runs before coming
+   * round (its hull, and its beams leaning out at their widest), and which way it faces.
+   */
+  const ships = fleet.map(({ length, drift }) => {
+    const reach = beams.reach * length
+    return {
+      belly: (length * HULL.tall) / 2,
+      reach,
+      margin: length / 2 + reach * Math.sin(beams.splay + beams.sway + beams.width),
+      ahead: drift < 0 ? -1 : 1,
+    }
+  })
   let width = 0
   let height = 0
   let color = ''
   let beam = ''
-  /** Whole ticks of the clock since the blimps began, and the part of one still to come. */
+  /** Ticks of the clock since the blimps began; they move on whole ones only (ash's beats round a half up). */
   let ticks = 0
-  let part = 0
 
   return {
     recolor(colorOf) {
@@ -342,60 +366,63 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
     resize(w, h) {
       ;[width, height] = [w, h]
       ticks = 0
-      part = 0
     },
     paint(ctx, dt) {
-      part += Math.min(dt, MAX_DT) / STEP
-      // Only whole ticks move them (a float's sum may land a hair under one).
-      const whole = Math.floor(part + 1e-9)
-      ticks += whole
-      part -= whole
+      ticks += Math.min(dt, MAX_DT) / STEP
       ctx.clearRect(0, 0, width, height)
       if (!width || !color) return
-      const sway = beams.sway * Math.sin((2 * Math.PI * ticks) / (beams.period * FPS))
-      for (const { length, at, from, drift } of fleet) {
-        const reach = beams.reach * length
-        // Wholly past a side: the hull, and its beams leaning out under it.
-        const margin = length / 2 + reach * Math.sin(beams.splay + beams.sway + beams.width)
-        const x = wrapAcross(from * width + drift * ticks, width, margin)
-        const y = at * height
-        // Under the nose, a quarter of the hull ahead of its middle, the way it drifts.
-        const nose = { x: x + (drift < 0 ? -1 : 1) * (length / 4), y: y + (length * HULL) / 2 }
-        ctx.globalAlpha = beams.alpha
-        ctx.fillStyle = beam
-        for (const side of [-1, 1]) {
-          const axis = side * beams.splay + sway
-          const edges = [axis - beams.width, axis + beams.width]
-          ctx.beginPath()
-          trace(
-            ctx,
-            [[0, 0], ...edges.map((a) => [Math.sin(a) * reach, Math.cos(a) * reach] as const)],
-            nose.x,
-            nose.y,
-          )
-          ctx.fill()
+      // A float's sum of whole ticks may land a hair under one.
+      const whole = Math.floor(ticks + 1e-9)
+      const sway = beams.sway * Math.sin((2 * Math.PI * whole) / (beams.period * FPS))
+      // Each beam's two edges, the same for every blimp this tick: left beam, then right.
+      const edges = [-1, 1].flatMap((side) =>
+        [-beams.width, beams.width].map((w) => side * beams.splay + sway + w),
+      )
+      const [sin, cos] = [edges.map(Math.sin), edges.map(Math.cos)]
+      const places = fleet.map(({ at, from, drift }, i) => ({
+        x: wrapAcross(from * width + drift * whole, width, ships[i]!.margin),
+        y: at * height,
+      }))
+      // Every beam in one fill, under every hull in another.
+      ctx.globalAlpha = beams.alpha
+      ctx.fillStyle = beam
+      ctx.beginPath()
+      places.forEach(({ x, y }, i) => {
+        const { belly, reach, ahead } = ships[i]!
+        // Under the nose, a quarter of the hull ahead of its middle.
+        const [nx, ny] = [x + (ahead * fleet[i]!.length) / 4, y + belly]
+        for (let b = 0; b < 4; b += 2) {
+          ctx.moveTo(nx, ny)
+          ctx.lineTo(nx + sin[b]! * reach, ny + cos[b]! * reach)
+          ctx.lineTo(nx + sin[b + 1]! * reach, ny + cos[b + 1]! * reach)
+          ctx.closePath()
         }
-        ctx.globalAlpha = 1
-        ctx.fillStyle = color
-        ctx.beginPath()
-        ctx.ellipse(x, y, length / 2, (length * HULL) / 2, 0, 0, 2 * Math.PI)
-        ctx.fill()
-        // Its tail fin, at the end away from the way it drifts, and its gondola under it.
-        const back = drift < 0 ? 1 : -1
-        ctx.beginPath()
+      })
+      ctx.fill()
+      ctx.globalAlpha = 1
+      ctx.fillStyle = color
+      ctx.beginPath()
+      places.forEach(({ x, y }, i) => {
+        const { length } = fleet[i]!
+        const { belly, ahead } = ships[i]!
+        ctx.moveTo(x + length / 2, y)
+        ctx.ellipse(x, y, length / 2, belly, 0, 0, 2 * Math.PI)
+        trace(ctx, HULL.fin, x, y, -ahead * length)
+        const { w, h } = HULL.gondola
         trace(
           ctx,
           [
-            [back * length * 0.38, 0],
-            [back * length * 0.58, -length * 0.2],
-            [back * length * 0.58, length * 0.2],
+            [-w / 2, 0],
+            [w / 2, 0],
+            [w / 2, h],
+            [-w / 2, h],
           ],
           x,
-          y,
+          y + belly,
+          length,
         )
-        ctx.fill()
-        ctx.fillRect(x - length * 0.1, y + (length * HULL) / 2 - 1, length * 0.2, length * 0.08 + 1)
-      }
+      })
+      ctx.fill()
     },
   }
 }
