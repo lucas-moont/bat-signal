@@ -999,8 +999,8 @@ export const DARK_DECO_WORDS: Words = {
         hint: (t) => `Police blimps over the city behind the ${lower(t.case.many)}`,
       },
     },
-    // On the perch he has just landed, crouched under his cape, as in the opening titles.
-    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, landed under his cape' },
+    // On the perch he stands with his arms crossed, as the series' key art has him.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, his arms crossed' },
     noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Roll the credits.' },
   },
 }
