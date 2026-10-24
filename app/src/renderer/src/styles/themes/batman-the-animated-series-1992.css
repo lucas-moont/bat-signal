@@ -9,7 +9,8 @@
  * - --abyss, --surface, --raised: the sky's dark top, crimson (jury section 9, decision 18), so
  *   nothing written sits on a sky lighter than about L* 19.5.
  * - --signal, --signal-hot: the police blimp's searchlights [13] (decision 1).
- * - --emblem-plate: the yellow oval, painted with the belt's paint, which never lights (decision 2).
+ * - --emblem-plate: the yellow oval, near the belt's paint as the HD frames show it, which never
+ *   lights (decision 2).
  */
 :root[data-theme='batman-the-animated-series-1992'],
 [data-theme='batman-the-animated-series-1992'] {
@@ -85,9 +86,9 @@
   --ash-dim: var(--ash);
   --chevron: var(--ash);
 
-  /* Bat-Clawd in Timm's suit (animated-series.md, section 8): a blue-black cowl with the cape's blue
-     at its brow, the blue rim of light on cowl and cape, a blue-grey suit, the yellow oval, the gold
-     belt, and the cobalt cape, the only blue cape in the app. */
+  /* Bat-Clawd in Timm's suit (animated-series.md, section 8): black, navy only where the light
+     touches his cape and mask, the rim of light on cowl and cape muted to a neutral blue, a blue-grey
+     suit, the yellow oval, the gold belt, black gloves and boots. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #07080e;
