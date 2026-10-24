@@ -50,8 +50,8 @@ export interface MoonBackdrop {
  */
 export interface SkylineBackdrop {
   kind: 'skyline'
-  /** The sky's bands, each its variable and where it sits down the panel (0 at its top, 1 at its foot). */
-  sky: readonly (readonly [at: number, color: string])[]
+  /** The sky's bands: where each sits down the panel (0 at its top, 1 at its foot) and its variable. */
+  sky: readonly { at: number; color: string }[]
   /**
    * The clouds: the variable they are filled in, how soft they are (a blur, in px), and each mass, an
    * ellipse: its centre across and down the panel as shares of its size, its half-width and
@@ -60,7 +60,11 @@ export interface SkylineBackdrop {
   clouds: {
     color: string
     blur: number
-    masses: readonly (readonly [x: number, y: number, rx: number, ry: number, alpha: number])[]
+    masses: readonly {
+      at: readonly [x: number, y: number]
+      size: readonly [rx: number, ry: number]
+      alpha: number
+    }[]
   }
   /**
    * The towers: the variable they are cut out in, how tall the lowest roofs and the tallest spire
@@ -232,10 +236,19 @@ export interface BlimpsAtmosphere extends Scene {
   fleet: readonly { length: number; at: number; from: number; drift: number }[]
   /**
    * The two beams under each nose: their variable and strength (alpha), how far they reach (in hull
-   * lengths), how far each leans out from straight down and sways either way of that (degrees), and
-   * the ticks a sway takes, out and back.
+   * lengths), how wide each opens either way of its axis, how far each leans out from straight down
+   * and sways either way of that (radians, as the rain's angle), and the seconds a sway takes, out
+   * and back.
    */
-  beams: { color: string; alpha: number; reach: number; splay: number; sway: number; period: number }
+  beams: {
+    color: string
+    alpha: number
+    reach: number
+    width: number
+    splay: number
+    sway: number
+    period: number
+  }
 }
 
 /**

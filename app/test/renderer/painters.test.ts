@@ -140,7 +140,7 @@ const BLIMPS: BlimpsAtmosphere = {
     { length: 28, at: 0.25, from: 0.7, drift: 0.5 },
     { length: 18, at: 0.45, from: 0.2, drift: -0.25 },
   ],
-  beams: { color: '--beam', alpha: 0.07, reach: 5, splay: 12, sway: 3, period: 64 },
+  beams: { color: '--beam', alpha: 0.07, reach: 5, width: 0.08, splay: 0.21, sway: 0.05, period: 8 },
 }
 
 /** Ash blown in two depths, a quarter of it dust. */
@@ -1443,16 +1443,16 @@ describe('the skyline behind the motion', () => {
   const SKYLINE: SkylineBackdrop = {
     kind: 'skyline',
     sky: [
-      [0, '--sky-top'],
-      [0.45, '--sky'],
-      [0.9, '--sky-lit'],
+      { at: 0, color: '--sky-top' },
+      { at: 0.45, color: '--sky' },
+      { at: 0.9, color: '--sky-lit' },
     ],
     clouds: {
       color: '--sky-shadow',
       blur: 12,
       masses: [
-        [0.1, 0.1, 110, 55, 0.75],
-        [0.8, 0.7, 90, 24, 0.5],
+        { at: [0.1, 0.1], size: [110, 55], alpha: 0.75 },
+        { at: [0.8, 0.7], size: [90, 24], alpha: 0.5 },
       ],
     },
     towers: { color: '--skyline', height: [30, 140], windows: { color: '--window', alpha: 0.35, count: 12 } },
@@ -1583,9 +1583,10 @@ describe('the blimps', () => {
   type Frame = ReturnType<typeof recorder>
   const hulls = (r: Frame) => r.fills.filter((f) => f.color === '#blimp').flatMap((f) => f.discs)
   const beams = (r: Frame) => r.fills.filter((f) => f.color === '#beam' && f.shapes.length)
-  /** A beam's lean from straight down, in degrees (out to the right is positive): its axis to its far edge's middle. */
+  /** A beam's lean from straight down, in radians (out to the right is positive): its axis to its far edge's middle. */
   const lean = ([nose, left, right]: Shape) =>
-    (Math.atan2((left![0] + right![0]) / 2 - nose![0], (left![1] + right![1]) / 2 - nose![1]) * 180) / Math.PI
+    Math.atan2((left![0] + right![0]) / 2 - nose![0], (left![1] + right![1]) / 2 - nose![1])
+  const { splay, sway, reach } = BLIMPS.beams
 
   it('cuts each blimp out in its color, where it hovers, as long as it is', () => {
     const [first] = framesOver(blimps(), 0)
@@ -1614,21 +1615,19 @@ describe('the blimps', () => {
       const leans = shapes.map(lean)
       // One out to each side, each within its splay and sway.
       for (const pair of [leans.slice(0, 2), leans.slice(2, 4)]) {
-        const [left, right] = [...pair].sort((a, b) => a - b) as [number, number]
-        expect(left).toBeGreaterThanOrEqual(-12 - 3 - 0.01)
-        expect(left).toBeLessThanOrEqual(-12 + 3 + 0.01)
-        expect(right).toBeGreaterThanOrEqual(12 - 3 - 0.01)
-        expect(right).toBeLessThanOrEqual(12 + 3 + 0.01)
+        expect(pair.map(Math.sign).sort()).toEqual([-1, 1])
+        for (const l of pair) expect(Math.abs(Math.abs(l) - splay)).toBeLessThanOrEqual(sway + 1e-9)
       }
       const [nose, edge] = shapes[0]!
-      expect(Math.hypot(edge![0] - nose![0], edge![1] - nose![1])).toBeGreaterThan(5 * 28 * 0.95)
+      const length = BLIMPS.fleet[0]!.length
+      expect(Math.hypot(edge![0] - nose![0], edge![1] - nose![1])).toBeCloseTo(reach * length)
     }
   })
 
   it('sways its beams over their period, rather than holding them', () => {
-    const frames = framesOver(blimps(), 64)
+    const frames = framesOver(blimps(), BLIMPS.beams.period * FPS)
     const leans = frames.map((f) => lean(beams(f)[0]!.shapes[0]!))
-    expect(Math.max(...leans) - Math.min(...leans)).toBeGreaterThan(5)
+    expect(Math.max(...leans) - Math.min(...leans)).toBeCloseTo(2 * sway, 2)
   })
 
   it('drifts at its pace on whole ticks only', () => {

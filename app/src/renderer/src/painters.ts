@@ -256,7 +256,7 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
   return {
     recolor(colorOf) {
       colors = {
-        sky: sky.map(([, variable]) => colorOf(variable)),
+        sky: sky.map(({ color }) => colorOf(color)),
         clouds: colorOf(clouds.color),
         towers: colorOf(city.color),
         windows: colorOf(city.windows.color),
@@ -282,13 +282,17 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
       ctx.clearRect(0, 0, width, height)
       ctx.globalAlpha = 1
       const bands = ctx.createLinearGradient(0, 0, 0, height)
-      sky.forEach(([at], i) => bands.addColorStop(at, colors!.sky[i]!))
+      sky.forEach(({ at }, i) => bands.addColorStop(at, colors!.sky[i]!))
       ctx.fillStyle = bands
       ctx.fillRect(0, 0, width, height)
       // The clouds, soft, only ever darker than the sky.
       ctx.fillStyle = colors.clouds
       ctx.filter = `blur(${clouds.blur}px)`
-      for (const [x, y, rx, ry, alpha] of clouds.masses) {
+      for (const {
+        at: [x, y],
+        size: [rx, ry],
+        alpha,
+      } of clouds.masses) {
         ctx.globalAlpha = alpha
         ctx.beginPath()
         ctx.ellipse(x * width, y * height, rx, ry, 0, 0, 2 * Math.PI)
@@ -314,12 +318,6 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
   }
 }
 
-/**
- * How wide a beam opens, either way of its axis, in degrees: thin, as the opening's crossing beams,
- * never the intro's cone.
- */
-const BEAM_HALF = 4.5
-
 /** A hull's height for its length: a cigar, about 3.3:1. */
 const HULL = 0.3
 
@@ -335,7 +333,6 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
   /** Whole ticks of the clock since the blimps began, and the part of one still to come. */
   let ticks = 0
   let part = 0
-  const rad = Math.PI / 180
 
   return {
     recolor(colorOf) {
@@ -355,11 +352,11 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
       part -= whole
       ctx.clearRect(0, 0, width, height)
       if (!width || !color) return
-      const sway = beams.sway * Math.sin((2 * Math.PI * ticks) / beams.period)
+      const sway = beams.sway * Math.sin((2 * Math.PI * ticks) / (beams.period * FPS))
       for (const { length, at, from, drift } of fleet) {
         const reach = beams.reach * length
         // Wholly past a side: the hull, and its beams leaning out under it.
-        const margin = length / 2 + reach * Math.sin((beams.splay + beams.sway + BEAM_HALF) * rad)
+        const margin = length / 2 + reach * Math.sin(beams.splay + beams.sway + beams.width)
         const x = wrapAcross(from * width + drift * ticks, width, margin)
         const y = at * height
         // Under the nose, a quarter of the hull ahead of its middle, the way it drifts.
@@ -367,8 +364,8 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
         ctx.globalAlpha = beams.alpha
         ctx.fillStyle = beam
         for (const side of [-1, 1]) {
-          const axis = (side * beams.splay + sway) * rad
-          const edges = [axis - BEAM_HALF * rad, axis + BEAM_HALF * rad]
+          const axis = side * beams.splay + sway
+          const edges = [axis - beams.width, axis + beams.width]
           ctx.beginPath()
           trace(
             ctx,
