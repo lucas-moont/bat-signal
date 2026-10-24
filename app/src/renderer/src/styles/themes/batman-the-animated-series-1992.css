@@ -79,14 +79,16 @@
      belt, and the cobalt cape, the only blue cape in the app. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
-  --cowl: #0b1030;
+  --cowl: #07080e;
   --cowl-edge: #4a66b0;
-  --cowl-shine: #1a3570;
+  /* Black, and navy only where the light touches the cape and the mask (the maintainer, on screen). */
+  --cowl-shine: #1a2c5c;
   --suit: #5a6589;
-  --gloves: var(--cape);
+  /* Black gloves, boots and trunks, as the HD frames and DC's standee show them. */
+  --gloves: #07080c;
   --belt: #be9336;
   --buckle: var(--cowl);
-  --cape: #1a3570;
+  --cape: #090b14;
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
   --chest: #050505;
