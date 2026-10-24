@@ -1598,20 +1598,10 @@ export const HOLIDAY_SUIT: Suit = {
 // dark-deco-build.md, section 4): a blue-black cowl with the cape's blue at its brow and taller ears
 // flush with its sides, the cape's blue round his neck, the blue-grey suit with the yellow oval that
 // never lights, a full unit of gold belt, dark trunks, and the cobalt cape behind him with a hem of
-// deep hooked points. Alarmed, he is black on the red sky but for his eyes, his jaw and his rim. ---
+// deep hooked points. Alarmed, he throws the cape open behind him. ---
 
 /** His suit's letters, and n for the cape's blue round his neck. */
 const DECO_LEGEND = { ...LEGEND, n: 'var(--cape)' }
-/** Alarmed, black on the red sky: the suit, belt and collar in the cowl's black. */
-const DECO_BLACK = {
-  ...LEGEND,
-  S: 'var(--cowl)',
-  b: 'var(--cowl)',
-  k: 'var(--cowl)',
-  g: 'var(--cowl)',
-  n: 'var(--cowl)',
-  h: 'var(--cowl)',
-}
 /** His head with the ears drawn behind it: no ear tips on the grid. */
 const DECO_HEAD = twice([
   '................',
@@ -1648,7 +1638,6 @@ const decoMap = (arms = SUIT, legend: OutfitMap['legend'] = DECO_LEGEND, seated 
 })
 const DECO_STANDING = decoMap()
 const DECO_ARMS_OUT = decoMap('.gSSSSSSSSSSSSg.')
-const DECO_BLACK_STANDING = decoMap(SUIT, DECO_BLACK)
 const DECO_SEATED = decoMap(SUIT, DECO_LEGEND, true)
 
 /** Timm's ears: flush with the cowl's sides, the outer edge straight up, the inner slanting in. */
@@ -1706,13 +1695,12 @@ const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: L
 /** Flying, the drop: the cape spread from his hands at his shoulders, two frames lifting its tips. */
 const decoFlying = (wing: string, light: string) =>
   decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
-/** Alarmed, black on the red sky, the cape flung open behind: only his eyes, jaw and rim show. */
-const decoAlarmed = decoPose(
-  DECO_BLACK_STANDING,
-  [BACK, { kind: 'cape', d: HOOKED.openLeft, mirrored: true }, lit(DECO_LIGHT.openLeft, true)],
-  [],
-  [],
-)
+/** Alarmed: in his suit, the cape flung open behind him, the aura lit (the maintainer kept him in it). */
+const decoAlarmed = decoPose(DECO_STANDING, [
+  BACK,
+  { kind: 'cape', d: HOOKED.openLeft, mirrored: true },
+  lit(DECO_LIGHT.openLeft, true),
+])
 /** The tent: his cape fallen round him to the roof, only the cowl and the top of his shoulders above it. */
 const tent = (cloth: string, light: string): Pose =>
   decoPose(DECO_STANDING, [], [{ kind: 'path', d: cloth, className: 'clawd__cape' }, lit(light)], [])
