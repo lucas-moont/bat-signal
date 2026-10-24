@@ -129,7 +129,37 @@ In HD the oval is painted with the belt's paint (0.8–1.0 ΔE00 apart in the sa
 
 ## 4. Poses
 
-_Pending: the landing step by step, the drop, the black silhouette on the sky._
+Without the official video (§6), the opening is read from The World's Finest's stills in their aired order, Timm's storyboards [97] [98] as Art of the Title hosts them (coloured by Eric Radomski), the writers' bible models [90] [91] and HD Blu-ray captures [92] [93].
+
+### 4.1 The landing is three frames, and it ends in a tent
+
+| Step | Frame | What it shows (Read; proportions Measured) |
+|---|---|---|
+| 1. The drop | [06] | The cape held **over the head** as a wide shallow bow, about 5.5 shoulder widths across, its two ends rising to points; the knees drawn up, apart |
+| 2. Landed | [94] | Crouched, **the cape fallen round him like a tent** to the roof on both sides, about 2.2:1; only the cowl and the top of the shoulders above it; the blue rim on the shoulders only; **eyes straight ahead** |
+| 3. Risen | [95] | Standing, the cape closed, its hem points at his ankles |
+
+- **[05] is not the landing.** It is a later shot: the crouch before he leaps into the giant bat [04], as the storyboard [98] draws it (Read). The dossier's S1 (a dome with the chest and two bent legs showing) mixes [94] with [05].
+- **The held step: the tent (S1b)**, after [94]. At 54px it is a low triangle about 25.6 units wide (x −4.8 to 20.8), the cowl on its top and no legs, from the ears at y 2.4 to the roof at 11.25. Every shipped held step is upright; HOLIDAY's long cape reaches the roof on one side only, a wedge, where the tent is symmetric (Measured on an outline board rendered from `suits.ts`). The tent puts the cape in front of his body, so it needs the Costume Rule's exception for a Signature drawn after its source, as BLUE COLLAR's stand has.
+- **The reveal, on the aired frames** (Inferred): the bow above; the bow closing down round him; the tent spread to the roof; the tent settled. The bow cannot be drawn as aired inside the frame (it sits above the ears, and the viewBox ends at y −1), so it shows lowered and cropped, or for a frame only.
+
+### 4.2 Flying
+
+The aired drop [06] holds the cape over the head, which is ANCIENT GRACE's flying outline. The dossier's drop (arms at shoulder height, the cape spread as two wings, legs together) is the storyboard's panel 12 [97] and an HD frame [93] (both hands spreading the cape, ribs, about seven hem points), not the aired frame. At 54px that is close to VENGEANCE's glide; the scallops and the closed legs are the difference. Decide on screen.
+
+### 4.3 Alarmed: black on the red sky
+
+Figures in the opening go black on the red, with white eyes: the thugs with a blue rim [07] [09], Batman's punch with no visible rim [10], and the lunge after the giant bat [96], the cape spread above, its inside lit blue (Read). [96] and [04] are the giant bat, PALE MOONLIGHT's alarmed pose, so that shape is not free. **What is free is the treatment**: the whole figure black but for the white eyes and the blue rim. The dossier's "cape flung open behind a stand" is close to the giant bat in outline; the black legend is what separates it. The punch [10] would be a new shape, but a fist forward meets the Arkham games' alarmed counter (jury §3.7).
+
+### 4.4 Anatomy at small size
+
+| Piece | Read and Measured | On Bat-Clawd |
+|---|---|---|
+| Ears | Front-on, 0.29 of the cowl's width tall, flush with its sides [91]; HD, 3.1 units on a 10.3-unit head [92] | Taller than the standard ears, as tall as the frame allows (about 1.8 units above the crown), as HOLIDAY's |
+| Cape hem | Hooked points, a sawtooth: depth about 0.11–0.15 of the hem's width [90] [56]; symmetric front-on [93] | About 2–2.6 units deep, three a side on an 18-unit hem: deeper than the dossier's 1.5 |
+| Collar | The cape's blue wraps the neck, a V at the front [56] [93] | The dossier's half-row of cape blue |
+| Gloves, trunks | Black in HD episode frames (`#020202`, with cape-blue highlight lines `#2b3972`) and on [56] (`#03030d`); three fins on each glove, under a unit [56] [90] | The dossier paints them cape blue; black is the HD reading. Decide on screen |
+| Belt | A plain band with three or four capsules, no buckle [56] [90] | One row; the capsules vanish |
 
 ## 5. HD colour, type and names
 
