@@ -9,6 +9,7 @@ import {
   type MoonBackdrop,
   type SkylineBackdrop,
   type AshAtmosphere,
+  type BlimpsAtmosphere,
   type NoiseAtmosphere,
   type SmokeAtmosphere,
   type SnowAtmosphere,
@@ -131,6 +132,17 @@ function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
 const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
   framesOver(painter, n, dt).map((r) => r.fills)
 
+/** Two police blimps hovering, two beams under each (DARK DECO's). */
+const BLIMPS: BlimpsAtmosphere = {
+  kind: 'blimps',
+  color: '--blimp',
+  fleet: [
+    { length: 28, at: 0.25, from: 0.7, drift: 0.5 },
+    { length: 18, at: 0.45, from: 0.2, drift: -0.25 },
+  ],
+  beams: { color: '--beam', alpha: 0.07, reach: 5, splay: 12, sway: 3, period: 64 },
+}
+
 /** Ash blown in two depths, a quarter of it dust. */
 const ASH: AshAtmosphere = {
   kind: 'ash',
@@ -200,7 +212,7 @@ const NOISE: NoiseAtmosphere = {
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE, BLIMPS])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -1554,5 +1566,82 @@ describe('the skyline behind the motion', () => {
     const r = recorder()
     expect(() => painter.paint(r.ctx, 0)).not.toThrow()
     expect([...r.boxes, ...r.fills]).toHaveLength(0)
+  })
+})
+
+// DARK DECO's police blimps (dark-deco-build.md, section 2.3): black hulls hovering over the red
+// sky, the storyboard's three, each with two beams under its nose, leaning out and swaying a little,
+// never sweeping; drifting so slowly that they hover, and on whole ticks only.
+describe('the blimps', () => {
+  const colorOf = (variable: string) => variable.replace('--', '#')
+  const blimps = (atmosphere = BLIMPS) => {
+    const painter = painterFor(atmosphere, seeded())
+    painter.recolor(colorOf)
+    painter.resize(320, 440)
+    return painter
+  }
+  type Frame = ReturnType<typeof recorder>
+  const hulls = (r: Frame) => r.fills.filter((f) => f.color === '#blimp').flatMap((f) => f.discs)
+  const beams = (r: Frame) => r.fills.filter((f) => f.color === '#beam' && f.shapes.length)
+  /** A beam's lean from straight down, in degrees (out to the right is positive): its axis to its far edge's middle. */
+  const lean = ([[x0, y0], [x1, y1], [x2, y2]]: Shape) =>
+    (Math.atan2((x1! + x2!) / 2 - x0!, (y1! + y2!) / 2 - y0!) * 180) / Math.PI
+
+  it('cuts each blimp out in its color, where it hovers, as long as it is', () => {
+    const [first] = framesOver(blimps(), 0)
+    expect(hulls(first).map(({ x, y, r }) => ({ x, y, r }))).toEqual([
+      { x: 0.7 * 320, y: 0.25 * 440, r: 14 },
+      { x: 0.2 * 320, y: 0.45 * 440, r: 9 },
+    ])
+  })
+
+  it('hangs two beams from under each, in their color and strength, behind the hull', () => {
+    const [first] = framesOver(blimps(), 0)
+    const drawn = beams(first)
+    expect(drawn.flatMap((f) => f.shapes)).toHaveLength(4)
+    expect(drawn.every((f) => f.alpha === 0.07)).toBe(true)
+    expect(first.fills.findIndex((f) => f.color === '#beam')).toBeLessThan(
+      first.fills.findIndex((f) => f.color === '#blimp'),
+    )
+  })
+
+  it('reaches its beams down as far as asked, leaning out either way within their sway', () => {
+    for (const frame of framesOver(blimps(), 80)) {
+      const shapes = beams(frame).flatMap((f) => f.shapes)
+      const leans = shapes.map(lean)
+      // One out to each side, each within its splay and sway.
+      for (const pair of [leans.slice(0, 2), leans.slice(2, 4)]) {
+        const [left, right] = [...pair].sort((a, b) => a - b) as [number, number]
+        expect(left).toBeGreaterThanOrEqual(-12 - 3 - 0.01)
+        expect(left).toBeLessThanOrEqual(-12 + 3 + 0.01)
+        expect(right).toBeGreaterThanOrEqual(12 - 3 - 0.01)
+        expect(right).toBeLessThanOrEqual(12 + 3 + 0.01)
+      }
+      const [[x0, y0], [x1, y1]] = shapes[0] as Shape
+      expect(Math.hypot(x1! - x0!, y1! - y0!)).toBeGreaterThan(5 * 28 * 0.95)
+    }
+  })
+
+  it('sways its beams over their period, rather than holding them', () => {
+    const frames = framesOver(blimps(), 64)
+    const leans = frames.map((f) => lean(beams(f)[0]!.shapes[0]!))
+    expect(Math.max(...leans) - Math.min(...leans)).toBeGreaterThan(5)
+  })
+
+  it('drifts at its pace on whole ticks only', () => {
+    const [first, half, whole] = framesOver(blimps(), 2, 1 / FPS / 2)
+    expect(hulls(half!)[0]!.x).toBeCloseTo(hulls(first)[0]!.x)
+    expect(hulls(whole!)[0]!.x).toBeCloseTo(hulls(first)[0]!.x + 0.5)
+    expect(hulls(whole!)[1]!.x).toBeCloseTo(hulls(first)[1]!.x - 0.25)
+  })
+
+  // Wholly past a side, hull and beams, it comes back in from the other.
+  it('comes back in from the other side once wholly past it', () => {
+    const fast: BlimpsAtmosphere = { ...BLIMPS, fleet: [{ length: 28, at: 0.25, from: 0.9, drift: 9 }] }
+    const xs = framesOver(blimps(fast), 60).map((f) => hulls(f)[0]!.x)
+    const back = xs.findIndex((x, i) => i > 0 && x < xs[i - 1]!)
+    expect(back).toBeGreaterThan(0)
+    expect(xs[back - 1]!).toBeGreaterThan(320 + 14)
+    expect(xs[back]!).toBeLessThan(-14)
   })
 })
