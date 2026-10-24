@@ -213,33 +213,31 @@ describe("HOLIDAY's bat", () => {
   })
 })
 
-// DARK DECO's bat (#145): the chest bat as it aired, traced from the HD frame [134], the chest square
-// to the camera (dark-deco-build.md, section 3), after the maintainer found the first trace strange.
+// DARK DECO's bat (#145): the series' chest symbol, traced from the clean drawing the maintainer
+// supplied [140] (dark-deco-build.md, section 3), after two traces from aired frames read strange.
 describe("DARK DECO's bat", () => {
   const { bat } = emblem(BAT_1992, 'none')
   const { box, rim } = OVAL_1992
 
-  // The oval as the frames measure it, about 1.6:1 under a thin black line; it never lights.
-  it('sits on an oval of about 1.6:1, a thin rim round it, that never lights', () => {
-    expect(box.width / box.height).toBeCloseTo(1.6, 1)
+  // The oval as the drawing measures it, about 1.76:1 under a thin black line; it never lights.
+  it('sits on an oval of about 1.76:1, a thin rim round it, that never lights', () => {
+    expect(box.width / box.height).toBeCloseTo(1.76, 1)
     expect(rim / box.height).toBeLessThan(0.04)
     expect(OVAL_1992.lights).toBe(false)
   })
 
-  // Its wings run out to the rim, as on air (into it a little where the oval curves in above its
-  // middle, black on black); its ears stop short of it.
-  it('meets the rim with its wings, not its ears', () => {
-    expect(bat.x).toBeLessThan(box.x + rim + 0.5)
-    expect(bat.x + bat.width).toBeGreaterThan(box.x + box.width - rim - 0.5)
-    expect(bat.y).toBeGreaterThan(box.y + rim)
+  // A band of yellow all the way round it: its wings, ears and tail all stop short of the rim.
+  it('keeps a band of yellow between itself and the rim', () => {
+    expect(bat.x).toBeGreaterThan(box.x + rim + 2)
+    expect(bat.x + bat.width).toBeLessThan(box.x + box.width - rim - 2)
+    expect(bat.y).toBeGreaterThan(box.y + rim + 2)
+    expect(bat.y + bat.height).toBeLessThan(box.y + box.height - rim - 2)
   })
 
-  // Its tail comes down to a point near the oval's foot, below its two round lobes a side.
-  it('ends in a pointed tail near the foot of the oval', () => {
+  // Its tail comes down to a single point, below its two round lobes a side.
+  it('ends in a pointed tail', () => {
     const foot = bat.y + bat.height
-    expect(foot).toBeLessThan(box.y + box.height - rim)
-    expect(foot).toBeGreaterThan(box.y + 0.9 * box.height)
-    const tail = points(BAT_1992).filter(([, y]) => y > foot - 4)
-    expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(4)
+    const tail = points(BAT_1992).filter(([, y]) => y > foot - 2)
+    expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(3)
   })
 })
