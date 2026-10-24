@@ -42,8 +42,52 @@ export interface MoonBackdrop {
   candle?: string
 }
 
+/**
+ * A red sky over a black skyline (DARK DECO's, after the opening of Batman: The Animated Series): the
+ * sky in bands from its top to the horizon, soft shadows of cloud only darker than it and never lit,
+ * Deco towers cut out sharp along the foot with a few faint lit windows, and a mist over their foot.
+ * The towers are the same city every time, whatever the panel's size. It fills the panel, over the
+ * Theme's haze: a Theme with a skyline lights its sky in its bands, and leaves its haze clear.
+ */
+export interface SkylineBackdrop {
+  kind: 'skyline'
+  /**
+   * The sky's bands, from its top down: how far above the foot each sits (px) and its variable. They
+   * keep that height on a panel of any size, so the lit band stays just above the towers, where no
+   * text sits; above the highest, the sky stays its top's color.
+   */
+  sky: readonly { above: number; color: string }[]
+  /**
+   * The clouds: the variable they are filled in, how soft they are (a blur, in px), and each mass, an
+   * ellipse: its centre across and down the panel as shares of its size, its half-width and
+   * half-height in px, its strength (alpha), and its own softness if not the clouds' (a flat streak
+   * stays crisp where a billow is soft).
+   */
+  clouds: {
+    color: string
+    blur: number
+    masses: readonly {
+      at: readonly [x: number, y: number]
+      size: readonly [rx: number, ry: number]
+      alpha: number
+      blur?: number
+    }[]
+  }
+  /**
+   * The towers: the variable they are cut out in, how tall the lowest roofs and the tallest spire
+   * are above the foot (px), and their lit windows: a variable, a strength and how many.
+   */
+  towers: {
+    color: string
+    height: readonly [low: number, high: number]
+    windows: { color: string; alpha: number; count: number }
+  }
+  /** The mist over the towers' foot: its variable, its strength at the bottom, and how high it rises (px). */
+  mist: { color: string; alpha: number; height: number }
+}
+
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
-export type Backdrop = MoonBackdrop
+export type Backdrop = MoonBackdrop | SkylineBackdrop
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {
@@ -182,6 +226,41 @@ export interface SmokeAtmosphere extends Scene {
 }
 
 /**
+ * Police blimps hovering over a city at night (DARK DECO's, after the opening of Batman: The
+ * Animated Series): black hulls, each with two beams under its nose that lean out either way and
+ * sway a few degrees, never sweeping; drifting so slowly they hover, and round from the other side
+ * once wholly past one.
+ */
+export interface BlimpsAtmosphere extends Scene {
+  kind: 'blimps'
+  /** The variable the hulls are cut out in. */
+  color: string
+  /**
+   * Each blimp: how long it is (px), how far down the panel it hovers and where across it starts
+   * (shares of the panel's height and width), how far it drifts a tick (px; under 0, from the
+   * right), and, if not the fleet's, how far its beams lean out (under 0, in: from lamps apart they
+   * cross, as the opening's far blimps' do).
+   */
+  fleet: readonly { length: number; at: number; from: number; drift: number; splay?: number }[]
+  /**
+   * The two beams under each nose: their variable and strength (alpha), how far they reach (in hull
+   * lengths), how wide each opens either way of its axis, how far each leans out from straight down
+   * and sways either way of that (radians, as the rain's angle), the seconds a sway takes, out and
+   * back, and how far apart its two lamps hang (in hull lengths; together by default).
+   */
+  beams: {
+    color: string
+    alpha: number
+    reach: number
+    width: number
+    splay: number
+    sway: number
+    period: number
+    apart?: number
+  }
+}
+
+/**
  * Noise on a screen: marks scattered over the panel that stay put for their life and then appear
  * somewhere else, never falling, born a tick apart so the noise never pulses; and, if it asks for
  * one, a soft band rolling down the panel, as an old set's picture rolls.
@@ -210,7 +289,13 @@ export interface NoiseAtmosphere extends Scene {
 }
 
 export type Atmosphere =
-  RainAtmosphere | SnowAtmosphere | LitWindowsAtmosphere | AshAtmosphere | SmokeAtmosphere | NoiseAtmosphere
+  | RainAtmosphere
+  | SnowAtmosphere
+  | LitWindowsAtmosphere
+  | AshAtmosphere
+  | SmokeAtmosphere
+  | NoiseAtmosphere
+  | BlimpsAtmosphere
 
 /** The Batman (2022)'s rain. */
 export const VENGEANCE_RAIN: RainAtmosphere = {

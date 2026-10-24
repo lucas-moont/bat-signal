@@ -4,11 +4,13 @@
 import type {
   AshAtmosphere,
   Atmosphere,
+  BlimpsAtmosphere,
   Backdrop,
   LitWindowsAtmosphere,
   MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
+  SkylineBackdrop,
   SmokeAtmosphere,
   SnowAtmosphere,
 } from '@shared/atmospheres'
@@ -52,6 +54,8 @@ export function painterFor(atmosphere: Atmosphere, random: () => number = Math.r
       return smoke(atmosphere, random)
     case 'noise':
       return noise(atmosphere, random)
+    case 'blimps':
+      return blimps(atmosphere)
   }
 }
 
@@ -71,11 +75,22 @@ function trace(
   ctx.closePath()
 }
 
+/**
+ * Where something carried across a canvas `width` wide lands: past either side it runs on for
+ * `margin` (as wide as it is, so it is wholly off the canvas), then comes round at the other.
+ */
+function wrapAcross(x: number, width: number, margin: number) {
+  const span = width + 2 * margin
+  return ((((x + margin) % span) + span) % span) - margin
+}
+
 /** The painter of an Atmosphere's backdrop: a still drawing, the same picture on every paint. */
 export function backdropFor(backdrop: Backdrop): Painter {
   switch (backdrop.kind) {
     case 'moon':
       return moon(backdrop)
+    case 'skyline':
+      return skyline(backdrop)
   }
 }
 
@@ -165,6 +180,295 @@ function moon({ color: variable, alpha, at, radius, carved, candle: flame }: Moo
         for (const cut of FACE) trace(ctx, cut, cx, cy, radius)
         ctx.fill()
       }
+    },
+  }
+}
+
+/**
+ * The skyline's seeds, in [0, 1) as seededFrom takes them: the same city, and the same lit windows
+ * in it, every time it is drawn.
+ */
+const SKYLINE_SEED = { city: 0.1992, windows: 0.0716 }
+
+/**
+ * The skyline's Deco vocabulary, in px: how wide a tower may be; how much of the span between the
+ * lowest roofs and the tallest spire its roof may rise; a setback's two steps up, each a sixth of its
+ * width in from the last; a spire's crown, a quarter of its width either side of its middle, with a
+ * needle that rises toward the tallest spire from its base this wide, and at least so far above the
+ * crown; one tower in so many a spire;
+ * and a dome's rise for its width.
+ */
+const DECO = {
+  width: [12, 34],
+  spread: 0.55,
+  setback: [
+    [1 / 6, 0],
+    [1 / 6, 8],
+    [1 / 3, 8],
+    [1 / 3, 16],
+  ],
+  crown: [
+    [1 / 4, 0],
+    [1 / 4, 10],
+  ],
+  needle: { base: 3, tip: [0.8, 1], above: 10 },
+  spireEvery: 4,
+  dome: 1 / 3,
+} as const
+
+/** How tall each of the mist's bands is, in px: thin enough to read as one fade. */
+const MIST_BAND = 2
+
+/** A lit window of the skyline: a dot taller than wide, in px (inset in its tower as the glass is, by INSET). */
+const WINDOW = { w: 1.5, h: 2 }
+
+/** A tower of the skyline: where it stands, how wide, and its roof's height above the foot (px). */
+interface Tower {
+  x: number
+  width: number
+  roof: number
+}
+
+/**
+ * A Deco skyline along the foot of a panel this size, as one outline from the left edge's foot along
+ * the roofs to the right edge's: flat roofs, stepped setbacks, domes and, one tower in so many, a
+ * spire rising toward the tallest. Its towers, for the windows lit in them.
+ */
+function decoSkyline(width: number, height: number, [low, high]: readonly [number, number]) {
+  const random = seededFrom(SKYLINE_SEED.city)
+  const outline: [number, number][] = [[-1, height]]
+  const towers: Tower[] = []
+  const up = (x: number, h: number) => outline.push([x, height - h])
+  /**
+   * A roof's left half, in shares of its width in and px up, then, past a peak in its middle if it
+   * has one (px up), the same mirrored back down.
+   */
+  const mirrored = (
+    x: number,
+    w: number,
+    roof: number,
+    half: readonly (readonly [number, number])[],
+    peak?: number,
+  ) => {
+    for (const [dx, rise] of half) up(x + dx * w, roof + rise)
+    if (peak !== undefined) up(x + w / 2, peak)
+    for (const [dx, rise] of [...half].reverse()) up(x + (1 - dx) * w, roof + rise)
+  }
+  const [narrow, wide] = DECO.width
+  for (let x = -1, i = 0; x < width + 1; i++) {
+    const w = narrow + random() * (wide - narrow)
+    const roof = low + (high - low) * DECO.spread * random()
+    const spire = i % DECO.spireEvery === DECO.spireEvery - 1
+    const kind = spire ? 'spire' : (['flat', 'setback', 'dome'] as const)[Math.floor(random() * 3)]!
+    up(x, roof)
+    if (kind === 'setback') mirrored(x, w, roof, DECO.setback)
+    else if (kind === 'dome')
+      for (let a = 1; a < 8; a++) up(x + (w * a) / 8, roof + Math.sin((Math.PI * a) / 8) * w * DECO.dome)
+    else if (kind === 'spire') {
+      const [lowest, highest] = DECO.needle.tip
+      // The crown, then the needle's base on it and its tip in the middle, always above the crown.
+      const crown = DECO.crown.at(-1)![1]
+      const tip = Math.max(high * (lowest + (highest - lowest) * random()), roof + crown + DECO.needle.above)
+      mirrored(x, w, roof, [...DECO.crown, [1 / 2 - DECO.needle.base / 2 / w, crown]], tip)
+    }
+    up(x + w, roof)
+    towers.push({ x, width: w, roof })
+    x += w
+  }
+  outline.push([outline.at(-1)![0], height])
+  return { outline, towers }
+}
+
+/** A red sky over a black skyline: painted whole on every paint, since it never moves. */
+function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
+  /** How high above the foot the sky's gradient starts: its highest band. */
+  const top = Math.max(...sky.map(({ above }) => above))
+  let width = 0
+  let height = 0
+  let stops: [number, string][] = []
+  let colors = { clouds: '', towers: '', windows: '', mist: '' }
+  /** Whether every color is set: a variable the page doesn't set reads as '', which a gradient refuses. */
+  let ready = false
+  let outline: [number, number][] = []
+  let windows: { x: number; y: number }[] = []
+  return {
+    recolor(colorOf) {
+      // Each band's place on the gradient from the highest band down to the foot.
+      stops = sky.map(({ above, color }) => [(top - above) / top, colorOf(color)])
+      colors = {
+        clouds: colorOf(clouds.color),
+        towers: colorOf(towers.color),
+        windows: colorOf(towers.windows.color),
+        mist: colorOf(mist.color),
+      }
+      ready = stops.every(([, color]) => color) && Object.values(colors).every(Boolean)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      const drawn = decoSkyline(w, h, towers.height)
+      outline = drawn.outline
+      // The windows from a seed of their own, each at a share of the way across the panel (so a resize
+      // keeps them about where they were, and none past an edge), in the tower standing there.
+      const random = seededFrom(SKYLINE_SEED.windows)
+      const room = (span: number, size: number) => Math.max(0, span - 2 * INSET - size)
+      windows = Array.from({ length: towers.windows.count }, () => {
+        const x = Math.round(INSET + random() * room(w, WINDOW.w))
+        const tower = drawn.towers.find((t) => x < t.x + t.width) ?? drawn.towers.at(-1)!
+        return { x, y: Math.round(h - tower.roof + INSET + random() * room(tower.roof, WINDOW.h)) }
+      })
+    },
+    paint(ctx) {
+      if (!width) return
+      ctx.clearRect(0, 0, width, height)
+      if (!ready) return
+      ctx.globalAlpha = 1
+      const bands = ctx.createLinearGradient(0, height - top, 0, height)
+      for (const [at, color] of stops) bands.addColorStop(at, color)
+      ctx.fillStyle = bands
+      ctx.fillRect(0, 0, width, height)
+      // The clouds, soft, only ever darker than the sky.
+      ctx.fillStyle = colors.clouds
+      for (const {
+        at: [x, y],
+        size: [rx, ry],
+        alpha,
+        blur = clouds.blur,
+      } of clouds.masses) {
+        ctx.filter = `blur(${blur}px)`
+        ctx.globalAlpha = alpha
+        ctx.beginPath()
+        ctx.ellipse(x * width, y * height, rx, ry, 0, 0, 2 * Math.PI)
+        ctx.fill()
+      }
+      ctx.filter = 'none'
+      ctx.globalAlpha = 1
+      ctx.fillStyle = colors.towers
+      ctx.beginPath()
+      trace(ctx, outline, 0, 0)
+      ctx.fill()
+      ctx.fillStyle = colors.windows
+      ctx.globalAlpha = towers.windows.alpha
+      for (const { x, y } of windows) ctx.fillRect(x, y, WINDOW.w, WINDOW.h)
+      // The mist, rising from the bottom over the towers' foot: thin bands in its own color, stronger
+      // as they near the bottom (a gradient from transparent would grey the band's middle).
+      ctx.fillStyle = colors.mist
+      const layers = Math.ceil(mist.height / MIST_BAND)
+      for (let b = 0; b < layers; b++) {
+        ctx.globalAlpha = (mist.alpha * (b + 1)) / layers
+        const y = height - mist.height + b * MIST_BAND
+        ctx.fillRect(0, y, width, Math.min(MIST_BAND, height - y))
+      }
+    },
+  }
+}
+
+/**
+ * A blimp's shape, in hull lengths from its middle (x along its way, y down): a black cigar about
+ * 2.4:1, as the opening cuts it out, and its tail fin at the back, which `trace` flips with a
+ * negative scale (the fin is the same above and below).
+ */
+const HULL = {
+  tall: 0.42,
+  fin: [
+    [0.38, 0],
+    [0.58, -0.2],
+    [0.58, 0.2],
+  ],
+} as const
+
+/** How far apart in its sway one blimp's beams are from the next one's, in radians of the swing. */
+const OUT_OF_STEP = 2.4
+
+/**
+ * Police blimps hovering: each drifts by whole ticks, round from the other side once it and its
+ * beams are wholly past one, its two beams hanging from its lamps under its nose, leaning out (or in,
+ * to cross) and swaying on the clock, each blimp out of step with the next.
+ */
+function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
+  const apart = beams.apart ?? 0
+  /**
+   * Each blimp's half-height, how far its beams reach and lean, which way it faces, where its lamps
+   * hang from its middle and how far below it (on the hull's underside there), and how far past a
+   * side it runs before coming round: its fin, or its beams at their widest lean.
+   */
+  const ships = fleet.map(({ length, drift, splay = beams.splay }) => {
+    const belly = (length * HULL.tall) / 2
+    const reach = beams.reach * length
+    const ahead = drift < 0 ? -1 : 1
+    const lamps = [-1, 1].map((side) => {
+      // Under the nose, a quarter of the hull ahead of its middle, the lamps either side of that.
+      const dx = ahead * (length / 4) + (side * apart * length) / 2
+      return { dx, dy: belly * Math.sqrt(Math.max(0, 1 - (dx / (length / 2)) ** 2)) }
+    })
+    const lean = Math.min(Math.PI / 2, Math.abs(splay) + beams.sway + beams.width)
+    const lampsOut = Math.max(...lamps.map(({ dx }) => Math.abs(dx)))
+    return {
+      belly,
+      reach,
+      splay,
+      ahead,
+      lamps,
+      margin: Math.max(HULL.fin[1][0] * length, lampsOut + reach * Math.sin(lean)),
+    }
+  })
+  let width = 0
+  let height = 0
+  let color = ''
+  let beam = ''
+  /** Ticks of the clock since the blimps began; they move on whole ones only (ash's beats round a half up). */
+  let ticks = 0
+
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+      beam = colorOf(beams.color)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+      ticks = 0
+    },
+    paint(ctx, dt) {
+      ticks += Math.min(dt, MAX_DT) / STEP
+      ctx.clearRect(0, 0, width, height)
+      if (!width || !color) return
+      // A float's sum of whole ticks may land a hair under one.
+      const whole = Math.floor(ticks + 1e-9)
+      const swing = (2 * Math.PI * whole) / (beams.period * FPS)
+      const places = fleet.map(({ at, from, drift }, i) => ({
+        x: wrapAcross(from * width + drift * whole, width, ships[i]!.margin),
+        y: at * height,
+      }))
+      // Every beam in one fill, under every hull in another; none while their color is missing (an
+      // empty fillStyle is ignored, and the hulls' black would stand in).
+      if (beam) {
+        ctx.globalAlpha = beams.alpha
+        ctx.fillStyle = beam
+        ctx.beginPath()
+        places.forEach(({ x, y }, i) => {
+          const { reach, splay, lamps } = ships[i]!
+          const sway = beams.sway * Math.sin(swing + i * OUT_OF_STEP)
+          lamps.forEach(({ dx, dy }, side) => {
+            const axis = (side ? 1 : -1) * splay + sway
+            const [lx, ly] = [x + dx, y + dy]
+            ctx.moveTo(lx, ly)
+            for (const edge of [axis - beams.width, axis + beams.width])
+              ctx.lineTo(lx + Math.sin(edge) * reach, ly + Math.cos(edge) * reach)
+            ctx.closePath()
+          })
+        })
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+      ctx.fillStyle = color
+      ctx.beginPath()
+      places.forEach(({ x, y }, i) => {
+        const { length } = fleet[i]!
+        const { belly, ahead } = ships[i]!
+        ctx.moveTo(x + length / 2, y)
+        ctx.ellipse(x, y, length / 2, belly, 0, 0, 2 * Math.PI)
+        trace(ctx, HULL.fin, x, y, -ahead * length)
+      })
+      ctx.fill()
     },
   }
 }
@@ -670,8 +974,6 @@ function smoke(
    * ever is, and as far as it sways, so it is wholly off the canvas when it comes round.
    */
   const reach = Math.max(...size) / 2 + sway
-  /** The way round a puff is blown: the canvas and that reach past either side. */
-  let span = 0
   /** A puff's life in ticks of the clock. */
   const lifeTicks = life / STEP
   let puffs: Puff[] = []
@@ -687,7 +989,6 @@ function smoke(
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      span = width + 2 * reach
       ticks = 0
       puffs = Array.from({ length: count }, (_, i) => ({
         x: random() * width,
@@ -709,8 +1010,7 @@ function smoke(
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
         // Blown along by the wind, and round again once past a side.
-        const blown = p.x + wind * p.age + swayAt(sway, ticks, p.phase) + reach
-        const x = (((blown % span) + span) % span) - reach
+        const x = wrapAcross(p.x + wind * p.age + swayAt(sway, ticks, p.phase), width, reach)
         // It leaves with its center on the bottom edge, half of it still below.
         const y = height - rise * p.age
         // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.

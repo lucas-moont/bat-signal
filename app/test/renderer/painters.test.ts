@@ -7,7 +7,9 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type MoonBackdrop,
+  type SkylineBackdrop,
   type AshAtmosphere,
+  type BlimpsAtmosphere,
   type NoiseAtmosphere,
   type SmokeAtmosphere,
   type SnowAtmosphere,
@@ -17,7 +19,13 @@ type Segment = { x0: number; y0: number; x1: number; y1: number }
 
 type Square = { x: number; y: number; size: number }
 
-type Box = { x: number; y: number; w: number; h: number; color: string; alpha: number }
+/** A linear gradient: from (x0, y0) to (x1, y1), with its stops, each a place (0 to 1) and a color. */
+type Gradient = { x0: number; y0: number; x1: number; y1: number; stops: [number, string][] }
+
+/** What a fill or a box is painted in: a color, or a gradient. */
+type Paint = string | Gradient
+
+type Box = { x: number; y: number; w: number; h: number; color: Paint; alpha: number }
 
 /** A disc, or an ellipse: its width's half is `r`, its height's half `ry`. */
 type Disc = { x: number; y: number; r: number; ry: number }
@@ -26,16 +34,17 @@ type Disc = { x: number; y: number; r: number; ry: number }
 type Shape = (readonly [number, number])[]
 
 /**
- * A canvas context that records what it is asked to draw, in which color and strength: one list of
- * segments per stroke() (the rain), one list of squares, of discs and of shapes per fill() (the snow,
- * the smoke, the bats), and each box filled or outlined on its own (the lit windows), and how often
- * it is cleared.
+ * A canvas context that records what it is asked to draw, in which color (or gradient), strength and
+ * blur: one list of segments per stroke() (the rain), one list of squares, of discs and of shapes per
+ * fill() (the snow, the smoke, the bats), and each box filled or outlined on its own (the lit
+ * windows), and how often it is cleared.
  */
 function recorder() {
   const strokes: { alpha: number; color: string; segments: Segment[] }[] = []
   const fills: {
     alpha: number
-    color: string
+    color: Paint
+    filter: string
     rule?: CanvasFillRule
     rects: Square[]
     discs: Disc[]
@@ -52,7 +61,19 @@ function recorder() {
   const ctx = {
     globalAlpha: 1,
     strokeStyle: '#000000',
-    fillStyle: '#000000',
+    fillStyle: '#000000' as Paint,
+    filter: 'none',
+    createLinearGradient: (x0: number, y0: number, x1: number, y1: number) => {
+      const gradient: Gradient & { addColorStop(at: number, color: string): void } = {
+        x0,
+        y0,
+        x1,
+        y1,
+        stops: [],
+        addColorStop: (at, color) => gradient.stops.push([at, color]),
+      }
+      return gradient
+    },
     clearRect: () => cleared.times++,
     fillRect: (x: number, y: number, w: number, h: number) =>
       boxes.push({ x, y, w, h, color: ctx.fillStyle, alpha: ctx.globalAlpha }),
@@ -74,10 +95,21 @@ function recorder() {
     arc: (x: number, y: number, r: number) => discs.push({ x, y, r, ry: r }),
     ellipse: (x: number, y: number, r: number, ry: number) => discs.push({ x, y, r, ry }),
     fill: (rule?: CanvasFillRule) =>
-      fills.push({ alpha: ctx.globalAlpha, color: ctx.fillStyle, rule, rects, discs, shapes }),
+      fills.push({
+        alpha: ctx.globalAlpha,
+        color: ctx.fillStyle,
+        filter: ctx.filter,
+        rule,
+        rects,
+        discs,
+        shapes,
+      }),
   }
   return { ctx: ctx as unknown as CanvasRenderingContext2D, strokes, fills, boxes, outlines, cleared }
 }
+
+/** A variable's color, told apart by its name: `--sky` is painted in `#sky`. */
+const namedColor = (variable: string) => variable.replace('--', '#')
 
 /** The same "random" numbers every run. */
 function seeded(seed = 7) {
@@ -101,6 +133,17 @@ function framesOver(painter: Painter, n: number, dt = 1 / FPS) {
 /** What a painter fills as it appears, then on each of `n` ticks of the clock `dt` apart. */
 const fillsOver = (painter: Painter, n: number, dt = 1 / FPS) =>
   framesOver(painter, n, dt).map((r) => r.fills)
+
+/** Two police blimps hovering, two beams under each (DARK DECO's). */
+const BLIMPS: BlimpsAtmosphere = {
+  kind: 'blimps',
+  color: '--blimp',
+  fleet: [
+    { length: 28, at: 0.25, from: 0.7, drift: 0.5 },
+    { length: 18, at: 0.45, from: 0.2, drift: -0.25 },
+  ],
+  beams: { color: '--beam', alpha: 0.07, reach: 5, width: 0.08, splay: 0.21, sway: 0.05, period: 8 },
+}
 
 /** Ash blown in two depths, a quarter of it dust. */
 const ASH: AshAtmosphere = {
@@ -171,7 +214,7 @@ const NOISE: NoiseAtmosphere = {
 // shows them: that can come before the canvas has a size. PALE MOONLIGHT's snow threw there, and the
 // whole panel went blank.
 describe('a painter given its colors before its size', () => {
-  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE])(
+  it.each([VENGEANCE_RAIN, PALE_MOONLIGHT_SNOW, ASH, COLONY, SMOKE, NOISE, BLIMPS])(
     'paints nothing, and does not throw ($kind)',
     (atmosphere) => {
       const painter = painterFor(atmosphere, seeded())
@@ -1392,5 +1435,309 @@ describe('the moon behind the motion', () => {
     const again = recorder()
     painter.paint(again.ctx, 0)
     expect(again.fills[0]!.color).toBe('#3d1b13')
+  })
+})
+
+// DARK DECO's sky, after the opening of Batman: The Animated Series (dark-deco-build.md, section 2):
+// a red sky in bands from its black top to the horizon, shadows of cloud only darker than it, Deco
+// towers cut out in black along the foot with a few lit windows, and a blue mist under them.
+describe('the skyline behind the motion', () => {
+  const SKYLINE: SkylineBackdrop = {
+    kind: 'skyline',
+    sky: [
+      { above: 440, color: '--sky-top' },
+      { above: 242, color: '--sky' },
+      { above: 44, color: '--sky-lit' },
+    ],
+    clouds: {
+      color: '--sky-shadow',
+      blur: 12,
+      masses: [
+        { at: [0.1, 0.1], size: [110, 55], alpha: 0.75 },
+        { at: [0.8, 0.7], size: [90, 24], alpha: 0.5 },
+      ],
+    },
+    towers: { color: '--skyline', height: [30, 140], windows: { color: '--window', alpha: 0.35, count: 12 } },
+    mist: { color: '--mist', alpha: 0.55, height: 36 },
+  }
+  const painted = (width = 320, height = 440, backdrop = SKYLINE) => {
+    const painter = backdropFor(backdrop)
+    painter.recolor(namedColor)
+    painter.resize(width, height)
+    const r = recorder()
+    painter.paint(r.ctx, 0)
+    return r
+  }
+  const towers = (r: ReturnType<typeof recorder>) => r.fills.filter((f) => f.color === '#skyline')
+  const points = (r: ReturnType<typeof recorder>) => towers(r).flatMap((f) => f.shapes.flat())
+
+  it('paints the sky from its top to the horizon in its bands', () => {
+    const [sky] = painted().boxes
+    expect(sky).toMatchObject({ x: 0, y: 0, w: 320, h: 440 })
+    expect(sky!.color).toMatchObject({
+      x0: 0,
+      y0: 0,
+      x1: 0,
+      y1: 440,
+      stops: [
+        [0, '#sky-top'],
+        [0.45, '#sky'],
+        [0.9, '#sky-lit'],
+      ],
+    })
+  })
+
+  it('shades it with soft clouds where they are asked, in their color and strength', () => {
+    const clouds = painted().fills.filter((f) => f.color === '#sky-shadow')
+    expect(clouds.map((f) => f.filter)).toEqual(['blur(12px)', 'blur(12px)'])
+    expect(clouds.map((f) => f.alpha)).toEqual([0.75, 0.5])
+    expect(clouds.map((f) => f.discs[0])).toEqual([
+      { x: 32, y: 44, r: 110, ry: 55 },
+      { x: 256, y: 308, r: 90, ry: 24 },
+    ])
+  })
+
+  // The opening's flat streaks [17] stay crisp where its billows are soft (section 2.2).
+  it('blurs a mass by its own softness, if it has one', () => {
+    const streaked: SkylineBackdrop = {
+      ...SKYLINE,
+      clouds: {
+        ...SKYLINE.clouds,
+        masses: [...SKYLINE.clouds.masses, { at: [0.5, 0.6], size: [140, 3], alpha: 0.4, blur: 2.5 }],
+      },
+    }
+    const clouds = painted(320, 440, streaked).fills.filter((f) => f.color === '#sky-shadow')
+    expect(clouds.map((f) => f.filter)).toEqual(['blur(12px)', 'blur(12px)', 'blur(2.5px)'])
+  })
+
+  it('draws the towers sharp, over the clouds', () => {
+    const r = painted()
+    expect(towers(r).every((f) => f.filter === 'none' && f.alpha === 1)).toBe(true)
+    expect(r.fills.findIndex((f) => f.color === '#skyline')).toBeGreaterThan(
+      r.fills.findLastIndex((f) => f.color === '#sky-shadow'),
+    )
+  })
+
+  it('cuts the towers out along the foot, across the whole width, none above the tallest', () => {
+    const drawn = points(painted())
+    const ys = drawn.map(([, y]) => y)
+    const xs = drawn.map(([x]) => x)
+    expect(Math.max(...ys)).toBe(440)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(440 - 140)
+    expect(Math.min(...ys)).toBeLessThan(440 - 100)
+    expect(Math.min(...xs)).toBeLessThanOrEqual(0)
+    expect(Math.max(...xs)).toBeGreaterThanOrEqual(320)
+  })
+
+  it('lights a few windows in the towers, faintly', () => {
+    const windows = painted().boxes.filter((b) => b.color === '#window')
+    expect(windows).toHaveLength(12)
+    for (const w of windows) {
+      expect(w.alpha).toBe(0.35)
+      expect(w.y).toBeGreaterThanOrEqual(440 - 140)
+      expect(w.y + w.h).toBeLessThanOrEqual(440)
+    }
+  })
+
+  it("lays a mist over the towers' foot, rising from the bottom", () => {
+    const mist = painted().boxes.filter((b) => b.color === '#mist')
+    // In thin bands from 36px up down to the bottom, the whole width, stronger as they near it.
+    expect(mist[0]!.y).toBe(440 - 36)
+    expect(mist.at(-1)!.y + mist.at(-1)!.h).toBe(440)
+    expect(mist.every((b) => b.x === 0 && b.w === 320)).toBe(true)
+    const alphas = mist.map((b) => b.alpha)
+    expect(alphas).toEqual([...alphas].sort((a, b) => a - b))
+    expect(alphas.at(-1)).toBeLessThanOrEqual(0.55)
+    expect(alphas[0]).toBeLessThan(0.1)
+  })
+
+  // A fixed city: the same towers after a resize or new colors, as the backdrop is painted afresh.
+  it('draws the same city after a resize and after new colors', () => {
+    const painter = backdropFor(SKYLINE)
+    painter.recolor(namedColor)
+    painter.resize(320, 440)
+    const first = recorder()
+    painter.paint(first.ctx, 0)
+    painter.resize(400, 500)
+    painter.resize(320, 440)
+    painter.recolor(namedColor)
+    const again = recorder()
+    painter.paint(again.ctx, 0)
+    expect(points(again)).toEqual(points(first))
+  })
+
+  it('keeps its towers to the foot of a taller panel', () => {
+    const ys = points(painted(320, 600)).map(([, y]) => y)
+    expect(Math.max(...ys)).toBe(600)
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(600 - 140)
+  })
+
+  // The lit band sits just above the towers whatever the panel's height: on a taller panel, the
+  // black top grows, and nothing lit rises to where the cards' text sits (section 2.5's ceiling).
+  it('keeps its bands as high above the foot on a taller panel', () => {
+    const [sky] = painted(320, 600).boxes
+    expect(sky).toMatchObject({ x: 0, y: 0, w: 320, h: 600 })
+    expect(sky!.color).toMatchObject({
+      x0: 0,
+      y0: 600 - 440,
+      x1: 0,
+      y1: 600,
+      stops: [
+        [0, '#sky-top'],
+        [0.45, '#sky'],
+        [0.9, '#sky-lit'],
+      ],
+    })
+  })
+
+  // A variable the page doesn't set reads as '', which a gradient refuses with a throw.
+  it.each(['--sky-lit', '--mist'])('paints nothing, and does not throw, while %s is missing', (missing) => {
+    const painter = backdropFor(SKYLINE)
+    painter.recolor((variable) => (variable === missing ? '' : namedColor(variable)))
+    painter.resize(320, 440)
+    const r = recorder()
+    expect(() => painter.paint(r.ctx, 0)).not.toThrow()
+    expect([...r.boxes, ...r.fills]).toHaveLength(0)
+  })
+
+  it('keeps every lit window on the panel, however wide it is', () => {
+    for (let width = 260; width <= 480; width += 7) {
+      const windows = painted(width).boxes.filter((b) => b.color === '#window')
+      expect(windows).toHaveLength(12)
+      for (const w of windows) {
+        expect(w.x).toBeGreaterThanOrEqual(0)
+        expect(w.x + w.w).toBeLessThanOrEqual(width)
+      }
+    }
+  })
+
+  // In its own color at a rising strength, not a gradient from transparent black, which a canvas
+  // mixes in and greys the middle of the band.
+  it('fades its mist in its own color', () => {
+    const mist = painted().boxes.slice(-6)
+    expect(mist.every((b) => b.color === '#mist')).toBe(true)
+  })
+
+  it('paints nothing before it has a size, and does not throw', () => {
+    const painter = backdropFor(SKYLINE)
+    painter.recolor(namedColor)
+    const r = recorder()
+    expect(() => painter.paint(r.ctx, 0)).not.toThrow()
+    expect([...r.boxes, ...r.fills]).toHaveLength(0)
+  })
+})
+
+// DARK DECO's police blimps (dark-deco-build.md, section 2.3): black hulls hovering over the red
+// sky (two here; the storyboard has three), each with two beams under its nose, leaning out and
+// swaying a little, never sweeping; drifting so slowly that they hover, and on whole ticks only.
+describe('the blimps', () => {
+  const blimps = (atmosphere = BLIMPS) => {
+    const painter = painterFor(atmosphere, seeded())
+    painter.recolor(namedColor)
+    painter.resize(320, 440)
+    return painter
+  }
+  type Frame = ReturnType<typeof recorder>
+  const hulls = (r: Frame) => r.fills.filter((f) => f.color === '#blimp').flatMap((f) => f.discs)
+  const beams = (r: Frame) => r.fills.filter((f) => f.color === '#beam' && f.shapes.length)
+  /** A beam's lean from straight down, in radians (out to the right is positive): its axis to its far edge's middle. */
+  const lean = ([nose, left, right]: Shape) =>
+    Math.atan2((left![0] + right![0]) / 2 - nose![0], (left![1] + right![1]) / 2 - nose![1])
+  const { splay, sway, reach } = BLIMPS.beams
+
+  it('cuts each blimp out in its color, where it hovers, as long as it is', () => {
+    const [first] = framesOver(blimps(), 0)
+    const [big, small] = hulls(first)
+    expect(big!.x).toBeCloseTo(0.7 * 320)
+    expect(big!.y).toBeCloseTo(0.25 * 440)
+    expect(big!.r).toBeCloseTo(14)
+    expect(small!.x).toBeCloseTo(0.2 * 320)
+    expect(small!.y).toBeCloseTo(0.45 * 440)
+    expect(small!.r).toBeCloseTo(9)
+  })
+
+  it('hangs two beams from under each, in their color and strength, behind the hull', () => {
+    const [first] = framesOver(blimps(), 0)
+    const drawn = beams(first)
+    expect(drawn.flatMap((f) => f.shapes)).toHaveLength(4)
+    expect(drawn.every((f) => f.alpha === 0.07)).toBe(true)
+    expect(first.fills.findIndex((f) => f.color === '#beam')).toBeLessThan(
+      first.fills.findIndex((f) => f.color === '#blimp'),
+    )
+  })
+
+  it('reaches its beams down as far as asked, leaning out either way within their sway', () => {
+    for (const frame of framesOver(blimps(), 80)) {
+      const shapes = beams(frame).flatMap((f) => f.shapes)
+      const leans = shapes.map(lean)
+      // One out to each side, each within its splay and sway.
+      for (const pair of [leans.slice(0, 2), leans.slice(2, 4)]) {
+        expect(pair.map(Math.sign).sort()).toEqual([-1, 1])
+        for (const l of pair) expect(Math.abs(Math.abs(l) - splay)).toBeLessThanOrEqual(sway + 1e-9)
+      }
+      const [nose, edge] = shapes[0]!
+      const length = BLIMPS.fleet[0]!.length
+      expect(Math.hypot(edge![0] - nose![0], edge![1] - nose![1])).toBeCloseTo(reach * length)
+    }
+  })
+
+  it('sways its beams over their period, rather than holding them', () => {
+    const frames = framesOver(blimps(), BLIMPS.beams.period * FPS)
+    const leans = frames.map((f) => lean(beams(f)[0]!.shapes[0]!))
+    expect(Math.max(...leans) - Math.min(...leans)).toBeCloseTo(2 * sway, 2)
+  })
+
+  // The opening's far blimps light two lamps apart, their beams leaning in to cross in an M [17].
+  it("crosses a blimp's beams when they lean in from two lamps apart", () => {
+    const crossing: BlimpsAtmosphere = {
+      ...BLIMPS,
+      fleet: [{ length: 28, at: 0.25, from: 0.5, drift: 0, splay: -0.15 }],
+      beams: { ...BLIMPS.beams, apart: 0.3 },
+    }
+    const [first] = framesOver(blimps(crossing), 0)
+    const [a, b] = beams(first).flatMap((f) => f.shapes) as [Shape, Shape]
+    const foot = (shape: Shape) => (shape[1]![0] + shape[2]![0]) / 2
+    // The beams start apart and end on the other's side.
+    expect(Math.sign(a[0]![0] - b[0]![0])).toBe(-Math.sign(foot(a) - foot(b)))
+  })
+
+  it("doesn't sway every blimp's beams in step", () => {
+    const leansOf = (f: Frame) =>
+      beams(f)
+        .flatMap((g) => g.shapes)
+        .map(lean)
+    const frames = framesOver(blimps(), 8)
+    const first = frames.map((f) => leansOf(f)[0]!)
+    const third = frames.map((f) => leansOf(f)[2]!)
+    const moved = (xs: number[]) => xs.map((x, i) => (i ? Math.sign(x - xs[i - 1]!) : 0))
+    expect(moved(first)).not.toEqual(moved(third))
+  })
+
+  it('draws no beams while their color is missing, rather than in the hull', () => {
+    const painter = painterFor(BLIMPS, seeded())
+    painter.recolor((variable) => (variable === '--beam' ? '' : namedColor(variable)))
+    painter.resize(320, 440)
+    const [first, next] = framesOver(painter, 1)
+    for (const frame of [first, next!]) {
+      expect(frame.fills.filter((f) => f.alpha === BLIMPS.beams.alpha)).toHaveLength(0)
+      expect(hulls(frame)).toHaveLength(2)
+    }
+  })
+
+  it('drifts at its pace on whole ticks only', () => {
+    const [first, half, whole] = framesOver(blimps(), 2, 1 / FPS / 2)
+    expect(hulls(half!)[0]!.x).toBeCloseTo(hulls(first)[0]!.x)
+    expect(hulls(whole!)[0]!.x).toBeCloseTo(hulls(first)[0]!.x + 0.5)
+    expect(hulls(whole!)[1]!.x).toBeCloseTo(hulls(first)[1]!.x - 0.25)
+  })
+
+  // Wholly past a side, hull and beams, it comes back in from the other.
+  it('comes back in from the other side once wholly past it', () => {
+    const fast: BlimpsAtmosphere = { ...BLIMPS, fleet: [{ length: 28, at: 0.25, from: 0.9, drift: 9 }] }
+    const xs = framesOver(blimps(fast), 60).map((f) => hulls(f)[0]!.x)
+    const back = xs.findIndex((x, i) => i > 0 && x < xs[i - 1]!)
+    expect(back).toBeGreaterThan(0)
+    expect(xs[back - 1]!).toBeGreaterThan(320 + 14)
+    expect(xs[back]!).toBeLessThan(-14)
   })
 })
