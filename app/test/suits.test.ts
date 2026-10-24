@@ -10,6 +10,7 @@ import {
   stillStep,
   VENGEANCE_SUIT,
   watchOn,
+  type Layer,
   type Pose,
   type Script,
 } from '../src/shared/suits'
@@ -189,7 +190,8 @@ describe("HOLIDAY's suit", () => {
 // An oval on his chest, as PALE MOONLIGHT wears it and the Wave 3 Themes will (jury-wave-3.md,
 // section 6, item 1): a cowl-black rim, the plate, and the Theme's bat across it.
 describe('an oval on his chest', () => {
-  const fills = (layers: readonly { fill?: string }[]) => layers.map((layer) => layer.fill)
+  const fills = (layers: readonly Layer[]) =>
+    layers.map((layer) => ('fill' in layer ? layer.fill : undefined))
   const at = { cx: 8, cy: 7, rx: 2.1 }
   const OVAL = { box: { x: 18, y: 0, width: 84, height: 48 }, rim: 2 }
 

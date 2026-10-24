@@ -109,7 +109,7 @@ export interface Box {
 export interface Plate {
   box: Box
   rim: number
-  lights?: false
+  lights?: boolean
 }
 
 /**
