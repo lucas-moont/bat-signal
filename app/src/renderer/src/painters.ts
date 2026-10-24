@@ -315,15 +315,14 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
       ;[width, height] = [w, h]
       const drawn = decoSkyline(w, h, towers.height)
       outline = drawn.outline
-      // The windows in the same towers every time, from a seed of their own, inset from each edge.
+      // The windows from a seed of their own, each at a share of the way across the panel (so a resize
+      // keeps them about where they were, and none past an edge), in the tower standing there.
       const random = seededFrom(SKYLINE_SEED.windows)
       const room = (span: number, size: number) => Math.max(0, span - 2 * WINDOW.inset - size)
       windows = Array.from({ length: towers.windows.count }, () => {
-        const tower = drawn.towers[Math.floor(random() * drawn.towers.length)]!
-        return {
-          x: Math.round(tower.x + WINDOW.inset + random() * room(tower.width, WINDOW.w)),
-          y: Math.round(h - tower.roof + WINDOW.inset + random() * room(tower.roof, WINDOW.h)),
-        }
+        const x = Math.round(WINDOW.inset + random() * room(w, WINDOW.w))
+        const tower = drawn.towers.find((t) => x < t.x + t.width) ?? drawn.towers.at(-1)!
+        return { x, y: Math.round(h - tower.roof + WINDOW.inset + random() * room(tower.roof, WINDOW.h)) }
       })
     },
     paint(ctx) {
