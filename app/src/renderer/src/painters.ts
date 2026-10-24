@@ -304,7 +304,10 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
   }
 }
 
-/** How wide a beam opens, either way of its axis, in degrees: thin, as the opening's crossing beams, never the intro's cone. */
+/**
+ * How wide a beam opens, either way of its axis, in degrees: thin, as the opening's crossing beams,
+ * never the intro's cone.
+ */
 const BEAM_HALF = 4.5
 
 /** A hull's height for its length: a cigar, about 3.3:1. */
