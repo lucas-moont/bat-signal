@@ -79,7 +79,53 @@ _Motion (cloud drift, the blimps' drift and bob, the beams' sweep) is checked on
 
 ## 3. The chest bat and the oval
 
-_Pending: the oval's ratio and the bat's silhouette from the sharpest sources, and a traced path._
+The dossier measured the oval on two small cel photographs and asked for a sharper source before tracing (its §13). Sources now, sharpest first: Timm's master model sheet *Batman Main Models no. 1* (Feb–Apr 1991, "MASTER") at 1080px [90], the sheet of [19]; an HD capture of the 2018 Blu-ray [92]; DC's licensed standee [56], turned three-quarter, so used for ratios only; the dossier's cel [53].
+
+### 3.1 The dossier's chest came from the one outlier
+
+| | Oval w:h | Bat width / oval width | Bat w:h | Yellow band, bat tip to rim | Touches the rim? |
+|---|---|---|---|---|---|
+| [90] model sheet, header logo | **1.51** | 0.80 | 1.57 | 3.5% of the width | no |
+| [90] model sheet, the figure's chest | 1.55 | 0.77 | 1.60 | 5–10% | no |
+| [92] HD Blu-ray | **about 1.66** | 0.82 | about 1.7 | 3–5% | no |
+| [56] DC standee | 1.73 | 0.87 | 1.89 | 4.7% | no |
+| [53] the cel (the dossier's source) | 1.38 | 0.79 | 2.0 | | no |
+| *`OVAL_1989` / `BAT_1989` (PALE MOONLIGHT)* | *1.75* | *0.94* | *1.99* | *none* | *yes, by design* |
+
+(Measured.) The oval is **1.5–1.73:1, about 1.66 as aired**, not 1.4; the bat **nearly fills it** (0.80–0.87 of the width, not 75%), with a thin yellow band all round and never touching the rim.
+
+### 3.2 The bat is the 1989 logo's construction
+
+The master sheet says so in writing: "PLEASE USE LOGO ON ALL MODELS REGARDING BATMAN" [90] (Read). Its chest bat has the 1989 logo's parts: two ears on a flat crown, a slot either side of the head, a wing point beside each slot, two lobes a side underneath, a tail as the lowest point. So the dossier's §9 ("this is not BAT_1989") does not hold. What is true is that the *drawn* bat does not reach the rim.
+
+It is still measurably not PALE MOONLIGHT's (Measured, left halves on the 120x48 grid):
+- **short ears** (2.8 units tall on a 10.1-unit head; `BAT_1989`'s are 6.4) on a flat crown;
+- **deep narrow slots** with straight walls down to y 18.4, where `BAT_1989` has round bowls;
+- **wings that follow the oval without reaching it**;
+- two lobes a side (the outer 12.4 units deep) and the tail 2.2 units below the wing tips.
+
+Fitted to the three sharp sources, a traced candidate overlaps them by **IoU 0.66–0.81**; `BAT_1989`, widened into the same plate, by 0.51–0.60. At 3x and on the 64px disc the two read differently: short ears and slots against tall ears and bowls, a yellow band against a bat that meets the rim, a rounder oval. **At 54px on the chest both are a dark bat in a yellow oval**, told apart only by the oval's colour and ratio (Measured on a proof board). The yellow-oval rule (decision 2) covers the colour; whether a shape this close may recur is the maintainer's call.
+
+### 3.3 A first trace
+
+Traced from [90]'s header logo, the left half mirrored at x 60, then widened ×1.10 so the sheet's 1.51 oval becomes the aired 1.66. About 1.79:1, in a plate `{ box: { x: 20, y: 0, width: 80, height: 48 }, rim: 2 }`:
+
+```ts
+export const BAT_1992 =
+  'M60 7.4 L58.35 7.4 L56.7 4.6 L54.94 5.4 L54.72 14.2 Q54.06 18.4 50.32 18.4 Q46.13 18.4 45.91 14.6 ' +
+  'L45.91 10.6 Q46.02 8.2 46.57 6.4 Q34.14 7.4 28.74 15.2 Q26.32 19 26.65 23.2 Q27.09 28.8 31.83 33.2 ' +
+  'L40.63 39.8 Q36.45 36.6 37.33 31.4 Q38.21 27.4 41.95 27.4 Q45.91 27.6 47.45 34.4 Q48.99 29.8 52.74 29.8 ' +
+  'Q56.92 29.8 57.58 33.6 L60 42 L62.42 33.6 Q63.08 29.8 67.26 29.8 Q71.01 29.8 72.55 34.4 Q74.09 27.6 ' +
+  '78.05 27.4 Q81.79 27.4 82.67 31.4 Q83.55 36.6 79.37 39.8 L88.17 33.2 Q92.91 28.8 93.35 23.2 Q93.68 19 ' +
+  '91.26 15.2 Q85.86 7.4 73.43 6.4 Q73.98 8.2 74.09 10.6 L74.09 14.6 Q73.87 18.4 69.68 18.4 Q65.94 18.4 ' +
+  '65.28 14.2 L65.06 5.4 L63.3 4.6 L61.65 7.4 L60 7.4 Z'
+```
+
+This is round one, not a finished trace: HOLIDAY's `BAT_1996` took twelve rounds on screen. Two Q control points lie 0.3 units outside the curve, so `emblem()`'s box comes out about 0.6 units wider than drawn. The aired drawing [92] has wider, shallower slots (6–20 units out, bottoms at y 14–16) and shallower lobes; that is the variant to show beside the model sheet's.
+
+### 3.4 The colours, in HD
+
+In HD the oval is painted with the belt's paint (0.8–1.0 ΔE00 apart in the same frame). The recommended `#b8963a` is 3.0–3.7 from the HD oval in flat light, the fallbacks `#c4a03a` 6.4 and `#c9a53c` 7.8; `#b8963a` is 19.7 from the alarm's fill and 19.2 from its hot ink, 2.04:1 on the suit, and the black bat reads 7.24:1 on it (Measured, §5). **HD supports `#b8963a`.**
 
 ## 4. Poses
 
