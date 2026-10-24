@@ -369,36 +369,52 @@ function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
 }
 
 /**
- * A blimp's shape, in hull lengths from its middle (x along its way, y down): a hull about 3.3:1;
- * its tail fin at the back, which `trace` flips with a negative scale (the fin is the same above and
- * below); and its gondola under the hull.
+ * A blimp's shape, in hull lengths from its middle (x along its way, y down): a black cigar about
+ * 2.4:1, as the opening cuts it out, and its tail fin at the back, which `trace` flips with a
+ * negative scale (the fin is the same above and below).
  */
 const HULL = {
-  tall: 0.3,
+  tall: 0.42,
   fin: [
     [0.38, 0],
     [0.58, -0.2],
     [0.58, 0.2],
   ],
-  gondola: { w: 0.2, h: 0.08 },
 } as const
+
+/** How far apart in its sway one blimp's beams are from the next one's, in radians of the swing. */
+const OUT_OF_STEP = 2.4
 
 /**
  * Police blimps hovering: each drifts by whole ticks, round from the other side once it and its
- * beams are wholly past one, its two beams leaning out under its nose and swaying on the clock.
+ * beams are wholly past one, its two beams hanging from its lamps under its nose, leaning out (or in,
+ * to cross) and swaying on the clock, each blimp out of step with the next.
  */
 function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
+  const apart = beams.apart ?? 0
   /**
-   * Each blimp's half-height, how far its beams reach, how far past a side it runs before coming
-   * round (its hull, and its beams leaning out at their widest), and which way it faces.
+   * Each blimp's half-height, how far its beams reach and lean, which way it faces, where its lamps
+   * hang from its middle and how far below it (on the hull's underside there), and how far past a
+   * side it runs before coming round: its fin, or its beams at their widest lean.
    */
-  const ships = fleet.map(({ length, drift }) => {
+  const ships = fleet.map(({ length, drift, splay = beams.splay }) => {
+    const belly = (length * HULL.tall) / 2
     const reach = beams.reach * length
+    const ahead = drift < 0 ? -1 : 1
+    const lamps = [-1, 1].map((side) => {
+      // Under the nose, a quarter of the hull ahead of its middle, the lamps either side of that.
+      const dx = ahead * (length / 4) + (side * apart * length) / 2
+      return { dx, dy: belly * Math.sqrt(Math.max(0, 1 - (dx / (length / 2)) ** 2)) }
+    })
+    const lean = Math.min(Math.PI / 2, Math.abs(splay) + beams.sway + beams.width)
+    const lampsOut = Math.max(...lamps.map(({ dx }) => Math.abs(dx)))
     return {
-      belly: (length * HULL.tall) / 2,
+      belly,
       reach,
-      margin: length / 2 + reach * Math.sin(beams.splay + beams.sway + beams.width),
-      ahead: drift < 0 ? -1 : 1,
+      splay,
+      ahead,
+      lamps,
+      margin: Math.max(HULL.fin[1][0] * length, lampsOut + reach * Math.sin(lean)),
     }
   })
   let width = 0
@@ -423,32 +439,31 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
       if (!width || !color) return
       // A float's sum of whole ticks may land a hair under one.
       const whole = Math.floor(ticks + 1e-9)
-      const sway = beams.sway * Math.sin((2 * Math.PI * whole) / (beams.period * FPS))
-      // Each beam's two edges, the same for every blimp this tick: left beam, then right.
-      const edges = [-1, 1].flatMap((side) =>
-        [-beams.width, beams.width].map((w) => side * beams.splay + sway + w),
-      )
-      const [sin, cos] = [edges.map(Math.sin), edges.map(Math.cos)]
+      const swing = (2 * Math.PI * whole) / (beams.period * FPS)
       const places = fleet.map(({ at, from, drift }, i) => ({
         x: wrapAcross(from * width + drift * whole, width, ships[i]!.margin),
         y: at * height,
       }))
-      // Every beam in one fill, under every hull in another.
-      ctx.globalAlpha = beams.alpha
-      ctx.fillStyle = beam
-      ctx.beginPath()
-      places.forEach(({ x, y }, i) => {
-        const { belly, reach, ahead } = ships[i]!
-        // Under the nose, a quarter of the hull ahead of its middle.
-        const [nx, ny] = [x + (ahead * fleet[i]!.length) / 4, y + belly]
-        for (let b = 0; b < 4; b += 2) {
-          ctx.moveTo(nx, ny)
-          ctx.lineTo(nx + sin[b]! * reach, ny + cos[b]! * reach)
-          ctx.lineTo(nx + sin[b + 1]! * reach, ny + cos[b + 1]! * reach)
-          ctx.closePath()
-        }
-      })
-      ctx.fill()
+      // Every beam in one fill, under every hull in another; none while their color is missing (an
+      // empty fillStyle is ignored, and the hulls' black would stand in).
+      if (beam) {
+        ctx.globalAlpha = beams.alpha
+        ctx.fillStyle = beam
+        ctx.beginPath()
+        places.forEach(({ x, y }, i) => {
+          const { reach, splay, lamps } = ships[i]!
+          const sway = beams.sway * Math.sin(swing + i * OUT_OF_STEP)
+          lamps.forEach(({ dx, dy }, side) => {
+            const axis = (side ? 1 : -1) * splay + sway
+            const [lx, ly] = [x + dx, y + dy]
+            ctx.moveTo(lx, ly)
+            for (const edge of [axis - beams.width, axis + beams.width])
+              ctx.lineTo(lx + Math.sin(edge) * reach, ly + Math.cos(edge) * reach)
+            ctx.closePath()
+          })
+        })
+        ctx.fill()
+      }
       ctx.globalAlpha = 1
       ctx.fillStyle = color
       ctx.beginPath()
@@ -458,19 +473,6 @@ function blimps({ color: variable, fleet, beams }: BlimpsAtmosphere): Painter {
         ctx.moveTo(x + length / 2, y)
         ctx.ellipse(x, y, length / 2, belly, 0, 0, 2 * Math.PI)
         trace(ctx, HULL.fin, x, y, -ahead * length)
-        const { w, h } = HULL.gondola
-        trace(
-          ctx,
-          [
-            [-w / 2, 0],
-            [w / 2, 0],
-            [w / 2, h],
-            [-w / 2, h],
-          ],
-          x,
-          y + belly,
-          length,
-        )
       })
       ctx.fill()
     },

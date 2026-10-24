@@ -234,15 +234,16 @@ export interface BlimpsAtmosphere extends Scene {
   color: string
   /**
    * Each blimp: how long it is (px), how far down the panel it hovers and where across it starts
-   * (shares of the panel's height and width), and how far it drifts a tick (px; under 0, from the
-   * right).
+   * (shares of the panel's height and width), how far it drifts a tick (px; under 0, from the
+   * right), and, if not the fleet's, how far its beams lean out (under 0, in: from lamps apart they
+   * cross, as the opening's far blimps' do).
    */
-  fleet: readonly { length: number; at: number; from: number; drift: number }[]
+  fleet: readonly { length: number; at: number; from: number; drift: number; splay?: number }[]
   /**
    * The two beams under each nose: their variable and strength (alpha), how far they reach (in hull
    * lengths), how wide each opens either way of its axis, how far each leans out from straight down
-   * and sways either way of that (radians, as the rain's angle), and the seconds a sway takes, out
-   * and back.
+   * and sways either way of that (radians, as the rain's angle), the seconds a sway takes, out and
+   * back, and how far apart its two lamps hang (in hull lengths; together by default).
    */
   beams: {
     color: string
@@ -252,6 +253,7 @@ export interface BlimpsAtmosphere extends Scene {
     splay: number
     sway: number
     period: number
+    apart?: number
   }
 }
 
