@@ -1658,7 +1658,7 @@ const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
 /** The cape's hem in deep hooked points, three a side (left half; mirrored for the right). */
 const HOOKED = {
   /** Hanging close behind him, just past his sides, its hem in one soft scallop (left half). */
-  hanging: 'M3 4.8 L2.4 5.2 Q2 7.8 2 10.9 Q2.7 10.3 3.4 10.9 L5.2 10.9 L5.2 5 Z',
+  hanging: 'M3 4.8 L2.4 5.2 Q2 7.8 2 10.9 Q2.7 10.3 3.4 10.9 L5.4 10.9 L5.4 5 Z',
   /** Closed round him, asleep, its hem in soft scallops. */
   wrapped:
     'M2.6 6.2 L13.4 6.2 L14.2 10.9 Q12.6 10.2 11 10.9 Q9.4 10.2 8 10.9 Q6.6 10.2 5 10.9 Q3.4 10.2 1.8 10.9 Z',
@@ -1666,7 +1666,7 @@ const HOOKED = {
   wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 Q-4.2 7.6 -3.2 9 Q-2 8.2 -0.8 9.8 Q0.6 9 1.6 10.4 Q2.4 10 3 10.4 Z',
   wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 Q-4.4 7 -3.4 8.4 Q-2.2 7.6 -1 9.2 Q0.4 8.4 1.4 9.8 Q2.2 9.4 3 9.8 Z',
   /** Thrown open behind him, alarmed, not too wide, its hem in two soft scallops (left half). */
-  openLeft: 'M3.4 5 L1.2 5.2 Q-0.4 7.6 -1.4 10.9 Q0 10.2 1 10.9 Q2.2 10.2 3.4 10.9 Z',
+  openLeft: 'M4.8 5 L1.2 5.2 Q-0.4 7.6 -1.4 10.9 Q0 10.2 1 10.9 Q2.2 10.2 4.8 10.9 Z',
 }
 
 /**
@@ -1709,12 +1709,39 @@ const decoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], chest: L
 /** Flying, the drop: the cape spread from his hands at his shoulders, two frames lifting its tips. */
 const decoFlying = (wing: string, light: string) =>
   decoPose(DECO_ARMS_OUT, [{ kind: 'cape', d: wing, mirrored: true }, lit(light, true)])
-/** Alarmed: in his suit, the cape flung open behind him, the aura lit (the maintainer kept him in it). */
-const decoAlarmed = decoPose(DECO_STANDING, [
-  ...DECO_BACK,
-  { kind: 'cape', d: HOOKED.openLeft, mirrored: true },
-  lit(DECO_LIGHT.openLeft, true),
-])
+/** His arms down his sides, his black fists at his hips, edged in the rim's blue as his crossed arms are. */
+const DECO_ARMS_DOWN: Layer[] = [
+  {
+    kind: 'rects',
+    px: [
+      [2.3, 5.3, 1.6, 4.2],
+      [12.1, 5.3, 1.6, 4.2],
+    ],
+    fill: 'var(--cowl-edge)',
+  },
+  {
+    kind: 'rects',
+    px: [
+      [2.5, 5.5, 1.2, 2.7],
+      [12.3, 5.5, 1.2, 2.7],
+    ],
+    fill: 'var(--suit)',
+  },
+  {
+    kind: 'rects',
+    px: [
+      [2.5, 8.2, 1.2, 1.1],
+      [12.3, 8.2, 1.2, 1.1],
+    ],
+    fill: 'var(--gloves)',
+  },
+]
+/** Alarmed: in his suit, his arms down, the cape thrown open behind him, the aura lit (the maintainer kept him in it). */
+const decoAlarmed = decoPose(
+  DECO_STANDING,
+  [...DECO_BACK, { kind: 'cape', d: HOOKED.openLeft, mirrored: true }, lit(DECO_LIGHT.openLeft, true)],
+  DECO_ARMS_DOWN,
+)
 /** His arms crossed high over his chest, in his black gloves, his upper arms in the suit's grey. */
 /**
  * His upper arms down his sides and his forearms crossed over his chest, each edged in the rim's blue
