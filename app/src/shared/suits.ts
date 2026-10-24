@@ -1657,14 +1657,16 @@ const DECO_CHEST = chestPlate(EMBLEM_1992, { cx: 8, cy: 6.75, rx: 2.3 })
 
 /** The cape's hem in deep hooked points, three a side (left half; mirrored for the right). */
 const HOOKED = {
-  hanging: 'M3 4.8 L2 5.2 Q1.4 7.6 1.3 11 L1.3 9.8 L2.6 11 L2.6 9.8 L3.9 11 L5.2 11 L5.2 5 Z',
+  /** Hanging close behind him, just past his sides, its hem in one soft scallop (left half). */
+  hanging: 'M3 4.8 L2.4 5.2 Q2 7.8 2 10.9 Q2.7 10.3 3.4 10.9 L5.2 10.9 L5.2 5 Z',
+  /** Closed round him, asleep, its hem in soft scallops. */
   wrapped:
-    'M2.6 6.2 L13.4 6.2 L14.4 10.9 L13 9 L11.4 10.9 L10 9 L8.6 10.9 L8 9.4 L7.4 10.9 L6 9 L4.6 10.9 L3 9 L1.6 10.9 Z',
+    'M2.6 6.2 L13.4 6.2 L14.2 10.9 Q12.6 10.2 11 10.9 Q9.4 10.2 8 10.9 Q6.6 10.2 5 10.9 Q3.4 10.2 1.8 10.9 Z',
   /** Spread from the hands at his shoulders, legs together under it: the storyboard's drop [97]. */
-  wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.4 8 L-3 7.2 L-2.6 9.6 L-1 8.8 L-0.4 10.8 L1.4 10 L3 10.8 Z',
-  wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.6 7.4 L-3.2 6.6 L-2.8 9 L-1.2 8.2 L-0.6 10.2 L1.2 9.4 L3 10.2 Z',
-  /** Flung open behind him, alarmed (left half). */
-  openLeft: 'M3.4 5 L0 5.2 L-4 11.2 L-4 9.2 L-2 11.2 L-2 9.2 L0 11.2 L0 9.2 L2 11.2 L3.4 9.6 Z',
+  wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 Q-4.2 7.6 -3.2 9 Q-2 8.2 -0.8 9.8 Q0.6 9 1.6 10.4 Q2.4 10 3 10.4 Z',
+  wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 Q-4.4 7 -3.4 8.4 Q-2.2 7.6 -1 9.2 Q0.4 8.4 1.4 9.8 Q2.2 9.4 3 9.8 Z',
+  /** Thrown open behind him, alarmed, not too wide, its hem in two soft scallops (left half). */
+  openLeft: 'M3.4 5 L1.2 5.2 Q-0.4 7.6 -1.4 10.9 Q0 10.2 1 10.9 Q2.2 10.2 3.4 10.9 Z',
 }
 
 /**
@@ -1674,20 +1676,20 @@ const HOOKED = {
 const DECO_LIGHT = {
   wingLeft: 'M3 5 L1 4.6 L-4.6 5.2 L-4.5 6.3 L1 5.7 L3 6.1 Z',
   wingLeftLifted: 'M3 5 L1 4.4 L-4.8 4.6 L-4.7 5.7 L1 5.5 L3 5.9 Z',
-  openLeft: 'M3.4 5 L0 5.2 L-2.2 8.6 L-1.2 8.6 L0.8 5.9 L3.4 5.9 Z',
-  hanging: 'M3 4.8 L2 5.2 Q1.7 6.2 1.6 7.2 Q2.6 5.9 3.4 5.8 Z',
+  openLeft: 'M3.4 5 L1.2 5.2 Q0.4 6.4 -0.2 7.8 Q1.2 6 3.4 5.9 Z',
+  hanging: 'M3 4.8 L2.4 5.2 Q2.1 6.2 2.1 7.2 Q2.8 5.9 3.4 5.8 Z',
 }
 const lit = (d: string, mirrored = false): Layer => ({ kind: 'path', d, fill: 'var(--cowl-shine)', mirrored })
 /**
- * The cape's back, seen between his legs: the same black cloth as the rest of it, its hem in hooked
- * points between his feet; his legs edged in the rim's blue so his black boots read in front of it
- * (the maintainer, on screen: a lit back read as another thing).
+ * The cape's back between his legs: the same cloth and rim as the rest of it, hidden at its sides
+ * behind his outer legs so only its scalloped hem shows; his legs edged in the rim's blue so his black
+ * boots read in front of it (the maintainer, on screen).
  */
 const DECO_BACK: Layer[] = [
   {
     kind: 'path',
-    d: 'M3.4 5 L12.6 5 L12.6 11 L11.6 10.2 L10.4 11 L9.2 10.2 L8 11 L6.8 10.2 L5.6 11 L4.4 10.2 L3.4 11 Z',
-    className: 'clawd__cape-cloth',
+    d: 'M4.5 8.8 L11.5 8.8 L11.5 10.9 Q10.6 10.2 9.6 10.9 Q8 10.1 6.4 10.9 Q5.4 10.2 4.5 10.9 Z',
+    className: 'clawd__cape',
   },
   {
     kind: 'rects',
