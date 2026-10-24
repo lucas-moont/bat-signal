@@ -4,6 +4,7 @@ import {
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
   chestPlate,
+  DARK_DECO_SUIT,
   HOLIDAY_SUIT,
   PALE_MOONLIGHT_SUIT,
   scriptAt,
@@ -228,5 +229,36 @@ describe('an oval on his chest', () => {
     const lit = (p: Pose) => fills(p.front).includes('var(--signal)')
     expect(PALE_MOONLIGHT_SUIT.poses.alarmed.every(lit)).toBe(true)
     expect(PALE_MOONLIGHT_SUIT.poses.flying.some(lit)).toBe(false)
+  })
+})
+
+// DARK DECO's suit (animated-series.md, section 8; dark-deco-build.md, section 4): the yellow oval
+// never lights, in any pose, and on the perch he stands with his arms crossed over his chest, the
+// official key art's pose [76] [77], picked on screen.
+describe("DARK DECO's suit", () => {
+  const { poses, watch } = DARK_DECO_SUIT
+  const signature = DARK_DECO_SUIT.signature!
+  const every = [
+    ...poses.sleeping,
+    ...poses.flying,
+    ...poses.alarmed,
+    ...signature.map((step) => step.pose),
+    ...watch.map((step) => step.pose),
+  ]
+  const fills = (p: Pose) =>
+    [...p.behind, ...p.front].map((layer) => ('fill' in layer ? layer.fill : undefined))
+
+  it('never lights its oval, in any pose', () => {
+    for (const p of every) expect(fills(p)).not.toContain('var(--signal)')
+  })
+
+  it('ends its Signature with his arms crossed over his chest, in his black gloves', () => {
+    const held = signature.at(-1)!.pose
+    expect(held.front.some((layer) => layer.kind === 'rects' && layer.fill === 'var(--gloves)')).toBe(true)
+  })
+
+  it('wears the oval on his chest when awake', () => {
+    for (const p of [...poses.flying, ...poses.alarmed, signature.at(-1)!.pose])
+      expect(fills(p)).toContain('var(--emblem-plate)')
   })
 })
