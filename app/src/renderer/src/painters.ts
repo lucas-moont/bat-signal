@@ -184,12 +184,39 @@ function moon({ color: variable, alpha, at, radius, carved, candle: flame }: Moo
   }
 }
 
-/** The skyline's seeds (in [0, 1), as seededFrom takes them): the same city, and the same lit
- * windows in it, every time it is drawn. */
+/**
+ * The skyline's seeds, in [0, 1) as seededFrom takes them: the same city, and the same lit windows
+ * in it, every time it is drawn.
+ */
 const SKYLINE_SEED = { city: 0.1992, windows: 0.0716 }
 
-/** A lit window of the skyline: a dot taller than wide, in px. */
-const WINDOW = { w: 1.5, h: 2 }
+/**
+ * The skyline's Deco vocabulary, in px: how wide a tower may be; how much of the span between the
+ * lowest roofs and the tallest spire its roof may rise; a setback's two steps up, each a sixth of its
+ * width in from the last; a spire's crown, a quarter of its width either side of its middle, with a
+ * needle that rises toward the tallest spire from its base this wide; one tower in so many a spire;
+ * and a dome's rise for its width.
+ */
+const DECO = {
+  width: [12, 34],
+  spread: 0.55,
+  setback: [
+    [1 / 6, 0],
+    [1 / 6, 8],
+    [1 / 3, 8],
+    [1 / 3, 16],
+  ],
+  crown: [
+    [1 / 4, 0],
+    [1 / 4, 10],
+  ],
+  needle: { base: 3, tip: [0.8, 1] },
+  spireEvery: 4,
+  dome: 1 / 3,
+} as const
+
+/** A lit window of the skyline: a dot taller than wide, and its margin inside a tower's edge, in px. */
+const WINDOW = { w: 1.5, h: 2, inset: 3 }
 
 /** A tower of the skyline: where it stands, how wide, and its roof's height above the foot (px). */
 interface Tower {
@@ -200,43 +227,45 @@ interface Tower {
 
 /**
  * A Deco skyline along the foot of a panel this size, as one outline from the left edge's foot along
- * the roofs to the right edge's: flat roofs, stepped setbacks, domes and, every fourth tower, a spire
- * rising toward the tallest. Its towers, for the windows lit in them.
+ * the roofs to the right edge's: flat roofs, stepped setbacks, domes and, one tower in so many, a
+ * spire rising toward the tallest. Its towers, for the windows lit in them.
  */
 function decoSkyline(width: number, height: number, [low, high]: readonly [number, number]) {
   const random = seededFrom(SKYLINE_SEED.city)
   const outline: [number, number][] = [[-1, height]]
   const towers: Tower[] = []
   const up = (x: number, h: number) => outline.push([x, height - h])
+  /**
+   * A roof's left half, in shares of its width in and px up, then, past a peak in its middle if it
+   * has one (px up), the same mirrored back down.
+   */
+  const mirrored = (
+    x: number,
+    w: number,
+    roof: number,
+    half: readonly (readonly [number, number])[],
+    peak?: number,
+  ) => {
+    for (const [dx, rise] of half) up(x + dx * w, roof + rise)
+    if (peak !== undefined) up(x + w / 2, peak)
+    for (const [dx, rise] of [...half].reverse()) up(x + (1 - dx) * w, roof + rise)
+  }
+  const [narrow, wide] = DECO.width
   for (let x = -1, i = 0; x < width + 1; i++) {
-    const w = 12 + random() * 22
-    const roof = low + (high - low) * 0.55 * random()
-    const kind = i % 4 === 3 ? 'spire' : (['flat', 'setback', 'dome'] as const)[Math.floor(random() * 3)]!
+    const w = narrow + random() * (wide - narrow)
+    const roof = low + (high - low) * DECO.spread * random()
+    const spire = i % DECO.spireEvery === DECO.spireEvery - 1
+    const kind = spire ? 'spire' : (['flat', 'setback', 'dome'] as const)[Math.floor(random() * 3)]!
     up(x, roof)
-    if (kind === 'setback') {
-      // Two steps in, each a little higher, a third of the way across from either side.
-      const step = w / 3
-      up(x + step / 2, roof)
-      up(x + step / 2, roof + 8)
-      up(x + step, roof + 8)
-      up(x + step, roof + 16)
-      up(x + w - step, roof + 16)
-      up(x + w - step, roof + 8)
-      up(x + w - step / 2, roof + 8)
-      up(x + w - step / 2, roof)
-    } else if (kind === 'dome') {
-      for (let a = 1; a < 8; a++) up(x + (w * a) / 8, roof + Math.sin((Math.PI * a) / 8) * (w / 3))
-    } else if (kind === 'spire') {
-      // A crown on the roof, then a needle toward the tallest spire.
-      const tip = high * (0.8 + 0.2 * random())
-      const mid = x + w / 2
-      up(mid - w / 4, roof)
-      up(mid - w / 4, roof + 10)
-      up(mid - 1.5, roof + 10)
-      up(mid, tip)
-      up(mid + 1.5, roof + 10)
-      up(mid + w / 4, roof + 10)
-      up(mid + w / 4, roof)
+    if (kind === 'setback') mirrored(x, w, roof, DECO.setback)
+    else if (kind === 'dome')
+      for (let a = 1; a < 8; a++) up(x + (w * a) / 8, roof + Math.sin((Math.PI * a) / 8) * w * DECO.dome)
+    else if (kind === 'spire') {
+      const [lowest, highest] = DECO.needle.tip
+      const tip = high * (lowest + (highest - lowest) * random())
+      // The crown, then the needle's base on it and its tip in the middle.
+      const crown = DECO.crown.at(-1)![1]
+      mirrored(x, w, roof, [...DECO.crown, [1 / 2 - DECO.needle.base / 2 / w, crown]], tip)
     }
     up(x + w, roof)
     towers.push({ x, width: w, roof })
@@ -247,42 +276,44 @@ function decoSkyline(width: number, height: number, [low, high]: readonly [numbe
 }
 
 /** A red sky over a black skyline: painted whole on every paint, since it never moves. */
-function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter {
+function skyline({ sky, clouds, towers, mist }: SkylineBackdrop): Painter {
   let width = 0
   let height = 0
-  let colors: { sky: string[]; clouds: string; towers: string; windows: string; mist: string } | undefined
+  let stops: [number, string][] = []
+  let colors = { clouds: '', towers: '', windows: '', mist: '' }
   let outline: [number, number][] = []
   let windows: { x: number; y: number }[] = []
   return {
     recolor(colorOf) {
+      stops = sky.map(({ at, color }) => [at, colorOf(color)])
       colors = {
-        sky: sky.map(({ color }) => colorOf(color)),
         clouds: colorOf(clouds.color),
-        towers: colorOf(city.color),
-        windows: colorOf(city.windows.color),
+        towers: colorOf(towers.color),
+        windows: colorOf(towers.windows.color),
         mist: colorOf(mist.color),
       }
     },
     resize(w, h) {
       ;[width, height] = [w, h]
-      const drawn = decoSkyline(w, h, city.height)
+      const drawn = decoSkyline(w, h, towers.height)
       outline = drawn.outline
-      // The windows in the same towers every time, from a seed of their own.
+      // The windows in the same towers every time, from a seed of their own, inset from each edge.
       const random = seededFrom(SKYLINE_SEED.windows)
-      windows = Array.from({ length: city.windows.count }, () => {
+      const room = (span: number, size: number) => Math.max(0, span - 2 * WINDOW.inset - size)
+      windows = Array.from({ length: towers.windows.count }, () => {
         const tower = drawn.towers[Math.floor(random() * drawn.towers.length)]!
         return {
-          x: Math.round(tower.x + 2 + random() * Math.max(0, tower.width - 5)),
-          y: Math.round(h - tower.roof + 3 + random() * Math.max(0, tower.roof - 9)),
+          x: Math.round(tower.x + WINDOW.inset + random() * room(tower.width, WINDOW.w)),
+          y: Math.round(h - tower.roof + WINDOW.inset + random() * room(tower.roof, WINDOW.h)),
         }
       })
     },
     paint(ctx) {
-      if (!width || !colors) return
+      if (!width || !stops.length) return
       ctx.clearRect(0, 0, width, height)
       ctx.globalAlpha = 1
       const bands = ctx.createLinearGradient(0, 0, 0, height)
-      sky.forEach(({ at }, i) => bands.addColorStop(at, colors!.sky[i]!))
+      for (const [at, color] of stops) bands.addColorStop(at, color)
       ctx.fillStyle = bands
       ctx.fillRect(0, 0, width, height)
       // The clouds, soft, only ever darker than the sky.
@@ -305,7 +336,7 @@ function skyline({ sky, clouds, towers: city, mist }: SkylineBackdrop): Painter 
       trace(ctx, outline, 0, 0)
       ctx.fill()
       ctx.fillStyle = colors.windows
-      ctx.globalAlpha = city.windows.alpha
+      ctx.globalAlpha = towers.windows.alpha
       for (const { x, y } of windows) ctx.fillRect(x, y, WINDOW.w, WINDOW.h)
       // The mist, rising from the bottom over the towers' foot.
       const rising = ctx.createLinearGradient(0, height - mist.height, 0, height)
