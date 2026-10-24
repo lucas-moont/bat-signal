@@ -83,7 +83,7 @@
 
   --bone: #ebe9e4;
   --ash: #97969a;
-  --bone-dim: #c4c3c0;
+  --bone-dim: var(--ink);
   --ash-dim: var(--ash);
   --chevron: var(--ash);
 
@@ -138,7 +138,7 @@
      blue street mist at their foot, and black police blimps with Bone beams (never the alarm's
      yellow). The sky fills the panel over the haze, so the haze stays clear. */
   --sky-top: #050100;
-  --sky-dark: #1d0701;
+  --sky-dark: var(--abyss);
   --sky-crimson: #2a0901;
   --sky: #5a1401;
   --sky-lit: #9e2801;
@@ -156,11 +156,13 @@
   --searchlight: var(--bone);
 
   /* Marcellus SC, flared roman caps near the title card of I Am the Night [48], sets the wordmark,
-     the headlines, a Case's title as its card, and the stamps; Barlow does the work and the report. */
+     the headlines, a Case's title as its card, the stamps, and the type (the case numbers, the
+     dateline, the watch strip's note, the log's speakers) in its small caps; Barlow does the work
+     and the report. */
   --font-display: 'Marcellus SC', 'Trajan Pro', serif;
   --display-weight: 400;
   --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
-  --font-type: 'Marcellus SC', 'Trajan Pro', serif;
+  --font-type: var(--font-display);
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   --font-report: var(--font-body);
   --font-headline: var(--font-display);
