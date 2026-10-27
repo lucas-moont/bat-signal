@@ -306,6 +306,12 @@
   position: relative;
   overflow: hidden;
 }
+/* A card clips as far out as its Theme lifts its stamp, so the stamp shows over the card's top edge
+   (the ripple may spread as far, faintly). */
+.card {
+  overflow: clip;
+  overflow-clip-margin: var(--stamp-lift);
+}
 .rippling::after {
   content: '';
   position: absolute;
