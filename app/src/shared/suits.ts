@@ -1795,34 +1795,22 @@ const PREDATOR_BELOW = [
 ]
 const PREDATOR_STANDING = predatorMap([SUIT, SUIT, SUIT], PREDATOR_BELOW)
 const PREDATOR_SEATED = predatorMap([SUIT, SUIT, SUIT, SUIT])
-/**
- * Crouched (the Signature): his body short and his knees out wide past it, boots under them; drawn
- * two units lower by its pose, so his head stays where every Theme keeps it on the grid.
- */
-const PREDATOR_CROUCHED = predatorMap(
-  [SUIT, SUIT],
-  [PREDATOR_BELT, '..SSSSSSSSSSSS..', '..SSS......SSS..', '..SSS......SSS..', '...gg......gg...'],
-)
 
 /** The wide flat bat across his chest, 6.5 units wide, tone on tone in the armour, under the mantle. */
 const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.7, width: 6.5 }
 
-/**
- * On the belt at y, two square pouches each side and the wide buckle plate between them, as Asylum's
- * suit has them [04] [05].
- */
-const pouchesAt = (y: number): Layer => ({
+/** On the belt, two square pouches each side and the wide buckle plate between them [04] [05]. */
+const POUCHES: Layer = {
   kind: 'rects',
   px: [
-    [3.5, y + 0.1, 0.8, 0.8],
-    [5, y + 0.1, 0.8, 0.8],
-    [7.2, y + 0.05, 1.6, 0.9],
-    [10.2, y + 0.1, 0.8, 0.8],
-    [11.7, y + 0.1, 0.8, 0.8],
+    [3.5, 8.1, 0.8, 0.8],
+    [5, 8.1, 0.8, 0.8],
+    [7.2, 8.05, 1.6, 0.9],
+    [10.2, 8.1, 0.8, 0.8],
+    [11.7, 8.1, 0.8, 0.8],
   ],
   fill: 'var(--buckle)',
-})
-const POUCHES = pouchesAt(8)
+}
 
 /** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
 const PREDATOR_MANTLE: Layer = {
@@ -1843,10 +1831,6 @@ const POINTS = {
   openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-0.8 10 L0.2 11.2 L1.6 10.2 L3.4 11 Z',
   /** Straight down under him on the line (flying). */
   falling: 'M3 5 L13 5 L13.6 11.2 L12.2 10.2 L10.8 11.2 L9.6 10.2 L6.4 10.2 L5.2 11.2 L3.8 10.2 L2.4 11.2 Z',
-  /** Over the ledge on one side, its tip pointed (the gargoyle). */
-  overTheLedge: 'M3.4 5 L2 5.4 L-0.6 7.4 L-2.6 9.4 L-1.2 9.2 L-0.4 10 L0.8 9.2 L2 9.6 L3.4 9 Z',
-  /** Spread both sides as he lands (left half; mirrored). */
-  landing: 'M3.4 5 L1.6 5.2 L-2.8 8.4 L-1.6 8.4 L-1 9.4 L0.4 8.6 L1.4 9.4 L3.4 9 Z',
 }
 
 /**
@@ -1864,14 +1848,9 @@ const fins = (x: number, y: number, toward: 1 | -1): Layer => ({
   fill: 'var(--gloves)',
 })
 
-/** A pose in the armour: the mantle on his shoulders and the bat on his chest, unless it says otherwise. */
-const predatorPose = (
-  map: OutfitMap,
-  behind: Layer[],
-  front: Layer[] = [],
-  { pouches = POUCHES }: { pouches?: Layer } = {},
-) =>
-  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, pouches, ...front], {
+/** A pose in the armour: his ears, the mantle on his shoulders, the pouches and the bat on his chest. */
+const predatorPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, POUCHES, ...front], {
     chest: [PREDATOR_CHEST],
     edge: PREDATOR_EDGE,
   })
@@ -1893,8 +1872,9 @@ const onTheGrapnel = predatorPose(
 )
 
 /**
- * The counter (alarmed): his right forearm thrust out, its fins up, his left fist drawn back by his
- * shoulder, the cape flung open behind him (away from SAME BAT-TIME's two raised fists, decision 14).
+ * The counter (alarmed): his right forearm thrust out, its fins up, his left fist raised by his
+ * shoulder, the cape flung open behind him (away from SAME BAT-TIME's two raised fists, decision 14;
+ * picked on screen).
  */
 const theCounter = predatorPose(
   PREDATOR_STANDING,
@@ -1908,29 +1888,80 @@ const theCounter = predatorPose(
   ],
 )
 
-/** Crouched on the gargoyle, his right forearm across his knee, fins up, the cape as `cape` lays it. */
-const crouched = (cape: Layer[]): Pose => ({
-  ...predatorPose(
-    PREDATOR_CROUCHED,
-    cape,
-    [
-      { kind: 'rects', px: [[10.5, 8, 3, 0.6]], fill: 'var(--suit)' },
-      { kind: 'rects', px: [[13.5, 8, 0.8, 0.6]], fill: 'var(--gloves)' },
-      fins(12, 8, -1),
+/**
+ * Crouched (the Signature), as a crouch reads face on: his knees drawn up high in front of him, wider
+ * than his body, his shins down to his boots, the cowl's shadow on his chest between them.
+ */
+const KNEES_UP = predatorMap(
+  [],
+  [
+    ...twice(['...SSSSSSSSSS...']),
+    ...twice(['.SSSSShhhhSSSSS.']),
+    '..SSSS....SSSS..',
+    ...twice(['..SSS......SSS..']),
+    ...twice(['...gg......gg...']),
+  ],
+)
+/** His hands hanging between his knees, fins on his forearms resting on them. */
+const HANDS_DOWN: Layer[] = [
+  {
+    kind: 'rects',
+    px: [
+      [6.1, 6.6, 0.9, 1.1],
+      [9, 6.6, 0.9, 1.1],
     ],
-    { pouches: pouchesAt(7) },
-  ),
-  transform: 'translateY(2px)',
+    fill: 'var(--gloves)',
+  },
+  fins(2, 6, 1),
+  fins(14, 6, -1),
+]
+/** The cape behind his crouch, down to the gargoyle's back. */
+const CAPE_BEHIND: Layer = { kind: 'cape', d: 'M3 5 L13 5 L14 9.6 L2 9.6 Z' }
+/** Spread from his shoulders down both sides as he lands (left half; mirrored). */
+const LANDING: Layer = {
+  kind: 'cape',
+  d: 'M3.4 5 L1.4 5.4 L-1.6 7.6 L-3.6 11.2 L-2 10.6 L-1 11.4 L0.4 10.6 L1.6 11.2 L3.4 10.4 Z',
+  mirrored: true,
+}
+/** Over the gargoyle's back on our left, away from its head, a long fold with pointed tips. */
+const OVER_ITS_BACK: Layer = {
+  kind: 'cape',
+  d: 'M3 5 L1.4 5.6 L-0.6 8.8 L-2.2 12 L-0.6 11.4 L0.2 12.2 L1.2 11.2 L2.6 11.6 Z',
+}
+
+/**
+ * The stone gargoyle he crouches on, after City's key art [24] (the maintainer, on screen: "a real
+ * gargoyle under him"): a beast's back under his boots, its horned head jutting out on our right,
+ * its jaws open; our own drawing.
+ */
+const GARGOYLE: Layer[] = [
+  {
+    kind: 'path',
+    d:
+      'M0.6 12.4 L0.8 9.6 Q1.8 8.6 3.6 8.6 L13 8.6 L13.8 8.3 L14.2 7 L15 8.1 L15.4 7.4 L15.9 8.3 L18 8.5 ' +
+      'L19.6 9.2 L18.4 9.5 L16.6 9.5 L17.2 9.9 L18.9 10 L18.2 10.6 L16 10.6 L15.6 12.4 Z',
+    fill: 'var(--stone)',
+  },
+  { kind: 'rects', px: [[1.4, 8.6, 12, 0.3]], fill: 'var(--stone-lit)' },
+  { kind: 'rects', px: [[16.4, 8.75, 0.6, 0.4]], fill: 'var(--abyss)' },
+]
+/** Crouched on the gargoyle, the cape as `cape` lays it, a small bat on his chest under his jaw. */
+const crouched = (cape: Layer): Pose => ({
+  ...pose(KNEES_UP, [...GARGOYLE, ...EARS, CAPE_BEHIND, cape], [PREDATOR_MANTLE, ...HANDS_DOWN], {
+    chest: [{ kind: 'emblem', cx: 8, cy: 5.5, width: 3.4 }],
+    edge: PREDATOR_EDGE,
+  }),
+  // Up on the gargoyle's back, by a share of his own height so it holds at every size.
+  transform: 'translateY(-7%)',
 })
 
 /**
- * The gargoyle (the Signature, City's key art [23] [24]): he lands crouched with the cape spread both
- * sides, folds its right side behind him, and lets the left fall over the ledge. Four a second.
+ * The gargoyle (the Signature, City's key art [23] [24]): he lands on its back with the cape spread,
+ * then lets it fall over the side away from the gargoyle's head, and looks down past its jaws.
  */
 const THE_GARGOYLE: Script = [
-  { pose: crouched([{ kind: 'cape', d: POINTS.landing, mirrored: true }]), look: 0 },
-  { pose: crouched([{ kind: 'cape', d: POINTS.landing }]), look: 0 },
-  { pose: crouched([{ kind: 'cape', d: POINTS.overTheLedge }]), look: 0, lookY: 0.4 },
+  { pose: crouched(LANDING), look: 0 },
+  { pose: crouched(OVER_ITS_BACK), look: GAZE, lookY: 0.4 },
 ]
 
 export const SILENT_PREDATOR_SUIT: Suit = {
@@ -1941,9 +1972,9 @@ export const SILENT_PREDATOR_SUIT: Suit = {
     flying: [onTheGrapnel, { ...onTheGrapnel, transform: 'translateY(-1px)' }],
     alarmed: [theCounter],
   },
-  // On the perch he watches the street below, down one way, then the other.
+  // On the perch he watches the street below, then past the gargoyle's jaws.
   watch: watchOn(THE_GARGOYLE, [
-    { look: -GAZE, lookY: 0.4 },
+    { look: 0, lookY: 0.4 },
     { look: GAZE, lookY: 0.4 },
   ]),
   signature: THE_GARGOYLE,
