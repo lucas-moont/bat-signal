@@ -1799,18 +1799,19 @@ const PREDATOR_SEATED = predatorMap([SUIT, SUIT, SUIT, SUIT])
 /** The wide flat bat across his chest, 6.5 units wide, tone on tone in the armour, under the mantle. */
 const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.7, width: 6.5 }
 
-/** On the belt, two square pouches each side and the wide buckle plate between them [04] [05]. */
-const POUCHES: Layer = {
+/** On the belt at y, two square pouches each side and the wide buckle plate between them [04] [05]. */
+const pouchesAt = (y: number): Layer => ({
   kind: 'rects',
   px: [
-    [3.5, 8.1, 0.8, 0.8],
-    [5, 8.1, 0.8, 0.8],
-    [7.2, 8.05, 1.6, 0.9],
-    [10.2, 8.1, 0.8, 0.8],
-    [11.7, 8.1, 0.8, 0.8],
+    [3.5, y + 0.1, 0.8, 0.8],
+    [5, y + 0.1, 0.8, 0.8],
+    [7.2, y + 0.05, 1.6, 0.9],
+    [10.2, y + 0.1, 0.8, 0.8],
+    [11.7, y + 0.1, 0.8, 0.8],
   ],
   fill: 'var(--buckle)',
-}
+})
+const POUCHES = pouchesAt(8)
 
 /** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
 const PREDATOR_MANTLE: Layer = {
@@ -1889,32 +1890,23 @@ const theCounter = predatorPose(
 )
 
 /**
- * Crouched (the Signature), as a crouch reads face on: his knees drawn up high in front of him, wider
- * than his body, his shins down to his boots, the cowl's shadow on his chest between them.
+ * Crouched (the Signature), face on, after the licensed statue [65]: his arms close down his sides
+ * to his hands at his hips, the belt there, his thighs filled in to his knees drawn up under him, the
+ * dark only between his shins, down to the stone, where black boots would sink into the cape behind him (the
+ * maintainer, on screen: torso, hips and legs must read apart, no splits, no floating arms).
  */
 const KNEES_UP = predatorMap(
   [],
   [
+    '...SSSSSSSSSS...',
+    ...twice(['..SSSSSSSSSSSS..']),
+    '..SSSSSSSSSSSS..',
+    '..gbbbbbbbbbbg..',
     ...twice(['...SSSSSSSSSS...']),
-    ...twice(['.SSSSShhhhSSSSS.']),
-    '..SSSS....SSSS..',
-    ...twice(['..SSS......SSS..']),
-    ...twice(['...gg......gg...']),
+    ...twice(['...SSS....SSS...']),
+    '...SSS....SSS...',
   ],
 )
-/** His hands hanging between his knees, fins on his forearms resting on them. */
-const HANDS_DOWN: Layer[] = [
-  {
-    kind: 'rects',
-    px: [
-      [6.1, 6.6, 0.9, 1.1],
-      [9, 6.6, 0.9, 1.1],
-    ],
-    fill: 'var(--gloves)',
-  },
-  fins(2, 6, 1),
-  fins(14, 6, -1),
-]
 /** The cape behind his crouch, down to the gargoyle's back. */
 const CAPE_BEHIND: Layer = { kind: 'cape', d: 'M3 5 L13 5 L14 9.6 L2 9.6 Z' }
 /** Spread from his shoulders down both sides as he lands (left half; mirrored). */
@@ -1923,10 +1915,10 @@ const LANDING: Layer = {
   d: 'M3.4 5 L1.4 5.4 L-1.6 7.6 L-3.6 11.2 L-2 10.6 L-1 11.4 L0.4 10.6 L1.6 11.2 L3.4 10.4 Z',
   mirrored: true,
 }
-/** Over the gargoyle's back on our left, away from its head, a long fold with pointed tips. */
+/** Over the gargoyle's back on our left, away from its head, spread like a wing to pointed tips. */
 const OVER_ITS_BACK: Layer = {
   kind: 'cape',
-  d: 'M3 5 L1.4 5.6 L-0.6 8.8 L-2.2 12 L-0.6 11.4 L0.2 12.2 L1.2 11.2 L2.6 11.6 Z',
+  d: 'M3.4 5 L1.2 5.2 L-1.6 7.2 L-4.4 10.4 L-5.4 12.4 L-3.4 11.6 L-2.2 12.6 L-0.8 11.4 L0.6 12.4 L2.2 11 L3.4 11.4 Z',
 }
 
 /**
@@ -1934,25 +1926,28 @@ const OVER_ITS_BACK: Layer = {
  * gargoyle under him"): a beast's back under his boots, its horned head jutting out on our right,
  * its jaws open; our own drawing.
  */
+const GARGOYLE_D =
+  'M0.4 13.8 L0.6 10.8 Q1.6 9.9 3.6 10 L12.6 10 L13.6 9.5 L13.9 7.8 L14.9 9.2 L15.6 8.2 L16.2 9.4 L18.6 9.6 ' +
+  'L21 10.5 L19.4 11 L17 11 L17.8 11.4 L20.2 11.5 L19.2 12.3 L16.4 12.3 L16 13.8 Z'
 const GARGOYLE: Layer[] = [
+  // Its outline in the cowl's neutral rim, so the stone stands off the dark and off his suit.
+  { kind: 'path', d: GARGOYLE_D, className: 'clawd__cowl-edge' },
+  { kind: 'path', d: GARGOYLE_D, fill: 'var(--stone)' },
+  { kind: 'rects', px: [[1.2, 10, 11.6, 0.3]], fill: 'var(--stone-lit)' },
   {
-    kind: 'path',
-    d:
-      'M0.6 12.4 L0.8 9.6 Q1.8 8.6 3.6 8.6 L13 8.6 L13.8 8.3 L14.2 7 L15 8.1 L15.4 7.4 L15.9 8.3 L18 8.5 ' +
-      'L19.6 9.2 L18.4 9.5 L16.6 9.5 L17.2 9.9 L18.9 10 L18.2 10.6 L16 10.6 L15.6 12.4 Z',
-    fill: 'var(--stone)',
+    kind: 'rects',
+    px: [[16.8, 9.95, 0.7, 0.45]],
+    fill: 'var(--abyss)',
   },
-  { kind: 'rects', px: [[1.4, 8.6, 12, 0.3]], fill: 'var(--stone-lit)' },
-  { kind: 'rects', px: [[16.4, 8.75, 0.6, 0.4]], fill: 'var(--abyss)' },
 ]
 /** Crouched on the gargoyle, the cape as `cape` lays it, a small bat on his chest under his jaw. */
 const crouched = (cape: Layer): Pose => ({
-  ...pose(KNEES_UP, [...GARGOYLE, ...EARS, CAPE_BEHIND, cape], [PREDATOR_MANTLE, ...HANDS_DOWN], {
+  ...pose(KNEES_UP, [...GARGOYLE, ...EARS, CAPE_BEHIND, cape], [PREDATOR_MANTLE, pouchesAt(6.9)], {
     chest: [{ kind: 'emblem', cx: 8, cy: 5.5, width: 3.4 }],
     edge: PREDATOR_EDGE,
   }),
   // Up on the gargoyle's back, by a share of his own height so it holds at every size.
-  transform: 'translateY(-7%)',
+  transform: 'translateY(-10%)',
 })
 
 /**
