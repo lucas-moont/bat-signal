@@ -7,6 +7,7 @@ import {
   BECOME_A_BAT_SMOKE,
   BLUE_COLLAR_COLONY,
   DARK_DECO_SKY,
+  FREEFLOW_RAIN,
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
@@ -32,6 +33,7 @@ import {
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
   DARK_DECO_SUIT,
+  FREEFLOW_SUIT,
   HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
@@ -44,6 +46,7 @@ import {
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
   DARK_DECO_WORDS,
+  FREEFLOW_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
@@ -63,6 +66,7 @@ export const THEME_IDS = [
   'absolute-batman-2024',
   'the-long-halloween-1996',
   'batman-the-animated-series-1992',
+  'batman-arkham-2009',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -174,6 +178,18 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: EMBLEM_1992,
     suit: DARK_DECO_SUIT,
     atmosphere: DARK_DECO_SKY,
+  },
+  /**
+   * Rocksteady's Arkham trilogy (Asylum 2009, City 2011, Knight 2015), FREEFLOW: Gotham lit green from
+   * above, rain falling straight, the menus' amber for what needs you.
+   */
+  'batman-arkham-2009': {
+    flag: 'freeflow',
+    ground: '#040a06',
+    words: FREEFLOW_WORDS,
+    emblem: emblem(WINGS, 'none'),
+    suit: FREEFLOW_SUIT,
+    atmosphere: FREEFLOW_RAIN,
   },
 }
 
