@@ -195,6 +195,20 @@ export const BAT_1992 =
   '16.4 L65.4 15.6 L65.2 14.5 L64.7 11.3 L64.4 7 L64.3 4.2 L61.6 9.1 L61.4 9.3 Z'
 
 /**
+ * SILENT PREDATOR's bat, after Rocksteady's Batman: Arkham Asylum (2009), on the same 120x48 grid:
+ * the suit's chest bat, traced from the game's 4K "view character" model [05], its undamaged right
+ * half mirrored at x = 60 (silent-predator-build.md, section 3): about 4:1, tiny ears close together, the
+ * top edge climbing straight from the head to a wing peak a quarter in from each tip, then falling
+ * in a long curve to low outer tips; two deep scallops a side, and a short curve into the tail.
+ */
+export const BAT_2009 =
+  'M60 19.6 L61.7 19.6 L63.2 16 L64.5 18.3 Q69 17.6 73.6 16.8 Q82 14.6 87.4 11 L90.8 8.8 Q104 9.4 ' +
+  '113 17.2 Q118.4 23.4 120 34.2 Q114.5 21.6 104 22.2 Q93.6 22.8 90.2 30.8 Q85 24.6 77.8 25.3 Q68.6 ' +
+  '26.2 64.3 34.7 Q61.6 36.8 60 39.1 Q58.4 36.8 55.7 34.7 Q51.4 26.2 42.2 25.3 Q35 24.6 29.8 30.8 ' +
+  'Q26.4 22.8 16 22.2 Q5.5 21.6 0 34.2 Q1.6 23.4 7 17.2 Q16 9.4 29.2 8.8 L32.6 11 Q38 14.6 46.4 ' +
+  '16.8 Q51 17.6 55.5 18.3 L56.8 16 L58.3 19.6 L60 19.6 Z'
+
+/**
  * The 1992 oval as the drawing measures it: about 1.76:1, centred on the grid, under a thin black
  * line (1.2 units); a bright yellow that never lights (jury-wave-3.md, section 9, decision 2).
  */

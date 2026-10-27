@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
-import { BAT_1992, BAT_1996, emblem, OVAL_1992, WINGS } from '../../src/shared/emblems'
+import { BAT_1992, BAT_1996, BAT_2009, emblem, OVAL_1992, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -192,6 +192,7 @@ const points = (d: string) => {
 it.each([
   ['HOLIDAY', BAT_1996],
   ['DARK DECO', BAT_1992],
+  ['SILENT PREDATOR', BAT_2009],
 ])("%s's bat is symmetric about the middle of its grid", (_, bat) => {
   const all = points(bat).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
   const mirrored = points(bat).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
@@ -239,5 +240,28 @@ describe("DARK DECO's bat", () => {
     const foot = bat.y + bat.height
     const tail = points(BAT_1992).filter(([, y]) => y > foot - 1)
     expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(3)
+  })
+})
+
+// SILENT PREDATOR's bat (#147): the chest bat of Arkham Asylum's suit, traced from the game's 4K model
+// [05], picked on screen over the loading-screen glyph (silent-predator-build.md, section 3).
+describe("SILENT PREDATOR's bat", () => {
+  const xs = points(BAT_2009).map(([x]) => x)
+  const ys = points(BAT_2009).map(([, y]) => y)
+  const top = Math.min(...ys)
+
+  it('spans its grid, about four times as wide as tall', () => {
+    const width = Math.max(...xs) - Math.min(...xs)
+    expect(width).toBe(120)
+    expect(width / (Math.max(...ys) - top)).toBeCloseTo(4, 0)
+  })
+
+  // No dip to the head: the wings' peaks, a quarter in from each tip, are its highest points, and
+  // its tiny ears stay well below them.
+  it('peaks at the wings, not the ears', () => {
+    const peaks = points(BAT_2009).filter(([, y]) => y === top)
+    expect(peaks.map(([x]) => x).sort((a, b) => a - b)).toEqual([29.2, 90.8])
+    const ears = points(BAT_2009).filter(([x]) => Math.abs(x - 60) < 4)
+    expect(Math.min(...ears.map(([, y]) => y)) - top).toBeGreaterThan(5)
   })
 })
