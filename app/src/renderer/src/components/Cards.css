@@ -27,6 +27,9 @@
       color-mix(in srgb, var(--surface-deep) 92%, transparent)
     );
   border: 1px solid var(--line);
+  /* A Theme's own edge drawn in place of the border, as a border image with its own width (a torn
+     white edge), or none: under the card's words and its lifted stamp, square at the corners. */
+  border-image: var(--card-edge);
   border-radius: var(--radius);
   cursor: pointer;
   transition:
@@ -50,17 +53,6 @@
 .card:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 2px;
-}
-
-/* A Theme's own edge round every card, drawn as a border image (SILENT PREDATOR's torn white edge),
-   or none. */
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 0 solid transparent;
-  border-image: var(--card-edge);
-  pointer-events: none;
 }
 
 /* The left rule of a case file, coloured by what it is about. */
