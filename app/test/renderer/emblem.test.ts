@@ -246,8 +246,9 @@ describe("DARK DECO's bat", () => {
 // SILENT PREDATOR's bat (#147): the trilogy's bat, traced from City's logo and title screen, picked on
 // screen over two traces of the suit's chest (silent-predator-build.md, section 3).
 describe("SILENT PREDATOR's bat", () => {
-  const xs = points(BAT_2009).map(([x]) => x)
-  const ys = points(BAT_2009).map(([, y]) => y)
+  const bat = points(BAT_2009)
+  const xs = bat.map(([x]) => x)
+  const ys = bat.map(([, y]) => y)
   const top = Math.min(...ys)
 
   it('fills the 48 units of its frame from wingtip to tail, about 2.3 times as wide', () => {
@@ -258,15 +259,15 @@ describe("SILENT PREDATOR's bat", () => {
 
   // The hooks at its wingtips are its highest points; its ears stand well below them.
   it('peaks at its hooked wingtips, not its ears', () => {
-    const peaks = points(BAT_2009).filter(([, y]) => y === top)
+    const peaks = bat.filter(([, y]) => y === top)
     expect(peaks.map(([x]) => x).sort((a, b) => a - b)).toEqual([36.5, 83.5])
-    const ears = points(BAT_2009).filter(([x]) => Math.abs(x - 60) < 6)
+    const ears = bat.filter(([x]) => Math.abs(x - 60) < 6)
     expect(Math.min(...ears.map(([, y]) => y)) - top).toBeGreaterThan(5)
   })
 
   // No step at the head (the maintainer, on screen): each ear's outer edge runs straight down into its bowl.
   it('runs each ear straight down into its bowl', () => {
-    const i = points(BAT_2009).findIndex(([x, y]) => x === 55.4 && y === 5.5)
-    expect(points(BAT_2009)[i - 1]![1]).toBeGreaterThan(16)
+    const i = bat.findIndex(([x, y]) => x === 55.4 && y === 5.5)
+    expect(bat[i - 1]![1]).toBeGreaterThan(16)
   })
 })

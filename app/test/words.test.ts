@@ -436,7 +436,7 @@ describe("SILENT PREDATOR's words", () => {
     expect(voice.report.end(2)).toBe('Objectives remain.')
   })
 
-  // "game" beside SERIOUS HOUSE's book in the picker: the studio's name, as every credit names its makers.
+  // The studio's name, as every credit names its makers, and "trilogy": a game, beside SERIOUS HOUSE's book.
   it('credits the games by their studio', () => {
     expect(voice.theme.name).toBe('SILENT PREDATOR')
     expect(voice.theme.film).toBe("Rocksteady's Arkham trilogy")

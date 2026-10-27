@@ -1028,7 +1028,7 @@ export const SILENT_PREDATOR_WORDS: Words = {
   voice: {
     ...STANDARD_VOICE,
     // The studio's name, as every credit names its makers, and "trilogy" tells a game from SERIOUS
-    // HOUSE's book in the picker. A no-break space keeps the title whole.
+    // HOUSE's book in the picker; a no-break space keeps "Arkham trilogy" on one line.
     theme: { name: 'SILENT PREDATOR', film: "Rocksteady's Arkham trilogy" },
     tagline: 'Eyes open. Move silent.',
     empty: {

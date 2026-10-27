@@ -70,7 +70,7 @@
   --bone: #e9f0ea;
   --bone-dim: #cfdad1;
   --ash: #8fa196;
-  --ash-dim: #8a9c91;
+  --ash-dim: var(--ash);
   --chevron: var(--ash);
 
   /* Bat-Clawd in Asylum's and City's armour (arkham-games.md, section 8.1): dark-grey plates, a black
@@ -128,7 +128,7 @@
   --searchlight: var(--bone);
 
   /* Staatliches, condensed capitals in the proportions of Asylum's hand-cut menu caps [16] [17]
-     (silent-predator-build.md, section 8; picked on screen over Oxanium and Squada One), sets the
+     (silent-predator-build.md, section 8; picked on screen), sets the
      wordmark, the headlines, the stamps and the small type; a Mission's own title and the report stay
      in Barlow. HUD headings are capitals. */
   --font-display: 'Staatliches', 'Bahnschrift Condensed', sans-serif;
