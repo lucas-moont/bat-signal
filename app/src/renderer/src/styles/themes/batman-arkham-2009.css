@@ -122,6 +122,9 @@
   --haze-inset: -35% -20% auto -20%;
   --grain-opacity: 0.04;
   --rain: var(--bone);
+  /* The gargoyle he crouches on at his perch, weathered stone, its back lit from above. */
+  --stone: #4d5550;
+  --stone-lit: #6c766f;
   --searchlight: var(--bone);
 
   /* Oxanium, squared techno capitals near City's and Knight's WayneTech menus [40] [47] [60], sets
