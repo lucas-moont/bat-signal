@@ -243,25 +243,30 @@ describe("DARK DECO's bat", () => {
   })
 })
 
-// SILENT PREDATOR's bat (#147): the chest bat of Arkham Asylum's suit, traced from the game's 4K model
-// [05], picked on screen over the loading-screen glyph (silent-predator-build.md, section 3).
+// SILENT PREDATOR's bat (#147): the trilogy's bat, traced from City's logo and title screen, picked on
+// screen over two traces of the suit's chest (silent-predator-build.md, section 3).
 describe("SILENT PREDATOR's bat", () => {
   const xs = points(BAT_2009).map(([x]) => x)
   const ys = points(BAT_2009).map(([, y]) => y)
   const top = Math.min(...ys)
 
-  it('spans its grid, about four times as wide as tall', () => {
-    const width = Math.max(...xs) - Math.min(...xs)
-    expect(width).toBe(120)
-    expect(width / (Math.max(...ys) - top)).toBeCloseTo(4, 0)
+  it('fills the 48 units of its frame from wingtip to tail, about 2.3 times as wide', () => {
+    expect(top).toBe(0)
+    expect(Math.max(...ys)).toBe(48)
+    expect((Math.max(...xs) - Math.min(...xs)) / 48).toBeCloseTo(2.3, 1)
   })
 
-  // No dip to the head: the wings' peaks, a quarter in from each tip, are its highest points, and
-  // its tiny ears stay well below them.
-  it('peaks at the wings, not the ears', () => {
+  // The hooks at its wingtips are its highest points; its ears stand well below them.
+  it('peaks at its hooked wingtips, not its ears', () => {
     const peaks = points(BAT_2009).filter(([, y]) => y === top)
-    expect(peaks.map(([x]) => x).sort((a, b) => a - b)).toEqual([29.2, 90.8])
-    const ears = points(BAT_2009).filter(([x]) => Math.abs(x - 60) < 4)
+    expect(peaks.map(([x]) => x).sort((a, b) => a - b)).toEqual([36.5, 83.5])
+    const ears = points(BAT_2009).filter(([x]) => Math.abs(x - 60) < 6)
     expect(Math.min(...ears.map(([, y]) => y)) - top).toBeGreaterThan(5)
+  })
+
+  // No step at the head (the maintainer, on screen): each ear's outer edge runs straight down into its bowl.
+  it('runs each ear straight down into its bowl', () => {
+    const i = points(BAT_2009).findIndex(([x, y]) => x === 55.4 && y === 5.5)
+    expect(points(BAT_2009)[i - 1]![1]).toBeGreaterThan(16)
   })
 })

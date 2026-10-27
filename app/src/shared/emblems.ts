@@ -195,18 +195,22 @@ export const BAT_1992 =
   '16.4 L65.4 15.6 L65.2 14.5 L64.7 11.3 L64.4 7 L64.3 4.2 L61.6 9.1 L61.4 9.3 Z'
 
 /**
- * SILENT PREDATOR's bat, after Rocksteady's Batman: Arkham Asylum (2009), on the same 120x48 grid:
- * the suit's chest bat, traced from the game's 4K "view character" model [05], its undamaged right
- * half mirrored at x = 60 (silent-predator-build.md, section 3): about 4:1, tiny ears close together, the
- * top edge climbing straight from the head to a wing peak a quarter in from each tip, then falling
- * in a long curve to low outer tips; two deep scallops a side, and a short curve into the tail.
+ * SILENT PREDATOR's bat, after Rocksteady's Arkham games (2009–2015), on the same 120x48 grid: the
+ * trilogy's own bat, as its logos and City's title screen draw it (silent-predator-build.md, section
+ * 3), its silhouette traced along the edge of City's logo [63] (never the lettering) and its head
+ * redrawn after the flat bat behind City's Press START [26]. About 2.3:1: tall ears whose outer
+ * edges run straight down into deep round bowls, wings rising to hooked tips that are its highest
+ * points, a long outer curve to low outer tips, a notch a side underneath, and a long V to the tail.
+ * Drawn as a left half and mirrored at x = 60.
  */
 export const BAT_2009 =
-  'M60 19.6 L61.7 19.6 L63.2 16 L64.5 18.3 Q69 17.6 73.6 16.8 Q82 14.6 87.4 11 L90.8 8.8 Q104 9.4 ' +
-  '113 17.2 Q118.4 23.4 120 34.2 Q114.5 21.6 104 22.2 Q93.6 22.8 90.2 30.8 Q85 24.6 77.8 25.3 Q68.6 ' +
-  '26.2 64.3 34.7 Q61.6 36.8 60 39.1 Q58.4 36.8 55.7 34.7 Q51.4 26.2 42.2 25.3 Q35 24.6 29.8 30.8 ' +
-  'Q26.4 22.8 16 22.2 Q5.5 21.6 0 34.2 Q1.6 23.4 7 17.2 Q16 9.4 29.2 8.8 L32.6 11 Q38 14.6 46.4 ' +
-  '16.8 Q51 17.6 55.5 18.3 L56.8 16 L58.3 19.6 L60 19.6 Z'
+  'M60 48 L57.6 46.6 L54.4 43 L51.4 40 L47.2 37.2 L43.3 35.6 L39.6 34.9 L37.2 35 L31.1 36.8 L28.4 ' +
+  '31.9 L26.7 30.2 L23.8 28.7 L15.9 27.4 L10.6 27.6 L6.5 28.4 L5.3 28.4 L4.6 27.6 L5.5 24 L7.7 19.9 ' +
+  'L15.1 10.8 L24.6 3.9 L32.8 0.6 L36.5 0 L33.6 2.4 L32.4 4.3 L32.4 7.6 L33.9 11 L36.9 13.5 L41.5 ' +
+  '15.6 L47.7 16.8 L53 17.1 L55.4 5.5 L58 12 L60 12 L62 12 L64.6 5.5 L67 17.1 L72.3 16.8 L78.5 15.6 ' +
+  'L83.1 13.5 L86.1 11 L87.6 7.6 L87.6 4.3 L86.4 2.4 L83.5 0 L87.2 0.6 L95.4 3.9 L104.9 10.8 L112.3 ' +
+  '19.9 L114.5 24 L115.4 27.6 L114.7 28.4 L113.5 28.4 L109.4 27.6 L104.1 27.4 L96.2 28.7 L93.3 30.2 ' +
+  'L91.6 31.9 L88.9 36.8 L82.8 35 L80.4 34.9 L76.7 35.6 L72.8 37.2 L68.6 40 L65.6 43 L62.4 46.6 Z'
 
 /**
  * The 1992 oval as the drawing measures it: about 1.76:1, centred on the grid, under a thin black
