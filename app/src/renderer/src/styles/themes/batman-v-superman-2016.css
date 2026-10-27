@@ -168,7 +168,7 @@
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   /* Asylum's menu language, SILENT PREDATOR's (Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
-  --card-paper: none;
+  --card-paper: transparent;
   --card-edge: none;
   --stamp-lift: 0px;
   --stamp-paper: transparent;

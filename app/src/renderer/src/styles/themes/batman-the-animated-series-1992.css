@@ -193,7 +193,7 @@
   --stamp-mask: none;
   /* Asylum's menu language, SILENT PREDATOR's (Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
-  --card-paper: none;
+  --card-paper: transparent;
   --card-edge: none;
   --stamp-lift: 0px;
   --stamp-paper: transparent;

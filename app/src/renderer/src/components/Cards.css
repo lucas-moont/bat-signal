@@ -18,9 +18,9 @@
   gap: 3px;
   width: 100%;
   padding: 8px 10px 9px 12px;
-  /* A Theme's own paper over the ground's (SILENT PREDATOR's black panels), or none. */
+  /* A Theme's own paper over the ground's (black panels), or transparent. */
   background:
-    var(--card-paper),
+    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--surface) 92%, transparent),
@@ -41,7 +41,7 @@
 .card:hover {
   transform: translateY(-2px);
   background:
-    var(--card-paper),
+    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--raised) 95%, transparent),
