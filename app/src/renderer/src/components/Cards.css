@@ -1,7 +1,9 @@
 .cards {
   list-style: none;
   margin: 0;
-  /* Room above each card for a stamp lifted over its top edge (--stamp-lift), if the Theme lifts it. */
+  /* Room above each card for a stamp lifted over its top edge (--stamp-lift), if the Theme lifts it:
+     the stamp rises by the whole lift, but about half of it stays on its own card, so 0.6 of the lift
+     keeps a tab clear of the card above. */
   padding: calc(10px + var(--stamp-lift) * 0.6) 10px 16px;
   display: grid;
   gap: calc(8px + var(--stamp-lift) * 0.6);
@@ -15,7 +17,7 @@
   display: grid;
   gap: 3px;
   width: 100%;
-  padding: calc(8px + var(--stamp-lift) / 4) 10px 9px 12px;
+  padding: 8px 10px 9px 12px;
   /* A Theme's own paper over the ground's (SILENT PREDATOR's black panels), or none. */
   background:
     var(--card-paper),
@@ -155,9 +157,11 @@
 }
 /* On a card, a Theme may lift the stamp over the card's top edge, a title tab over its corner. */
 .card .stamp {
-  justify-self: start;
-  top: calc(-1 * var(--stamp-lift));
-  margin-bottom: calc(-1 * var(--stamp-lift));
+  translate: 0 calc(-1 * var(--stamp-lift));
+}
+/* A card with a stamp: a quarter of the lift more room on top, so the title clears the tab's foot. */
+.card--attention {
+  padding-top: calc(8px + var(--stamp-lift) / 4);
 }
 /* What needs the user may be marked as a selected row: a hatch behind the word and an arrow before
    it, in the stamp's own ink (the Alarm color, on these cards). */
