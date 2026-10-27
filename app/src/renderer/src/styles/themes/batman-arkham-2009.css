@@ -1,0 +1,170 @@
+/*
+ * FREEFLOW, after Rocksteady's Arkham trilogy (Asylum 2009, City 2011, Knight 2015, as one work):
+ * its palette and faces (docs/research/themes/arkham-games.md, section 4.7; the decisions in
+ * jury-wave-3.md, section 9). Gotham at night lit green from above, where the games' own highlight,
+ * the amber that marks what is selected, new or usable in Asylum's menus and detective mode, marks
+ * what needs you. The asylum's green light for what waits on you, Bone for what runs.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss, --surface, --raised: Asylum's green-black nights [09] [11], moved toward Knight's [54]
+ *   and darkened; the raised tone clears the jury's C* 15 floor for a green ground.
+ * - --signal, --signal-hot: Asylum's menu amber [15] [16] [18] [19] [22], a recorded exception 9.2
+ *   from PALE MOONLIGHT's gold (decision 11), so its lit disc differs by form: dark glass, an amber rim.
+ */
+:root[data-theme='batman-arkham-2009'],
+[data-theme='batman-arkham-2009'] {
+  --abyss: #040a06;
+  --smoke: #07100a;
+  --surface: #0b1a10;
+  --raised: #11301c;
+  --line: #29432f;
+  --surface-deep: #08130c;
+  --frame: #0f2416;
+  --header-fade: #07110a;
+  --sheet-top: #0e2115;
+  --shadow: #000000;
+
+  /* The Alarm color, the menu's amber, and the amber unlit, which marks only the unlit disc's hover. */
+  --blood: #4a3608;
+  --signal: #e08f00;
+  --signal-glow: color-mix(in srgb, var(--signal) 45%, transparent);
+  --signal-hot: #ffad00;
+  --on-signal: var(--abyss);
+  --ink-hot: var(--signal-hot);
+  /* The asylum's green light over Crime Alley [12]: what waits on you (decision 3). */
+  --ink-soft: #b3e8b8;
+  /* Bone marks what runs: the stamp word carries the tier. */
+  --ink-live: var(--bone);
+  --ink: #c3d0c6;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is amber. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 14%, transparent);
+  --selection: var(--raised);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: ACCESS? and FAILED in amber, RESPOND and INCOMING in the asylum's green. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 40%, transparent);
+
+  /* Quit's hover stays a shadow: amber is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: color-mix(in srgb, var(--ink-soft) 50%, var(--surface));
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+  --bare-veil: none;
+
+  --clawd: #d77757;
+
+  /* Bone and the greys carry a faint green, like everything under the asylum's light. */
+  --bone: #e9f0ea;
+  --bone-dim: #cfdad1;
+  --ash: #8fa196;
+  --ash-dim: #8a9c91;
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in Asylum's and City's armour (arkham-games.md, section 8.1): dark-grey plates, a black
+     cowl, gloves and cape, the cape worn over the shoulders, a wide bat tone on tone across the chest,
+     a dim pouch belt, never the key art's gold. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #16181b;
+  /* A neutral rim, so the black reads on green. */
+  --cowl-edge: color-mix(in srgb, #b8c6bc 30%, transparent);
+  --cowl-shine: #2c3033;
+  --suit: #4a4c50;
+  --gloves: var(--cowl);
+  --belt: #5e5240;
+  --buckle: #7d6c4f;
+  --cape: #0e1011;
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: #1c1d20;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: the suit's wide flat bat, in the masthead in ink. */
+  --emblem: var(--ink);
+
+  /* The Signal disc. Unlit: dark green glass, the bat a shade in it. Lit (L1, detective mode's
+     highlight [15] [39]): the glass stays dark and turns amber toward an amber rim, the bat black
+     with an amber edge, as detective mode outlines what you can use. */
+  --disc-bat: var(--line);
+  --glass-shine: var(--surface);
+  --glass: var(--abyss);
+  --disc-rim-inner: #050c07;
+  --disc-rim-outer: var(--line);
+  --lens-core: var(--surface);
+  --lens-rim: var(--signal-hot);
+  --lens-bat: var(--abyss);
+  --lens-bat-edge: var(--signal-hot);
+  --lens-shade: inset 0 0 0 3px color-mix(in srgb, var(--shadow) 35%, transparent);
+  --notice-top: #0f2216;
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #14301e;
+  --notice-hover-foot: #0b1a10;
+
+  /* The Atmosphere: rain falling almost straight down under a green haze from above, the asylum's
+     lamps and green skies [12]. The rain is drawn on a canvas, which reads --rain at run time. */
+  --haze: color-mix(in srgb, #3d8a52 9%, transparent);
+  --haze-edge: color-mix(in srgb, #3d8a52 3%, transparent);
+  --haze-inset: -35% -20% auto -20%;
+  --grain-opacity: 0.04;
+  --rain: var(--bone);
+  --searchlight: var(--bone);
+
+  /* Oxanium, squared techno capitals near City's and Knight's WayneTech menus [40] [47] [60], sets
+     the wordmark, the headlines, the stamps and the small type; a Mission's own title and the report
+     stay in Barlow. HUD headings are capitals. */
+  --font-display: 'Oxanium', 'Bahnschrift', sans-serif;
+  --display-weight: 700;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-display);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-body);
+  --font-headline: var(--font-display);
+  --headline-weight: 600;
+  --font-dateline: var(--font-display);
+  --dateline-weight: 600;
+  --font-stamp: var(--font-type);
+  --font-label: var(--font-display);
+  --heading-case: uppercase;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 12px;
+  --folder-name-tracking: 0.4px;
+  --wordmark-size: 15px;
+  --wordmark-tracking: 1.5px;
+  --wordmark-glow: transparent;
+
+  /* A HUD's underline, not a pen: straight strokes. */
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%23ffad00' stroke-width='1.5'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%23b3e8b8' stroke-width='1.5'/%3E%3C/svg%3E");
+
+  /* A HUD label: straight, no wear, a 1px box. Oxanium runs wide: at 12px PERMISSION outgrows the
+     narrowest margin (arkham-games.md, section 5), so the stamps stay at 11px. */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --stamp-border: 1px;
+  --stamp-size: 11px;
+  --stamp-weight: 600;
+  --stamp-mask: none;
+
+  --disc-lens: radial-gradient(
+    circle at 50% 50% in srgb,
+    var(--lens-core) 0%,
+    #1d3a26 55%,
+    var(--signal) 85%,
+    var(--signal-hot) 100%
+  );
+}
