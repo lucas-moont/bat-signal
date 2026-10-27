@@ -18,10 +18,9 @@
   gap: 9px;
   height: 54px;
   padding: 0 8px 0 14px;
-  /* A Theme's spatter by the masthead (SILENT PREDATOR's white ink), or none, over the fade. */
-  background:
-    var(--spatter) right 60px top 2px / 150px 75px no-repeat,
-    linear-gradient(180deg in srgb, var(--header-fade), transparent);
+  /* A Theme's spatter by the masthead, a background layer with its own place and size (white ink
+     drops), or none, over the fade. */
+  background: var(--spatter), linear-gradient(180deg in srgb, var(--header-fade), transparent);
   -webkit-app-region: drag;
 }
 .header__title {
