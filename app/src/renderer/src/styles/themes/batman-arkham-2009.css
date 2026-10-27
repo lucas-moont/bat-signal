@@ -75,7 +75,7 @@
 
   /* Bat-Clawd in Asylum's and City's armour (arkham-games.md, section 8.1): dark-grey plates, a black
      cowl, gloves and cape, the cape worn over the shoulders, a wide bat tone on tone across the chest,
-     a dim pouch belt, never the key art's gold. */
+     a brass-khaki pouch belt, never the key art's gold. */
   --clawd-eye: var(--bone);
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #16181b;
@@ -84,8 +84,9 @@
   --cowl-shine: #2c3033;
   --suit: #4a4c50;
   --gloves: var(--cowl);
-  --belt: #5e5240;
-  --buckle: #7d6c4f;
+  /* Brass-khaki, the suit's brightest part [04] [05], dimmed so it stays 26 from the amber alarm. */
+  --belt: #7d6c4f;
+  --buckle: #9a8256;
   --cape: #0e1011;
   --cape-rim: var(--cowl-edge);
   --thread: var(--cowl-edge);
@@ -93,7 +94,7 @@
   --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
   --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
 
-  /* The emblem: the suit's wide flat bat, in the masthead in ink. */
+  /* The emblem: the trilogy's bat, in the masthead in ink. */
   --emblem: var(--ink);
 
   /* The Signal disc. Unlit: dark green glass, the bat a shade in it. Lit (L1, detective mode's
