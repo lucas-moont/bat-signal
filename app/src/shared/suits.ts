@@ -1829,8 +1829,8 @@ const POINTS = {
     'M2.6 6.4 L13.4 6.4 L14.2 11.1 L12.8 10.1 L11.6 11.1 L10.4 10.1 L5.6 10.1 L4.4 11.1 L3.2 10.1 L1.8 11.1 Z',
   /** Flung back and hanging open (left half; mirrored). */
   openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-0.8 10 L0.2 11.2 L1.6 10.2 L3.4 11 Z',
-  /** Straight down under him on the line (flying). */
-  falling: 'M3 5 L13 5 L13.6 11.2 L12.2 10.2 L10.8 11.2 L9.6 10.2 L6.4 10.2 L5.2 11.2 L3.8 10.2 L2.4 11.2 Z',
+  /** Hanging under him on the line (flying), flaring out past his legs. */
+  falling: 'M3 5 L13 5 L15 11.2 L13.4 10.4 L12 11.2 L10.4 10.2 L5.6 10.2 L4 11.2 L2.6 10.4 L1 11.2 Z',
 }
 
 /**
@@ -1862,7 +1862,7 @@ const GRAPNEL_ARM: Layer[] = [
   fins(14, 2.6, -1),
 ]
 /** The grapnel's line, straight up from his glove past the frame's top. */
-const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -1, 0.3, 1]], fill: 'var(--ash)' }
+const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'var(--ash)' }
 
 /** On the grapnel (flying): rising on the line, his legs hanging, the cape falling straight under him. */
 const onTheGrapnel = predatorPose(
