@@ -123,8 +123,8 @@
   --grain-opacity: 0.04;
   --rain: var(--bone);
   /* The gargoyle he crouches on at his perch, weathered stone, its back lit from above. */
-  --stone: #4d5550;
-  --stone-lit: #6c766f;
+  --stone: #66706a;
+  --stone-lit: #929d95;
   --searchlight: var(--bone);
 
   /* Staatliches, condensed capitals in the proportions of Asylum's hand-cut menu caps [16] [17]
