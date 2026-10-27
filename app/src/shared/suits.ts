@@ -1762,8 +1762,30 @@ export const DARK_DECO_SUIT: Suit = {
 // like a mantle, a wide flat bat tone on tone across his chest, a dim pouch belt, and fins on his
 // gauntlets. On the perch he crouches on a gargoyle, the cape falling over the ledge on one side. ---
 
-/** The pouch belt, four pouches on its band, a unit tall; then his four booted legs. */
-const PREDATOR_BELT = '...bkbkbbkbkb...'
+/**
+ * Asylum's ears [04] [05]: tall, about two fifths of his head, narrow and nearly upright, set in from
+ * the cowl's sides; drawn behind the cowl, so his head carries no ear tips on the grid (picked on
+ * screen over the standard ears).
+ */
+const PREDATOR_HEAD = twice([
+  '................',
+  BROW,
+  '...cccccccccc...',
+  '...cccccccccc...',
+  '...cc######cc...',
+])
+const EARS = earsOf('M4.2 1.4 L4.5 -1 L5.1 -1 L5.7 1.4 Z M11.8 1.4 L11.5 -1 L10.9 -1 L10.3 1.4 Z')
+/** The cowl's outline without ears, behind the face, so only its outer edge shows. */
+const PREDATOR_EDGE: Layer = {
+  kind: 'path',
+  d: 'M3 5 L3 2 L4 2 L4 1 L12 1 L12 2 L13 2 L13 5 Z',
+  className: 'clawd__cowl-edge',
+}
+const predatorMap = (chest: readonly string[], rows: readonly string[] = []) =>
+  map(chest, rows, LEGEND, PREDATOR_HEAD)
+
+/** The pouch belt's band, a unit tall (its pouches and buckle are drawn on it); then his four booted legs. */
+const PREDATOR_BELT = '...bbbbbbbbbb...'
 const PREDATOR_BELOW = [
   PREDATOR_BELT,
   PREDATOR_BELT,
@@ -1771,19 +1793,36 @@ const PREDATOR_BELOW = [
   '....g.g..g.g....',
   ...twice(['....g.g..g.g....']),
 ]
-const PREDATOR_STANDING = map([SUIT, SUIT, SUIT], PREDATOR_BELOW)
-const PREDATOR_SEATED = map([SUIT, SUIT, SUIT, SUIT], [])
+const PREDATOR_STANDING = predatorMap([SUIT, SUIT, SUIT], PREDATOR_BELOW)
+const PREDATOR_SEATED = predatorMap([SUIT, SUIT, SUIT, SUIT])
 /**
  * Crouched (the Signature): his body short and his knees out wide past it, boots under them; drawn
  * two units lower by its pose, so his head stays where every Theme keeps it on the grid.
  */
-const PREDATOR_CROUCHED = map(
+const PREDATOR_CROUCHED = predatorMap(
   [SUIT, SUIT],
-  ['...bkbkbbkbkb...', '..SSSSSSSSSSSS..', '..SSS......SSS..', '..SSS......SSS..', '...gg......gg...'],
+  [PREDATOR_BELT, '..SSSSSSSSSSSS..', '..SSS......SSS..', '..SSS......SSS..', '...gg......gg...'],
 )
 
-/** The wide flat bat across his chest, 6.5 units by 2, tone on tone in the armour. */
-const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.4, width: 6.5, height: 2 }
+/** The wide flat bat across his chest, 6.5 units wide, tone on tone in the armour, under the mantle. */
+const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.7, width: 6.5 }
+
+/**
+ * On the belt at y, two square pouches each side and the wide buckle plate between them, as Asylum's
+ * suit has them [04] [05].
+ */
+const pouchesAt = (y: number): Layer => ({
+  kind: 'rects',
+  px: [
+    [3.5, y + 0.1, 0.8, 0.8],
+    [5, y + 0.1, 0.8, 0.8],
+    [7.2, y + 0.05, 1.6, 0.9],
+    [10.2, y + 0.1, 0.8, 0.8],
+    [11.7, y + 0.1, 0.8, 0.8],
+  ],
+  fill: 'var(--buckle)',
+})
+const POUCHES = pouchesAt(8)
 
 /** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
 const PREDATOR_MANTLE: Layer = {
@@ -1795,27 +1834,33 @@ const PREDATOR_MANTLE: Layer = {
   className: 'clawd__cape',
 }
 
-/** The cape's hem in three long points a side. */
+/** The cape's hem in two long points a side, as Asylum's artwork shows it [04]. */
 const POINTS = {
-  /** Hanging behind him (left half; mirrored). */
-  hanging: 'M8 5 L3 5 L1.6 5.6 L1 11 L1.8 10.2 L2.4 11.2 L3 10.3 L3.8 11.2 L4.6 10.3 L8 10.3 Z',
   /** Closed round him, asleep. */
   wrapped:
-    'M2.6 6.4 L13.4 6.4 L14.2 11.1 L13.1 10.1 L12.1 11.1 L11 10.1 L5 10.1 L3.9 11.1 L2.9 10.1 L1.8 11.1 Z',
+    'M2.6 6.4 L13.4 6.4 L14.2 11.1 L12.8 10.1 L11.6 11.1 L10.4 10.1 L5.6 10.1 L4.4 11.1 L3.2 10.1 L1.8 11.1 Z',
   /** Flung back and hanging open (left half; mirrored). */
-  openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-1.4 10 L-0.8 11.2 L0.4 10.2 L1.2 11.2 L2.2 10.3 L3.4 11 Z',
+  openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-0.8 10 L0.2 11.2 L1.6 10.2 L3.4 11 Z',
   /** Straight down under him on the line (flying). */
-  falling: 'M3 5 L13 5 L13.6 11.2 L12.4 10.2 L11.2 11.2 L10 10.2 L6 10.2 L4.8 11.2 L3.6 10.2 L2.4 11.2 Z',
+  falling: 'M3 5 L13 5 L13.6 11.2 L12.2 10.2 L10.8 11.2 L9.6 10.2 L6.4 10.2 L5.2 11.2 L3.8 10.2 L2.4 11.2 Z',
   /** Over the ledge on one side, its tip pointed (the gargoyle). */
   overTheLedge: 'M3.4 5 L2 5.4 L-0.6 7.4 L-2.6 9.4 L-1.2 9.2 L-0.4 10 L0.8 9.2 L2 9.6 L3.4 9 Z',
   /** Spread both sides as he lands (left half; mirrored). */
   landing: 'M3.4 5 L1.6 5.2 L-2.8 8.4 L-1.6 8.4 L-1 9.4 L0.4 8.6 L1.4 9.4 L3.4 9 Z',
 }
 
-/** Fins on a forearm, two blades pointing back toward his elbow, along its top edge at (x, y). */
+/**
+ * Fins on a forearm, three short blades along its top edge from (x, y) toward his hand (`toward`),
+ * each leaning back toward his elbow [04] [05].
+ */
 const fins = (x: number, y: number, toward: 1 | -1): Layer => ({
   kind: 'path',
-  d: `M${x} ${y} L${x - 0.8 * toward} ${y - 0.8} L${x - 0.4 * toward} ${y} Z M${x + toward} ${y} L${x + 0.2 * toward} ${y - 0.8} L${x + 0.6 * toward} ${y} Z`,
+  d: [0, 0.7, 1.4]
+    .map((at) => {
+      const root = x + at * toward
+      return `M${root} ${y} L${root - 0.5 * toward} ${y - 0.7} L${root + 0.4 * toward} ${y} Z`
+    })
+    .join(' '),
   fill: 'var(--gloves)',
 })
 
@@ -1824,8 +1869,12 @@ const predatorPose = (
   map: OutfitMap,
   behind: Layer[],
   front: Layer[] = [],
-  over: { eyes?: Pose['eyes'] } = {},
-) => pose(map, behind, [PREDATOR_MANTLE, ...front], { chest: [PREDATOR_CHEST], ...over })
+  { pouches = POUCHES }: { pouches?: Layer } = {},
+) =>
+  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, pouches, ...front], {
+    chest: [PREDATOR_CHEST],
+    edge: PREDATOR_EDGE,
+  })
 
 /** His right arm straight up at column 13 to the glove a unit over his head, fins on the forearm. */
 const GRAPNEL_ARM: Layer[] = [
@@ -1861,11 +1910,16 @@ const theCounter = predatorPose(
 
 /** Crouched on the gargoyle, his right forearm across his knee, fins up, the cape as `cape` lays it. */
 const crouched = (cape: Layer[]): Pose => ({
-  ...predatorPose(PREDATOR_CROUCHED, cape, [
-    { kind: 'rects', px: [[10.5, 8, 3, 0.6]], fill: 'var(--suit)' },
-    { kind: 'rects', px: [[13.5, 8, 0.8, 0.6]], fill: 'var(--gloves)' },
-    fins(12, 8, -1),
-  ]),
+  ...predatorPose(
+    PREDATOR_CROUCHED,
+    cape,
+    [
+      { kind: 'rects', px: [[10.5, 8, 3, 0.6]], fill: 'var(--suit)' },
+      { kind: 'rects', px: [[13.5, 8, 0.8, 0.6]], fill: 'var(--gloves)' },
+      fins(12, 8, -1),
+    ],
+    { pouches: pouchesAt(7) },
+  ),
   transform: 'translateY(2px)',
 })
 
@@ -1882,7 +1936,7 @@ const THE_GARGOYLE: Script = [
 export const SILENT_PREDATOR_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [seated(PREDATOR_SEATED, POINTS.wrapped)],
+    sleeping: [seated(PREDATOR_SEATED, POINTS.wrapped, [...EARS, PREDATOR_EDGE])],
     // Rising on the line, a pixel higher every other frame.
     flying: [onTheGrapnel, { ...onTheGrapnel, transform: 'translateY(-1px)' }],
     alarmed: [theCounter],
