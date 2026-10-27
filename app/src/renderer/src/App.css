@@ -18,7 +18,10 @@
   gap: 9px;
   height: 54px;
   padding: 0 8px 0 14px;
-  background: linear-gradient(180deg in srgb, var(--header-fade), transparent);
+  /* A Theme's spatter by the masthead (SILENT PREDATOR's white ink), or none, over the fade. */
+  background:
+    var(--spatter) right 60px top 2px / 150px 75px no-repeat,
+    linear-gradient(180deg in srgb, var(--header-fade), transparent);
   -webkit-app-region: drag;
 }
 .header__title {
@@ -213,6 +216,11 @@
 .tabs__tab[aria-selected='true'],
 .tabs__tab:hover {
   color: var(--bone);
+}
+/* The open tab on a Theme's hatch (a selected row's, in SILENT PREDATOR's menus), or none. */
+.tabs__tab[aria-selected='true'] {
+  padding-inline: var(--tab-pad);
+  background: var(--hatch);
 }
 .tabs__tab:focus-visible {
   outline: 1px solid var(--accent);
