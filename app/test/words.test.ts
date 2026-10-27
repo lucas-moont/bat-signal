@@ -11,6 +11,7 @@ import {
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
   DARK_DECO_WORDS,
+  FREEFLOW_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
@@ -404,5 +405,58 @@ describe("DARK DECO's words", () => {
   it('names its Atmosphere after the sky, with the blimps over the city', () => {
     expect(voice.settings.atmosphere.label).toBe('Red sky')
     expect(voice.settings.atmosphere.hint(terms)).toBe('Police blimps over the city behind the cases')
+  })
+})
+
+describe("FREEFLOW's words", () => {
+  const { terms, voice } = FREEFLOW_WORDS
+
+  // The games' objective log (arkham-games.md, sections 6 and 7; jury-wave-3.md, section 4): a
+  // Mission, an Objective that needs you, ACCESS? asking to be let through, a FAILED mission, a
+  // RESPOND waiting on you. STALLED keeps the standard word: dark and quiet mean all clear.
+  it("speak the objective log's Lexicon", () => {
+    expect(terms.case).toEqual({ one: 'Mission', many: 'Missions' })
+    expect(terms.needsYou.label).toBe('Objectives')
+    expect(terms.needsYou.count(1)).toBe('1 objective')
+    expect(terms.needsYou.count(3)).toBe('3 objectives')
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Access?',
+      error: 'Failed',
+      waiting: 'Respond',
+      reply: 'Incoming',
+      'session-opened': 'Mission start',
+      'session-closed': 'Mission over',
+    })
+  })
+
+  it('reads a quiet city as all clear, and closes the log on what remains', () => {
+    expect(voice.empty.quiet.title).toBe('No objectives. The city is quiet.')
+    expect(voice.report.end(0)).toBe('All objectives complete.')
+    expect(voice.report.end(2)).toBe('Objectives remain.')
+  })
+
+  // "game" beside SERIOUS HOUSE's book in the picker: the studio's name, as every credit names its makers.
+  it('credits the games by their studio', () => {
+    expect(voice.theme.name).toBe('FREEFLOW')
+    expect(voice.theme.film).toBe("Rocksteady's Arkham trilogy")
+  })
+
+  // The respect list SERIOUS HOUSE set: the games' asylum, its patients and villains are not in the Voice.
+  it('keeps the respect list', () => {
+    const lines = [
+      JSON.stringify({ terms, voice }),
+      voice.empty.noCases.title(terms),
+      voice.report.nil(terms),
+      voice.report.end(0),
+      voice.report.end(1),
+      voice.settings.atmosphere.hint(terms),
+    ].join(' ')
+    expect(lines).not.toMatch(/\b(mad|insane|lunatic|crazy|psycho|inmate|patient|cell|asylum)\b/i)
+  })
+
+  it('names its Atmosphere after the rain', () => {
+    expect(voice.settings.atmosphere.label).toBe('Rain')
+    expect(voice.settings.atmosphere.hint(terms)).toBe('Rain over Gotham behind the missions')
   })
 })

@@ -1004,3 +1004,60 @@ export const DARK_DECO_WORDS: Words = {
     noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Roll the credits.' },
   },
 }
+
+/**
+ * FREEFLOW, after Rocksteady's Arkham trilogy (arkham-games.md, sections 6 and 7): the game itself
+ * speaks, its objective log in the second person, short and practical. Quiet means all clear; the
+ * respect list SERIOUS HOUSE set holds, though the games use some of its words.
+ */
+export const FREEFLOW_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    case: { one: 'Mission', many: 'Missions' },
+    needsYou: { label: 'Objectives', count: (n) => `${n} objective${n === 1 ? '' : 's'}` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Access?',
+      error: 'Failed',
+      waiting: 'Respond',
+      reply: 'Incoming',
+      'session-opened': 'Mission start',
+      'session-closed': 'Mission over',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // The studio's name, as every credit names its makers, and "trilogy" tells a game from SERIOUS
+    // HOUSE's book in the picker. A no-break space keeps the title whole.
+    theme: { name: 'FREEFLOW', film: "Rocksteady's Arkham trilogy" },
+    tagline: 'Eyes open. Move silent.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'No objectives. The city is quiet.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} running. Grapple out.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Mission log',
+      dateline: datelineOf('MISSION LOG'),
+      signature: 'Objectives',
+      nil: (t) => `No objectives waiting on you. Every ${lower(t.case.one)} is running.`,
+      caseNotes: (t) => `${t.case.one} log`,
+      end: (waiting) => (waiting ? 'Objectives remain.' : 'All objectives complete.'),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : 'Nothing highlighted. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Gadgets',
+      atmosphere: { label: 'Rain', hint: (t) => `Rain over Gotham behind the ${lower(t.case.many)}` },
+    },
+    // On the perch he crouches on a gargoyle, as City's key art has him.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd on a gargoyle' },
+  },
+}
