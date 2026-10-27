@@ -42,6 +42,7 @@
     "@fontsource/limelight": "^5.3.0",
     "@fontsource/marcellus-sc": "^5.3.0",
     "@fontsource/neucha": "^5.3.0",
+    "@fontsource/oxanium": "^5.3.0",
     "@fontsource/permanent-marker": "^5.3.0",
     "@fontsource/shantell-sans": "^5.3.0",
     "@fontsource/special-elite": "^5.3.0",
@@ -138,6 +139,10 @@
       {
         "from": "node_modules/@fontsource/neucha/LICENSE",
         "to": "licenses/Neucha.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/oxanium/LICENSE",
+        "to": "licenses/Oxanium.txt"
       },
       {
         "from": "node_modules/@fontsource/permanent-marker/LICENSE",
