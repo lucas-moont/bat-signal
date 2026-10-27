@@ -503,11 +503,11 @@ export const DARK_DECO_SKY: BlimpsAtmosphere = {
 }
 
 /**
- * FREEFLOW's rain, over Asylum's island and Knight's whole night (arkham-games.md, section 10, A1):
+ * SILENT PREDATOR's rain, over Asylum's island and Knight's whole night (arkham-games.md, section 10, A1):
  * falling almost straight down, heavier and brighter than VENGEANCE's slant, under a green haze from
  * above. The searchlights are DARK DECO's (jury-wave-3.md, section 9, decision 5).
  */
-export const FREEFLOW_RAIN: RainAtmosphere = {
+export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
   kind: 'rain',
   color: '--rain',
   density: 0.4,

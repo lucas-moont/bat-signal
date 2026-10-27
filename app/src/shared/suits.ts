@@ -1757,30 +1757,36 @@ export const DARK_DECO_SUIT: Suit = {
   aura: 'alarmed',
 }
 
-// --- FREEFLOW: the armoured suit of Rocksteady's Asylum and City (arkham-games.md, section 8.1):
+// --- SILENT PREDATOR: the armoured suit of Rocksteady's Asylum and City (arkham-games.md, section 8.1):
 // dark-grey plates over his body, a black cowl, gloves and cape, the cape worn over his shoulders
 // like a mantle, a wide flat bat tone on tone across his chest, a dim pouch belt, and fins on his
 // gauntlets. On the perch he crouches on a gargoyle, the cape falling over the ledge on one side. ---
 
 /** The pouch belt, four pouches on its band, a unit tall; then his four booted legs. */
-const FF_BELT = '...bkbkbbkbkb...'
-const FF_BELOW = [FF_BELT, FF_BELT, '....S.S..S.S....', '....g.g..g.g....', ...twice(['....g.g..g.g....'])]
-const FF_STANDING = map([SUIT, SUIT, SUIT], FF_BELOW)
-const FF_SEATED = map([SUIT, SUIT, SUIT, SUIT], [])
+const PREDATOR_BELT = '...bkbkbbkbkb...'
+const PREDATOR_BELOW = [
+  PREDATOR_BELT,
+  PREDATOR_BELT,
+  '....S.S..S.S....',
+  '....g.g..g.g....',
+  ...twice(['....g.g..g.g....']),
+]
+const PREDATOR_STANDING = map([SUIT, SUIT, SUIT], PREDATOR_BELOW)
+const PREDATOR_SEATED = map([SUIT, SUIT, SUIT, SUIT], [])
 /**
  * Crouched (the Signature): his body short and his knees out wide past it, boots under them; drawn
  * two units lower by its pose, so his head stays where every Theme keeps it on the grid.
  */
-const FF_CROUCHED = map(
+const PREDATOR_CROUCHED = map(
   [SUIT, SUIT],
   ['...bkbkbbkbkb...', '..SSSSSSSSSSSS..', '..SSS......SSS..', '..SSS......SSS..', '...gg......gg...'],
 )
 
 /** The wide flat bat across his chest, 6.5 units by 2, tone on tone in the armour. */
-const FF_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.4, width: 6.5, height: 2 }
+const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.4, width: 6.5, height: 2 }
 
 /** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
-const FF_MANTLE: Layer = {
+const PREDATOR_MANTLE: Layer = {
   kind: 'rects',
   px: [
     [3, 5, 1.5, 1],
@@ -1814,8 +1820,12 @@ const fins = (x: number, y: number, toward: 1 | -1): Layer => ({
 })
 
 /** A pose in the armour: the mantle on his shoulders and the bat on his chest, unless it says otherwise. */
-const ffPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], over: { eyes?: Pose['eyes'] } = {}) =>
-  pose(map, behind, [FF_MANTLE, ...front], { chest: [FF_CHEST], ...over })
+const predatorPose = (
+  map: OutfitMap,
+  behind: Layer[],
+  front: Layer[] = [],
+  over: { eyes?: Pose['eyes'] } = {},
+) => pose(map, behind, [PREDATOR_MANTLE, ...front], { chest: [PREDATOR_CHEST], ...over })
 
 /** His right arm straight up at column 13 to the glove a unit over his head, fins on the forearm. */
 const GRAPNEL_ARM: Layer[] = [
@@ -1827,8 +1837,8 @@ const GRAPNEL_ARM: Layer[] = [
 const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -1, 0.3, 1]], fill: 'var(--ash)' }
 
 /** On the grapnel (flying): rising on the line, his legs hanging, the cape falling straight under him. */
-const onTheGrapnel = ffPose(
-  FF_STANDING,
+const onTheGrapnel = predatorPose(
+  PREDATOR_STANDING,
   [{ kind: 'cape', d: POINTS.falling }],
   [...GRAPNEL_ARM, GRAPNEL_LINE],
 )
@@ -1837,8 +1847,8 @@ const onTheGrapnel = ffPose(
  * The counter (alarmed): his right forearm thrust out, its fins up, his left fist drawn back by his
  * shoulder, the cape flung open behind him (away from SAME BAT-TIME's two raised fists, decision 14).
  */
-const theCounter = ffPose(
-  FF_STANDING,
+const theCounter = predatorPose(
+  PREDATOR_STANDING,
   [BACK, { kind: 'cape', d: POINTS.openLeft, mirrored: true }],
   [
     { kind: 'rects', px: [[13, 5.5, 3, 1]], fill: 'var(--suit)' },
@@ -1851,7 +1861,7 @@ const theCounter = ffPose(
 
 /** Crouched on the gargoyle, his right forearm across his knee, fins up, the cape as `cape` lays it. */
 const crouched = (cape: Layer[]): Pose => ({
-  ...ffPose(FF_CROUCHED, cape, [
+  ...predatorPose(PREDATOR_CROUCHED, cape, [
     { kind: 'rects', px: [[10.5, 8, 3, 0.6]], fill: 'var(--suit)' },
     { kind: 'rects', px: [[13.5, 8, 0.8, 0.6]], fill: 'var(--gloves)' },
     fins(12, 8, -1),
@@ -1869,10 +1879,10 @@ const THE_GARGOYLE: Script = [
   { pose: crouched([{ kind: 'cape', d: POINTS.overTheLedge }]), look: 0, lookY: 0.4 },
 ]
 
-export const FREEFLOW_SUIT: Suit = {
+export const SILENT_PREDATOR_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [seated(FF_SEATED, POINTS.wrapped)],
+    sleeping: [seated(PREDATOR_SEATED, POINTS.wrapped)],
     // Rising on the line, a pixel higher every other frame.
     flying: [onTheGrapnel, { ...onTheGrapnel, transform: 'translateY(-1px)' }],
     alarmed: [theCounter],

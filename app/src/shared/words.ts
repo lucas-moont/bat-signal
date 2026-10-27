@@ -1006,11 +1006,11 @@ export const DARK_DECO_WORDS: Words = {
 }
 
 /**
- * FREEFLOW, after Rocksteady's Arkham trilogy (arkham-games.md, sections 6 and 7): the game itself
+ * SILENT PREDATOR, after Rocksteady's Arkham trilogy (arkham-games.md, sections 6 and 7): the game itself
  * speaks, its objective log in the second person, short and practical. Quiet means all clear; the
  * respect list SERIOUS HOUSE set holds, though the games use some of its words.
  */
-export const FREEFLOW_WORDS: Words = {
+export const SILENT_PREDATOR_WORDS: Words = {
   terms: {
     ...STANDARD_TERMS,
     case: { one: 'Mission', many: 'Missions' },
@@ -1029,7 +1029,7 @@ export const FREEFLOW_WORDS: Words = {
     ...STANDARD_VOICE,
     // The studio's name, as every credit names its makers, and "trilogy" tells a game from SERIOUS
     // HOUSE's book in the picker. A no-break space keeps the title whole.
-    theme: { name: 'FREEFLOW', film: "Rocksteady's Arkham trilogy" },
+    theme: { name: 'SILENT PREDATOR', film: "Rocksteady's Arkham trilogy" },
     tagline: 'Eyes open. Move silent.',
     empty: {
       ...STANDARD_VOICE.empty,

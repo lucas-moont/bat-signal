@@ -11,7 +11,7 @@ import {
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
   DARK_DECO_WORDS,
-  FREEFLOW_WORDS,
+  SILENT_PREDATOR_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   STANDARD_TERMS,
@@ -408,8 +408,8 @@ describe("DARK DECO's words", () => {
   })
 })
 
-describe("FREEFLOW's words", () => {
-  const { terms, voice } = FREEFLOW_WORDS
+describe("SILENT PREDATOR's words", () => {
+  const { terms, voice } = SILENT_PREDATOR_WORDS
 
   // The games' objective log (arkham-games.md, sections 6 and 7; jury-wave-3.md, section 4): a
   // Mission, an Objective that needs you, ACCESS? asking to be let through, a FAILED mission, a
@@ -438,7 +438,7 @@ describe("FREEFLOW's words", () => {
 
   // "game" beside SERIOUS HOUSE's book in the picker: the studio's name, as every credit names its makers.
   it('credits the games by their studio', () => {
-    expect(voice.theme.name).toBe('FREEFLOW')
+    expect(voice.theme.name).toBe('SILENT PREDATOR')
     expect(voice.theme.film).toBe("Rocksteady's Arkham trilogy")
   })
 

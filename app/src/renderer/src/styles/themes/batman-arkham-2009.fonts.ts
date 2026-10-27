@@ -1,4 +1,4 @@
-// FREEFLOW's faces: Oxanium, squared techno capitals near the games' WayneTech menus, for the
+// SILENT PREDATOR's faces: Oxanium, squared techno capitals near the games' WayneTech menus, for the
 // wordmark, the headlines and the stamps; Barlow Semi Condensed to work in and for the report; and
 // JetBrains Mono for what the machine said. Loaded when worn or previewed.
 import '@fontsource/oxanium/600.css'

@@ -7,7 +7,7 @@ import {
   BECOME_A_BAT_SMOKE,
   BLUE_COLLAR_COLONY,
   DARK_DECO_SKY,
-  FREEFLOW_RAIN,
+  SILENT_PREDATOR_RAIN,
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
@@ -19,6 +19,7 @@ import {
   BAT_1986,
   BAT_1987,
   BAT_1996,
+  BAT_2009,
   BAT_2008,
   BAT_2016,
   BLOCK_2024,
@@ -33,7 +34,7 @@ import {
   BECOME_A_BAT_SUIT,
   BLUE_COLLAR_SUIT,
   DARK_DECO_SUIT,
-  FREEFLOW_SUIT,
+  SILENT_PREDATOR_SUIT,
   HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
@@ -46,7 +47,7 @@ import {
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
   DARK_DECO_WORDS,
-  FREEFLOW_WORDS,
+  SILENT_PREDATOR_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
@@ -180,16 +181,16 @@ export const THEMES: Record<ThemeId, Theme> = {
     atmosphere: DARK_DECO_SKY,
   },
   /**
-   * Rocksteady's Arkham trilogy (Asylum 2009, City 2011, Knight 2015), FREEFLOW: Gotham lit green from
+   * Rocksteady's Arkham trilogy (Asylum 2009, City 2011, Knight 2015), SILENT PREDATOR: Gotham lit green from
    * above, rain falling straight, the menus' amber for what needs you.
    */
   'batman-arkham-2009': {
-    flag: 'freeflow',
+    flag: 'predator',
     ground: '#040a06',
-    words: FREEFLOW_WORDS,
-    emblem: emblem(WINGS, 'none'),
-    suit: FREEFLOW_SUIT,
-    atmosphere: FREEFLOW_RAIN,
+    words: SILENT_PREDATOR_WORDS,
+    emblem: emblem(BAT_2009, 'none'),
+    suit: SILENT_PREDATOR_SUIT,
+    atmosphere: SILENT_PREDATOR_RAIN,
   },
 }
 
