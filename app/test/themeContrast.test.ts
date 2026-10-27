@@ -125,6 +125,18 @@ describe.each(THEME_IDS)("%s's inks on their own paper", (theme) => {
   })
 })
 
+// A Theme's stamp paper (SILENT PREDATOR's black title tabs) sits under the stamp inks the grounds
+// already hold to the line: no lighter than the darkest ground, so those light inks only gain on it.
+describe.each(THEME_IDS)("%s's stamp paper", (theme) => {
+  const variables = themeVariables(theme)
+
+  it('is transparent, or no lighter than its darkest ground', () => {
+    if (resolved(variables, 'var(--stamp-paper)') === 'transparent') return
+    const darkest = Math.min(...GROUNDS.map((ground) => luminance(rgb(variables, ground))))
+    expect(luminance(rgb(variables, '--stamp-paper'))).toBeLessThanOrEqual(darkest)
+  })
+})
+
 describe('the contrast ratio', () => {
   // Worked values: white on black is 21:1, and #777777 on white is the textbook 4.48:1.
   it('follows WCAG 2', () => {

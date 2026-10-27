@@ -1,9 +1,12 @@
 .cards {
   list-style: none;
   margin: 0;
-  padding: 10px 10px 16px;
+  /* Room above each card for a stamp lifted over its top edge (--stamp-lift), if the Theme lifts it:
+     the stamp rises by the whole lift, but about half of it stays on its own card, so 0.6 of the lift
+     keeps a tab clear of the card above. */
+  padding: calc(10px + var(--stamp-lift) * 0.6) 10px 16px;
   display: grid;
-  gap: 8px;
+  gap: calc(8px + var(--stamp-lift) * 0.6);
   align-content: start;
 }
 
@@ -15,12 +18,18 @@
   gap: 3px;
   width: 100%;
   padding: 8px 10px 9px 12px;
-  background: linear-gradient(
-    180deg in srgb,
-    color-mix(in srgb, var(--surface) 92%, transparent),
-    color-mix(in srgb, var(--surface-deep) 92%, transparent)
-  );
+  /* A Theme's own paper over the ground's (black panels), or transparent. */
+  background:
+    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    linear-gradient(
+      180deg in srgb,
+      color-mix(in srgb, var(--surface) 92%, transparent),
+      color-mix(in srgb, var(--surface-deep) 92%, transparent)
+    );
   border: 1px solid var(--line);
+  /* A Theme's own edge drawn in place of the border, as a border image with its own width (a torn
+     white edge), or none: under the card's words and its lifted stamp, square at the corners. */
+  border-image: var(--card-edge);
   border-radius: var(--radius);
   cursor: pointer;
   transition:
@@ -31,11 +40,13 @@
 }
 .card:hover {
   transform: translateY(-2px);
-  background: linear-gradient(
-    180deg in srgb,
-    color-mix(in srgb, var(--raised) 95%, transparent),
-    color-mix(in srgb, var(--surface) 95%, transparent)
-  );
+  background:
+    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    linear-gradient(
+      180deg in srgb,
+      color-mix(in srgb, var(--raised) 95%, transparent),
+      color-mix(in srgb, var(--surface) 95%, transparent)
+    );
   box-shadow: 0 6px 18px -8px var(--accent-glow);
   border-color: var(--accent-glow);
 }
@@ -123,8 +134,11 @@
   font-weight: var(--stamp-weight);
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  position: relative;
   color: var(--stamp-hot);
-  border: var(--stamp-border) solid currentColor;
+  /* Its rule in its own ink, or in a Theme's (a white tab edge), on a Theme's paper: every stamp's. */
+  border: var(--stamp-border) solid var(--stamp-rule);
+  background: var(--stamp-paper);
   border-radius: 2px;
   /* The typewriter face sits high in its line: more room above than below centres the words. */
   padding: 3px 6px 1px;
@@ -132,6 +146,31 @@
   transform: rotate(var(--stamp-tilt));
   opacity: 0.92;
   mask-image: var(--stamp-mask);
+}
+/* On a card, a Theme may lift the stamp over the card's top edge, a title tab over its corner. */
+.card .stamp {
+  translate: 0 calc(-1 * var(--stamp-lift));
+}
+/* A card with a stamp: a quarter of the lift more room on top, so the title clears the tab's foot. */
+.card--attention {
+  padding-top: calc(8px + var(--stamp-lift) / 4);
+}
+/* What needs the user may be marked as a selected row: a hatch behind the word and an arrow before
+   it, in the stamp's own ink (the Alarm color, on these cards). */
+.card--urgent .stamp {
+  padding-left: calc(6px + var(--stamp-arrow-room));
+  background: var(--hatch), var(--stamp-paper);
+}
+.card--urgent .stamp::before {
+  content: var(--stamp-arrow);
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 9px;
+  height: 8px;
+  margin-top: -4.5px;
+  background: currentColor;
+  clip-path: polygon(0 28%, 55% 28%, 55% 0, 100% 50%, 55% 100%, 55% 72%, 0 72%);
 }
 .card--waiting .stamp,
 .card--reply .stamp {

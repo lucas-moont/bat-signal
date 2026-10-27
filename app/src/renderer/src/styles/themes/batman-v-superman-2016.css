@@ -166,6 +166,20 @@
   --stamp-size: 10.5px;
   --stamp-weight: var(--display-weight);
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
+     on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
+  --card-paper: transparent;
+  --card-edge: none;
+  --stamp-lift: 0px;
+  --stamp-paper: transparent;
+  --stamp-rule: currentColor;
+  --hatch: none;
+  --stamp-arrow: none;
+  --stamp-arrow-room: 0px;
+  --tab-pad: 0px;
+  --caption-edge: transparent;
+  --caption-tilt: 0deg;
+  --spatter: none;
 
   /* Broken: pieces of the glass gone, the dark of the lamp showing through, as everything is after the
      fall (the maintainer's idea, picked on screen over cracks). */

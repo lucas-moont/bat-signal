@@ -18,7 +18,9 @@
   gap: 9px;
   height: 54px;
   padding: 0 8px 0 14px;
-  background: linear-gradient(180deg in srgb, var(--header-fade), transparent);
+  /* A Theme's spatter by the masthead, a background layer with its own place and size (white ink
+     drops), or none, over the fade. */
+  background: var(--spatter), linear-gradient(180deg in srgb, var(--header-fade), transparent);
   -webkit-app-region: drag;
 }
 .header__title {
@@ -214,6 +216,14 @@
 .tabs__tab:hover {
   color: var(--bone);
 }
+/* The open tab on a Theme's hatch (a selected menu row's), or none; every tab keeps the hatch's
+   room, so the labels stay put as the open tab changes. */
+.tabs__tab {
+  padding-inline: var(--tab-pad);
+}
+.tabs__tab[aria-selected='true'] {
+  background: var(--hatch);
+}
 .tabs__tab:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 2px;
@@ -297,6 +307,12 @@
 .tabs__tab {
   position: relative;
   overflow: hidden;
+}
+/* A card clips as far out as its Theme lifts its stamp, so the stamp shows over the card's top edge
+   (the ripple may spread as far, faintly). */
+.card {
+  overflow: clip;
+  overflow-clip-margin: var(--stamp-lift);
 }
 .rippling::after {
   content: '';

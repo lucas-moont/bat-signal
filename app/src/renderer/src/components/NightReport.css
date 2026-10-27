@@ -95,7 +95,11 @@
   text-underline-offset: 4px;
   color: var(--caption-ink);
   background: var(--caption-paper);
-  box-shadow: 0 0 0 3px var(--caption-paper);
+  /* The paper, and a Theme's edge round it (a white title tab), tilted if it says so. */
+  box-shadow:
+    0 0 0 3px var(--caption-paper),
+    0 0 0 5px var(--caption-edge);
+  transform: rotate(var(--caption-tilt));
 }
 /* The plugin hint, typed into the report under its heading. */
 .report .plugin-hint {
