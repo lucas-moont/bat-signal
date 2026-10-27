@@ -59,9 +59,9 @@
   --danger: var(--raised);
   --waiting-rule: color-mix(in srgb, var(--ink-soft) 50%, var(--surface));
   --report-rule: var(--line);
-  --caption-paper: transparent;
-  --caption-ink: var(--ash);
-  --caption-rule: underline;
+  --caption-paper: #000000;
+  --caption-ink: var(--bone);
+  --caption-rule: none;
   --bare-veil: none;
 
   --clawd: #d77757;
@@ -127,42 +127,59 @@
   --stone-lit: #6c766f;
   --searchlight: var(--bone);
 
-  /* Oxanium, squared techno capitals near City's and Knight's WayneTech menus [40] [47] [60], sets
-     the wordmark, the headlines, the stamps and the small type; a Mission's own title and the report
-     stay in Barlow. HUD headings are capitals. */
-  --font-display: 'Oxanium', 'Bahnschrift', sans-serif;
-  --display-weight: 700;
+  /* Staatliches, condensed capitals in the proportions of Asylum's hand-cut menu caps [16] [17]
+     (silent-predator-build.md, section 8; picked on screen over Oxanium and Squada One), sets the
+     wordmark, the headlines, the stamps and the small type; a Mission's own title and the report stay
+     in Barlow. HUD headings are capitals. */
+  --font-display: 'Staatliches', 'Bahnschrift Condensed', sans-serif;
+  --display-weight: 400;
   --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
   --font-type: var(--font-display);
   --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
   --font-report: var(--font-body);
   --font-headline: var(--font-display);
-  --headline-weight: 600;
+  --headline-weight: 400;
   --font-dateline: var(--font-display);
-  --dateline-weight: 600;
+  --dateline-weight: 400;
   --font-stamp: var(--font-type);
   --font-label: var(--font-display);
   --heading-case: uppercase;
   --font-case-title: var(--font-body);
   --case-title-weight: 600;
-  --folder-name-size: 12px;
-  --folder-name-tracking: 0.4px;
-  --wordmark-size: 15px;
-  --wordmark-tracking: 1.5px;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.6px;
+  --wordmark-size: 19px;
+  --wordmark-tracking: 1px;
   --wordmark-glow: transparent;
 
   /* A HUD's underline, not a pen: straight strokes. */
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%23ffad00' stroke-width='1.5'/%3E%3C/svg%3E");
   --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%23b3e8b8' stroke-width='1.5'/%3E%3C/svg%3E");
 
-  /* A HUD label: straight, no wear, a 1px box. Oxanium runs wide: at 12px PERMISSION outgrows the
-     narrowest margin (arkham-games.md, section 5), so the stamps stay at 11px. */
-  --stamp-tilt: 0deg;
-  --stamp-tilt-slight: 0deg;
-  --stamp-border: 1px;
-  --stamp-size: 11px;
-  --stamp-weight: 600;
+  /* Asylum's menus [16] [17] [18]: every card a black panel with a torn white edge; its stamp the
+     panel's title tab, black, edged in white and tilted over its top-left corner; what needs the user
+     marked as the selected row, an arrow before the word on a grey hatch; the open tab on that hatch;
+     the mission log's headings title tabs too; white ink spatter by the masthead
+     (silent-predator-build.md, section 8). */
+  --stamp-tilt: -2.4deg;
+  --stamp-tilt-slight: -1.5deg;
+  --stamp-border: 2px;
+  --stamp-size: 12px;
+  --stamp-weight: 400;
   --stamp-mask: none;
+  --card-paper: linear-gradient(in srgb, #000000, #000000);
+  --card-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M0.0 0.7 2.0 0.1 4.0 1.2 6.0 0.5 8.0 0.5 10.0 0.8 12.0 0.9 14.0 1.0 16.0 1.1 18.0 0.3 20.0 1.1 22.0 0.9 24.0 0.6 26.0 -0.0 28.0 0.5 30.0 0.4 32.0 0.4 34.0 0.8 36.0 0.2 38.0 0.2 40.0 -0.0 42.0 1.0 44.0 1.0 46.0 1.2 47.7 0.0 47.8 2.0 47.0 4.0 47.8 6.0 46.9 8.0 47.0 10.0 47.5 12.0 47.1 14.0 47.4 16.0 47.8 18.0 47.5 20.0 47.8 22.0 48.0 24.0 47.9 26.0 47.3 28.0 48.0 30.0 47.3 32.0 47.0 34.0 46.8 36.0 47.6 38.0 46.9 40.0 47.8 42.0 46.9 44.0 48.0 46.0 48.0 47.6 46.0 46.9 44.0 47.0 42.0 47.9 40.0 47.2 38.0 47.4 36.0 47.6 34.0 47.5 32.0 47.6 30.0 47.1 28.0 47.2 26.0 47.0 24.0 47.3 22.0 48.0 20.0 47.1 18.0 47.7 16.0 47.5 14.0 47.8 12.0 47.3 10.0 47.1 8.0 47.8 6.0 47.6 4.0 47.7 2.0 47.7 0.9 48.0 0.0 46.0 0.0 44.0 0.6 42.0 0.3 40.0 0.1 38.0 0.2 36.0 0.2 34.0 0.8 32.0 0.4 30.0 -0.0 28.0 0.5 26.0 0.6 24.0 0.1 22.0 0.1 20.0 0.6 18.0 0.8 16.0 1.0 14.0 0.3 12.0 0.5 10.0 1.0 8.0 0.9 6.0 0.9 4.0 0.6 2.0Z M3.3 2.0 3.3 4.0 3.4 6.0 3.0 8.0 3.1 10.0 3.7 12.0 3.1 14.0 3.1 16.0 4.0 18.0 2.8 20.0 3.5 22.0 2.7 24.0 2.8 26.0 4.0 28.0 3.7 30.0 3.2 32.0 3.8 34.0 2.8 36.0 3.8 38.0 3.5 40.0 3.1 42.0 3.7 44.0 4.0 46.0 3.0 48.0 2.0 44.4 4.0 44.3 6.0 44.7 8.0 44.5 10.0 44.6 12.0 45.2 14.0 45.2 16.0 44.4 18.0 44.3 20.0 45.0 22.0 44.9 24.0 44.8 26.0 44.9 28.0 44.8 30.0 45.1 32.0 44.4 34.0 44.0 36.0 43.9 38.0 44.5 40.0 44.0 42.0 43.9 44.0 45.0 46.0 44.5 48.0 45.0 44.3 46.0 44.2 44.0 44.2 42.0 44.3 40.0 45.2 38.0 44.2 36.0 43.9 34.0 44.5 32.0 44.0 30.0 45.0 28.0 45.2 26.0 44.8 24.0 45.0 22.0 44.5 20.0 44.3 18.0 44.6 16.0 44.4 14.0 45.3 12.0 44.4 10.0 45.2 8.0 44.3 6.0 44.5 4.0 45.0 2.0 44.0 0.0 46.0 3.5 44.0 3.2 42.0 2.8 40.0 3.0 38.0 3.0 36.0 3.0 34.0 3.3 32.0 3.3 30.0 2.8 28.0 3.2 26.0 3.1 24.0 3.3 22.0 2.8 20.0 2.9 18.0 3.4 16.0 4.0 14.0 3.4 12.0 4.1 10.0 3.9 8.0 3.1 6.0 2.7 4.0 2.8 2.0 3.3 0.0 3.0Z' fill='%23e9f0ea' fill-rule='evenodd'/%3E%3C/svg%3E")
+    12 / 3px round;
+  --stamp-lift: 22px;
+  --stamp-paper: #000000;
+  --stamp-rule: var(--bone);
+  --hatch: repeating-linear-gradient(-55deg in srgb, #262626 0 3px, transparent 3px 6px);
+  --stamp-arrow: '';
+  --stamp-arrow-room: 13px;
+  --tab-pad: 8px;
+  --caption-edge: var(--bone);
+  --caption-tilt: -2deg;
+  --spatter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cg fill='%23e9f0ea' fill-opacity='0.55'%3E%3Ccircle cx='56' cy='23' r='0.8'/%3E%3Ccircle cx='25' cy='39' r='1'/%3E%3Ccircle cx='60' cy='51' r='0.6'/%3E%3Ccircle cx='41' cy='53' r='2.4'/%3E%3Ccircle cx='9' cy='24' r='2.4'/%3E%3Ccircle cx='110' cy='53' r='1.3'/%3E%3Ccircle cx='22' cy='16' r='0.6'/%3E%3Ccircle cx='19' cy='49' r='1.8'/%3E%3Ccircle cx='11' cy='40' r='2.4'/%3E%3Ccircle cx='103' cy='52' r='0.8'/%3E%3Ccircle cx='80' cy='42' r='1.3'/%3E%3Ccircle cx='104' cy='44' r='0.8'/%3E%3Ccircle cx='48' cy='22' r='0.6'/%3E%3Ccircle cx='26' cy='50' r='1.3'/%3E%3Ccircle cx='10' cy='24' r='1.3'/%3E%3Ccircle cx='20' cy='16' r='2.4'/%3E%3C/g%3E%3C/svg%3E");
 
   --disc-lens: radial-gradient(
     circle at 50% 50% in srgb,
