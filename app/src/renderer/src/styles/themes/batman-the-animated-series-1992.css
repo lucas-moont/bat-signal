@@ -191,7 +191,7 @@
   --stamp-size: 11px;
   --stamp-weight: 400;
   --stamp-mask: none;
-  /* Asylum's menu language, SILENT PREDATOR's (Cards.css, App.css, NightReport.css): no paper or edge
+  /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
   --card-edge: none;

@@ -136,7 +136,7 @@
   text-transform: uppercase;
   position: relative;
   color: var(--stamp-hot);
-  /* Its rule in its own ink, or in a Theme's (SILENT PREDATOR's white tab edge), on a Theme's paper. */
+  /* Its rule in its own ink, or in a Theme's (a white tab edge), on a Theme's paper: every stamp's. */
   border: var(--stamp-border) solid var(--stamp-rule);
   background: var(--stamp-paper);
   border-radius: 2px;

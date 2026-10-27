@@ -95,7 +95,7 @@
   text-underline-offset: 4px;
   color: var(--caption-ink);
   background: var(--caption-paper);
-  /* The paper, and a Theme's edge round it (SILENT PREDATOR's white title tab), tilted if it says so. */
+  /* The paper, and a Theme's edge round it (a white title tab), tilted if it says so. */
   box-shadow:
     0 0 0 3px var(--caption-paper),
     0 0 0 5px var(--caption-edge);
