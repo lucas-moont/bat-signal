@@ -1756,3 +1756,133 @@ export const DARK_DECO_SUIT: Suit = {
   signature: ARMS_CROSSED,
   aura: 'alarmed',
 }
+
+// --- FREEFLOW: the armoured suit of Rocksteady's Asylum and City (arkham-games.md, section 8.1):
+// dark-grey plates over his body, a black cowl, gloves and cape, the cape worn over his shoulders
+// like a mantle, a wide flat bat tone on tone across his chest, a dim pouch belt, and fins on his
+// gauntlets. On the perch he crouches on a gargoyle, the cape falling over the ledge on one side. ---
+
+/** The pouch belt, four pouches on its band, a unit tall; then his four booted legs. */
+const FF_BELT = '...bkbkbbkbkb...'
+const FF_BELOW = [FF_BELT, FF_BELT, '....S.S..S.S....', '....g.g..g.g....', ...twice(['....g.g..g.g....'])]
+const FF_STANDING = map([SUIT, SUIT, SUIT], FF_BELOW)
+const FF_SEATED = map([SUIT, SUIT, SUIT, SUIT], [])
+/**
+ * Crouched (the Signature): his body short and his knees out wide past it, boots under them; drawn
+ * two units lower by its pose, so his head stays where every Theme keeps it on the grid.
+ */
+const FF_CROUCHED = map(
+  [SUIT, SUIT],
+  ['...bkbkbbkbkb...', '..SSSSSSSSSSSS..', '..SSS......SSS..', '..SSS......SSS..', '...gg......gg...'],
+)
+
+/** The wide flat bat across his chest, 6.5 units by 2, tone on tone in the armour. */
+const FF_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.4, width: 6.5, height: 2 }
+
+/** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
+const FF_MANTLE: Layer = {
+  kind: 'rects',
+  px: [
+    [3, 5, 1.5, 1],
+    [11.5, 5, 1.5, 1],
+  ],
+  className: 'clawd__cape',
+}
+
+/** The cape's hem in three long points a side. */
+const POINTS = {
+  /** Hanging behind him (left half; mirrored). */
+  hanging: 'M8 5 L3 5 L1.6 5.6 L1 11 L1.8 10.2 L2.4 11.2 L3 10.3 L3.8 11.2 L4.6 10.3 L8 10.3 Z',
+  /** Closed round him, asleep. */
+  wrapped:
+    'M2.6 6.4 L13.4 6.4 L14.2 11.1 L13.1 10.1 L12.1 11.1 L11 10.1 L5 10.1 L3.9 11.1 L2.9 10.1 L1.8 11.1 Z',
+  /** Flung back and hanging open (left half; mirrored). */
+  openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-1.4 10 L-0.8 11.2 L0.4 10.2 L1.2 11.2 L2.2 10.3 L3.4 11 Z',
+  /** Straight down under him on the line (flying). */
+  falling: 'M3 5 L13 5 L13.6 11.2 L12.4 10.2 L11.2 11.2 L10 10.2 L6 10.2 L4.8 11.2 L3.6 10.2 L2.4 11.2 Z',
+  /** Over the ledge on one side, its tip pointed (the gargoyle). */
+  overTheLedge: 'M3.4 5 L2 5.4 L-0.6 7.4 L-2.6 9.4 L-1.2 9.2 L-0.4 10 L0.8 9.2 L2 9.6 L3.4 9 Z',
+  /** Spread both sides as he lands (left half; mirrored). */
+  landing: 'M3.4 5 L1.6 5.2 L-2.8 8.4 L-1.6 8.4 L-1 9.4 L0.4 8.6 L1.4 9.4 L3.4 9 Z',
+}
+
+/** Fins on a forearm, two blades pointing back toward his elbow, along its top edge at (x, y). */
+const fins = (x: number, y: number, toward: 1 | -1): Layer => ({
+  kind: 'path',
+  d: `M${x} ${y} L${x - 0.8 * toward} ${y - 0.8} L${x - 0.4 * toward} ${y} Z M${x + toward} ${y} L${x + 0.2 * toward} ${y - 0.8} L${x + 0.6 * toward} ${y} Z`,
+  fill: 'var(--gloves)',
+})
+
+/** A pose in the armour: the mantle on his shoulders and the bat on his chest, unless it says otherwise. */
+const ffPose = (map: OutfitMap, behind: Layer[], front: Layer[] = [], over: { eyes?: Pose['eyes'] } = {}) =>
+  pose(map, behind, [FF_MANTLE, ...front], { chest: [FF_CHEST], ...over })
+
+/** His right arm straight up at column 13 to the glove a unit over his head, fins on the forearm. */
+const GRAPNEL_ARM: Layer[] = [
+  { kind: 'rects', px: [[13, 1, 1, 5]], fill: 'var(--suit)' },
+  { kind: 'rects', px: [[13, 0, 1, 1]], fill: 'var(--gloves)' },
+  fins(14, 2.6, -1),
+]
+/** The grapnel's line, straight up from his glove past the frame's top. */
+const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -1, 0.3, 1]], fill: 'var(--ash)' }
+
+/** On the grapnel (flying): rising on the line, his legs hanging, the cape falling straight under him. */
+const onTheGrapnel = ffPose(
+  FF_STANDING,
+  [{ kind: 'cape', d: POINTS.falling }],
+  [...GRAPNEL_ARM, GRAPNEL_LINE],
+)
+
+/**
+ * The counter (alarmed): his right forearm thrust out, its fins up, his left fist drawn back by his
+ * shoulder, the cape flung open behind him (away from SAME BAT-TIME's two raised fists, decision 14).
+ */
+const theCounter = ffPose(
+  FF_STANDING,
+  [BACK, { kind: 'cape', d: POINTS.openLeft, mirrored: true }],
+  [
+    { kind: 'rects', px: [[13, 5.5, 3, 1]], fill: 'var(--suit)' },
+    { kind: 'rects', px: [[16, 5.5, 1, 1]], fill: 'var(--gloves)' },
+    fins(14, 5.5, -1),
+    { kind: 'rects', px: [[2, 4, 1, 2]], fill: 'var(--suit)' },
+    { kind: 'rects', px: [[2, 3, 1, 1]], fill: 'var(--gloves)' },
+  ],
+)
+
+/** Crouched on the gargoyle, his right forearm across his knee, fins up, the cape as `cape` lays it. */
+const crouched = (cape: Layer[]): Pose => ({
+  ...ffPose(FF_CROUCHED, cape, [
+    { kind: 'rects', px: [[10.5, 8, 3, 0.6]], fill: 'var(--suit)' },
+    { kind: 'rects', px: [[13.5, 8, 0.8, 0.6]], fill: 'var(--gloves)' },
+    fins(12, 8, -1),
+  ]),
+  transform: 'translateY(2px)',
+})
+
+/**
+ * The gargoyle (the Signature, City's key art [23] [24]): he lands crouched with the cape spread both
+ * sides, folds its right side behind him, and lets the left fall over the ledge. Four a second.
+ */
+const THE_GARGOYLE: Script = [
+  { pose: crouched([{ kind: 'cape', d: POINTS.landing, mirrored: true }]), look: 0 },
+  { pose: crouched([{ kind: 'cape', d: POINTS.landing }]), look: 0 },
+  { pose: crouched([{ kind: 'cape', d: POINTS.overTheLedge }]), look: 0, lookY: 0.4 },
+]
+
+export const FREEFLOW_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(FF_SEATED, POINTS.wrapped)],
+    // Rising on the line, a pixel higher every other frame.
+    flying: [onTheGrapnel, { ...onTheGrapnel, transform: 'translateY(-1px)' }],
+    alarmed: [theCounter],
+  },
+  // On the perch he watches the street below, down one way, then the other.
+  watch: watchOn(THE_GARGOYLE, [
+    { look: -GAZE, lookY: 0.4 },
+    { look: GAZE, lookY: 0.4 },
+  ]),
+  signature: THE_GARGOYLE,
+  // Amber is the Alarm color and never shows at rest.
+  aura: 'alarmed',
+}
