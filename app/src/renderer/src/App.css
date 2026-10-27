@@ -216,9 +216,12 @@
 .tabs__tab:hover {
   color: var(--bone);
 }
-/* The open tab on a Theme's hatch (a selected row's, in SILENT PREDATOR's menus), or none. */
-.tabs__tab[aria-selected='true'] {
+/* The open tab on a Theme's hatch (a selected menu row's), or none; every tab keeps the hatch's
+   room, so the labels stay put as the open tab changes. */
+.tabs__tab {
   padding-inline: var(--tab-pad);
+}
+.tabs__tab[aria-selected='true'] {
   background: var(--hatch);
 }
 .tabs__tab:focus-visible {
