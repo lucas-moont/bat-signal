@@ -14,13 +14,13 @@ import './Balloon.css'
  */
 const STEPS = ['wait', 'grow', 'hold', 'fade'] as const
 
-/** Its size, in px: about the stamp's height and a word's width. */
+/** The box its burst is drawn in; it is stretched round its word, whatever the word's size. */
 const WIDTH = 34
 const HEIGHT = 22
 
 /**
  * A starburst's points, in shares of its half-width and half-height: twelve spikes, uneven as a
- * hand-drawn one's, about its middle.
+ * hand-drawn one's, about its middle, and the dips between them wide enough for the word.
  */
 const SPIKES = [1, 0.86, 0.97, 0.8, 1, 0.9, 0.95, 0.82, 1, 0.88, 0.93, 0.84]
 const BURST = SPIKES.flatMap((reach, i) => {
@@ -28,7 +28,7 @@ const BURST = SPIKES.flatMap((reach, i) => {
   const into = out + Math.PI / SPIKES.length
   const at = (angle: number, r: number) =>
     `${(WIDTH / 2) * (1 + r * Math.cos(angle))},${(HEIGHT / 2) * (1 + r * Math.sin(angle))}`
-  return [at(out, reach), at(into, 0.68)]
+  return [at(out, reach), at(into, 0.78)]
 }).join(' ')
 
 /**
@@ -49,7 +49,7 @@ export function Balloon({ kind }: { kind: NoticeKind }) {
   }
   return (
     <span className={`balloon balloon--${STEPS[step]}`} aria-hidden>
-      <svg className="balloon__burst" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width={WIDTH} height={HEIGHT}>
+      <svg className="balloon__burst" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none">
         <polygon points={BURST} />
       </svg>
       <span className="balloon__word">{word}</span>
