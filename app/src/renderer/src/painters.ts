@@ -10,6 +10,7 @@ import type {
   MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
+  SignalBackdrop,
   SkylineBackdrop,
   SmokeAtmosphere,
   SnowAtmosphere,
@@ -91,6 +92,48 @@ export function backdropFor(backdrop: Backdrop): Painter {
       return moon(backdrop)
     case 'skyline':
       return skyline(backdrop)
+    case 'signal':
+      return signal(backdrop)
+  }
+}
+
+/**
+ * An outline traced on the emblems' 120x48 grid as points about the grid's middle, in shares of its
+ * width. Straight lines only: a curve would come out as its end points.
+ */
+function outlineOf(d: string): Points {
+  const commands = d.match(/[a-zA-Z]/g) ?? []
+  if (commands.some((c) => !'MLZ'.includes(c)))
+    throw new Error(`not a traced outline, in straight lines: ${d}`)
+  return [...d.matchAll(/[ML]\s*(-?[\d.]+)[\s,]+(-?[\d.]+)/g)].map(
+    ([, x, y]) => [(Number(x) - 60) / 120, (Number(y) - 24) / 120] as const,
+  )
+}
+
+/** The Bat-Signal on the clouds: painted whole on every paint, since it never moves. */
+function signal({ color: variable, alpha, at, radius, aspect, bat }: SignalBackdrop): Painter {
+  const outline = outlineOf(bat.d)
+  let width = 0
+  let height = 0
+  let color = ''
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+    },
+    paint(ctx) {
+      const [cx, cy] = [at[0] * width, at[1]]
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.ellipse(cx, cy, radius, radius * aspect, 0, 0, 2 * Math.PI)
+      // The bat inside the light, left empty by the even-odd rule.
+      trace(ctx, outline, cx, cy, 2 * radius * bat.width)
+      ctx.fill('evenodd')
+    },
   }
 }
 
