@@ -67,7 +67,7 @@ export function AttentionList({
               {...listMotion(i)}
             >
               <button
-                className={`card card--attention card--${item.kind}${URGENT.has(item.kind) ? ' card--urgent' : ''}`}
+                className={`card card--attention card--${item.kind}${URGENT.has(item.kind) ? ' card--urgent' : ''}${item.kind === 'permission' ? ' card--locked' : ''}`}
                 onClick={() => onOpen(item)}
               >
                 {URGENT.has(item.kind) && <Glow />}
@@ -111,11 +111,12 @@ export function CaseList({
         {orderCases(sessions, attention).map((s, i) => {
           const { number, title, progress } = caseHeader(s, words)
           const needsYou = attention.some((a) => a.sessionId === s.sessionId)
+          const locked = attention.some((a) => a.sessionId === s.sessionId && a.kind === 'permission')
           const status = needsYou ? 'alert' : s.status
           return (
             <motion.li key={s.sessionId} className="card-slot" {...listMotion(i)}>
               <button
-                className={`card card--case${needsYou ? ' card--urgent' : ''}`}
+                className={`card card--case${needsYou ? ' card--urgent' : ''}${locked ? ' card--locked' : ''}`}
                 onClick={() => onOpen(s.sessionId)}
               >
                 {needsYou && <Glow />}

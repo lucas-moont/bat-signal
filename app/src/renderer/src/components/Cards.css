@@ -58,8 +58,9 @@
   outline-offset: 2px;
 }
 
-/* What asks permission is locked, in a Theme that draws a lock (the game's own LOCKED tile). */
-.card--permission {
+/* What asks permission is locked, in a Theme that draws a lock (Arkham Asylum's LOCKED tile): the
+   request itself, and the Case card of the session asking. */
+.card--locked {
   --card-lock: var(--lock-mark);
 }
 
