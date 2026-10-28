@@ -54,9 +54,14 @@ describe('the Atmosphere', () => {
   // The dark layer is at rest unseen (opacity 0) and only a Theme's --flicker dims it. Its fade in and
   // out must not hold its opacity: at 1 it laid black over every Theme's scene while it moved.
   it('leaves its failing light unseen but for the Theme’s own flicker', () => {
-    const flicker = /<div class="atmosphere__flicker"([^>]*)>/.exec(draw(true))
-    expect(flicker).not.toBeNull()
-    expect(flicker![1]).not.toContain('opacity')
+    // The fade is on a layer of its own, the dark layer a plain child of it.
+    const failing =
+      /<div class="atmosphere__failing"([^>]*)><div class="atmosphere__flicker"([^>]*)><\/div><\/div>/.exec(
+        draw(true),
+      )
+    expect(failing).not.toBeNull()
+    expect(failing![1]).toContain('opacity')
+    expect(failing![2]).not.toContain('style')
   })
 })
 

@@ -13,7 +13,8 @@
   background: radial-gradient(closest-side in srgb, var(--haze), var(--haze-edge) 55%, transparent);
 }
 
-/* The motion, and under it the backdrop (a still drawing, if the Atmosphere has one). */
+/* The motion, and under it the backdrop (a still drawing, if the Atmosphere has one); and the failing
+   light's fade, a layer of its own so Motion's opacity never lands on the dark one under it. */
 .atmosphere__layer,
 .atmosphere__backdrop,
 .atmosphere__failing {
