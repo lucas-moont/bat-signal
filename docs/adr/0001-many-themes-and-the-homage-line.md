@@ -8,6 +8,8 @@ Each Theme's emblem follows that version's bat symbol closely, redrawn by us as 
 
 One narrow exception, added in wave 2 (`docs/research/themes/jury-wave-2.md` §9): when a work shows no bat symbol of its own, its Theme may draw the bat the work itself shows, from life, credited as our drawing. *Arkham Asylum: A Serious House on Serious Earth* is the first case. This is not a licence for "inspired by" emblems: a version that has a symbol still uses it.
 
+A second narrow exception, added in wave 3 (#147, the maintainer's pick on screen): besides its emblem, a Theme may carry one small mark from its work's own world, redrawn by us as a vector and credited to its owner in `NOTICE` like the emblems. SILENT PREDATOR's medallion, from *Arkham Asylum*'s Chronicles of Arkham, is the first case; it was traced from a capture of the game, since hand drawings could not come close. This is not a licence for screenshots, character art or scenes.
+
 ## Rules that follow
 
 - "Red always means something" becomes the Alarm color rule: each Theme keeps one color for "something needs you" and uses it nowhere else. It is the hottest color in the palette, or a red that suits the palette when nothing in it reads as an alarm.
