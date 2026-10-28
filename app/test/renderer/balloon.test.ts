@@ -28,8 +28,9 @@ describe('a Theme with balloons', () => {
     },
   })
 
-  it('pops its word for the alert', () => {
+  it('pops its word for the alert, waiting unseen while the card comes in', () => {
     expect(balloon('permission')).toContain('POW!')
+    expect(balloon('permission')).toContain('balloon--wait')
     expect(balloon('reply')).toContain('BAM!')
   })
 
