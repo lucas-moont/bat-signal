@@ -1765,7 +1765,7 @@ export const DARK_DECO_SUIT: Suit = {
 // --- SILENT PREDATOR: the armoured suit of Rocksteady's Arkham Asylum (arkham-games.md, section 8.1;
 // silent-predator-build.md, section 4): dark-grey plates over his body, a black cowl with tall ears,
 // gloves and cape, the cape worn over his shoulders like a mantle, the trilogy's bat tone on tone
-// across his chest, a brass-khaki pouch belt, and three fins on each gauntlet. On the perch he
+// across his chest, a brass-khaki pouch belt, and three fins on his gauntlet. On the perch he
 // crouches on a stone gargoyle, the cape spread over its back. ---
 
 /**
@@ -1827,19 +1827,23 @@ const POINTS = {
 }
 
 /**
- * Fins on a forearm, three short blades along its top edge from (x, y) toward his hand (`toward`),
- * each leaning back toward his elbow [04] [05].
+ * Fins on a forearm, three short blades along its edge from (x, y) toward his hand (`toward`), each
+ * leaning back toward his elbow [04] [05]: up from the top edge of an arm held out, or out from the
+ * outer side of an arm raised (`upright`, his hand above).
  */
-const fins = (x: number, y: number, toward: 1 | -1): Layer => ({
-  kind: 'path',
-  d: [0, 0.7, 1.4]
-    .map((at) => {
-      const root = x + at * toward
-      return `M${root} ${y} L${root - 0.5 * toward} ${y - 0.7} L${root + 0.4 * toward} ${y} Z`
-    })
-    .join(' '),
-  fill: 'var(--gloves)',
-})
+const fins = (x: number, y: number, toward: 1 | -1, upright = false): Layer => {
+  const at = (along: number, out: number) => (upright ? `${x + out} ${y + along}` : `${x + along} ${y - out}`)
+  return {
+    kind: 'path',
+    d: [0, 0.7, 1.4]
+      .map((step) => {
+        const root = step * toward
+        return `M${at(root, 0)} L${at(root - 0.5 * toward, 0.7)} L${at(root + 0.4 * toward, 0)} Z`
+      })
+      .join(' '),
+    fill: 'var(--gloves)',
+  }
+}
 
 /**
  * A pose in the armour: his ears, the mantle on his shoulders, the pouches on his belt at beltY and
@@ -1856,8 +1860,8 @@ const predatorPose = (
     edge: PREDATOR_EDGE,
   })
 
-/** His right arm straight up at column 13 to the glove a unit over his head, fins on the forearm. */
-const GRAPNEL_ARM: Layer[] = [...raisedArm(13, [], 0, 5), fins(14, 2.6, -1)]
+/** His right arm straight up at column 13 to the glove a unit over his head, fins up its outer side. */
+const GRAPNEL_ARM: Layer[] = [...raisedArm(13, [], 0, 5), fins(14, 3.6, -1, true)]
 /** The grapnel's line, straight up from his glove past the frame's top. */
 const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'var(--ash)' }
 
@@ -1879,7 +1883,7 @@ const theCounter = predatorPose(
   [
     { kind: 'rects', px: [[13, 5.5, 3, 1]], fill: 'var(--suit)' },
     { kind: 'rects', px: [[16, 5.5, 1, 1]], fill: 'var(--gloves)' },
-    fins(14, 5.5, -1),
+    fins(14, 5.5, 1),
     ...raisedArm(2, [], 3, 2),
   ],
 )
