@@ -11,9 +11,9 @@ import {
   BECOME_A_BAT_WORDS,
   BLUE_COLLAR_WORDS,
   DARK_DECO_WORDS,
-  SILENT_PREDATOR_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
+  SILENT_PREDATOR_WORDS,
   STANDARD_TERMS,
   STANDARD_VOICE,
   STANDARD_WORDS,
@@ -430,10 +430,19 @@ describe("SILENT PREDATOR's words", () => {
     })
   })
 
-  it('reads a quiet city as all clear, and closes the log on what remains', () => {
-    expect(voice.empty.quiet.title).toBe('No objectives. The city is quiet.')
-    expect(voice.report.end(0)).toBe('All objectives complete.')
-    expect(voice.report.end(2)).toBe('Objectives remain.')
+  // The Voice never borrows the Lexicon's words: with the Lexicon off the tabs say Needs you and Cases.
+  it('reads a quiet city as all clear, and closes the field log on what still waits', () => {
+    expect(voice.empty.quiet.title).toBe('Nothing to report. The city is quiet.')
+    expect(voice.report.end(0)).toBe('Area secure.')
+    expect(voice.report.end(2)).toBe('Something still waits on you.')
+    const lines = [
+      voice.empty.quiet.title,
+      voice.report.name,
+      voice.report.signature,
+      voice.report.end(0),
+      voice.report.end(2),
+    ]
+    for (const line of lines) expect(line).not.toMatch(/objective|mission/i)
   })
 
   // The studio's name, as every credit names its makers, and "trilogy": a game, beside SERIOUS HOUSE's book.

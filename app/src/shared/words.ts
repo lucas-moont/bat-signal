@@ -596,7 +596,7 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
       ...STANDARD_VOICE.report,
       name: 'Sitrep',
       dateline: datelineOf('GOTHAM'),
-      signature: 'Waiting on you',
+      signature: 'Your move',
       caseNotes: () => 'In the field',
       // The Theme's one film line, a fragment of Harvey Dent's, only when nothing waits.
       end: (waiting) =>
@@ -1033,7 +1033,8 @@ export const SILENT_PREDATOR_WORDS: Words = {
     tagline: 'Eyes open. Move silent.',
     empty: {
       ...STANDARD_VOICE.empty,
-      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'No objectives. The city is quiet.' },
+      // Never the Lexicon's own words: with it off, the tabs say Needs you and Cases.
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Nothing to report. The city is quiet.' },
       noCases: {
         ...STANDARD_VOICE.empty.noCases,
         title: (t) => `No ${lower(t.case.many)} running. Grapple out.`,
@@ -1041,12 +1042,12 @@ export const SILENT_PREDATOR_WORDS: Words = {
     },
     report: {
       ...STANDARD_VOICE.report,
-      name: 'Mission log',
-      dateline: datelineOf('MISSION LOG'),
-      signature: 'Objectives',
-      nil: (t) => `No objectives waiting on you. Every ${lower(t.case.one)} is running.`,
+      name: 'Field log',
+      dateline: datelineOf('SURVEILLANCE'),
+      signature: 'Your move',
+      nil: (t) => `Nothing waits on you. Every ${lower(t.case.one)} is running.`,
       caseNotes: (t) => `${t.case.one} log`,
-      end: (waiting) => (waiting ? 'Objectives remain.' : 'All objectives complete.'),
+      end: (waiting) => (waiting ? 'Something still waits on you.' : 'Area secure.'),
     },
     signal: {
       ...STANDARD_VOICE.signal,
@@ -1057,7 +1058,7 @@ export const SILENT_PREDATOR_WORDS: Words = {
       kicker: 'Gadgets',
       atmosphere: { label: 'Rain', hint: (t) => `Rain over Gotham behind the ${lower(t.case.many)}` },
     },
-    // On the perch he crouches on a gargoyle, as City's key art has him.
+    // On the perch he crouches on a stone gargoyle, as the games' vantage points have him.
     mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd on a gargoyle' },
   },
 }
