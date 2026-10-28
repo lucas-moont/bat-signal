@@ -4,12 +4,14 @@ import { ALERT_INK, attentionCopy, caseHeader, folderName, orderCases, relativeT
 import { useWords } from '../words'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
+import { EmptyMark } from './Mark'
 import { TerminalButton } from './TerminalButton'
 import './Cards.css'
 
 function Empty({ title, hint }: { title: string; hint: string }) {
   return (
     <div className="empty">
+      <EmptyMark />
       <BatClawd mood="sleeping" size={72} />
       <p className="empty__title">{title}</p>
       <p className="empty__hint">{hint}</p>

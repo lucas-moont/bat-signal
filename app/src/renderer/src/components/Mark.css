@@ -1,0 +1,22 @@
+/* A Theme's mark, drawn in its --mark (and, found, its --mark-lit): images, none for a Theme without. */
+.empty__mark {
+  width: 84px;
+  height: 84px;
+  margin-bottom: 4px;
+  background: var(--mark) center / contain no-repeat;
+}
+.report__marks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.report__mark {
+  width: 18px;
+  height: 18px;
+  background: var(--mark) center / contain no-repeat;
+}
+.report__mark--lit {
+  background-image: var(--mark-lit);
+}
