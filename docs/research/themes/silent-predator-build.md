@@ -26,7 +26,7 @@
 
 Research note, 2026-10-27. Scope: what the Theme dossier [`arkham-games.md`](arkham-games.md) left unverified (§13) or read only from angled captures, checked again before the build of the Theme first named FREEFLOW, now SILENT PREDATOR (GitHub #147). **The maintainer has made *Batman: Arkham Asylum* (2009) the primary reference for the whole Theme** (2026-10-27), so every finding below is taken from Asylum first; City and Knight are secondary context and are labelled so. Covered: the chest bat, the gargoyle crouch, the mantle, the gauntlet fins, the pouch belt, the cape hem, the ears, Asylum's UI language, and whether "FREEFLOW" and its two fallbacks (SILENT PREDATOR, KNIGHTFALL) are registered marks. Read with the dossier, its reference index [`references/arkham-games.md`](references/arkham-games.md) and [`jury-wave-3.md`](jury-wave-3.md) §9, whose decisions stand.
 
-Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image, named by its number (`[05]`). **Measured** = taken off that image with a script (column scans, segmentation, colour medians) or read as pixel coordinates off a gridded, upscaled crop of it. **Inferred** = our reading of what those facts imply. **Proposed** = our choice. Images [01]–[60] are the dossier's; [61]–[72] are new (§2), and [73]–[99] (§9). All stay in scratch folders and are never committed, traced into shipped art from a frame, or shipped (ADR 0001). The game logos ([62]–[64], [01], [21]'s wordmark, [44]) were measured as context; the maintainer has since chosen the logo bat as the emblem, traced from [63] without its lettering (see the Decided block).
+Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image, named by its number (`[05]`). **Measured** = taken off that image with a script (column scans, segmentation, colour medians) or read as pixel coordinates off a gridded, upscaled crop of it. **Inferred** = our reading of what those facts imply. **Proposed** = our choice. Images [01]–[60] are the dossier's; [61]–[72] are new (§2), and [73]–[99] (§9). All stay in scratch folders and are never committed or shipped, nor traced into shipped art from a frame, except the warden's medallion (§9, picked on screen; ADR 0001's second exception). The game logos ([62]–[64], [01], [21]'s wordmark, [44]) were measured as context; the maintainer has since chosen the logo bat as the emblem, traced from [63] without its lettering (see the Decided block).
 
 ## 1. TL;DR
 
@@ -391,7 +391,7 @@ References [73]–[99] are new and are added to [`references/arkham-games.md`](r
 
 Both were fetched at 640×360, the only resolution we could get.
 
-The scripts are in `tools-decay/`. `regions.py` gives a region's median, dark5 (the darkest 5% of its pixels) and bright3 (the brightest 3%). The scratch sheets are `crops-decay/SHEET-chronicles.png`, `crops-decay/SHEET-gate.png` and `crops-decay/decay-board.png`.
+The scripts are in the session's scratch folder `tools-decay/`, not committed, like the images. `regions.py` gives a region's median, dark5 (the darkest 5% of its pixels) and bright3 (the brightest 3%). The scratch sheets are `crops-decay/SHEET-chronicles.png`, `crops-decay/SHEET-gate.png` and `crops-decay/decay-board.png`.
 
 ### 9.1 The director's symbols are the Chronicles of Arkham
 
