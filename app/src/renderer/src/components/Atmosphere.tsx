@@ -169,9 +169,14 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
       </AnimatePresence>
       <div className="atmosphere__grain" />
       {/* A Theme's failing light: animated in CSS, so only on the page while the Atmosphere moves, and
-          faded in and out with the motion, so it never snaps off mid-dim. */}
+          faded in and out with the motion, so it never snaps off mid-dim. The fade is its own layer:
+          on the dark layer itself it would hold it at full strength over the whole scene. */}
       <AnimatePresence>
-        {moving && <motion.div key="flicker" className="atmosphere__flicker" {...FADE} />}
+        {moving && (
+          <motion.div key="flicker" className="atmosphere__failing" {...FADE}>
+            <div className="atmosphere__flicker" />
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   )
