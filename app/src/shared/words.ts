@@ -1004,3 +1004,61 @@ export const DARK_DECO_WORDS: Words = {
     noticeLine: { ...STANDARD_VOICE.noticeLine, closed: 'Case closed. Roll the credits.' },
   },
 }
+
+/**
+ * SILENT PREDATOR, after Rocksteady's Arkham trilogy (arkham-games.md, sections 6 and 7): the game itself
+ * speaks, its objective log in the second person, short and practical. Quiet means all clear; the
+ * respect list SERIOUS HOUSE set holds, though the games use some of its words.
+ */
+export const SILENT_PREDATOR_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    case: { one: 'Mission', many: 'Missions' },
+    needsYou: { label: 'Objectives', count: (n) => `${n} objective${n === 1 ? '' : 's'}` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'Access?',
+      error: 'Failed',
+      waiting: 'Respond',
+      reply: 'Incoming',
+      'session-opened': 'Mission start',
+      'session-closed': 'Mission over',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // The studio's name, as every credit names its makers, and "trilogy" tells a game from SERIOUS
+    // HOUSE's book in the picker; a no-break space keeps "Arkham trilogy" on one line.
+    theme: { name: 'SILENT PREDATOR', film: "Rocksteady's Arkham trilogy" },
+    tagline: 'Eyes open. Move silent.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      // Never the Lexicon's own words: with it off, the tabs say Needs you and Cases.
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'Nothing to report. The city is quiet.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)} running. Grapple out.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Field log',
+      dateline: datelineOf('SURVEILLANCE'),
+      signature: 'Standing by for you',
+      nil: (t) => `Nothing waits on you. Every ${lower(t.case.one)} is running.`,
+      caseNotes: (t) => `${t.case.one} log`,
+      end: (waiting) => (waiting ? 'Something still waits on you.' : 'Area secure.'),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) => (lit ? '' : 'Nothing highlighted. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Gadgets',
+      atmosphere: { label: 'Rain', hint: (t) => `Rain over Gotham behind the ${lower(t.case.many)}` },
+    },
+    // On the perch he crouches on a stone gargoyle, as the games' vantage points have him.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd on a gargoyle' },
+  },
+}

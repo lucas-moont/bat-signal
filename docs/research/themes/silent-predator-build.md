@@ -12,10 +12,21 @@
 > - **Face: Staatliches** for the wordmark, headings and stamps (§8), over Oxanium and Squada One.
 > - **Bolder: Asylum's menu language across the whole panel** (§8): every card a black panel with a torn white edge, each stamp its title tab over the corner, an arrow on a hatch for what needs the user, the open tab on the hatch, title tabs in the mission log, spatter by the masthead. Engine hooks in PR #161.
 > - **Alarmed: the counter**, one forearm thrust out with its fins, the other fist raised.
+> - **Heavier decay** (§9.4, the heavy level): rust and water streaks, mould, a faint cracked tile grid and grime in every panel; ACCESS? cards chained and padlocked, after the game's own LOCKED tile [85].
+> - **An iron fence along the panel's foot** (§9.5). The maintainer tried three drawings of the asylum's gate, with its statues and lettering, and chose to keep the plain spiked fence.
+> - **A failing green light**: it only dims, never marks news, and only while the Atmosphere moves.
+> - **The warden's medallion as the Theme's mark** (§9.1), traced from the 4K Deciphered Messages capture [73]:
+>   - its dark shapes followed edge by edge and the left half mirrored;
+>   - the dots at 12 and 6 o'clock redrawn;
+>   - the hatched laurel sprigs and the middle pair of legs drawn by hand after it.
+>
+>   It was picked on screen over hand drawings and over a version with all the legs redrawn, and it lifts, for this mark, the note's "never traced" as the logo bat does. It is grey at rest and Bone when found (the game's found medallions are white; amber stays the alarm's).
+> - **At the night report's end, one medallion per Case**, lit one after another once found.
+> - Engine hooks: PRs #161 and #163.
 
 Research note, 2026-10-27. Scope: what the Theme dossier [`arkham-games.md`](arkham-games.md) left unverified (§13) or read only from angled captures, checked again before the build of the Theme first named FREEFLOW, now SILENT PREDATOR (GitHub #147). **The maintainer has made *Batman: Arkham Asylum* (2009) the primary reference for the whole Theme** (2026-10-27), so every finding below is taken from Asylum first; City and Knight are secondary context and are labelled so. Covered: the chest bat, the gargoyle crouch, the mantle, the gauntlet fins, the pouch belt, the cape hem, the ears, Asylum's UI language, and whether "FREEFLOW" and its two fallbacks (SILENT PREDATOR, KNIGHTFALL) are registered marks. Read with the dossier, its reference index [`references/arkham-games.md`](references/arkham-games.md) and [`jury-wave-3.md`](jury-wave-3.md) §9, whose decisions stand.
 
-Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image, named by its number (`[05]`). **Measured** = taken off that image with a script (column scans, segmentation, colour medians) or read as pixel coordinates off a gridded, upscaled crop of it. **Inferred** = our reading of what those facts imply. **Proposed** = our choice. Images [01]–[60] are the dossier's; [61]–[72] are new (§2). All stay in scratch folders and are never committed, traced into shipped art from a frame, or shipped (ADR 0001). The game logos ([62]–[64], [01], [21]'s wordmark, [44]) were measured as context; the maintainer has since chosen the logo bat as the emblem, traced from [63] without its lettering (see the Decided block).
+Provenance key, as in [`dkr-rework.md`](dkr-rework.md): **Read** = seen by us on a reference image, named by its number (`[05]`). **Measured** = taken off that image with a script (column scans, segmentation, colour medians) or read as pixel coordinates off a gridded, upscaled crop of it. **Inferred** = our reading of what those facts imply. **Proposed** = our choice. Images [01]–[60] are the dossier's; [61]–[72] are new (§2), and [73]–[99] (§9). All stay in scratch folders and are never committed or shipped, nor traced into shipped art from a frame, except the warden's medallion (§9, picked on screen; ADR 0001's second exception). The game logos ([62]–[64], [01], [21]'s wordmark, [44]) were measured as context; the maintainer has since chosen the logo bat as the emblem, traced from [63] without its lettering (see the Decided block).
 
 ## 1. TL;DR
 
@@ -369,3 +380,140 @@ In `crops-freeflow/`:
   - `ui-22-troph.png` (the selected tile);
   - `ui-71-failed.png` (failure).
 - **The detective HUD:** `ui-14-hud.png` (the combat ring), `ui-15-labels.png` (labels and rules), `ui-72-hud.png` (the armed enemy in red, the reticle).
+
+## 9. Asylum's decay and the warden's chronicles
+
+Added 2026-10-27, after the maintainer's verdict on the first build: "the theme should be more 'Asylum'. In the original game there are symbols left by the asylum's director, everything is more aged, polluted, deteriorated. Batman, the symbol and the tasks are good, but the overall theme is too simple and weak." *Arkham Asylum* (2009) only.
+
+References [73]–[99] are new and are added to [`references/arkham-games.md`](references/arkham-games.md). Most of [87]–[99] are stills from two YouTube videos, cited by video and time:
+- **V1:** CompletionCore Gaming's guide to all 24 Chronicles, https://www.youtube.com/watch?v=5EkvagMURYM;
+- **V2:** Batman Arkham Videos' introduction, https://www.youtube.com/watch?v=079tCc_JWJY.
+
+Both were fetched at 640×360, the only resolution we could get.
+
+The scripts are in the session's scratch folder `tools-decay/`, not committed, like the images. `regions.py` gives a region's median, dark5 (the darkest 5% of its pixels) and bright3 (the brightest 3%). The scratch sheets are `crops-decay/SHEET-chronicles.png`, `crops-decay/SHEET-gate.png` and `crops-decay/decay-board.png`.
+
+### 9.1 The director's symbols are the Chronicles of Arkham
+
+- **What they are.** The asylum's director in the game is Warden Quincy Sharp. The symbols he leaves are the **Chronicles of Arkham**, hidden "encrypted tablets" round the island that Batman finds and scans. Their text seems to be founder Amadeus Arkham's. Once all are found, the later entries turn out to be Sharp's own: he believes he is the "Spirit of Arkham" and spread the tablets himself.
+  - Source: the Arkham Wiki's [Chronicles of Arkham](https://arkhamcity.fandom.com/wiki/Chronicles_of_Arkham), [Spirit of Arkham](https://arkhamcity.fandom.com/wiki/Spirit_of_Arkham) and [Amadeus Arkham](https://arkhamcity.fandom.com/wiki/Amadeus_Arkham) pages, used to identify only.
+  - The Riddler's marks are a separate set of challenges and are not the director's.
+- **The tablet in the world** ([91]–[96]; [93] front-on; Read). It is a free-standing **stone slab, wider at the base than the top**, a trapezoid about 1.2:1. It is thick, with a bevelled rim, and stands on the floor or leans against a wall, with no frame.
+  - Its face is pale stone lit by the room: green-lit `#5f7f5f`, bright `#8ab68e` [93]; torch-lit `#3c382e` [92] (Measured).
+  - It is chipped at a corner [93], and it waits in rubble behind a wall Batman blows open ([96]; V1 2:55, 6:34, 13:40).
+- **The carving.** **Three to four concentric rings of tiny scratched script** fill the face nearly to its edge. At the centre is **a beetle in low relief**, about a sixth of the slab's width: four long prongs rising from the head (the middle two joined like a U), a short thorax, an oval abdomen and six legs. The bio art [74] and [75] draws the same slab.
+- **How the game shows it** ([91], [94], [95]). The prompt reads "Use the Environment Analysis tool to decipher cryptic symbols" ([91]).
+  - In detective mode the slab has **no outline**: it is blue like everything else ([95] `#2d3864`, Measured).
+  - Once scanned, **the whole slab glows a flat yellow-green**, `#90b953`, bright `#ccfd94`, dark `#5d7222` (Measured, [94]), with "CHRONICLE OF ARKHAM SCANNED" beside it behind the amber arrow.
+- **The final chronicle is not a slab:** its rings of script are drawn on a floor, with a word scrawled many times inside them ([97], [98]; the wiki's low-resolution capture [76]).
+- **The medallion** ([73] 4K; [99]; Read and Measured). The bio screen "THE SPIRIT OF ARKHAM" lists "DECIPHERED MESSAGES" as a 6×4 grid of flat medallions.
+  - **Each medallion:**
+    - a ring of about 16 small dots inside the rim, with larger dots at 12 and 6 o'clock;
+    - two hatched laurel sprigs, left and right;
+    - the beetle in silhouette, about 0.55 of the disc's height: four upright prongs, an oval body, two front legs bent up and four legs bent down.
+  - **Its three states:**
+
+    | State | How it is drawn |
+    |---|---|
+    | Not found | dark grey |
+    | Found | **white with the beetle black** (`#ffffff`, `#000000`, [99]) |
+    | Selected | **amber `#ffad00`** in four amber corner brackets ([73]) |
+
+    Amber is the selection, not "found".
+- **Not found online:** concept art of the beetle or the slab, a tablet in the world sharper than V1's 360p frames, or any source for what the beetle means. "Scarab" is our word only.
+
+### 9.2 The decay vocabulary
+
+Rocksteady's art director David Hego describes the look:
+- "a very realistic touch in the texture treatment and in the details";
+- "We used a lot of saturated colors in the lighting while successfully keeping the mood dark and gothic";
+- the medical wing is "more inspired from a Victorian architecture and metalwork structure";
+- the intensive treatment unit is "a strong industrial gothic architecture".
+
+([Episodic Content Magazine, 2016](https://episodiccontentmag.com/2016/03/04/batmanaa_chapter2/).)
+
+Measured with `regions.py` on 31 regions; the table gives median / dark5 / bright3.
+
+| Element | References | Measured | What a 2D panel could borrow |
+|---|---|---|---|
+| Grime and water stains | [10], [06], [83], [81] | `#171915` / `#0b0f0e` / `#617077`; `#2f4e50` / `#060605` / `#547b74`; `#0f131e` / `#050506` / `#3f535a` | Soft streaks running down from the top, darker than the ground; blotchy grime |
+| Rust | [77], [10], [82], [79] | `#5e4734` / `#0a0f0c` / `#9e7657` (h 63–65) | A rust bleed on an edge or a rim; rust running from rivets |
+| Peeling paint, torn posters | [12], [08] | `#2c3025` / `#080804` / `#a6aa92`; `#29362e` / … / `#a8d9cd` | Pale flakes. Close to SERIOUS HOUSE's torn panes (§9.3) |
+| Cracked tiles | [78], [84] | `#58777a` / `#060a0d` / `#d0ffff`; `#15222a` / … / `#9cc2cf` | A faint square grid with one or two cracks; the clinical blue-white |
+| Mould and overgrowth | [77], [20], [80] | `#0e140e` / `#060706` / `#55593a`; `#040d08` / `#000300` / `#264230` | Green-black creeping in at the lower corners, olive at its lit edge |
+| Wet surfaces | [12], [08], [78] | `#38392e` / `#111009` / `#736557`; `#2b3d41` / `#060a0d` / `#b5fefe` | A sheen on the bottom band catching the green light |
+| Green light | [12], [80], [06], [09] | `#688a70` / `#101b16` / `#bef8c5`; `#07181d` / … / `#baf8f3` | Already the Theme's haze; decay adds a failing light (from play, not seen in a still) |
+| Victorian ironwork | [80], [15], [10], [72] | `#102e2e` / `#020c09` / `#bcf8f2`; `#141b1b` / … / `#577178` | A spiked fence at the panel's foot, rivets, barbed wire |
+| Chains and padlocks | [79], [85] | `#0b1017` / `#000002` / `#aabfcb`; [85] flat `#000000` and `#ffffff` | **The game's own "LOCKED" tile**: a chain round a padlock, white, amber when selected |
+| Warning signs, boarded crosses | [81], [82], [77] | `#7f6e5d` / `#1c1613` / `#e1d7ce`; `#3d2c23` / `#090604` / `#a47f67` | Stencilled plates; a boarded X over something closed |
+
+Read plainly: Asylum's decay is **warm rust and brown (h 54–91) on cold green-teal and blue (h 146–280)**, and its whites are clinical blue-white rather than paper white.
+
+### 9.3 Distance from SERIOUS HOUSE
+
+SERIOUS HOUSE (`arkham-horror-references.md` on `origin/feat/123-serious-house`) claims:
+- McKean's scratched emulsion;
+- spatter (red on alarm);
+- tall strips split by hairline rules;
+- torn paper panes;
+- construction geometry;
+- hand lettering per voice;
+- blue-black, scarlet and the Joker's green.
+
+It rules out a flickering bulb.
+
+**The game's own, and clear of it:** rust and rust-bleed, water-stain streaks and grime blotches, the cracked tile grid, mould, wet sheen, Victorian ironwork and barbed wire, chains and padlocks, stencilled signs and boarded crosses, the beetle medallion and the slab, and green-teal with warm rust.
+
+**Collides, kept out:**
+- the rings of script and the scrawled word: Arkham's binding spell is the 1989 book's own image, and hand lettering is SERIOUS HOUSE's;
+- scratches of any kind;
+- torn posters;
+- red spatter (the Theme's white menu spatter stays white);
+- a flicker that brightens.
+
+### 9.4 Three levels (Proposed)
+
+1. **Subtle, CSS only:**
+   - a rust bleed in the torn card edge;
+   - the medallion as the empty-state and closing glyph;
+   - a riveted or barbed-wire header rule;
+   - grain a little higher.
+2. **Clear, small hooks:**
+   - a grime image slot on cards;
+   - a static stain layer on the ground: streaks from the top, mould at the lower corners, a faint cracked tile grid;
+   - ACCESS? cards chained and padlocked after [85];
+   - the night report's Cases as a row of medallions.
+3. **Heavy, new painters:**
+   - drips on the glass;
+   - a failing green light that only dims;
+   - an iron fence or gate backdrop at the panel's foot;
+   - creeping vines.
+
+The maintainer took the heavy level, without drips or vines (see the Decided block).
+
+### 9.5 The gate
+
+Read on [86] (front-on), [87]–[89] (the opening's drive-in, V2 1:21–1:31), [80] (three-quarter) and [90].
+- **Approach:** the road runs straight through the gate between dead twisted trees, the green moon behind the centre. Before it stands a green direction sign over an orange warning plate ([90]).
+- **Pillars and statues:** two squat stone pillars with overgrown bases (stone `#1d201d`). On each stands a tall robed, hooded statue, head bowed, holding a lantern out at chest height (`#fdfeef`). Whether the figures are angels or mourners is not settled: [80] hints at a wing, [86] shows only hood and drapery.
+- **The arch:** two curved iron bands span the pillars, the upper one heavier, each carrying a word; the iron is `#24373e`, lit to `#c2f4ed`. Two more lanterns hang under the lower band.
+- **The gate leaves:** above the bands, vertical bars rise higher toward the centre to a crown of spear tips ([88], [89]; `#2b414e`, bright `#8bcac4`).
+- **The fence:** to each side, iron bars with a band of ring scrolls on the top rail and barbed-wire coils on top ([80]).
+- **Defining shapes at the foot of a 320px panel**, most important first (Proposed):
+  1. the two-band arch;
+  2. the bars rising to a spear-tipped crown;
+  3. the two robed figures;
+  4. four warm lantern dots;
+  5. the pillars;
+  6. the fence with ring scrolls and barbed wire;
+  7. the moon and dead branches.
+- **Decided:** the maintainer tried three drawings of the gate with its statues and blank bands, and chose the plain spiked fence instead (see the Decided block). No lettering is ever drawn.
+
+### 9.6 Unverified
+
+- How a tablet looks in the world at more than 360p, and any official art of it.
+- The final chronicle, written in blood on a monitor: from the wiki's text only.
+- [76]'s scene.
+- What the gate's statues are.
+- The failing green light: from memory of play, not seen in a still.
+- Sources outside the publisher: [78]–[82] come through a magazine (one carries a MobyGames watermark); [80] is a wallpaper of unverified origin; [86] carries a TeamXbox watermark.

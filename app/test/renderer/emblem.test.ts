@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { batAt, BatEmblem, OUTLINE_SHARE } from '../../src/renderer/src/components/BatEmblem'
-import { BAT_1992, BAT_1996, emblem, OVAL_1992, WINGS } from '../../src/shared/emblems'
+import { BAT_1992, BAT_1996, BAT_2009, emblem, OVAL_1992, WINGS } from '../../src/shared/emblems'
 import { standInTheme } from '../fixtures/themes'
 
 const draw = (props: Parameters<typeof BatEmblem>[0] = {}) =>
@@ -192,6 +192,7 @@ const points = (d: string) => {
 it.each([
   ['HOLIDAY', BAT_1996],
   ['DARK DECO', BAT_1992],
+  ['SILENT PREDATOR', BAT_2009],
 ])("%s's bat is symmetric about the middle of its grid", (_, bat) => {
   const all = points(bat).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
   const mirrored = points(bat).map(([x, y]) => `${(120 - x).toFixed(1)},${y.toFixed(1)}`)
@@ -239,5 +240,34 @@ describe("DARK DECO's bat", () => {
     const foot = bat.y + bat.height
     const tail = points(BAT_1992).filter(([, y]) => y > foot - 1)
     expect(Math.max(...tail.map(([x]) => x)) - Math.min(...tail.map(([x]) => x))).toBeLessThan(3)
+  })
+})
+
+// SILENT PREDATOR's bat (#147): the trilogy's bat, traced from City's logo and title screen, picked on
+// screen over two traces of the suit's chest (silent-predator-build.md, section 3).
+describe("SILENT PREDATOR's bat", () => {
+  const bat = points(BAT_2009)
+  const xs = bat.map(([x]) => x)
+  const ys = bat.map(([, y]) => y)
+  const top = Math.min(...ys)
+
+  it('fills the 48 units of its frame from wingtip to tail, about 2.3 times as wide', () => {
+    expect(top).toBe(0)
+    expect(Math.max(...ys)).toBe(48)
+    expect((Math.max(...xs) - Math.min(...xs)) / 48).toBeCloseTo(2.3, 1)
+  })
+
+  // The hooks at its wingtips are its highest points; its ears stand well below them.
+  it('peaks at its hooked wingtips, not its ears', () => {
+    const peaks = bat.filter(([, y]) => y === top)
+    expect(peaks.map(([x]) => x).sort((a, b) => a - b)).toEqual([36.5, 83.5])
+    const ears = bat.filter(([x]) => Math.abs(x - 60) < 6)
+    expect(Math.min(...ears.map(([, y]) => y)) - top).toBeGreaterThan(5)
+  })
+
+  // No step at the head (the maintainer, on screen): each ear's outer edge runs straight down into its bowl.
+  it('runs each ear straight down into its bowl', () => {
+    const i = bat.findIndex(([x, y]) => x === 55.4 && y === 5.5)
+    expect(bat[i - 1]![1]).toBeGreaterThan(16)
   })
 })

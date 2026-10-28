@@ -10,6 +10,7 @@ import {
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
+  SILENT_PREDATOR_RAIN,
   VENGEANCE_RAIN,
   WATCHFUL_PROTECTOR_WINDOWS,
   type Atmosphere,
@@ -19,6 +20,7 @@ import {
   BAT_1987,
   BAT_1996,
   BAT_2008,
+  BAT_2009,
   BAT_2016,
   BLOCK_2024,
   emblem,
@@ -35,6 +37,7 @@ import {
   HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
+  SILENT_PREDATOR_SUIT,
   VENGEANCE_SUIT,
   WATCHFUL_PROTECTOR_SUIT,
   type Suit,
@@ -47,6 +50,7 @@ import {
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
+  SILENT_PREDATOR_WORDS,
   STANDARD_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
   withLexicon,
@@ -63,6 +67,7 @@ export const THEME_IDS = [
   'absolute-batman-2024',
   'the-long-halloween-1996',
   'batman-the-animated-series-1992',
+  'batman-arkham-2009',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -174,6 +179,19 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: EMBLEM_1992,
     suit: DARK_DECO_SUIT,
     atmosphere: DARK_DECO_SKY,
+  },
+  /**
+   * Rocksteady's Arkham trilogy (Asylum 2009, City 2011, Knight 2015), SILENT PREDATOR: Gotham lit green from
+   * above, rain falling straight, the menus' amber for what needs you.
+   */
+  'batman-arkham-2009': {
+    flag: 'predator',
+    ground: '#040a06',
+    words: SILENT_PREDATOR_WORDS,
+    emblem: emblem(BAT_2009, 'none'),
+    suit: SILENT_PREDATOR_SUIT,
+    atmosphere: SILENT_PREDATOR_RAIN,
+    mark: true,
   },
 }
 

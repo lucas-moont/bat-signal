@@ -13,6 +13,7 @@ import {
   DARK_DECO_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
+  SILENT_PREDATOR_WORDS,
   STANDARD_TERMS,
   STANDARD_VOICE,
   STANDARD_WORDS,
@@ -404,5 +405,67 @@ describe("DARK DECO's words", () => {
   it('names its Atmosphere after the sky, with the blimps over the city', () => {
     expect(voice.settings.atmosphere.label).toBe('Red sky')
     expect(voice.settings.atmosphere.hint(terms)).toBe('Police blimps over the city behind the cases')
+  })
+})
+
+describe("SILENT PREDATOR's words", () => {
+  const { terms, voice } = SILENT_PREDATOR_WORDS
+
+  // The games' objective log (arkham-games.md, sections 6 and 7; jury-wave-3.md, section 4): a
+  // Mission, an Objective that needs you, ACCESS? asking to be let through, a FAILED mission, a
+  // RESPOND waiting on you. STALLED keeps the standard word: dark and quiet mean all clear.
+  it("speak the objective log's Lexicon", () => {
+    expect(terms.case).toEqual({ one: 'Mission', many: 'Missions' })
+    expect(terms.needsYou.label).toBe('Objectives')
+    expect(terms.needsYou.count(1)).toBe('1 objective')
+    expect(terms.needsYou.count(3)).toBe('3 objectives')
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Access?',
+      error: 'Failed',
+      waiting: 'Respond',
+      reply: 'Incoming',
+      'session-opened': 'Mission start',
+      'session-closed': 'Mission over',
+    })
+  })
+
+  // The Voice never borrows the Lexicon's words: with the Lexicon off the tabs say Needs you and Cases.
+  it('reads a quiet city as all clear, and closes the field log on what still waits', () => {
+    expect(voice.empty.quiet.title).toBe('Nothing to report. The city is quiet.')
+    expect(voice.report.end(0)).toBe('Area secure.')
+    expect(voice.report.end(2)).toBe('Something still waits on you.')
+    const lines = [
+      voice.empty.quiet.title,
+      voice.report.name,
+      voice.report.signature,
+      voice.report.end(0),
+      voice.report.end(2),
+    ]
+    for (const line of lines) expect(line).not.toMatch(/objective|mission/i)
+  })
+
+  // The studio's name, as every credit names its makers, and "trilogy": a game, beside SERIOUS HOUSE's book.
+  it('credits the games by their studio', () => {
+    expect(voice.theme.name).toBe('SILENT PREDATOR')
+    expect(voice.theme.film).toBe("Rocksteady's Arkham trilogy")
+  })
+
+  // The respect list SERIOUS HOUSE set: the games' asylum, its patients and villains are not in the Voice.
+  it('keeps the respect list', () => {
+    const lines = [
+      JSON.stringify({ terms, voice }),
+      voice.empty.noCases.title(terms),
+      voice.report.nil(terms),
+      voice.report.end(0),
+      voice.report.end(1),
+      voice.settings.atmosphere.hint(terms),
+    ].join(' ')
+    expect(lines).not.toMatch(/\b(mad|insane|lunatic|crazy|psycho|inmate|patient|cell|asylum)\b/i)
+  })
+
+  it('names its Atmosphere after the rain', () => {
+    expect(voice.settings.atmosphere.label).toBe('Rain')
+    expect(voice.settings.atmosphere.hint(terms)).toBe('Rain over Gotham behind the missions')
   })
 })

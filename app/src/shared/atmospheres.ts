@@ -501,3 +501,16 @@ export const DARK_DECO_SKY: BlimpsAtmosphere = {
     mist: { color: '--mist', alpha: 0.55, height: 36 },
   },
 }
+
+/**
+ * SILENT PREDATOR's rain, over Asylum's island and Knight's whole night (arkham-games.md, section 10, A1):
+ * falling almost straight down, heavier and brighter than VENGEANCE's slant, under a green haze from
+ * above; no searchlights, which went to DARK DECO's sky (jury-wave-3.md, section 9, decision 5).
+ */
+export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
+  kind: 'rain',
+  color: '--rain',
+  density: 0.4,
+  angle: 0.06,
+  depths: [0.1, 0.16, 0.25],
+}

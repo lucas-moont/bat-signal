@@ -7,6 +7,7 @@ import {
   DARK_DECO_SUIT,
   HOLIDAY_SUIT,
   PALE_MOONLIGHT_SUIT,
+  SILENT_PREDATOR_SUIT,
   scriptAt,
   stillStep,
   VENGEANCE_SUIT,
@@ -260,5 +261,56 @@ describe("DARK DECO's suit", () => {
   it('wears the oval on his chest when awake', () => {
     for (const p of [...poses.flying, ...poses.alarmed, signature.at(-1)!.pose])
       expect(fills(p)).toContain('var(--emblem-plate)')
+  })
+})
+
+// SILENT PREDATOR's suit (arkham-games.md, section 8; silent-predator-build.md, section 4), after Arkham
+// Asylum's armour, each part picked on screen beside the references.
+describe("SILENT PREDATOR's suit", () => {
+  const { poses, watch, aura } = SILENT_PREDATOR_SUIT
+  const signature = SILENT_PREDATOR_SUIT.signature!
+  const held = signature.at(-1)!
+  const layers = (p: Pose) => [...p.behind, ...p.front]
+  const every = [
+    ...poses.sleeping,
+    ...poses.flying,
+    ...poses.alarmed,
+    ...signature.map((step) => step.pose),
+    ...watch.map((step) => step.pose),
+  ]
+
+  // Amber is the Alarm color: only the aura, while something needs the user, ever shows it.
+  it('wears nothing in the Alarm color, and its aura only when alarmed', () => {
+    expect(aura).toBe('alarmed')
+    for (const p of every)
+      expect(layers(p).filter((l) => 'fill' in l && l.fill?.includes('--signal'))).toEqual([])
+  })
+
+  // City's key art [24]: crouched on a stone gargoyle, the cape over its back on the side away from
+  // its head, his eyes down past its jaws.
+  it('ends its Signature crouched on a stone gargoyle, the cape away from where he looks', () => {
+    expect(layers(held.pose).some((l) => 'fill' in l && l.fill === 'var(--stone)')).toBe(true)
+    expect(held.look).toBeGreaterThan(0)
+    expect(held.lookY).toBeGreaterThan(0)
+    // The cape on our left reaches past his side; the gargoyle's head and his gaze are on our right.
+    const xs = held.pose.behind
+      .filter((l) => l.kind === 'cape' && !l.mirrored)
+      .flatMap((l) => ('d' in l ? [...l.d.matchAll(/[ML](-?[\d.]+) /g)].map((m) => Number(m[1])) : []))
+    expect(Math.min(...xs)).toBeLessThan(0)
+    expect(Math.max(...xs)).toBeLessThanOrEqual(16)
+  })
+
+  it('keeps its watch on the gargoyle', () => {
+    for (const step of watch) expect(step.pose).toBe(held.pose)
+  })
+  // One hand up on the line, the other hanging at his side by the belt (the maintainer, on screen).
+  it('rises on the grapnel with one glove up and the other down at his side', () => {
+    const gloves = layers(poses.flying[0]!)
+      .filter((l) => l.kind === 'rects' && l.fill === 'var(--gloves)')
+      .flatMap((l) => ('px' in l ? l.px : []))
+    expect(gloves.map(([x, y]) => [x < 8 ? 'left' : 'right', y < 2 ? 'up' : 'down'])).toEqual([
+      ['left', 'down'],
+      ['right', 'up'],
+    ])
   })
 })

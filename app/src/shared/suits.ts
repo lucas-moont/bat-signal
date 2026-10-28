@@ -1310,11 +1310,14 @@ const collarPose = (
   { chest = [CHEST_BLOCK], pads = PADS.rest }: { chest?: Layer[]; pads?: Layer } = {},
 ) => pose(map, behind, [...front, pads], { chest })
 
-/** An arm raised at column `x`, its glove a unit above his shoulder, holding `held` under the glove. */
-const raisedArm = (x: number, held: Layer[] = []): Layer[] => [
-  { kind: 'rects', px: [[x, 3, 1, 3]], fill: 'var(--suit)' },
+/**
+ * An arm raised at column `x`, its glove at `top` (a unit above his shoulder unless told), the suit
+ * `length` units down from it, holding `held` under the glove.
+ */
+const raisedArm = (x: number, held: Layer[] = [], top = 2, length = 3): Layer[] => [
+  { kind: 'rects', px: [[x, top + 1, 1, length]], fill: 'var(--suit)' },
   ...held,
-  { kind: 'rects', px: [[x, 2, 1, 1]], fill: 'var(--gloves)' },
+  { kind: 'rects', px: [[x, top, 1, 1]], fill: 'var(--gloves)' },
 ]
 
 /** The tether up from his raised right hand, past the frame's top. */
@@ -1459,11 +1462,13 @@ const HOLIDAY_EDGE: Layer = {
  * thin tips at the frame's top, three units tall, their outer edges in line with the cowl's sides.
  */
 const LONG_EARS_D = 'M3 3 L3 -0.9 L3.5 -0.9 L5 1.4 L5 3 Z M13 3 L13 -0.9 L12.5 -0.9 L11 1.4 L11 3 Z'
-/** Ears drawn behind the cowl: their outline in the cowl's edge, then their cloth in its black. */
-const earsOf = (d: string): Layer[] => [
+/** A shape outlined in the cowl's neutral edge, then filled: so it stands off the dark behind it. */
+const outlined = (d: string, fill: string): Layer[] => [
   { kind: 'path', d, className: 'clawd__cowl-edge' },
-  { kind: 'path', d, fill: 'var(--cowl)' },
+  { kind: 'path', d, fill },
 ]
+/** Ears drawn behind the cowl: their outline in the cowl's edge, then their cloth in its black. */
+const earsOf = (d: string): Layer[] => outlined(d, 'var(--cowl)')
 const LONG_EARS = earsOf(LONG_EARS_D)
 
 /** The book's Signal bat on his chest, a unit and a half tall, between the mantle and the belt. */
@@ -1754,5 +1759,221 @@ export const DARK_DECO_SUIT: Suit = {
   // On the perch, his arms crossed, he looks along the roof and back.
   watch: watchOn(ARMS_CROSSED, [{ look: -GAZE }, { look: GAZE }]),
   signature: ARMS_CROSSED,
+  aura: 'alarmed',
+}
+
+// --- SILENT PREDATOR: the armoured suit of Rocksteady's Arkham Asylum (arkham-games.md, section 8.1;
+// silent-predator-build.md, section 4): dark-grey plates over his body, a black cowl with tall ears,
+// gloves and cape, the cape worn over his shoulders like a mantle, the trilogy's bat tone on tone
+// across his chest, a brass-khaki pouch belt, and three fins on his gauntlet. On the perch he
+// crouches on a stone gargoyle, the cape spread over its back. ---
+
+/**
+ * Asylum's ears [04] [05]: tall, about two fifths of his head, narrow and nearly upright, set in from
+ * the cowl's sides; drawn behind the cowl, so his head carries no ear tips on the grid (picked on
+ * screen over the standard ears).
+ */
+const EARS = earsOf('M4.2 1.4 L4.5 -1 L5.1 -1 L5.7 1.4 Z M11.8 1.4 L11.5 -1 L10.9 -1 L10.3 1.4 Z')
+/** The cowl's outline without ears, behind the face, so only its outer edge shows. */
+const PREDATOR_EDGE: Layer = {
+  kind: 'path',
+  d: 'M3 5 L3 2 L4 2 L4 1 L12 1 L12 2 L13 2 L13 5 Z',
+  className: 'clawd__cowl-edge',
+}
+/** His map under the earless head that DARK DECO's ears also stand behind. */
+const predatorMap = (chest: readonly string[], rows: readonly string[] = []) =>
+  map(chest, rows, LEGEND, DECO_HEAD)
+
+/** The pouch belt's band, a unit tall (its pouches and buckle are drawn on it); then his four booted legs. */
+const PREDATOR_BELOW = [...twice(['...bbbbbbbbbb...']), ...BELOW_WAIST.slice(2)]
+const PREDATOR_STANDING = predatorMap([SUIT, SUIT, SUIT], PREDATOR_BELOW)
+const PREDATOR_SEATED = predatorMap([SUIT, SUIT, SUIT, SUIT])
+
+/** The wide flat bat across his chest, 6.5 units wide, tone on tone in the armour, under the mantle. */
+const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 6.5 }
+
+/**
+ * On a belt at y, `tall` units deep, two square pouches each side and the wide buckle plate between
+ * them [04] [05], all inside the band.
+ */
+const pouchesAt = (y: number, tall = 1): Layer => ({
+  kind: 'rects',
+  px: [
+    [3.5, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [5, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [7.2, y + 0.05 * tall, 1.6, 0.9 * tall],
+    [10.2, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [11.7, y + 0.1 * tall, 0.8, 0.8 * tall],
+  ],
+  fill: 'var(--buckle)',
+})
+
+/** The cape's top worn over his shoulders, in front of the armour: a block of cape on each. */
+const PREDATOR_MANTLE: Layer = {
+  kind: 'rects',
+  px: [
+    [3, 5, 1.5, 1],
+    [11.5, 5, 1.5, 1],
+  ],
+  className: 'clawd__cape',
+}
+
+/** The cape's hem in two long points a side, as Asylum's artwork shows it [04]. */
+const POINTS = {
+  /** Closed round him, asleep. */
+  wrapped:
+    'M2.6 6.4 L13.4 6.4 L14.2 11.1 L12.8 10.1 L11.6 11.1 L10.4 10.1 L5.6 10.1 L4.4 11.1 L3.2 10.1 L1.8 11.1 Z',
+  /** Flung back and hanging open (left half; mirrored). */
+  openLeft: 'M3.4 5 L0.4 5.2 L-2.6 10.6 L-0.8 10 L0.2 11.2 L1.6 10.2 L3.4 11 Z',
+  /** Hanging under him on the line (flying), flaring out past his legs. */
+  falling: 'M3 5 L13 5 L15 11.2 L13.4 10.4 L12 11.2 L10.4 10.2 L5.6 10.2 L4 11.2 L2.6 10.4 L1 11.2 Z',
+}
+
+/**
+ * Fins on a forearm, three short blades along its edge from (x, y) toward his hand (`toward`), each
+ * leaning back toward his elbow [04] [05]: up from the top edge of an arm held out, or out from the
+ * outer side of an arm raised (`upright`, his hand above).
+ */
+const fins = (x: number, y: number, toward: 1 | -1, upright = false): Layer => {
+  const at = (along: number, out: number) => (upright ? `${x + out} ${y + along}` : `${x + along} ${y - out}`)
+  return {
+    kind: 'path',
+    d: [0, 0.7, 1.4]
+      .map((step) => {
+        const root = step * toward
+        return `M${at(root, 0)} L${at(root - 0.5 * toward, 0.7)} L${at(root + 0.4 * toward, 0)} Z`
+      })
+      .join(' '),
+    fill: 'var(--gloves)',
+  }
+}
+
+/**
+ * A pose in the armour: his ears, the mantle on his shoulders, the pouches on his belt and the bat on
+ * his chest (the crouch's belt sits higher and narrower, and its bat is smaller).
+ */
+const predatorPose = (
+  map: OutfitMap,
+  behind: Layer[],
+  front: Layer[] = [],
+  { chest = PREDATOR_CHEST, belt = pouchesAt(8) }: { chest?: Layer; belt?: Layer } = {},
+) =>
+  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, belt, ...front], {
+    chest: [chest],
+    edge: PREDATOR_EDGE,
+  })
+
+/** His right arm straight up at column 13 to the glove a unit over his head, fins up its outer side. */
+const GRAPNEL_ARM: Layer[] = [...raisedArm(13, [], 0, 5), fins(14, 3.6, -1, true)]
+/** His left arm hanging at his side, under the mantle, the glove by his belt. */
+const HANGING_ARM: Layer[] = [
+  { kind: 'rects', px: [[2, 6, 1, 2]], fill: 'var(--suit)' },
+  { kind: 'rects', px: [[2, 8, 1, 1]], fill: 'var(--gloves)' },
+]
+/** The grapnel's line, straight up from his glove past the frame's top. */
+const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'var(--ash)' }
+
+/** On the grapnel (flying): rising on the line, his legs hanging, the cape falling straight under him. */
+const onTheGrapnel = predatorPose(
+  PREDATOR_STANDING,
+  [{ kind: 'cape', d: POINTS.falling }],
+  [...HANGING_ARM, ...GRAPNEL_ARM, GRAPNEL_LINE],
+)
+
+/**
+ * The counter (alarmed): his right forearm thrust out, its fins up, his left fist raised by his
+ * shoulder, the cape flung open behind him (away from SAME BAT-TIME's two raised fists, decision 14;
+ * picked on screen).
+ */
+const theCounter = predatorPose(
+  PREDATOR_STANDING,
+  [BACK, { kind: 'cape', d: POINTS.openLeft, mirrored: true }],
+  [
+    { kind: 'rects', px: [[13, 5.5, 3, 1]], fill: 'var(--suit)' },
+    { kind: 'rects', px: [[16, 5.5, 1, 1]], fill: 'var(--gloves)' },
+    fins(14, 5.5, 1),
+    ...raisedArm(2, [], 3, 2),
+  ],
+)
+
+/**
+ * Crouched (the Signature), face on, after the licensed statue [65]: his arms close down his sides
+ * to his hands at his hips, the belt there, his thighs filled in to his knees drawn up under him, the
+ * dark only between his shins, grey down to the stone (black boots vanish into the cape behind him).
+ * The maintainer, on screen: torso, hips and legs must read apart, no splits, no floating arms.
+ */
+const KNEES_UP = predatorMap(
+  [],
+  [
+    SUIT,
+    ...Array<string>(3).fill('..SSSSSSSSSSSS..'),
+    '..gbbbbbbbbbbg..',
+    ...twice([SUIT]),
+    ...Array<string>(3).fill('...SSS....SSS...'),
+  ],
+)
+/** The cape behind his crouch, down to the gargoyle's back. */
+const CAPE_BEHIND: Layer = { kind: 'cape', d: 'M3 5 L13 5 L14 9.6 L2 9.6 Z' }
+/** Spread from his shoulders down both sides as he lands (left half; mirrored). */
+const LANDING: Layer = {
+  kind: 'cape',
+  d: 'M3.4 5 L1.4 5.4 L-1.6 7.6 L-3.6 11.2 L-2 10.6 L-1 11.4 L0.4 10.6 L1.6 11.2 L3.4 10.4 Z',
+  mirrored: true,
+}
+/** Over the gargoyle's back on our left, away from its head, spread like a wing to pointed tips. */
+const OVER_ITS_BACK: Layer = {
+  kind: 'cape',
+  d: 'M3.4 5 L1.2 5.2 L-1.6 7.2 L-4.4 10.4 L-5.4 12.4 L-3.4 11.6 L-2.2 12.6 L-0.8 11.4 L0.6 12.4 L2.2 11 L3.4 11.4 Z',
+}
+
+/**
+ * The stone gargoyle he crouches on, after City's key art [24] (the maintainer, on screen: "a real
+ * gargoyle under him"): a beast's back under his boots, its horned head jutting out on our right,
+ * its jaws open; our own drawing.
+ */
+const GARGOYLE_D =
+  'M0.4 13.8 L0.6 10.8 Q1.6 9.9 3.6 10 L12.6 10 L13.6 9.5 L13.9 7.8 L14.9 9.2 L15.6 8.2 L16.2 9.4 L18.6 9.6 ' +
+  'L21 10.5 L19.4 11 L17 11 L17.8 11.4 L20.2 11.5 L19.2 12.3 L16.4 12.3 L16 13.8 Z'
+const GARGOYLE: Layer[] = [
+  // Outlined in the cowl's neutral edge, so the stone stands off the dark and off his suit.
+  ...outlined(GARGOYLE_D, 'var(--stone)'),
+  { kind: 'rects', px: [[1.2, 10, 11.6, 0.3]], fill: 'var(--stone-lit)' },
+  { kind: 'rects', px: [[16.8, 9.95, 0.7, 0.45]], fill: 'var(--abyss)' },
+]
+/** Crouched on the gargoyle, the cape as `cape` lays it, a small bat on his chest under his jaw. */
+const crouched = (cape: Layer): Pose => ({
+  ...predatorPose(KNEES_UP, [...GARGOYLE, CAPE_BEHIND, cape], [], {
+    // Under his jaw (rows 4 and 5), and the belt a half-row band at y 7.
+    chest: { kind: 'emblem', cx: 8, cy: 5.8, width: 3.4 },
+    belt: pouchesAt(7, 0.5),
+  }),
+  // Up on the gargoyle's back, by a share of his own height so it holds at every size.
+  transform: 'translateY(-10%)',
+})
+
+/**
+ * The gargoyle (the Signature, City's key art [23] [24]): he lands on its back with the cape spread,
+ * then lets it fall over the side away from the gargoyle's head, and looks down past its jaws.
+ */
+const THE_GARGOYLE: Script = [
+  { pose: crouched(LANDING), look: 0 },
+  { pose: crouched(OVER_ITS_BACK), look: GAZE, lookY: 0.4 },
+]
+
+export const SILENT_PREDATOR_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(PREDATOR_SEATED, POINTS.wrapped, [...EARS, PREDATOR_EDGE])],
+    // Rising on the line, a pixel higher every other frame.
+    flying: [onTheGrapnel, { ...onTheGrapnel, transform: 'translateY(-1px)' }],
+    alarmed: [theCounter],
+  },
+  // On the perch he watches the street below, then past the gargoyle's jaws.
+  watch: watchOn(THE_GARGOYLE, [
+    { look: 0, lookY: 0.4 },
+    { look: GAZE, lookY: 0.4 },
+  ]),
+  signature: THE_GARGOYLE,
+  // Amber is the Alarm color and never shows at rest.
   aura: 'alarmed',
 }

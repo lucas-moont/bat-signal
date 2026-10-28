@@ -45,6 +45,7 @@
     "@fontsource/permanent-marker": "^5.3.0",
     "@fontsource/shantell-sans": "^5.3.0",
     "@fontsource/special-elite": "^5.3.0",
+    "@fontsource/staatliches": "^5.3.0",
     "@fontsource/syncopate": "^5.3.0",
     "@resvg/resvg-wasm": "^2.6.2",
     "@types/node": "^24.19.1",
@@ -150,6 +151,10 @@
       {
         "from": "node_modules/@fontsource/special-elite/LICENSE",
         "to": "licenses/Special Elite.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/staatliches/LICENSE",
+        "to": "licenses/Staatliches.txt"
       },
       {
         "from": "node_modules/@fontsource/syncopate/LICENSE",
