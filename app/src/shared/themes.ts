@@ -191,6 +191,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: emblem(BAT_2009, 'none'),
     suit: SILENT_PREDATOR_SUIT,
     atmosphere: SILENT_PREDATOR_RAIN,
+    mark: true,
   },
 }
 
