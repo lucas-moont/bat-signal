@@ -28,18 +28,23 @@ describe('the Atmosphere', () => {
     expect(draw(true)).toContain('atmosphere__canvas')
   })
 
-  // The haze, the grain and a Theme's decor (SILENT PREDATOR's stains and fence) are still: they stay
-  // whether the Atmosphere moves or not.
-  it('keeps the haze, the grain and the decor either way', () => {
+  // The haze and the grain are still: they stay whether the Atmosphere moves or not.
+  it('keeps the haze and the grain either way', () => {
     const off = draw(false)
     expect(off).toContain('atmosphere__glow')
     expect(off).toContain('atmosphere__grain')
-    expect(off).toContain('atmosphere__decor')
-    expect(draw(true, true)).toContain('atmosphere__decor')
   })
 
-  // A Theme's failing light (SILENT PREDATOR's) dims the scene now and then: only while it moves, never
-  // under reduced motion or while it is off, so a window parked in a corner never pays for it.
+  // A Theme's decor (stains, a fence) is still, like a backdrop: it stays while the Atmosphere is on,
+  // under reduced motion too, and leaves when it is off.
+  it('keeps its decor while it is on, moving or not', () => {
+    expect(draw(true)).toContain('atmosphere__decor')
+    expect(draw(true, true)).toContain('atmosphere__decor')
+    expect(draw(false)).not.toContain('atmosphere__decor')
+  })
+
+  // A Theme's failing light dims the scene now and then: only while it moves, never under reduced
+  // motion or while it is off, so a window parked in a corner never pays for it.
   it('lets its light fail only while it moves', () => {
     expect(draw(true)).toContain('atmosphere__flicker')
     expect(draw(true, true)).not.toContain('atmosphere__flicker')
