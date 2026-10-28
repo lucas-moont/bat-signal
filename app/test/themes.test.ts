@@ -11,6 +11,14 @@ describe('the Themes', () => {
     expect(themeVariables(id).get('--abyss')?.toLowerCase()).toBe(THEMES[id].ground.toLowerCase())
   })
 
+  // A mark is drawn only for a Theme whose entry says so, in the images its stylesheet gives: the two
+  // agree, or the mark would be an empty box, or images never drawn.
+  it.each(THEME_IDS)('%s draws a mark only with images for it', (id) => {
+    const vars = themeVariables(id)
+    for (const name of ['--mark', '--mark-lit'])
+      expect(vars.get(name) !== 'none', name).toBe(!!THEMES[id].mark)
+  })
+
   // The picker names each Theme by its display name and credits the film or comic it follows
   // (jury §10: names allude to the film; the credit says which). Words, so they are its Voice's.
   it.each(THEME_IDS)('%s has a display name and the film it follows', (id) => {
