@@ -37,14 +37,14 @@ function ratio(a: Rgb, b: Rgb): number {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-/**
- * Every variable the renderer's CSS paints text (or an icon) with. A balloon's word sits on its own
- * starburst, not on a ground: it has a test of its own.
- */
+/** A balloon's word sits on its own starburst, not on a ground: it has a test of its own. */
+const BALLOON_WORD = /\.balloon__word\s*\{[^}]*\}/
+
+/** Every variable the renderer's CSS paints text (or an icon) with. */
 function textColors(): string[] {
-  const used = rendererSources('.css')
-    .filter(({ path }) => !path.endsWith('Balloon.css'))
-    .flatMap(({ text }) => [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!))
+  const used = rendererSources('.css').flatMap(({ text }) =>
+    [...text.replace(BALLOON_WORD, '').matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
+  )
   return [...new Set(used)].filter((c) => !(c in PAPERS)).sort()
 }
 
