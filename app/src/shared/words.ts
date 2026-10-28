@@ -6,6 +6,7 @@
 // Every presenter takes the words it speaks, with no default, so no caller can fall back on the
 // standard words by forgetting them. Windows notifications (the announcer) and the tray pass
 // STANDARD_WORDS themselves; the panel and the Signal pass the Theme's (the renderer's useWords).
+import type { NoticeKind } from './notices'
 import type { NewsGroup } from './settings'
 import type { ShortcutProblem } from './accelerator'
 import type { ShortcutStatus } from './status'
@@ -211,6 +212,11 @@ export interface Voice {
     opened: string
     closed: string
   }
+  /**
+   * The word a balloon pops with beside a fresh notice's stamp (SAME BAT-TIME's POW!): decoration,
+   * never the alert's name, which the stamp beside it still gives. None, without a word.
+   */
+  balloon?: Partial<Record<NoticeKind, string>>
 }
 
 /** A setting's label and the line under it. */

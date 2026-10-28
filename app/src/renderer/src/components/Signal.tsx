@@ -15,6 +15,7 @@ import { Wearing } from '../theme'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { useWords } from '../words'
 import { mascotMood } from '@shared/view'
+import { Balloon } from './Balloon'
 import { BatClawd } from './BatClawd'
 import { BatEmblem } from './BatEmblem'
 import { Glow } from './Live'
@@ -190,7 +191,10 @@ function NoticeCard({
         }}
         title={voice.signal.openCase(terms)}
       >
-        <span className="stamp">{notice.stamp}</span>
+        <span className="notice__stamp">
+          <span className="stamp">{notice.stamp}</span>
+          <Balloon kind={notice.kind} />
+        </span>
         <strong className="notice__title">{notice.title}</strong>
         {notice.line && <span className="notice__line">{notice.line}</span>}
       </button>
