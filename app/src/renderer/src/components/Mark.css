@@ -1,22 +1,25 @@
-/* A Theme's mark, drawn in its --mark (and, found, its --mark-lit): images, none for a Theme without. */
+/* A Theme's mark, drawn in its --mark and, found, its --mark-lit: images, none for a Theme without. */
 .empty__mark {
-  width: 84px;
-  height: 84px;
-  margin-bottom: 4px;
+  width: 64px;
+  height: 64px;
   background: var(--mark) center / contain no-repeat;
 }
+/* Along the report's sign-off, which it sits above. */
 .report__marks {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 5px;
   margin-bottom: 10px;
 }
 .report__mark {
+  position: relative;
   width: 18px;
   height: 18px;
   background: var(--mark) center / contain no-repeat;
 }
-.report__mark--lit {
-  background-image: var(--mark-lit);
+/* A found mark's light, over its unlit face, lit one after another. */
+.report__light {
+  position: absolute;
+  inset: 0;
+  background: var(--mark-lit) center / contain no-repeat;
 }

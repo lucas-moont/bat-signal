@@ -141,7 +141,7 @@ export function NightReport({
       )}
 
       <footer className="report__end">
-        <CaseMarks sessions={sessions} />
+        <CaseMarks cases={cases} attention={attention} />
         {voice.report.end(attention.length)}
       </footer>
     </article>

@@ -90,10 +90,15 @@ export interface CaseHeader {
   progress?: { done: number; total: number; label: string }
 }
 
+/** How far a session's task list has come: its tasks done, of all of them. */
+export const taskProgress = ({ tasks }: SessionSnapshot) => ({
+  done: tasks.filter((t) => t.status === 'completed').length,
+  total: tasks.length,
+})
+
 /** How a session is introduced on its card. */
 export function caseHeader(session: SessionSnapshot, { terms, voice }: Words): CaseHeader {
-  const done = session.tasks.filter((t) => t.status === 'completed').length
-  const total = session.tasks.length
+  const { done, total } = taskProgress(session)
   return {
     number: `#${session.sessionId.replace(/[^a-z0-9]/gi, '').slice(0, 6)}`,
     title: session.title ?? session.name ?? voice.untitled(terms),
