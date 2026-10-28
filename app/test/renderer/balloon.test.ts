@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CalmContext } from '../../src/renderer/src/calm'
 import { Balloon } from '../../src/renderer/src/components/Balloon'
-import type { NoticeKind } from '../../src/shared/notices'
+import { NOTICE_URGENCY, type NoticeKind } from '../../src/shared/notices'
 import { STANDARD_WORDS } from '../../src/shared/words'
 import { standInTheme } from '../fixtures/themes'
 
@@ -15,8 +15,8 @@ const balloon = (kind: NoticeKind, calm = false) =>
 // SAME BAT-TIME's POW! (adam-west.md, section 7): a balloon pops beside a fresh alert's stamp on
 // the notice card. It is decoration, never the alert's name: the stamp beside it says what it is.
 describe('a Theme without balloons', () => {
-  it('pops none, whatever the alert', () => {
-    for (const kind of ['permission', 'error', 'waiting', 'reply'] as const) expect(balloon(kind)).toBe('')
+  it('pops none, whatever the news', () => {
+    for (const kind of Object.keys(NOTICE_URGENCY) as NoticeKind[]) expect(balloon(kind)).toBe('')
   })
 })
 
