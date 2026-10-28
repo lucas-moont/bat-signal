@@ -22,8 +22,10 @@
      chain and padlock, water rings and rust), over its own paper (black panels) or transparent, over
      the ground's. */
   --card-lock: none;
+  --card-over:
+    var(--card-lock), var(--card-grime), linear-gradient(in srgb, var(--card-paper), var(--card-paper));
   background:
-    var(--card-lock), var(--card-grime), linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    var(--card-over),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--surface) 92%, transparent),
@@ -44,7 +46,7 @@
 .card:hover {
   transform: translateY(-2px);
   background:
-    var(--card-lock), var(--card-grime), linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    var(--card-over),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--raised) 95%, transparent),
