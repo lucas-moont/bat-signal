@@ -1,6 +1,7 @@
 // The Theme's Atmosphere (VENGEANCE's is rain), over its backdrop if it has one (a still drawing,
-// HOLIDAY's moon), film grain and a haze of the Theme's light (from a street below, unless the
-// Theme's falls from above) behind everything, in the Theme's colors.
+// HOLIDAY's moon), film grain, a haze of the Theme's light (from a street below, unless the Theme's
+// falls from above) and its decor if it has one (stains, a fence) behind everything, in the Theme's
+// colors; and its light failing now and then while it moves, if the Theme's light fails.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
@@ -149,6 +150,8 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
+      {/* Still, like the backdrop: a Theme's decor stays while the Atmosphere is on, moving or not. */}
+      {on && <div className="atmosphere__decor" />}
       <AnimatePresence>
         {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
         {on && backdrop && (
@@ -165,6 +168,11 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
         )}
       </AnimatePresence>
       <div className="atmosphere__grain" />
+      {/* A Theme's failing light: animated in CSS, so only on the page while the Atmosphere moves, and
+          faded in and out with the motion, so it never snaps off mid-dim. */}
+      <AnimatePresence>
+        {moving && <motion.div key="flicker" className="atmosphere__flicker" {...FADE} />}
+      </AnimatePresence>
     </div>
   )
 }

@@ -21,6 +21,7 @@ import {
 import { useWords } from '../words'
 import type { SheetTarget } from './CaseDetail'
 import type { Tab } from './Header'
+import { CaseMarks } from './Mark'
 import { PluginHint } from './PluginHint'
 import { TerminalButton } from './TerminalButton'
 import { Typewriter } from './Typewriter'
@@ -139,7 +140,10 @@ export function NightReport({
         </section>
       )}
 
-      <footer className="report__end">{voice.report.end(attention.length)}</footer>
+      <footer className="report__end">
+        <CaseMarks cases={cases} attention={attention} />
+        {voice.report.end(attention.length)}
+      </footer>
     </article>
   )
 }

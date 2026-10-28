@@ -84,6 +84,11 @@ export interface Theme {
   suit: Suit
   /** What its canvas paints behind the panel (shared/atmospheres.ts). */
   atmosphere: Atmosphere
+  /**
+   * A mark of its own, drawn in its --mark and --mark-lit (a medallion, after Arkham's chronicles): over an
+   * empty list, and one a Case at the night report's end, lit once the Case's tasks are all done.
+   */
+  mark?: true
 }
 
 export const THEMES: Record<ThemeId, Theme> = {

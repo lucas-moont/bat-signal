@@ -177,6 +177,14 @@
   --caption-edge: transparent;
   --caption-tilt: 0deg;
   --spatter: none;
+  /* Arkham Asylum's decay (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
 
   /* Lit: a lantern, its glow soft from the heart out. */
   --disc-lens: radial-gradient(

@@ -34,6 +34,22 @@ describe('the Atmosphere', () => {
     expect(off).toContain('atmosphere__glow')
     expect(off).toContain('atmosphere__grain')
   })
+
+  // A Theme's decor (stains, a fence) is still, like a backdrop: it stays while the Atmosphere is on,
+  // under reduced motion too, and leaves when it is off.
+  it('keeps its decor while it is on, moving or not', () => {
+    expect(draw(true)).toContain('atmosphere__decor')
+    expect(draw(true, true)).toContain('atmosphere__decor')
+    expect(draw(false)).not.toContain('atmosphere__decor')
+  })
+
+  // A Theme's failing light dims the scene now and then: only while it moves, never under reduced
+  // motion or while it is off, so a window parked in a corner never pays for it.
+  it('lets its light fail only while it moves', () => {
+    expect(draw(true)).toContain('atmosphere__flicker')
+    expect(draw(true, true)).not.toContain('atmosphere__flicker')
+    expect(draw(false)).not.toContain('atmosphere__flicker')
+  })
 })
 
 describe('a still Atmosphere', () => {
