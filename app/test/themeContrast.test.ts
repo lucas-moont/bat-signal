@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { THEME_IDS, type ThemeId } from '../src/shared/themes'
-import { channels, rendererSources, resolved, themeVariables } from './rendererSources'
+import { THEME_IDS, THEMES, type ThemeId } from '../src/shared/themes'
+import {
+  channels,
+  componentCss,
+  cssRule,
+  declared,
+  rendererSources,
+  resolved,
+  themeVariables,
+} from './rendererSources'
 
 type Rgb = [number, number, number]
 
@@ -29,11 +37,14 @@ function ratio(a: Rgb, b: Rgb): number {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-/** Every variable the renderer's CSS paints text (or an icon) with. */
+/**
+ * Every variable the renderer's CSS paints text (or an icon) with. A balloon's word sits on its own
+ * starburst, not on a ground: it has a test of its own.
+ */
 function textColors(): string[] {
-  const used = rendererSources('.css').flatMap(({ text }) =>
-    [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
-  )
+  const used = rendererSources('.css')
+    .filter(({ path }) => !path.endsWith('Balloon.css'))
+    .flatMap(({ text }) => [...text.matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!))
   return [...new Set(used)].filter((c) => !(c in PAPERS)).sort()
 }
 
@@ -145,3 +156,19 @@ describe('the contrast ratio', () => {
     expect(ratio([0x77, 0x77, 0x77], [255, 255, 255])).toBeCloseTo(4.48, 2)
   })
 })
+
+// A balloon's word is cut out of a starburst in the stamp's ink, hot or soft as the notice is urgent
+// or not (Balloon.css): held to both inks, in the Themes that pop one.
+describe.each(THEME_IDS.filter((theme) => THEMES[theme].words.voice.balloon))(
+  "%s's balloon word",
+  (theme) => {
+    const variables = themeVariables(theme)
+    const ink = /var\((--[\w-]+)\)/.exec(
+      declared(cssRule(componentCss('Balloon.css'), '.balloon__word'), 'color'),
+    )![1]!
+
+    it.each(['--stamp-hot', '--stamp-soft'])('reads at 4.5:1 or better on its burst in %s', (burst) => {
+      expect(ratio(rgb(variables, ink), rgb(variables, burst))).toBeGreaterThanOrEqual(4.5)
+    })
+  },
+)
