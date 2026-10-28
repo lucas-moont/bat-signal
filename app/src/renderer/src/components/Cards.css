@@ -18,9 +18,12 @@
   gap: 3px;
   width: 100%;
   padding: 8px 10px 9px 12px;
-  /* A Theme's own paper over the ground's (black panels), or transparent. */
+  /* A locked card's mark and a Theme's grime (background layers with their own place and size: a
+     chain and padlock, water rings and rust), over its own paper (black panels) or transparent, over
+     the ground's. */
+  --card-lock: none;
   background:
-    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    var(--card-lock), var(--card-grime), linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--surface) 92%, transparent),
@@ -41,7 +44,7 @@
 .card:hover {
   transform: translateY(-2px);
   background:
-    linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
+    var(--card-lock), var(--card-grime), linear-gradient(in srgb, var(--card-paper), var(--card-paper)),
     linear-gradient(
       180deg in srgb,
       color-mix(in srgb, var(--raised) 95%, transparent),
@@ -53,6 +56,11 @@
 .card:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* What asks permission is locked, in a Theme that draws a lock (the game's own LOCKED tile). */
+.card--permission {
+  --card-lock: var(--lock-mark);
 }
 
 /* The left rule of a case file, coloured by what it is about. */
