@@ -596,7 +596,7 @@ export const WATCHFUL_PROTECTOR_WORDS: Words = {
       ...STANDARD_VOICE.report,
       name: 'Sitrep',
       dateline: datelineOf('GOTHAM'),
-      signature: 'Your move',
+      signature: 'Waiting on you',
       caseNotes: () => 'In the field',
       // The Theme's one film line, a fragment of Harvey Dent's, only when nothing waits.
       end: (waiting) =>
@@ -1044,7 +1044,7 @@ export const SILENT_PREDATOR_WORDS: Words = {
       ...STANDARD_VOICE.report,
       name: 'Field log',
       dateline: datelineOf('SURVEILLANCE'),
-      signature: 'Your move',
+      signature: 'Standing by for you',
       nil: (t) => `Nothing waits on you. Every ${lower(t.case.one)} is running.`,
       caseNotes: (t) => `${t.case.one} log`,
       end: (waiting) => (waiting ? 'Something still waits on you.' : 'Area secure.'),
