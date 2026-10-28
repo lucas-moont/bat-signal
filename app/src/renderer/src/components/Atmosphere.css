@@ -15,7 +15,8 @@
 
 /* The motion, and under it the backdrop (a still drawing, if the Atmosphere has one). */
 .atmosphere__layer,
-.atmosphere__backdrop {
+.atmosphere__backdrop,
+.atmosphere__failing {
   position: absolute;
   inset: 0;
 }
