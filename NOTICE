@@ -23,6 +23,12 @@ icons drawn from them in app/resources/icons/, and the pictures in docs/screensh
 - the bat symbol of Rocksteady's Batman: Arkham games (2009-2015), as their logos and Arkham City's
   title screen draw it (never their lettering), worn by the SILENT PREDATOR Theme.
 
+The medallion of the Chronicles of Arkham in Rocksteady's Batman: Arkham Asylum (2009) is the art of
+Warner Bros. Games, used here as fan art and not covered by the MIT License. It is our vector redrawing
+of it, the --mark and --mark-lit images in
+app/src/renderer/src/styles/themes/batman-arkham-2009.css, worn by the SILENT PREDATOR Theme, and the
+pictures in docs/screenshots/ that show it.
+
 The fonts are bundled from Fontsource under their own licences, not the MIT License:
 - Anton, Archivo, Bangers, Barlow Semi Condensed, Big Shoulders Stencil, Bungee, Federo, Grenze
   Gotisch, JetBrains Mono, Josefin Sans, Limelight, Marcellus SC, Neucha, Shantell Sans and
