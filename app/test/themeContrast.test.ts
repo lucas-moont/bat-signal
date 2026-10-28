@@ -158,17 +158,19 @@ describe('the contrast ratio', () => {
 })
 
 // A balloon's word is cut out of a starburst in the stamp's ink, hot or soft as the notice is urgent
-// or not (Balloon.css): held to both inks, in the Themes that pop one.
+// or not (Balloon.css): held to both inks, in the Themes that pop one. Not every Theme: the others
+// never show the pair, and VENGEANCE's hot stamp ink is an approved exception.
+const balloonInk = /var\((--[\w-]+)\)/.exec(
+  declared(cssRule(componentCss('Balloon.css'), '.balloon__word'), 'color'),
+)![1]!
+
 describe.each(THEME_IDS.filter((theme) => THEMES[theme].words.voice.balloon))(
   "%s's balloon word",
   (theme) => {
     const variables = themeVariables(theme)
-    const ink = /var\((--[\w-]+)\)/.exec(
-      declared(cssRule(componentCss('Balloon.css'), '.balloon__word'), 'color'),
-    )![1]!
 
     it.each(['--stamp-hot', '--stamp-soft'])('reads at 4.5:1 or better on its burst in %s', (burst) => {
-      expect(ratio(rgb(variables, ink), rgb(variables, burst))).toBeGreaterThanOrEqual(4.5)
+      expect(ratio(rgb(variables, balloonInk), rgb(variables, burst))).toBeGreaterThanOrEqual(4.5)
     })
   },
 )

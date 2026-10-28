@@ -6,7 +6,7 @@ import { rendererSources } from './rendererSources'
 describe('where a balloon pops', () => {
   it('is the notice card alone', () => {
     const drawers = rendererSources('.tsx')
-      .filter(({ path, text }) => !path.endsWith('Balloon.tsx') && /<Balloon\b/.test(text))
+      .filter(({ text }) => /<Balloon\b/.test(text))
       .map(({ path }) => path)
     expect(drawers).toEqual(['components/Signal.tsx'])
   })
