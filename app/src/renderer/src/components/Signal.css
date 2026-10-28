@@ -162,6 +162,11 @@
     0 10px 28px color-mix(in srgb, var(--shadow) 80%, transparent),
     0 0 22px -6px var(--signal-glow);
 }
+/* The stamp's row: a balloon may pop beside the stamp, over the card (Balloon.css). */
+.notice__stamp {
+  position: relative;
+  display: flex;
+}
 .notice:not(.notice--urgent) .stamp {
   color: var(--stamp-soft);
 }
