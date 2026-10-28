@@ -1,6 +1,7 @@
 // The Theme's Atmosphere (VENGEANCE's is rain), over its backdrop if it has one (a still drawing,
-// HOLIDAY's moon), film grain and a haze of the Theme's light (from a street below, unless the
-// Theme's falls from above) behind everything, in the Theme's colors.
+// HOLIDAY's moon), film grain, a haze of the Theme's light (from a street below, unless the Theme's
+// falls from above) and its decor if it has one (SILENT PREDATOR's stains) behind everything, in the
+// Theme's colors; and its light failing now and then while it moves, if the Theme's light fails.
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { Atmosphere as AtmosphereData } from '@shared/atmospheres'
@@ -149,6 +150,8 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
   return (
     <div className="atmosphere" aria-hidden>
       <div className="atmosphere__glow" />
+      {/* Still, like the grain: a Theme's decor stays whether the Atmosphere moves or not. */}
+      <div className="atmosphere__decor" />
       <AnimatePresence>
         {/* The backdrop never moves: it stays while the Atmosphere is on, under its motion. */}
         {on && backdrop && (
@@ -165,6 +168,8 @@ export function Atmosphere({ on, activity }: { on: boolean; activity: unknown })
         )}
       </AnimatePresence>
       <div className="atmosphere__grain" />
+      {/* A Theme's failing light: animated in CSS, so only on the page while the Atmosphere moves. */}
+      {moving && <div className="atmosphere__flicker" />}
     </div>
   )
 }

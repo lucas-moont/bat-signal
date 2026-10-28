@@ -26,6 +26,25 @@
   height: 100%;
 }
 
+/* A Theme's decor, still under its motion: background layers that bring their own place and size
+   (SILENT PREDATOR's stains, mould, cracked tiles and iron fence), or none. */
+.atmosphere__decor {
+  position: absolute;
+  inset: 0;
+  background: var(--decor);
+}
+
+/* A Theme's light failing now and then (SILENT PREDATOR's), or never: a dark layer over the scene
+   whose CSS animation the Theme names in --flicker; opacity only, so the compositor alone redraws it. */
+.atmosphere__flicker {
+  position: absolute;
+  inset: 0;
+  background: var(--shadow);
+  opacity: 0;
+  animation: var(--flicker);
+  will-change: opacity;
+}
+
 /* Film grain: static SVG noise, no animation, so it costs nothing at idle. */
 .atmosphere__grain {
   position: absolute;
