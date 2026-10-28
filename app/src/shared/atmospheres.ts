@@ -223,6 +223,11 @@ export interface SmokeAtmosphere extends Scene {
   wind?: number
   /** A puff's height for its width: under 1, a flat bank of fog or cloud. Round by default. */
   aspect?: number
+  /**
+   * The band of the sky it is born in, its top and bottom in px from the panel's top: each puff at
+   * a height of its own in it, again each time it is born. Off the street, by default.
+   */
+  band?: readonly [number, number]
 }
 
 /**
