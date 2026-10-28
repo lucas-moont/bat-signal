@@ -167,7 +167,7 @@
   position: relative;
   display: flex;
 }
-.notice:not(.notice--urgent) .stamp {
+.notice:not(.notice--urgent) :is(.stamp, .balloon) {
   color: var(--stamp-soft);
 }
 
