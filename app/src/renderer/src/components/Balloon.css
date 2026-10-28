@@ -1,5 +1,6 @@
-/* A starburst beside the notice's stamp, in the stamp's own ink, its word cut out of it in the
-   ground's: it sits over the card and takes no room, so the card never shifts as it pops. */
+/* A starburst beside the notice's stamp, in the stamp's own ink (soft on news that can wait, as the
+   stamp is: Signal.css), its word cut out of it in the ground's: it sits over the card and takes no
+   room, so the card never shifts as it pops. */
 .balloon {
   position: absolute;
   left: calc(100% + 6px);
@@ -9,9 +10,7 @@
   translate: 0 -50%;
   color: var(--stamp-hot);
   pointer-events: none;
-}
-.notice:not(.notice--urgent) .balloon {
-  color: var(--stamp-soft);
+  animation: balloon-pop 0.5s steps(1, end) forwards;
 }
 .balloon > * {
   grid-area: 1 / 1;
@@ -27,11 +26,21 @@
   color: var(--abyss);
 }
 
-/* Its three steps on the clock: it grows, holds, and fades as it swells a little more. */
-.balloon--grow {
-  scale: 0.55;
-}
-.balloon--fade {
-  scale: 1.08;
-  opacity: 0.45;
+/* It pops once in four steps of the clock's beat (8 a second): it grows, holds, fades as it swells
+   a little more, and is gone. */
+@keyframes balloon-pop {
+  0% {
+    scale: 0.55;
+  }
+  25% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.08;
+    opacity: 0.45;
+  }
+  75%,
+  100% {
+    opacity: 0;
+  }
 }

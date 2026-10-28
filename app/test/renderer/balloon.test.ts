@@ -10,7 +10,7 @@ import { STANDARD_WORDS } from '../../src/shared/words'
 import { standInTheme } from '../fixtures/themes'
 
 const balloon = (kind: NoticeKind, calm = false) =>
-  renderToStaticMarkup(createElement(CalmContext.Provider, { value: calm }, createElement(Balloon, { kind })))
+  renderToStaticMarkup(createElement(CalmContext, { value: calm }, createElement(Balloon, { kind })))
 
 // SAME BAT-TIME's POW! (adam-west.md, section 7): a balloon pops beside a fresh alert's stamp on
 // the notice card. It is decoration, never the alert's name: the stamp beside it says what it is.
@@ -28,10 +28,8 @@ describe('a Theme with balloons', () => {
     },
   })
 
-  it('pops its word for the alert, growing on its first step', () => {
-    const markup = balloon('permission')
-    expect(markup).toContain('POW!')
-    expect(markup).toContain('balloon--grow')
+  it('pops its word for the alert', () => {
+    expect(balloon('permission')).toContain('POW!')
     expect(balloon('reply')).toContain('BAM!')
   })
 

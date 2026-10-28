@@ -1,15 +1,10 @@
 // A balloon that pops beside a fresh alert's stamp on the notice card, as the 1966 series' fight
 // words do over the action (SAME BAT-TIME's POW!, adam-west.md section 7). It is decoration: the
 // stamp beside it still names the alert, so the balloon says nothing a screen reader needs.
-import { useState } from 'react'
 import type { NoticeKind } from '@shared/notices'
 import { useIsCalm } from '../calm'
-import { useFrame } from '../ticker'
 import { useWords } from '../words'
 import './Balloon.css'
-
-/** Its steps on the clock, one a tick: it grows, holds, and fades, then is gone. */
-const STEPS = ['grow', 'hold', 'fade'] as const
 
 /** Its size, in px: about the stamp's height and a word's width. */
 const WIDTH = 34
@@ -30,21 +25,14 @@ const BURST = SPIKES.flatMap((reach, i) => {
 
 /**
  * The balloon for a notice, if the worn Theme has a word for its kind: it pops once as the card
- * comes, never under reduced motion.
+ * comes (Balloon.css), never under reduced motion.
  */
 export function Balloon({ kind }: { kind: NoticeKind }) {
   const word = useWords().voice.balloon?.[kind]
   const calm = useIsCalm()
-  const [done, setDone] = useState(false)
-  const step = useFrame(!!word && !calm && !done)
-  if (!word || calm || done) return null
-  // Past its last step it stops the clock and is gone (set during render, React's pattern).
-  if (step >= STEPS.length) {
-    setDone(true)
-    return null
-  }
+  if (!word || calm) return null
   return (
-    <span className={`balloon balloon--${STEPS[step]}`} aria-hidden>
+    <span className="balloon" aria-hidden>
       <svg className="balloon__burst" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width={WIDTH} height={HEIGHT}>
         <polygon points={BURST} />
       </svg>
