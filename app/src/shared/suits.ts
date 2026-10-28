@@ -1310,11 +1310,14 @@ const collarPose = (
   { chest = [CHEST_BLOCK], pads = PADS.rest }: { chest?: Layer[]; pads?: Layer } = {},
 ) => pose(map, behind, [...front, pads], { chest })
 
-/** An arm raised at column `x`, its glove a unit above his shoulder, holding `held` under the glove. */
-const raisedArm = (x: number, held: Layer[] = []): Layer[] => [
-  { kind: 'rects', px: [[x, 3, 1, 3]], fill: 'var(--suit)' },
+/**
+ * An arm raised at column `x`, its glove at `top` (a unit above his shoulder unless told), the suit
+ * `length` units down from it, holding `held` under the glove.
+ */
+const raisedArm = (x: number, held: Layer[] = [], top = 2, length = 3): Layer[] => [
+  { kind: 'rects', px: [[x, top + 1, 1, length]], fill: 'var(--suit)' },
   ...held,
-  { kind: 'rects', px: [[x, 2, 1, 1]], fill: 'var(--gloves)' },
+  { kind: 'rects', px: [[x, top, 1, 1]], fill: 'var(--gloves)' },
 ]
 
 /** The tether up from his raised right hand, past the frame's top. */
@@ -1853,14 +1856,8 @@ const predatorPose = (
     edge: PREDATOR_EDGE,
   })
 
-/** An arm raised at column x: its glove at top, and the suit length units down from it. */
-const raised = (x: number, top: number, length: number): Layer[] => [
-  { kind: 'rects', px: [[x, top + 1, 1, length]], fill: 'var(--suit)' },
-  { kind: 'rects', px: [[x, top, 1, 1]], fill: 'var(--gloves)' },
-]
-
 /** His right arm straight up at column 13 to the glove a unit over his head, fins on the forearm. */
-const GRAPNEL_ARM: Layer[] = [...raised(13, 0, 5), fins(14, 2.6, -1)]
+const GRAPNEL_ARM: Layer[] = [...raisedArm(13, [], 0, 5), fins(14, 2.6, -1)]
 /** The grapnel's line, straight up from his glove past the frame's top. */
 const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'var(--ash)' }
 
@@ -1883,7 +1880,7 @@ const theCounter = predatorPose(
     { kind: 'rects', px: [[13, 5.5, 3, 1]], fill: 'var(--suit)' },
     { kind: 'rects', px: [[16, 5.5, 1, 1]], fill: 'var(--gloves)' },
     fins(14, 5.5, -1),
-    ...raised(2, 3, 2),
+    ...raisedArm(2, [], 3, 2),
   ],
 )
 
