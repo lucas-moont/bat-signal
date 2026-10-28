@@ -1790,17 +1790,20 @@ const PREDATOR_STANDING = predatorMap([SUIT, SUIT, SUIT], PREDATOR_BELOW)
 const PREDATOR_SEATED = predatorMap([SUIT, SUIT, SUIT, SUIT])
 
 /** The wide flat bat across his chest, 6.5 units wide, tone on tone in the armour, under the mantle. */
-const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.7, width: 6.5 }
+const PREDATOR_CHEST: Layer = { kind: 'emblem', cx: 8, cy: 6.6, width: 6.5 }
 
-/** On the belt at y, two square pouches each side and the wide buckle plate between them [04] [05]. */
-const pouchesAt = (y: number): Layer => ({
+/**
+ * On a belt at y, `tall` units deep, two square pouches each side and the wide buckle plate between
+ * them [04] [05], all inside the band.
+ */
+const pouchesAt = (y: number, tall = 1): Layer => ({
   kind: 'rects',
   px: [
-    [3.5, y + 0.1, 0.8, 0.8],
-    [5, y + 0.1, 0.8, 0.8],
-    [7.2, y + 0.05, 1.6, 0.9],
-    [10.2, y + 0.1, 0.8, 0.8],
-    [11.7, y + 0.1, 0.8, 0.8],
+    [3.5, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [5, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [7.2, y + 0.05 * tall, 1.6, 0.9 * tall],
+    [10.2, y + 0.1 * tall, 0.8, 0.8 * tall],
+    [11.7, y + 0.1 * tall, 0.8, 0.8 * tall],
   ],
   fill: 'var(--buckle)',
 })
@@ -1846,16 +1849,16 @@ const fins = (x: number, y: number, toward: 1 | -1, upright = false): Layer => {
 }
 
 /**
- * A pose in the armour: his ears, the mantle on his shoulders, the pouches on his belt at beltY and
- * the bat on his chest (the crouch's belt sits higher and its bat smaller).
+ * A pose in the armour: his ears, the mantle on his shoulders, the pouches on his belt and the bat on
+ * his chest (the crouch's belt sits higher and narrower, and its bat is smaller).
  */
 const predatorPose = (
   map: OutfitMap,
   behind: Layer[],
   front: Layer[] = [],
-  { chest = PREDATOR_CHEST, beltY = 8 }: { chest?: Layer; beltY?: number } = {},
+  { chest = PREDATOR_CHEST, belt = pouchesAt(8) }: { chest?: Layer; belt?: Layer } = {},
 ) =>
-  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, pouchesAt(beltY), ...front], {
+  pose(map, [...EARS, ...behind], [PREDATOR_MANTLE, belt, ...front], {
     chest: [chest],
     edge: PREDATOR_EDGE,
   })
@@ -1935,8 +1938,9 @@ const GARGOYLE: Layer[] = [
 /** Crouched on the gargoyle, the cape as `cape` lays it, a small bat on his chest under his jaw. */
 const crouched = (cape: Layer): Pose => ({
   ...predatorPose(KNEES_UP, [...GARGOYLE, CAPE_BEHIND, cape], [], {
-    chest: { kind: 'emblem', cx: 8, cy: 5.5, width: 3.4 },
-    beltY: 6.9,
+    // Under his jaw (rows 4 and 5), and the belt a half-row band at y 7.
+    chest: { kind: 'emblem', cx: 8, cy: 5.8, width: 3.4 },
+    belt: pouchesAt(7, 0.5),
   }),
   // Up on the gargoyle's back, by a share of his own height so it holds at every size.
   transform: 'translateY(-10%)',
