@@ -201,6 +201,14 @@
   --caption-edge: transparent;
   --caption-tilt: 0deg;
   --spatter: none;
+  /* Arkham Asylum's decay, SILENT PREDATOR's (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
 
   /* The lit disc's lens: a recipe, not a color, since another Theme's lens may differ in shape
      (more stops, an inverted lens). */

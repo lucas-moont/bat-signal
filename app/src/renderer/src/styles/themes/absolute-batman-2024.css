@@ -168,6 +168,14 @@
   --caption-edge: transparent;
   --caption-tilt: 0deg;
   --spatter: none;
+  /* Arkham Asylum's decay, SILENT PREDATOR's (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
 
   /* Lit: one flat field, Martin's flat colour. */
   --disc-lens: linear-gradient(in srgb, var(--signal-hot), var(--signal-hot));

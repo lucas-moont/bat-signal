@@ -177,6 +177,14 @@
   --caption-edge: transparent;
   --caption-tilt: 0deg;
   --spatter: none;
+  /* Arkham Asylum's decay, SILENT PREDATOR's (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
 
   /* Lit: a screen's scanlines, a 1px line every 3px, over the bolt's white into Lightning Cyan. */
   --disc-lens:

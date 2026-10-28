@@ -180,6 +180,14 @@
   --caption-edge: transparent;
   --caption-tilt: 0deg;
   --spatter: none;
+  /* Arkham Asylum's decay, SILENT PREDATOR's (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
 
   /* Broken: pieces of the glass gone, the dark of the lamp showing through, as everything is after the
      fall (the maintainer's idea, picked on screen over cracks). */
