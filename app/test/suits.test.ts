@@ -303,4 +303,14 @@ describe("SILENT PREDATOR's suit", () => {
   it('keeps its watch on the gargoyle', () => {
     for (const step of watch) expect(step.pose).toBe(held.pose)
   })
+  // One hand up on the line, the other hanging at his side by the belt (the maintainer, on screen).
+  it('rises on the grapnel with one glove up and the other down at his side', () => {
+    const gloves = layers(poses.flying[0]!)
+      .filter((l) => l.kind === 'rects' && l.fill === 'var(--gloves)')
+      .flatMap((l) => ('px' in l ? l.px : []))
+    expect(gloves.map(([x, y]) => [x < 8 ? 'left' : 'right', y < 2 ? 'up' : 'down'])).toEqual([
+      ['left', 'down'],
+      ['right', 'up'],
+    ])
+  })
 })

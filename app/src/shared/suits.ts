@@ -1865,6 +1865,11 @@ const predatorPose = (
 
 /** His right arm straight up at column 13 to the glove a unit over his head, fins up its outer side. */
 const GRAPNEL_ARM: Layer[] = [...raisedArm(13, [], 0, 5), fins(14, 3.6, -1, true)]
+/** His left arm hanging at his side, under the mantle, the glove by his belt. */
+const HANGING_ARM: Layer[] = [
+  { kind: 'rects', px: [[2, 6, 1, 2]], fill: 'var(--suit)' },
+  { kind: 'rects', px: [[2, 8, 1, 1]], fill: 'var(--gloves)' },
+]
 /** The grapnel's line, straight up from his glove past the frame's top. */
 const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'var(--ash)' }
 
@@ -1872,7 +1877,7 @@ const GRAPNEL_LINE: Layer = { kind: 'rects', px: [[13.35, -6, 0.3, 6]], fill: 'v
 const onTheGrapnel = predatorPose(
   PREDATOR_STANDING,
   [{ kind: 'cape', d: POINTS.falling }],
-  [...GRAPNEL_ARM, GRAPNEL_LINE],
+  [...HANGING_ARM, ...GRAPNEL_ARM, GRAPNEL_LINE],
 )
 
 /**
