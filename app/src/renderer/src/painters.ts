@@ -97,17 +97,28 @@ export function backdropFor(backdrop: Backdrop): Painter {
   }
 }
 
+/** A number in a traced outline. */
+const NUMBER = String.raw`-?\d+(?:\.\d+)?`
+/** One traced outline: a move, at least two lines, each point after its own L, and a close. */
+const OUTLINE = new RegExp(
+  String.raw`^M\s*${NUMBER}[\s,]+${NUMBER}(?:\s*L\s*${NUMBER}[\s,]+${NUMBER}){2,}\s*Z$`,
+)
+
 /**
- * An outline traced on the emblems' 120x48 grid as points about the grid's middle, in shares of its
- * width. Straight lines only: a curve would come out as its end points.
+ * A traced outline (an emblem's, on its 120x48 grid) as points about its own middle, in shares of its
+ * own width. One outline in straight lines only: anything else would be drawn as another shape.
  */
 function outlineOf(d: string): Points {
-  const commands = d.match(/[a-zA-Z]/g) ?? []
-  if (commands.some((c) => !'MLZ'.includes(c)))
-    throw new Error(`not a traced outline, in straight lines: ${d}`)
-  return [...d.matchAll(/[ML]\s*(-?[\d.]+)[\s,]+(-?[\d.]+)/g)].map(
-    ([, x, y]) => [(Number(x) - 60) / 120, (Number(y) - 24) / 120] as const,
+  if (!OUTLINE.test(d.trim())) throw new Error(`not one traced outline in straight lines: ${d}`)
+  const points = [...d.matchAll(new RegExp(String.raw`(${NUMBER})[\s,]+(${NUMBER})`, 'g'))].map(
+    ([, x, y]) => [Number(x), Number(y)] as const,
   )
+  const xs = points.map(([x]) => x)
+  const ys = points.map(([, y]) => y)
+  const [left, right] = [Math.min(...xs), Math.max(...xs)]
+  const [middle, width] = [(left + right) / 2, right - left]
+  const centre = (Math.min(...ys) + Math.max(...ys)) / 2
+  return points.map(([x, y]) => [(x - middle) / width, (y - centre) / width] as const)
 }
 
 /** The Bat-Signal on the clouds: painted whole on every paint, since it never moves. */

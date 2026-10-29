@@ -1513,15 +1513,17 @@ describe('the Signal behind the motion', () => {
   })
 
   it('cuts its bat out of the light, centred in it and as wide as it asks', () => {
-    const { rule, shapes } = signal().fills[0]!
+    // A bat that fills only part of the grid, below its middle: measured by its own outline.
+    const { rule, shapes } = signal({ ...SIGNAL, bat: { d: 'M40 14 L80 14 L80 38 L40 38 Z', width: 0.8 } })
+      .fills[0]!
     expect(rule).toBe('evenodd')
     expect(shapes).toHaveLength(1)
     const bat = shapes[0]!
     const xs = bat.map(([x]) => x)
     const ys = bat.map(([, y]) => y)
-    // 0.8 of the light's 80px: 64px, the grid's proportions kept (48 tall for 120 wide).
+    // 0.8 of the light's 80px: 64px, its own proportions kept (24 tall for 40 wide).
     expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(64)
-    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(64 * 0.4)
+    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(64 * 0.6)
     expect((Math.max(...xs) + Math.min(...xs)) / 2).toBeCloseTo(0.6 * 320)
     expect((Math.max(...ys) + Math.min(...ys)) / 2).toBeCloseTo(90)
   })
@@ -1533,9 +1535,15 @@ describe('the Signal behind the motion', () => {
     expect(again.fills).toEqual(fills)
   })
 
-  // The bat is a traced outline in straight lines; a curve would be drawn as its end points alone.
-  it('will not take a bat drawn in curves', () => {
-    expect(() => backdropFor({ ...SIGNAL, bat: { d: 'M0 0 C10 10 20 10 30 0 Z', width: 0.8 } })).toThrow()
+  // The bat is one traced outline in straight lines, each point after its own L: anything else would
+  // be drawn as another shape, with no error.
+  it.each([
+    ['curves', 'M0 0 C10 10 20 10 30 0 Z'],
+    ['points without their L', 'M0 0 L10 5 20 0 Z'],
+    ['two outlines', 'M0 0 L10 0 L10 10 Z M20 0 L30 0 L30 10 Z'],
+    ['nothing', ''],
+  ])('will not take a bat drawn with %s', (_, d) => {
+    expect(() => backdropFor({ ...SIGNAL, bat: { d, width: 0.8 } })).toThrow()
   })
 })
 
