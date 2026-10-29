@@ -121,8 +121,11 @@ function outlineOf(d: string): Points {
   return points.map(([x, y]) => [(x - middle) / width, (y - centre) / width] as const)
 }
 
-/** The Bat-Signal on the clouds: painted whole on every paint, since it never moves. */
-function signal({ color: variable, alpha, at, radius, aspect, bat }: SignalBackdrop): Painter {
+/** A glow's halo: rings of light round it, each a share of the glow out past its edge, the widest first. */
+const GLOW_RINGS = [1, 0.66, 0.33]
+
+/** The Bat-Signal in the sky: painted whole on every paint, since it never moves. */
+function signal({ color: variable, alpha, at, radius, aspect, bat, glow = 0 }: SignalBackdrop): Painter {
   const outline = outlineOf(bat.d)
   let width = 0
   let height = 0
@@ -137,8 +140,17 @@ function signal({ color: variable, alpha, at, radius, aspect, bat }: SignalBackd
     paint(ctx) {
       const [cx, cy] = [at[0] * width, at[1]]
       ctx.clearRect(0, 0, width, height)
-      ctx.globalAlpha = alpha
       ctx.fillStyle = color
+      // Its halo, the rings overlapping so it is brightest at the light's edge.
+      if (glow)
+        for (const ring of GLOW_RINGS) {
+          const r = radius + glow * ring
+          ctx.globalAlpha = alpha / (2 * GLOW_RINGS.length)
+          ctx.beginPath()
+          ctx.ellipse(cx, cy, r, r * aspect, 0, 0, 2 * Math.PI)
+          ctx.fill()
+        }
+      ctx.globalAlpha = alpha
       ctx.beginPath()
       ctx.ellipse(cx, cy, radius, radius * aspect, 0, 0, 2 * Math.PI)
       // The bat inside the light, left empty by the even-odd rule.

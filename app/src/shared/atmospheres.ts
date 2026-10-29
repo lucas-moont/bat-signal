@@ -87,8 +87,9 @@ export interface SkylineBackdrop {
 }
 
 /**
- * The Bat-Signal on the clouds (SAME BAT-TIME's, after the 1966 series [17]): a pale ellipse of
- * light high in the sky, never lit as the alarm, with the bat cut out of it so the sky shows through.
+ * The Bat-Signal in the sky (SAME BAT-TIME's, after the 1966 series [17]): a pale ellipse of light
+ * high in the sky, glowing if it has a halo, never lit as the alarm, with the bat cut out of it so
+ * the sky shows through.
  */
 export interface SignalBackdrop {
   kind: 'signal'
@@ -107,6 +108,8 @@ export interface SignalBackdrop {
    * straight lines only, and the share of the light's width it spans.
    */
   bat: { d: string; width: number }
+  /** How far a soft halo spreads round the light, in px, fainter as it goes: glowing. None by default. */
+  glow?: number
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */

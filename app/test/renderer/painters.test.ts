@@ -1528,6 +1528,22 @@ describe('the Signal behind the motion', () => {
     expect((Math.max(...ys) + Math.min(...ys)) / 2).toBeCloseTo(90)
   })
 
+  // Glowing (SAME BAT-TIME's, picked on screen): a soft halo round the light, fainter as it spreads.
+  it('glows in a soft halo round its light, if asked, under it', () => {
+    const { fills } = signal({ ...SIGNAL, glow: 12 })
+    const light = fills.at(-1)!
+    expect(light.rule).toBe('evenodd')
+    const halo = fills.slice(0, -1)
+    expect(halo.length).toBeGreaterThan(1)
+    for (const ring of halo) {
+      expect(ring.color).toBe('#sky-signal')
+      expect(ring.alpha).toBeLessThan(SIGNAL.alpha)
+      expect(ring.discs[0]!.r).toBeGreaterThan(SIGNAL.radius)
+      expect(ring.discs[0]!.r).toBeLessThanOrEqual(SIGNAL.radius + 12)
+    }
+    expect(signal().fills).toHaveLength(1)
+  })
+
   it('paints the same picture every time', () => {
     const { painter, fills } = signal()
     const again = recorder()
