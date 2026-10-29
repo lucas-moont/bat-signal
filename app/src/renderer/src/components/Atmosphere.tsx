@@ -142,10 +142,12 @@ function useAtmosphereVisible(enabled: boolean, activity: unknown): boolean {
  */
 export function Atmosphere({ on, activity }: { on: boolean; activity: unknown }) {
   const calm = useIsCalm()
-  const moving = useAtmosphereVisible(on && !calm, activity)
   const theme = useTheme()
   const atmosphere = THEMES[theme].atmosphere
-  const shown = isShown(atmosphere.still, { on, moving, calm })
+  // A still sky has no motion: no canvas on the clock, only its backdrop.
+  const moves = atmosphere.kind !== 'sky'
+  const moving = useAtmosphereVisible(on && !calm && moves, activity)
+  const shown = moves && isShown(atmosphere.still, { on, moving, calm })
   const { backdrop } = atmosphere
   return (
     <div className="atmosphere" aria-hidden>
