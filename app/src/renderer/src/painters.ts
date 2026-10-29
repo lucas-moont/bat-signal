@@ -41,8 +41,13 @@ const OLD_FPS = 15
 const howMany = (width: number, height: number, density: number) =>
   Math.round(((width * height) / 1000) * density)
 
+/** A still sky's motion: none; its backdrop is painted on a canvas of its own. */
+const STILL_SKY: Painter = { recolor() {}, resize() {}, paint() {} }
+
 export function painterFor(atmosphere: Atmosphere, random: () => number = Math.random): Painter {
   switch (atmosphere.kind) {
+    case 'sky':
+      return STILL_SKY
     case 'rain':
       return rain(atmosphere, random)
     case 'snow':

@@ -1478,6 +1478,19 @@ describe('the moon behind the motion', () => {
   })
 })
 
+// A still sky (SAME BAT-TIME's, picked on screen): nothing crosses it; it carries only its backdrop.
+describe('a still sky', () => {
+  it('paints nothing of its own, tick after tick', () => {
+    const painter = painterFor({ kind: 'sky' }, seeded())
+    painter.recolor(namedColor)
+    painter.resize(320, 440)
+    for (const frame of framesOver(painter, 5)) {
+      expect(frame.fills).toEqual([])
+      expect(frame.strokes).toEqual([])
+    }
+  })
+})
+
 // SAME BAT-TIME's Signal on the clouds, after the 1966 series [17]: a pale ellipse of light, high in
 // the sky and never lit as the alarm, with the bat cut out of it so the sky shows through.
 describe('the Signal behind the motion', () => {

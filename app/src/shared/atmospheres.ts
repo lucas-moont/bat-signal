@@ -319,7 +319,16 @@ export interface NoiseAtmosphere extends Scene {
   band?: { height: number; alpha: number; fall: number }
 }
 
+/**
+ * A still sky (SAME BAT-TIME's): nothing crosses it, so it is only its backdrop, still while the
+ * Atmosphere is on.
+ */
+export interface SkyAtmosphere extends Scene {
+  kind: 'sky'
+}
+
 export type Atmosphere =
+  | SkyAtmosphere
   | RainAtmosphere
   | SnowAtmosphere
   | LitWindowsAtmosphere
