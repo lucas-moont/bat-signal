@@ -66,6 +66,7 @@
   --caption-paper: var(--emblem-plate);
   --caption-ink: var(--chest);
   --caption-rule: none;
+  --caption-edge: var(--chest);
   /* Words with no card under them (the night report, an empty list) sit on the opening's fields: a
      veil of the ground behind them, deepest at the foot where the skyline and the green are. */
   --bare-veil: linear-gradient(
@@ -184,15 +185,14 @@
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;
   --tab-pad: 0px;
-  --caption-edge: var(--chest);
   --caption-tilt: 0deg;
   --spatter: none;
   /* The animated opening (same-bat-time-pop.md; picked on screen, round 6): flat fields of its cool
      colours, cel blue, the fight cards' green and teal, a shard of the cliffhanger cards' ultramarine,
      a black skyline at the foot and two henchmen in fedoras rising behind it, their eyes lit [91] [96]-[99]; the cards stay
      dark over it, as the titles set their names on black; the header and tabs on the ground's navy,
-     where the dim tab names keep 4.5:1 (the fade's #040e21 is the ground's abyss, written out, as
-     an image can't read a variable). Held to the panel's foot. */
+     where the dim tab names keep 4.5:1 (the fade's #040e21 is the ground's abyss and the eyes' #f2e8ec
+     its Bone, written out, as an image can't read a variable). Held to the panel's foot. */
   --decor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 440' preserveAspectRatio='xMidYMax slice'%3E%3Crect width='320' height='440' fill='%231c4781'/%3E%3Cpath d='M0 440 L0 250 L320 120 L320 440 Z' fill='%2317753c'/%3E%3Cpath d='M0 440 L0 330 L320 250 L320 440 Z' fill='%23287063'/%3E%3Cpath d='M170 0 L320 0 L320 70 L120 160 Z' fill='%230359e9' fill-opacity='.55'/%3E%3ClinearGradient id='h' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23040e21'/%3E%3Cstop offset='.2' stop-color='%23040e21'/%3E%3Cstop offset='.3' stop-color='%23040e21' stop-opacity='0'/%3E%3C/linearGradient%3E%3Crect width='320' height='440' fill='url(%23h)'/%3E%3Cg fill='%2305060a'%3E%3Cpath d='M20.7 387 L23 341 Q24.15 331.8 35.65 329.5 L56.35 329.5 Q67.85 331.8 69 341 L71.3 387 Z'/%3E%3Cellipse cx='46' cy='320.3' rx='8.625' ry='10.35'/%3E%3Crect x='29.9' y='309.95' width='32.2' height='3.45' rx='1.725'/%3E%3Cpath d='M36.8 311.1 L37.95 300.75 Q46 297.3 54.05 300.75 L55.2 311.1 Z'/%3E%3Cg fill='%23f2e8ec'%3E%3Crect x='40.25' y='318' width='3.45' height='1.61'/%3E%3Crect x='48.3' y='318' width='3.45' height='1.61'/%3E%3C/g%3E%3Cpath d='M248.5 381 L251 331 Q252.25 321 264.75 318.5 L287.25 318.5 Q299.75 321 301 331 L303.5 381 Z'/%3E%3Cellipse cx='276' cy='308.5' rx='9.375' ry='11.25'/%3E%3Crect x='258.5' y='297.25' width='35' height='3.75' rx='1.875'/%3E%3Cpath d='M266 298.5 L267.25 287.25 Q276 283.5 284.75 287.25 L286 298.5 Z'/%3E%3Cg fill='%23f2e8ec'%3E%3Crect x='269.75' y='306' width='3.75' height='1.75'/%3E%3Crect x='278.5' y='306' width='3.75' height='1.75'/%3E%3C/g%3E%3Crect x='0' y='370' width='34' height='70'/%3E%3Crect x='30' y='344' width='22' height='96'/%3E%3Crect x='52' y='382' width='40' height='58'/%3E%3Crect x='92' y='320' width='26' height='120'/%3E%3Crect x='118' y='360' width='44' height='80'/%3E%3Crect x='162' y='336' width='24' height='104'/%3E%3Crect x='186' y='374' width='46' height='66'/%3E%3Crect x='232' y='310' width='30' height='130'/%3E%3Crect x='262' y='350' width='22' height='90'/%3E%3Crect x='284' y='366' width='36' height='74'/%3E%3C/g%3E%3C/svg%3E")
     center bottom / cover no-repeat;
   /* Arkham Asylum's decay (#147; Atmosphere.css, Cards.css, Mark.css): no failing light, grime,
