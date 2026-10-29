@@ -7,6 +7,7 @@ import {
   VENGEANCE_RAIN,
   type LitWindowsAtmosphere,
   type MoonBackdrop,
+  type SignalBackdrop,
   type SkylineBackdrop,
   type AshAtmosphere,
   type BlimpsAtmosphere,
@@ -991,6 +992,45 @@ describe('the smoke', () => {
         for (const { discs } of frame) for (const d of discs) expect(d.ry).toBeCloseTo(d.r * FOG.aspect!)
     })
   })
+
+  // SAME BAT-TIME's clouds (LUC-118's comment on LUC-89): banks across a navy sky, not off the street.
+  describe('born in a band of the sky', () => {
+    /** Cloud banks born 40 to 120px down, rising not at all, blown 1px a tick. */
+    const CLOUDS: SmokeAtmosphere = {
+      ...SMOKE,
+      life: 30,
+      rise: 0,
+      sway: 0,
+      wind: 1,
+      aspect: 1 / 4,
+      band: [40, 120],
+    }
+
+    it('keeps every bank that never rises in its band, each at a height of its own', () => {
+      const ys = frames(3 * CLOUDS.life * FPS, 1 / FPS, smoke(CLOUDS))
+        .flat()
+        .map((p) => p.y)
+      for (const y of ys) {
+        expect(y).toBeGreaterThanOrEqual(40)
+        expect(y).toBeLessThanOrEqual(120)
+      }
+      expect(new Set(ys).size).toBeGreaterThan(CLOUDS.puffs)
+    })
+
+    it('rises from where it is born, as far as it asks', () => {
+      const [first, next] = frames(1, 1 / FPS, smoke({ ...CLOUDS, rise: 2 }))
+      first!.forEach((a, i) => {
+        const b = next![i]!
+        if (b.y > a.y) return // gone, and born again lower in the band
+        expect(a.y - b.y).toBeCloseTo(2)
+      })
+    })
+
+    it('is born again at a new height in its band once it is gone', () => {
+      const lives = frames(2 * CLOUDS.life * FPS - 1, 1 / FPS, smoke(CLOUDS)).map((frame) => frame[0]!)
+      expect(new Set(lives.map((p) => p.y)).size).toBe(2)
+    })
+  })
 })
 
 describe('the noise', () => {
@@ -1435,6 +1475,75 @@ describe('the moon behind the motion', () => {
     const again = recorder()
     painter.paint(again.ctx, 0)
     expect(again.fills[0]!.color).toBe('#3d1b13')
+  })
+})
+
+// SAME BAT-TIME's Signal on the clouds, after the 1966 series [17]: a pale ellipse of light, high in
+// the sky and never lit as the alarm, with the bat cut out of it so the sky shows through.
+describe('the Signal behind the motion', () => {
+  /** A diamond for a bat: 120 wide, 48 tall on the emblems' grid, its middle at (60, 24). */
+  const DIAMOND = 'M0 24 L60 0 L120 24 L60 48 Z'
+  const SIGNAL: SignalBackdrop = {
+    kind: 'signal',
+    color: '--sky-signal',
+    alpha: 0.1,
+    at: [0.6, 90],
+    radius: 40,
+    aspect: 0.6,
+    bat: { d: DIAMOND, width: 0.8 },
+  }
+
+  const signal = (backdrop: SignalBackdrop = SIGNAL, width = 320) => {
+    const painter = backdropFor(backdrop)
+    painter.recolor(namedColor)
+    painter.resize(width, 440)
+    const { ctx, fills } = recorder()
+    painter.paint(ctx, 0)
+    return { painter, fills }
+  }
+
+  it('paints its light where it is asked, as wide as it asks and flattened, in its color and strength', () => {
+    const { fills } = signal()
+    expect(fills).toHaveLength(1)
+    const [{ color, alpha, discs }] = fills as [(typeof fills)[number]]
+    expect(color).toBe('#sky-signal')
+    expect(alpha).toBe(0.1)
+    expect(discs).toEqual([{ x: 0.6 * 320, y: 90, r: 40, ry: 24 }])
+    expect(signal(SIGNAL, 400).fills[0]!.discs[0]!.x).toBeCloseTo(0.6 * 400)
+  })
+
+  it('cuts its bat out of the light, centred in it and as wide as it asks', () => {
+    // A bat that fills only part of the grid, below its middle: measured by its own outline.
+    const { rule, shapes } = signal({ ...SIGNAL, bat: { d: 'M40 14 L80 14 L80 38 L40 38 Z', width: 0.8 } })
+      .fills[0]!
+    expect(rule).toBe('evenodd')
+    expect(shapes).toHaveLength(1)
+    const bat = shapes[0]!
+    const xs = bat.map(([x]) => x)
+    const ys = bat.map(([, y]) => y)
+    // 0.8 of the light's 80px: 64px, its own proportions kept (24 tall for 40 wide).
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(64)
+    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(64 * 0.6)
+    expect((Math.max(...xs) + Math.min(...xs)) / 2).toBeCloseTo(0.6 * 320)
+    expect((Math.max(...ys) + Math.min(...ys)) / 2).toBeCloseTo(90)
+  })
+
+  it('paints the same picture every time', () => {
+    const { painter, fills } = signal()
+    const again = recorder()
+    painter.paint(again.ctx, 1 / FPS)
+    expect(again.fills).toEqual(fills)
+  })
+
+  // The bat is one traced outline in straight lines, each point after its own L: anything else would
+  // be drawn as another shape, with no error.
+  it.each([
+    ['curves', 'M0 0 C10 10 20 10 30 0 Z'],
+    ['points without their L', 'M0 0 L10 5 20 0 Z'],
+    ['two outlines', 'M0 0 L10 0 L10 10 Z M20 0 L30 0 L30 10 Z'],
+    ['nothing', ''],
+  ])('will not take a bat drawn with %s', (_, d) => {
+    expect(() => backdropFor({ ...SIGNAL, bat: { d, width: 0.8 } })).toThrow()
   })
 })
 

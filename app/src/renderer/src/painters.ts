@@ -10,6 +10,7 @@ import type {
   MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
+  SignalBackdrop,
   SkylineBackdrop,
   SmokeAtmosphere,
   SnowAtmosphere,
@@ -91,6 +92,59 @@ export function backdropFor(backdrop: Backdrop): Painter {
       return moon(backdrop)
     case 'skyline':
       return skyline(backdrop)
+    case 'signal':
+      return signal(backdrop)
+  }
+}
+
+/** A number in a traced outline. */
+const NUMBER = String.raw`-?\d+(?:\.\d+)?`
+/** One traced outline: a move, at least two lines, each point after its own L, and a close. */
+const OUTLINE = new RegExp(
+  String.raw`^M\s*${NUMBER}[\s,]+${NUMBER}(?:\s*L\s*${NUMBER}[\s,]+${NUMBER}){2,}\s*Z$`,
+)
+
+/**
+ * A traced outline (an emblem's, on its 120x48 grid) as points about its own middle, in shares of its
+ * own width. One outline in straight lines only: anything else would be drawn as another shape.
+ */
+function outlineOf(d: string): Points {
+  if (!OUTLINE.test(d.trim())) throw new Error(`not one traced outline in straight lines: ${d}`)
+  const points = [...d.matchAll(new RegExp(String.raw`(${NUMBER})[\s,]+(${NUMBER})`, 'g'))].map(
+    ([, x, y]) => [Number(x), Number(y)] as const,
+  )
+  const xs = points.map(([x]) => x)
+  const ys = points.map(([, y]) => y)
+  const [left, right] = [Math.min(...xs), Math.max(...xs)]
+  const [middle, width] = [(left + right) / 2, right - left]
+  const centre = (Math.min(...ys) + Math.max(...ys)) / 2
+  return points.map(([x, y]) => [(x - middle) / width, (y - centre) / width] as const)
+}
+
+/** The Bat-Signal on the clouds: painted whole on every paint, since it never moves. */
+function signal({ color: variable, alpha, at, radius, aspect, bat }: SignalBackdrop): Painter {
+  const outline = outlineOf(bat.d)
+  let width = 0
+  let height = 0
+  let color = ''
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+    },
+    paint(ctx) {
+      const [cx, cy] = [at[0] * width, at[1]]
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.ellipse(cx, cy, radius, radius * aspect, 0, 0, 2 * Math.PI)
+      // The bat inside the light, left empty by the even-odd rule.
+      trace(ctx, outline, cx, cy, 2 * radius * bat.width)
+      ctx.fill('evenodd')
+    },
   }
 }
 
@@ -951,6 +1005,8 @@ interface Puff {
   age: number
   /** Where in the sway it starts, so the puffs don't sway in step. */
   phase: number
+  /** How far down the panel it was born, in a band of the sky; on the bottom edge without one. */
+  bornY?: number
 }
 
 /** A puff's soft edge: the discs it is painted as, each a share of its width, the widest first. */
@@ -963,10 +1019,22 @@ const FADE_IN = 0.2
  * Smoke: a few puffs rise from the bottom edge, each swelling and fading to nothing over its life,
  * swaying on the clock as snow does. They leave the street one after another, so the smoke never
  * pulses; a puff that is gone leaves again from the street, in a column of its own. A wind carries
- * them sideways as they rise, round from one side to the other, and an aspect flattens them.
+ * them sideways as they rise, round from one side to the other, and an aspect flattens them. Given
+ * a band of the sky, they are born at a height in it rather than on the street.
  */
 function smoke(
-  { color: variable, puffs: count, size, alpha, rise, life, sway, wind = 0, aspect = 1 }: SmokeAtmosphere,
+  {
+    color: variable,
+    puffs: count,
+    size,
+    alpha,
+    rise,
+    life,
+    sway,
+    wind = 0,
+    aspect = 1,
+    band,
+  }: SmokeAtmosphere,
   random: () => number,
 ): Painter {
   /**
@@ -982,6 +1050,8 @@ function smoke(
   /** Ticks of the clock since the smoke began. */
   let ticks = 0
   let color = ''
+  /** A height in its band to be born at, if it has one. */
+  const bornAt = () => band && band[0] + random() * (band[1] - band[0])
 
   return {
     recolor(colorOf) {
@@ -994,6 +1064,7 @@ function smoke(
         x: random() * width,
         age: (i * lifeTicks) / count,
         phase: Math.floor(random() * SWAY.length),
+        bornY: bornAt(),
       }))
     },
     paint(ctx, dt) {
@@ -1006,13 +1077,14 @@ function smoke(
         while (p.age >= lifeTicks) {
           p.age -= lifeTicks
           p.x = random() * width
+          p.bornY = bornAt()
         }
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
         // Blown along by the wind, and round again once past a side.
         const x = wrapAcross(p.x + wind * p.age + swayAt(sway, ticks, p.phase), width, reach)
-        // It leaves with its center on the bottom edge, half of it still below.
-        const y = height - rise * p.age
+        // Born in its band, or off the street with its center on the bottom edge, half of it below.
+        const y = (p.bornY ?? height) - rise * p.age
         // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.
         const fade = wind ? Math.min(1, t / FADE_IN) * (1 - t) : 1 - t
         ctx.globalAlpha = (alpha * fade) / PUFF_RINGS.length
