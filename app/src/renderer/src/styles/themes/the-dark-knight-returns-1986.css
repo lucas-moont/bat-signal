@@ -159,7 +159,7 @@
   /* A caption over a TV picture: Bangers is slanted already, so the box sits straight and clean. */
   --stamp-tilt: 0deg;
   --stamp-tilt-slight: 0deg;
-  --notice-tilt: 0deg;
+  --notice-tilt: none;
   --stamp-border: 1px;
   --stamp-size: 12px;
   --stamp-weight: 400;

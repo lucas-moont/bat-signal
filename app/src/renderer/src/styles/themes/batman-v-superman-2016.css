@@ -161,7 +161,7 @@
   /* Archivo caps a degree off true, in a box, under a coarse grit like dust blown across paint. */
   --stamp-tilt: -1deg;
   --stamp-tilt-slight: -0.5deg;
-  --notice-tilt: 0deg;
+  --notice-tilt: none;
   --stamp-border: 1.5px;
   /* A half size under the others: Archivo's AUTHORIZE fits the narrowest panel's margin. */
   --stamp-size: 10.5px;

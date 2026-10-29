@@ -187,7 +187,7 @@
      the report's margin (dark-deco-build.md, section 5.2). */
   --stamp-tilt: 0deg;
   --stamp-tilt-slight: 0deg;
-  --notice-tilt: 0deg;
+  --notice-tilt: none;
   --stamp-border: 1px;
   --stamp-size: 11px;
   --stamp-weight: 400;

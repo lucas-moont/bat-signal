@@ -154,7 +154,7 @@
 
   --stamp-tilt: -2.5deg;
   --stamp-tilt-slight: -1.5deg;
-  --notice-tilt: 0deg;
+  --notice-tilt: none;
   --stamp-border: 1.5px;
   --stamp-size: 11px;
   --stamp-weight: 400;

@@ -157,7 +157,7 @@
   background: linear-gradient(180deg in srgb, var(--notice-hover-top), var(--notice-hover-foot));
 }
 .notice--urgent {
-  /* A Theme may tilt what needs you, as SAME BAT-TIME's villains' lairs are shot crooked. */
+  /* A Theme may tilt what needs you (none, by default: no transform, no stacking of its own). */
   rotate: var(--notice-tilt);
   border-left-color: var(--signal-hot);
   box-shadow:
