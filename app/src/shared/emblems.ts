@@ -220,3 +220,30 @@ export const OVAL_1992 = { box: { x: 17.85, y: 0, width: 84.3, height: 48 }, rim
 
 /** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)
+
+/**
+ * SAME BAT-TIME's bat, after the Batman television series (1966–68), on the same 120x48 grid: the
+ * sticker on Adam West's chest, traced from the Treasury's Savings Bonds short (ca. 1966, public
+ * domain) [54], sixty front-on frames median-stacked, its outline followed pixel by pixel and its
+ * halves averaged (same-bat-time-build.md, section 3; picked on the boards). About 1.88:1: two short
+ * pointed ears over a round notch, a round scoop each side, wingtips pointing straight up nearly as
+ * high as the ears, two round lobes a side underneath and a pointed tail. Symmetric about x = 60.
+ */
+export const BAT_1966 =
+  'M60 14.5 L59.4 14.5 L58.1 13.9 L55.7 11.6 L55.3 11.9 L54.2 14.4 L52.1 16.5 L50.1 17.2 ' +
+  'L46.9 17.3 L45.6 16.9 L43.4 15.6 L42.4 14.5 L41.3 12.7 L40.9 12.3 L40.3 12.4 L38.2 14.4 ' +
+  'L36.1 17.6 L34.1 22.3 L33.7 24.9 L33.7 27.9 L34.1 30 L34.4 31 L35.1 31.9 L35.7 31.9 L36.1 31.6 ' +
+  'L36.7 30.2 L38.2 28.8 L39.3 28.2 L40.7 27.9 L42.4 28.2 L44.1 29.1 L45.2 30.1 L46.2 31.7 ' +
+  'L46.6 33.4 L47.1 33.7 L47.8 33.4 L49.2 32.2 L50.9 31.5 L52.8 31.6 L55 32.5 L57.8 35 L58.9 37 ' +
+  'L59.6 39.3 L60 39.6 L60.4 39.3 L61.1 37 L62.2 35 L65 32.5 L67.2 31.6 L69.1 31.5 L70.8 32.2 ' +
+  'L72.2 33.4 L72.9 33.7 L73.4 33.4 L73.8 31.7 L74.8 30.1 L75.9 29.1 L77.6 28.2 L79.3 27.9 ' +
+  'L80.7 28.2 L81.8 28.8 L83.3 30.2 L83.9 31.6 L84.3 31.9 L84.9 31.9 L85.6 31 L85.9 30 L86.3 27.9 ' +
+  'L86.3 24.9 L85.9 22.3 L83.9 17.6 L81.8 14.4 L79.7 12.4 L79.1 12.3 L78.7 12.7 L77.6 14.5 ' +
+  'L76.6 15.6 L74.4 16.9 L73.1 17.3 L69.9 17.2 L67.9 16.5 L65.8 14.4 L64.7 11.9 L64.3 11.6 ' +
+  'L61.9 13.9 L60.6 14.5 Z'
+
+/** The 1966 oval as filmed, about 1.39:1, centred, with no rim: a bright yellow that never lights. */
+export const OVAL_1966 = { box: { x: 26.62, y: 0, width: 66.76, height: 48 }, rim: 0, lights: false }
+
+/** SAME BAT-TIME's emblem: the 1966 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_1966 = emblem(BAT_1966, 'none', OVAL_1966)
