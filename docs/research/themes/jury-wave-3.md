@@ -510,4 +510,12 @@ Taken on 2026-10-23, from the boards in §7, seen on screen.
     - **the beams more visible** (strength 0.14), and the blimps hovering, as the storyboard draws them;
     - **display name DARK DECO**, free of marks; I AM THE NIGHT is a live Warner mark.
 
+20. **SAME BAT-TIME at its build** (2026-10-28/29, #148), each picked on screen beside the references ([`same-bat-time-build.md`](same-bat-time-build.md), [`same-bat-time-pop.md`](same-bat-time-pop.md)):
+    - **the chest bat traced from the Savings Bonds short** (ca. 1966, public domain) [54], sixty frames stacked: 1.88:1 on a 1.39:1 oval with no rim (the dossier's 2.6:1 was read from soft frames);
+    - **Needs you is HOTLINE**: BATPHONE is DC's live mark in the EU and the UK, software and entertainment among its classes; FOILED became FIASCO (decision 13), WHAT NOW? kept;
+    - **less gloom, reopening decision 7's premise**: at round 4 the maintainer found the night-navy draft, soft clouds and a pale Signal "muito gloom pra um tema do Adam West" and asked to embellish and go further, after the series' iconic scenes. Of three directions (the cliffhanger cards' ultramarine, the animated opening, fight night) **the animated opening** won: the cards keep the credits' navy over the opening's flat cool fields (cel blue, the fight cards' green, teal, a shard of the cliffhanger ultramarine), a black skyline and henchmen in hats at the foot, as a still decor; flat cartoon clouds cross its sky. The warm half of the series' pop (red, orange, magenta) stays out: it is other Themes' alarms;
+    - **the report's headings on yellow label plates**, as the Batcave labels its gadgets; **the urgent notice tilted -2.5°**, as the lairs' camera (a new shared `--notice-tilt`, 0 elsewhere); the POW! balloon a size above the stamp;
+    - **Bat-Clawd**: the Batusi on the perch, revealed in steps; the painted brows in every pose; the fight with a two-tone burst; asleep under a satin nightcap with a Zzz; flying on **the Bat-climb**, nearly flat out from the wall, one arm up the rope and one holding it at his chest, the rope across his front;
+    - **display name SAME BAT-TIME**, free of marks.
+
 Display names are still decided on screen, at each Theme's build.

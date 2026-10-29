@@ -1,5 +1,7 @@
 # Theme dossier: Batman (ABC, 1966–68), with Adam West
 
+> **Built in #148 (2026-10-29).** At the build the maintainer reopened the look as too gloomy: see [`jury-wave-3.md`](jury-wave-3.md) §9, decision 20, and [`same-bat-time-pop.md`](same-bat-time-pop.md). This dossier's night clouds and Signal (§10), its BATPHONE (§7) and its 2.6:1 bat (§9) were not built.
+
 > **Decided 2026-10-23.** The maintainer's decisions in [`jury-wave-3.md`](jury-wave-3.md) §9 override this dossier where they differ. For SAME BAT-TIME: the violet satin alarm (V) stays, under the Alarm-color rule now in `CONTEXT.md`; the credits navy (G1); the yellow oval stays bright and never lit, beside TAS's and Lego's; FOILED changes (§9, decisions 2, 6, 7, 13).
 
 Research note, 2026-10-22. Scope: one Bat-Signal Theme after the *Batman* television series (ABC, 120 episodes, 12 January 1966 to 14 March 1968; Greenway Productions with 20th Century-Fox Television), with Adam West as Batman, and the 1966 film (20th Century-Fox) as a second source. Wave 3, round 2 ([`wave-3-brief.md`](wave-3-brief.md) §2, §5–7), issue #143, Linear LUC-85 (Theme issue LUC-89). It reads the three round-1 dossiers ([`animated-series.md`](animated-series.md), [`long-halloween.md`](long-halloween.md), [`arkham-games.md`](arkham-games.md)) and [`claims-wave-3.md`](claims-wave-3.md), and is measured against the seven shipped stylesheets (`main`, v1.3.0) and SERIOUS HOUSE as kept on `feat/123-serious-house`. Terms are those of [`CONTEXT.md`](../../../CONTEXT.md).
