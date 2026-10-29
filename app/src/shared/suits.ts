@@ -2015,8 +2015,9 @@ const WEST_CAPE = {
   hanging: 'M3 4.8 L2.2 5.3 L1.6 10.6 L2.4 10 L3.2 10.8 L4 10.1 L4.8 10.8 L5.4 10.2 L5.4 5 Z',
   /** Flung back and open behind his raised fists. */
   open: 'M3.4 5 L0.6 5.2 L-2.6 10.8 L-1.4 10.2 L-0.4 11 L0.8 10.3 L2 11 L3.4 10.4 Z',
-  /** Streaming out behind him as he runs, to the left, its points trailing. */
-  streaming: 'M3 5 L-1 4.6 L-4.8 5.2 L-3.8 6.2 L-4.6 7.2 L-3.2 7.8 L-3.6 8.8 L-1.2 8.8 L3 9.6 Z',
+  /** Billowing up behind his shoulders as he runs, its points over his head [03], then lifting. */
+  billowing: 'M3 5 L1.4 4.4 L-1.2 2.6 L-3 -0.2 L-1.8 0.4 L-0.8 -0.6 L0.4 0.8 L1.6 0.2 L2.4 1.8 L3.4 2.2 Z',
+  billowingUp: 'M3 5 L1.4 4.2 L-1.4 2 L-3.4 -0.8 L-2 -0.2 L-1 -1 L0.3 0.2 L1.6 -0.4 L2.4 1.2 L3.4 1.6 Z',
 }
 /** Its back between his legs, its hem in points. */
 const WEST_BACK: Layer = {
@@ -2027,10 +2028,45 @@ const WEST_BACK: Layer = {
 /** Closed round him, asleep, its hem in points. */
 const WEST_WRAPPED =
   'M2.6 6.2 L13.4 6.2 L14.2 10.6 L12.8 10 L11.4 10.8 L9.6 10 L8 10.8 L6.4 10 L4.6 10.8 L3.2 10 L1.8 10.6 Z'
+/**
+ * The cowl's painted brows [38] [47]: pale strokes rising outward from beside the nose, over the eyes
+ * (picked on screen, in every pose).
+ */
+const BROWS: Layer = {
+  kind: 'path',
+  d: 'M7.1 2.85 L4.8 2.05 L4.6 1.7 L5 1.75 L7.2 2.45 Z',
+  fill: 'var(--ink)',
+  mirrored: true,
+}
+/** A Zzz rising beside him, the letters growing as they go. */
+const ZZZ =
+  'M13.40 1.60 L14.40 1.60 L14.40 1.82 L13.76 2.38 L14.40 2.38 L14.40 2.60 L13.40 2.60 L13.40 2.38 L14.04 1.82 L13.40 1.82 Z M15.20 -0.20 L16.50 -0.20 L16.50 0.09 L15.67 0.81 L16.50 0.81 L16.50 1.10 L15.20 1.10 L15.20 0.81 L16.03 0.09 L15.20 0.09 Z M17.40 -1.00 L19.00 -1.00 L19.00 -0.65 L17.98 0.25 L19.00 0.25 L19.00 0.60 L17.40 0.60 L17.40 0.25 L18.42 -0.65 L17.40 -0.65 Z'
+/**
+ * Asleep, played for laughs (picked on screen): wrapped in his cape under a long satin nightcap with a
+ * pompom over the cowl, and a Zzz rising beside him.
+ */
+const WEST_ASLEEP: Pose = (() => {
+  const seat = seated(WEST_SEATED, WEST_WRAPPED)
+  return {
+    ...seat,
+    front: [
+      ...seat.front,
+      BROWS,
+      {
+        kind: 'path',
+        d: 'M3.6 1.4 Q8 -1.6 13.6 -0.4 Q15.8 0.4 16 2.4 L15.2 2.4 Q14.6 1.2 12.4 1.2 L12.4 1.6 Z',
+        fill: 'var(--cowl-shine)',
+      },
+      { kind: 'rects', px: [[3.2, 1.2, 9.6, 0.8]], fill: 'var(--bone)' },
+      { kind: 'path', d: 'M14.8 2.6 a0.8 0.8 0 1 0 1.6 0 a0.8 0.8 0 1 0 -1.6 0', fill: 'var(--bone)' },
+      { kind: 'path', d: ZZZ, fill: 'var(--bone)' },
+    ],
+  }
+})()
 const WEST_HANGING: Layer[] = [WEST_BACK, { kind: 'cape', d: WEST_CAPE.hanging, mirrored: true }]
 
 const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
-  pose(map, behind, front, { chest: WEST_CHEST })
+  pose(map, behind, [...front, BROWS], { chest: WEST_CHEST })
 
 /** An arm in the suit's lavender, outlined so it reads on the cowl's violet (left; mirrored). */
 const satinArm = (arm: string): Layer[] => [
@@ -2047,20 +2083,34 @@ const satinGloves = (gloves: Px[]): Layer[] => [
   { kind: 'rects', px: gloves, fill: 'var(--gloves)' },
 ]
 
-/** Running (flying), the opening's run [03]: a knee up and the other fist forward, the cape streaming. */
+/**
+ * Running (flying), the opening's run [03]: a knee up and the other fist forward, the cape billowing
+ * up behind him, then lifting.
+ */
 const westRun = (side: 'left' | 'right') =>
   westPose(
     westRunning(side),
-    [{ kind: 'cape', d: WEST_CAPE.streaming }],
+    [{ kind: 'cape', d: side === 'left' ? WEST_CAPE.billowing : WEST_CAPE.billowingUp, mirrored: true }],
     side === 'left' ? raisedArm(13, [], 3, 2) : raisedArm(2, [], 3, 2),
   )
 
-/** The fight's burst [04] [30], behind his head in the Alarm color: eight points, no word at this size. */
-const FIGHT_BURST: Layer = {
-  kind: 'path',
-  d: 'M8.0 -1.0 L9.5 0.9 L13.4 0.1 L11.5 1.9 L15.6 2.6 L11.5 3.3 L13.4 5.1 L9.5 4.3 L8.0 6.2 L6.5 4.3 L2.6 5.1 L4.5 3.3 L0.4 2.6 L4.5 1.9 L2.6 0.1 L6.5 0.9 Z',
-  fill: 'var(--signal-hot)',
-}
+/**
+ * The fight's burst [04] [30], behind him in the Alarm color, its lit heart over its shade: eight
+ * points past his head and sides, no word at this size (picked on screen over a smaller and a
+ * larger one).
+ */
+const FIGHT_BURST: Layer[] = [
+  {
+    kind: 'path',
+    d: 'M8.0 -1.8 L10.0 0.8 L14.8 -0.3 L12.9 2.3 L17.6 3.4 L12.9 4.5 L14.8 7.1 L10.0 6.0 L8.0 8.6 L6.0 6.0 L1.2 7.1 L3.1 4.5 L-1.6 3.4 L3.1 2.3 L1.2 -0.3 L6.0 0.8 Z',
+    fill: 'var(--signal)',
+  },
+  {
+    kind: 'path',
+    d: 'M8.0 -0.2 L9.3 1.7 L12.7 0.9 L11.0 2.7 L14.6 3.4 L11.0 4.1 L12.7 5.9 L9.3 5.1 L8.0 7.0 L6.7 5.1 L3.3 5.9 L5.0 4.1 L1.4 3.4 L5.0 2.7 L3.3 0.9 L6.7 1.7 Z',
+    fill: 'var(--signal-hot)',
+  },
+]
 /**
  * His arms raised from the shoulders to fists at `top` beside or over his head, outlined so they read
  * on the cowl.
@@ -2080,7 +2130,7 @@ const armsUp = (top: number, sides: 'left' | 'right' | 'both' = 'both'): Layer[]
 /** Alarmed, the fight: both fists up beside his head, the cape flung back, the burst lit behind him. */
 const westAlarmed = westPose(
   WEST_STANDING,
-  [FIGHT_BURST, WEST_BACK, { kind: 'cape', d: WEST_CAPE.open, mirrored: true }],
+  [...FIGHT_BURST, WEST_BACK, { kind: 'cape', d: WEST_CAPE.open, mirrored: true }],
   armsUp(1.4),
 )
 
@@ -2130,7 +2180,7 @@ const THE_BATUSI: Script = [
 export const SAME_BAT_TIME_SUIT: Suit = {
   eyes: EYES,
   poses: {
-    sleeping: [seated(WEST_SEATED, WEST_WRAPPED)],
+    sleeping: [WEST_ASLEEP],
     flying: [westRun('left'), westRun('right')],
     alarmed: [westAlarmed],
   },

@@ -7,6 +7,7 @@ import {
   DARK_DECO_SUIT,
   HOLIDAY_SUIT,
   PALE_MOONLIGHT_SUIT,
+  SAME_BAT_TIME_SUIT,
   SILENT_PREDATOR_SUIT,
   scriptAt,
   stillStep,
@@ -14,6 +15,7 @@ import {
   watchOn,
   type Layer,
   type Pose,
+  type Px,
   type Script,
 } from '../src/shared/suits'
 import { emblem, OVAL_1989, WINGS } from '../src/shared/emblems'
@@ -312,5 +314,64 @@ describe("SILENT PREDATOR's suit", () => {
       ['left', 'down'],
       ['right', 'up'],
     ])
+  })
+})
+
+// SAME BAT-TIME's suit (adam-west.md, section 8; same-bat-time-build.md, sections 4 and 5), each part
+// picked on screen: the satin is the alarm's unlit relative, the Batusi on the perch.
+describe("SAME BAT-TIME's suit", () => {
+  const { poses, watch, aura } = SAME_BAT_TIME_SUIT
+  const signature = SAME_BAT_TIME_SUIT.signature!
+  const layers = (p: Pose) => [...p.behind, ...p.front]
+  const fills = (p: Pose) => layers(p).flatMap((l) => ('fill' in l && l.fill ? [l.fill] : []))
+  const gloves = (p: Pose) =>
+    layers(p)
+      .filter((l) => l.kind === 'rects' && l.fill === 'var(--gloves)')
+      .flatMap((l) => ('px' in l ? l.px : []))
+  const atRest = [
+    ...poses.sleeping,
+    ...poses.flying,
+    ...signature.map((step) => step.pose),
+    ...watch.map((step) => step.pose),
+  ]
+
+  // Violet is the Alarm color: at rest only the satin, its unlit relative in the cowl's and cape's
+  // variables, wears it; the fight's burst lights it when something needs the user.
+  it('wears the Alarm color only in the fight, and its aura only when alarmed', () => {
+    expect(aura).toBe('alarmed')
+    for (const p of atRest) expect(fills(p).filter((fill) => fill.includes('--signal'))).toEqual([])
+    expect(fills(poses.alarmed[0])).toEqual(expect.arrayContaining(['var(--signal)', 'var(--signal-hot)']))
+  })
+
+  it('wears its yellow oval when awake, which never lights', () => {
+    for (const p of [...poses.flying, ...poses.alarmed, signature.at(-1)!.pose])
+      expect(fills(p)).toContain('var(--emblem-plate)')
+  })
+
+  it('paints the brows on the cowl in every pose', () => {
+    for (const p of [...atRest, ...poses.alarmed])
+      expect(layers(p).some((l) => l.kind === 'path' && l.fill === 'var(--ink)' && l.mirrored)).toBe(true)
+  })
+
+  // The episode's order [20]–[22]: an arm up, both arms overhead, the V at his nose, the V held.
+  it('dances the Batusi to the V across his eyes, the eyes left clear', () => {
+    const tops = signature.map((step) => gloves(step.pose).map(([, y]) => y))
+    expect(tops[0]).toHaveLength(1)
+    expect(Math.min(...tops[0]!)).toBeLessThan(0)
+    expect(tops.at(-1)).toHaveLength(2)
+    const eyes: Px[] = [
+      [5, 3, 2, 1],
+      [9, 3, 2, 1],
+    ]
+    const overlaps = ([x, y, w = 1, h = 1]: Px, [ex, ey, ew = 1, eh = 1]: Px) =>
+      x < ex + ew && ex < x + w && y < ey + eh && ey < y + h
+    for (const glove of gloves(signature.at(-1)!.pose))
+      for (const eye of eyes) expect(overlaps(glove, eye)).toBe(false)
+  })
+
+  it('sleeps under a nightcap with a Zzz rising beside him', () => {
+    const asleep = poses.sleeping[0]
+    expect(asleep.eyes).toBe('shut')
+    expect(fills(asleep)).toEqual(expect.arrayContaining(['var(--cowl-shine)', 'var(--bone)']))
   })
 })
