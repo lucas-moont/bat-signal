@@ -34,12 +34,14 @@
     "@fontsource/bangers": "^5.3.0",
     "@fontsource/barlow-semi-condensed": "^5.3.0",
     "@fontsource/big-shoulders-stencil": "^5.3.0",
+    "@fontsource/bowlby-one-sc": "^5.3.0",
     "@fontsource/bungee": "^5.3.0",
     "@fontsource/federo": "^5.3.0",
     "@fontsource/grenze-gotisch": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/josefin-sans": "^5.3.0",
     "@fontsource/limelight": "^5.3.0",
+    "@fontsource/luckiest-guy": "^5.3.0",
     "@fontsource/marcellus-sc": "^5.3.0",
     "@fontsource/neucha": "^5.3.0",
     "@fontsource/permanent-marker": "^5.3.0",
@@ -109,6 +111,10 @@
         "to": "licenses/Big Shoulders Stencil.txt"
       },
       {
+        "from": "node_modules/@fontsource/bowlby-one-sc/LICENSE",
+        "to": "licenses/Bowlby One SC.txt"
+      },
+      {
         "from": "node_modules/@fontsource/bungee/LICENSE",
         "to": "licenses/Bungee.txt"
       },
@@ -131,6 +137,10 @@
       {
         "from": "node_modules/@fontsource/limelight/LICENSE",
         "to": "licenses/Limelight.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/luckiest-guy/LICENSE",
+        "to": "licenses/Luckiest Guy.txt"
       },
       {
         "from": "node_modules/@fontsource/marcellus-sc/LICENSE",
