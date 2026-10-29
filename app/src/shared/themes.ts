@@ -10,7 +10,7 @@ import {
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
-  SAME_BAT_TIME_CLOUDS,
+  SAME_BAT_TIME_SKY,
   SILENT_PREDATOR_RAIN,
   VENGEANCE_RAIN,
   WATCHFUL_PROTECTOR_WINDOWS,
@@ -208,7 +208,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     words: SAME_BAT_TIME_WORDS,
     emblem: EMBLEM_1966,
     suit: SAME_BAT_TIME_SUIT,
-    atmosphere: SAME_BAT_TIME_CLOUDS,
+    atmosphere: SAME_BAT_TIME_SKY,
   },
 }
 

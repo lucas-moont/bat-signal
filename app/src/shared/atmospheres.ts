@@ -7,6 +7,8 @@
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
 
+import { BAT_1966_SIGNAL } from './emblems'
+
 /** What every kind has. */
 interface Scene {
   /**
@@ -556,19 +558,20 @@ export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
 }
 
 /**
- * SAME BAT-TIME's sky (same-bat-time-pop.md; round 6): over the animated opening's flat fields, the
- * Theme's decor, a few flat cartoon clouds cross the cel-blue sky, high above the skyline.
+ * SAME BAT-TIME's sky (same-bat-time-pop.md; picked on screen): over the animated opening's flat
+ * fields, the Theme's decor, nothing crosses it; the series' Bat-Signal glows low over the skyline
+ * [17] (picked on screen), pale, never lit as the alarm.
  */
-export const SAME_BAT_TIME_CLOUDS: SmokeAtmosphere = {
-  kind: 'smoke',
-  color: '--clouds',
-  puffs: 3,
-  size: [120, 160],
-  alpha: 0.4,
-  rise: 0,
-  life: 50,
-  sway: 0,
-  wind: 0.35,
-  aspect: 0.3,
-  band: [16, 130],
+export const SAME_BAT_TIME_SKY: SkyAtmosphere = {
+  kind: 'sky',
+  backdrop: {
+    kind: 'signal',
+    color: '--sky-signal',
+    alpha: 0.6,
+    at: [0.5, 292],
+    radius: 62,
+    aspect: 1 / 1.67,
+    bat: { d: BAT_1966_SIGNAL, width: 0.63 },
+    glow: 14,
+  },
 }
