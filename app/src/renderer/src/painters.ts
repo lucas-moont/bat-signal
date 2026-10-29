@@ -146,14 +146,16 @@ function signal({ color: variable, alpha, at, radius, aspect, bat, glow = 0 }: S
       const [cx, cy] = [at[0] * width, at[1]]
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = color
-      // Its halo, the rings overlapping so it is brightest at the light's edge.
+      // Its halo: rings round the light, never under it, so the bat cut out of the light stays the
+      // sky; overlapping, so the halo is brightest at the light's edge.
       if (glow)
         for (const ring of GLOW_RINGS) {
           const r = radius + glow * ring
           ctx.globalAlpha = alpha / (2 * GLOW_RINGS.length)
           ctx.beginPath()
           ctx.ellipse(cx, cy, r, r * aspect, 0, 0, 2 * Math.PI)
-          ctx.fill()
+          ctx.ellipse(cx, cy, radius, radius * aspect, 0, 0, 2 * Math.PI)
+          ctx.fill('evenodd')
         }
       ctx.globalAlpha = alpha
       ctx.beginPath()

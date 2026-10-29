@@ -1553,6 +1553,9 @@ describe('the Signal behind the motion', () => {
       expect(ring.alpha).toBeLessThan(SIGNAL.alpha)
       expect(ring.discs[0]!.r).toBeGreaterThan(SIGNAL.radius)
       expect(ring.discs[0]!.r).toBeLessThanOrEqual(SIGNAL.radius + 12)
+      // A ring round the light, not a disc under it: the bat cut out of the light stays the sky.
+      expect(ring.rule).toBe('evenodd')
+      expect(ring.discs[1]).toEqual(light.discs[0])
     }
     expect(signal().fills).toHaveLength(1)
   })
