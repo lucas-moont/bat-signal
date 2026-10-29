@@ -159,6 +159,7 @@
   /* The covers' labels sit straight in their boxes. */
   --stamp-tilt: 0deg;
   --stamp-tilt-slight: 0deg;
+  --notice-tilt: 0deg;
   --stamp-border: 1px;
   --stamp-size: 11px;
   --stamp-weight: 400;

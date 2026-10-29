@@ -163,6 +163,7 @@
   /* A stencilled spec label, not a rubber stamp: straight, a thin box, no wear (nolan.md, section 4). */
   --stamp-tilt: 0deg;
   --stamp-tilt-slight: 0deg;
+  --notice-tilt: 0deg;
   --stamp-border: 1px;
   --stamp-size: 12px;
   --stamp-weight: 700;

@@ -183,6 +183,7 @@
   /* The stamp's shape: tilted and worn in VENGEANCE; another Theme may stamp straight and clean. */
   --stamp-tilt: -2.5deg;
   --stamp-tilt-slight: -1.5deg;
+  --notice-tilt: 0deg;
   --stamp-border: 1.5px;
   --stamp-size: 11px;
   --stamp-weight: 400;
