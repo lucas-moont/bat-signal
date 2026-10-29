@@ -13,6 +13,7 @@ import {
   DARK_DECO_WORDS,
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
+  SAME_BAT_TIME_WORDS,
   SILENT_PREDATOR_WORDS,
   STANDARD_TERMS,
   STANDARD_VOICE,
@@ -467,5 +468,48 @@ describe("SILENT PREDATOR's words", () => {
   it('names its Atmosphere after the rain', () => {
     expect(voice.settings.atmosphere.label).toBe('Rain')
     expect(voice.settings.atmosphere.hint(terms)).toBe('Rain over Gotham behind the missions')
+  })
+})
+
+describe("SAME BAT-TIME's words", () => {
+  const { terms, voice } = SAME_BAT_TIME_WORDS
+
+  // The serial's Lexicon (adam-west.md, section 7; jury-wave-3.md, section 9, decisions 13 and 20):
+  // Case stays; the Hotline, not the Batphone (DC's live mark); FIASCO, not FOILED, which reads as
+  // the villain stopped; WHAT NOW? kept on screen.
+  it("speak the serial's Lexicon", () => {
+    expect(terms.case).toEqual(STANDARD_TERMS.case)
+    expect(terms.needsYou.label).toBe('Hotline')
+    expect(terms.needsYou.count(1)).toBe('1 call on the hotline')
+    expect(terms.needsYou.count(3)).toBe('3 calls on the hotline')
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'May I?',
+      error: 'Fiasco',
+      waiting: 'What now?',
+      reply: 'New clue',
+      stalled: 'Hanging',
+    })
+  })
+
+  // The narrator, never the news (ANCIENT GRACE's): "Meanwhile", stately Wayne Manor, and the
+  // serial's promise, cut before "Channel", only while something still waits.
+  it('narrates the night as the serial does', () => {
+    expect(voice.tagline).toBe('Meanwhile, in Gotham City…')
+    expect(voice.report.dateline(new Date(2026, 9, 28, 21, 40))).toMatch(/^MEANWHILE · /)
+    expect(voice.report.end(1)).toBe('Same Bat-time tomorrow!')
+    expect(voice.report.end(0)).not.toMatch(/Bat-time/)
+    for (const line of [voice.tagline, voice.report.name, voice.report.end(1), voice.empty.quiet.title])
+      expect(line).not.toMatch(/(live|channel|anchor|news)/i)
+  })
+
+  // The fight cards' words, as balloons beside the stamp, only for what came in.
+  it('pops POW! for what needs you now and BAM! for news', () => {
+    expect(voice.balloon).toEqual({ permission: 'POW!', error: 'POW!', waiting: 'BAM!', reply: 'BAM!' })
+  })
+
+  it('names its Atmosphere after the opening titles, apart from the report', () => {
+    expect(voice.settings.atmosphere.label).toBe('Opening titles')
+    expect(voice.settings.atmosphere.label).not.toBe(voice.report.name)
   })
 })

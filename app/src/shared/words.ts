@@ -1125,8 +1125,8 @@ export const SAME_BAT_TIME_WORDS: Words = {
       // The Batcave labels its gadgets [43]: one Bat- label on the screen.
       title: 'Bat-Settings',
       atmosphere: {
-        label: 'Clouds',
-        hint: (t) => `Night clouds over Gotham behind the ${lower(t.case.many)}`,
+        label: 'Opening titles',
+        hint: (t) => `The Bat-Signal over the opening's Gotham behind the ${lower(t.case.many)}`,
       },
     },
     // On the perch he does the Batusi, as in the first episode.
