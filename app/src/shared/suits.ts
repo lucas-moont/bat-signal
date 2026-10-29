@@ -1996,8 +1996,8 @@ const WEST_BELOW = [
 ]
 const WEST_STANDING = westMap()
 const WEST_SEATED = westMap(SUIT, twice([SUIT, SUIT]))
-/** Running, one knee up (the left, then the right): its boot a unit higher. */
-const westRunning = (side: 'left' | 'right') =>
+/** Walking up the wall, one knee up (the left, then the right): its boot a unit higher. */
+const westStepping = (side: 'left' | 'right') =>
   westMap(SUIT, [
     ...WEST_BELOW.slice(0, 4),
     '....g.g..g.g....',
@@ -2015,9 +2015,6 @@ const WEST_CAPE = {
   hanging: 'M3 4.8 L2.2 5.3 L1.6 10.6 L2.4 10 L3.2 10.8 L4 10.1 L4.8 10.8 L5.4 10.2 L5.4 5 Z',
   /** Flung back and open behind his raised fists. */
   open: 'M3.4 5 L0.6 5.2 L-2.6 10.8 L-1.4 10.2 L-0.4 11 L0.8 10.3 L2 11 L3.4 10.4 Z',
-  /** Billowing up behind his shoulders as he runs, its points over his head [03], then lifting. */
-  billowing: 'M3 5 L1.4 4.4 L-1.2 2.6 L-3 -0.2 L-1.8 0.4 L-0.8 -0.6 L0.4 0.8 L1.6 0.2 L2.4 1.8 L3.4 2.2 Z',
-  billowingUp: 'M3 5 L1.4 4.2 L-1.4 2 L-3.4 -0.8 L-2 -0.2 L-1 -1 L0.3 0.2 L1.6 -0.4 L2.4 1.2 L3.4 1.6 Z',
 }
 /** Its back between his legs, its hem in points. */
 const WEST_BACK: Layer = {
@@ -2082,17 +2079,6 @@ const satinGloves = (gloves: Px[]): Layer[] => [
   },
   { kind: 'rects', px: gloves, fill: 'var(--gloves)' },
 ]
-
-/**
- * Running (flying), the opening's run [03]: a knee up and the other fist forward, the cape billowing
- * up behind him, then lifting.
- */
-const westRun = (side: 'left' | 'right') =>
-  westPose(
-    westRunning(side),
-    [{ kind: 'cape', d: side === 'left' ? WEST_CAPE.billowing : WEST_CAPE.billowingUp, mirrored: true }],
-    side === 'left' ? raisedArm(13, [], 3, 2) : raisedArm(2, [], 3, 2),
-  )
 
 /**
  * The fight's burst [04] [30], behind him in the Alarm color, its lit heart over its shade: eight
@@ -2177,11 +2163,52 @@ const THE_BATUSI: Script = [
   { pose: HELD_V, look: 0 },
 ]
 
+/** The cape on the climb, hanging from his side toward the street, its hem in three points. */
+const CLIMB_CAPE = 'M13 4.8 L16.4 4.4 L17.6 5.6 L16.8 6.4 L18 7.4 L17 8.2 L17.8 9.4 L13 9.6 Z'
+/** The Bat-climb's turn: nearly lying out from the wall, as the series shot it (picked on screen). */
+const CLIMB_ANGLE = 80
+/**
+ * The Bat-climb [63] [64] (flying): up the side of a building on a rope, his body out from the wall,
+ * his boots on it, walking up (the set lay on its side), the cape hanging down toward the street.
+ * Drawn upright and turned as a whole, so the rope and the wall are drawn to stand upright on
+ * screen, and the cape to hang from his side that faces the street.
+ */
+const westClimb = (side: 'left' | 'right', angle = CLIMB_ANGLE, scale = 0.72): Pose => {
+  const t = (angle * Math.PI) / 180
+  // Straight up on screen, in the turned frame he is drawn in.
+  const [ux, uy] = [-Math.sin(t), -Math.cos(t)]
+  const at = (x: number, y: number, d: number) => `${(x + ux * d).toFixed(2)} ${(y + uy * d).toFixed(2)}`
+  const line = (x: number, y: number, from: number, to: number, w: number) => {
+    const [nx, ny] = [-uy * w, ux * w]
+    return `M${at(x + nx, y + ny, from)} L${at(x + nx, y + ny, to)} L${at(x - nx, y - ny, to)} L${at(x - nx, y - ny, from)} Z`
+  }
+  const climb = westPose(
+    westStepping(side),
+    [],
+    [
+      ...satinGloves([
+        [6.6, 6.2, 1.2, 1.2],
+        [8.2, 6.2, 1.2, 1.2],
+      ]),
+    ],
+  )
+  return {
+    ...climb,
+    behind: [
+      { kind: 'path', d: line(8, 11.3, -12, 14, 0.5), fill: 'var(--ash)' },
+      { kind: 'path', d: line(8, 6.8, 0, 16, 0.12), fill: 'var(--bone)' },
+      { kind: 'cape', d: CLIMB_CAPE },
+      ...climb.behind,
+    ],
+    transform: `rotate(${angle}deg) scale(${scale})`,
+  }
+}
+
 export const SAME_BAT_TIME_SUIT: Suit = {
   eyes: EYES,
   poses: {
     sleeping: [WEST_ASLEEP],
-    flying: [westRun('left'), westRun('right')],
+    flying: [westClimb('left'), westClimb('right')],
     alarmed: [westAlarmed],
   },
   // On the perch he holds the V, glances along the street, and draws it out once more on the beat.

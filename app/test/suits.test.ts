@@ -369,6 +369,15 @@ describe("SAME BAT-TIME's suit", () => {
       for (const eye of eyes) expect(overlaps(glove, eye)).toBe(false)
   })
 
+  // The Bat-climb [63] [64], picked on screen: turned nearly flat out from the wall, on the rope.
+  it('flies up the wall on the Bat-climb, the rope above him and the cape hanging', () => {
+    for (const p of poses.flying) {
+      expect(p.transform).toMatch(/rotate\(80deg\)/)
+      expect(fills(p)).toEqual(expect.arrayContaining(['var(--bone)', 'var(--ash)']))
+      expect(p.behind.some((l) => l.kind === 'cape')).toBe(true)
+    }
+  })
+
   it('sleeps under a nightcap with a Zzz rising beside him', () => {
     const asleep = poses.sleeping[0]
     expect(asleep.eyes).toBe('shut')
