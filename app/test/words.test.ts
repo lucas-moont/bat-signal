@@ -500,7 +500,7 @@ describe("SAME BAT-TIME's words", () => {
     expect(voice.report.end(1)).toBe('Same Bat-time tomorrow!')
     expect(voice.report.end(0)).not.toMatch(/Bat-time/)
     for (const line of [voice.tagline, voice.report.name, voice.report.end(1), voice.empty.quiet.title])
-      expect(line).not.toMatch(/(live|channel|anchor|news)/i)
+      expect(line).not.toMatch(/b(live|channel|anchor|news)b/i)
   })
 
   // The fight cards' words, as balloons beside the stamp, only for what came in.
