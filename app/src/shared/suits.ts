@@ -2032,11 +2032,19 @@ const WEST_HANGING: Layer[] = [WEST_BACK, { kind: 'cape', d: WEST_CAPE.hanging, 
 const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, behind, front, { chest: WEST_CHEST })
 
-/** An arm in the suit's lavender, outlined so it reads on the cowl's violet, then its satin glove. */
-const satinArm = (arm: string, glove: Px, mirrored = false): Layer[] => [
-  { kind: 'path', d: arm, className: 'clawd__cowl-edge', mirrored },
-  { kind: 'path', d: arm, fill: 'var(--suit)', mirrored },
-  { kind: 'rects', px: [glove], fill: 'var(--gloves)' },
+/** An arm in the suit's lavender, outlined so it reads on the cowl's violet (left; mirrored). */
+const satinArm = (arm: string): Layer[] => [
+  { kind: 'path', d: arm, className: 'clawd__cowl-edge', mirrored: true },
+  { kind: 'path', d: arm, fill: 'var(--suit)', mirrored: true },
+]
+/** Satin gloves, each edged in the neutral rim so they stand off the cowl of the same violet. */
+const satinGloves = (gloves: Px[]): Layer[] => [
+  {
+    kind: 'rects',
+    px: gloves.map(([x, y, w = 1, h = 1]) => [x - 0.25, y - 0.25, w + 0.5, h + 0.5] as const),
+    className: 'clawd__cowl-edge',
+  },
+  { kind: 'rects', px: gloves, fill: 'var(--gloves)' },
 ]
 
 /** Running (flying), the opening's run [03]: a knee up and the other fist forward, the cape streaming. */
@@ -2053,21 +2061,27 @@ const FIGHT_BURST: Layer = {
   d: 'M8.0 -1.0 L9.5 0.9 L13.4 0.1 L11.5 1.9 L15.6 2.6 L11.5 3.3 L13.4 5.1 L9.5 4.3 L8.0 6.2 L6.5 4.3 L2.6 5.1 L4.5 3.3 L0.4 2.6 L4.5 1.9 L2.6 0.1 L6.5 0.9 Z',
   fill: 'var(--signal-hot)',
 }
-/** A fist raised beside his head (the left; mirrored for the right), outlined so it reads on the cowl. */
-const FIST_UP: Layer[] = [
-  { kind: 'rects', px: [[1.2, 1.2, 2, 4.4]], className: 'clawd__cowl-edge' },
-  { kind: 'rects', px: [[1.5, 2.8, 1.4, 2.6]], fill: 'var(--suit)' },
-  { kind: 'rects', px: [[1.4, 1.4, 1.6, 1.5]], fill: 'var(--gloves)' },
-]
-const mirroredRects = (layers: Layer[]): Layer[] =>
-  layers.map((l) =>
-    l.kind === 'rects' ? { ...l, px: l.px.map(([x, y, w = 1, h = 1]) => [16 - x - w, y, w, h] as const) } : l,
-  )
+/**
+ * His arms raised from the shoulders to fists at `top` beside or over his head, outlined so they read
+ * on the cowl.
+ */
+const armsUp = (top: number, sides: 'left' | 'right' | 'both' = 'both'): Layer[] => {
+  const xs = { left: [1.5], right: [13.1], both: [1.5, 13.1] }[sides]
+  return [
+    {
+      kind: 'rects',
+      px: xs.map((x) => [x - 0.3, top + 1, 2, 5.4 - top - 1] as const),
+      className: 'clawd__cowl-edge',
+    },
+    { kind: 'rects', px: xs.map((x) => [x, top + 1.4, 1.4, 5.4 - top - 1.4] as const), fill: 'var(--suit)' },
+    ...satinGloves(xs.map((x) => [x - 0.1, top, 1.6, 1.5] as const)),
+  ]
+}
 /** Alarmed, the fight: both fists up beside his head, the cape flung back, the burst lit behind him. */
 const westAlarmed = westPose(
   WEST_STANDING,
   [FIGHT_BURST, WEST_BACK, { kind: 'cape', d: WEST_CAPE.open, mirrored: true }],
-  [...FIST_UP, ...mirroredRects(FIST_UP)],
+  armsUp(1.4),
 )
 
 /**
@@ -2078,45 +2092,37 @@ const westAlarmed = westPose(
 const V_ARM = 'M3 5.2 L3 6.2 L0.4 4.6 L-0.6 3.6 L-0.2 2.9 L2.6 2.4 L3.6 2.4 L3.6 3.6 L2.6 3.6 L0.8 3.9 Z'
 /** The V drawn out to the temples: the gloves beside the cowl, or a unit further out on the beat. */
 const theV = (out = 0): Layer[] => [
-  ...satinArm(V_ARM, [2.4 - out, 2.2, 1.6, 1.6], true).slice(0, 2),
-  {
-    kind: 'rects',
-    px: [
-      [2.4 - out, 2.2, 1.6, 1.6],
-      [12 + out, 2.2, 1.6, 1.6],
-    ],
-    fill: 'var(--gloves)',
-  },
+  ...satinArm(V_ARM),
+  ...satinGloves([
+    [2.4 - out, 2.2, 1.6, 1.6],
+    [12 + out, 2.2, 1.6, 1.6],
+  ]),
 ]
 /** The V meeting at his nose, a beat before it is drawn out: the gloves together under his eyes. */
 const V_AT_NOSE_ARM = 'M3 5.2 L3 6.2 L1 5.4 L0.6 4.4 L1.4 3.8 L6.4 4 L7.4 4 L7.4 5 L6.4 5 L2.2 4.8 Z'
 const AT_THE_NOSE: Layer[] = [
-  ...satinArm(V_AT_NOSE_ARM, [6.4, 4, 1, 1], true).slice(0, 2),
-  {
-    kind: 'rects',
-    px: [
-      [6.4, 4, 1.2, 1],
-      [8.4, 4, 1.2, 1],
-    ],
-    fill: 'var(--gloves)',
-  },
+  ...satinArm(V_AT_NOSE_ARM),
+  ...satinGloves([
+    [6.4, 4, 1.2, 1],
+    [8.4, 4, 1.2, 1],
+  ]),
 ]
 const batusi = (front: Layer[]) => westPose(WEST_STANDING, WEST_HANGING, front)
 const HELD_V = batusi(theV())
 
-/**
- * The Batusi (same-bat-time-build.md, section 5): an arm up, both arms overhead, the V at his nose,
- * then the V drawn out to his temples and held. The show changes pose every two beats (about seven
- * ticks), so each step holds a few of the clock's.
- */
 /** A step of the dance, held two ticks of the reveal's clock. */
 const twoBeats = (front: Layer[]): [Step, Step] => {
   const step = { pose: batusi(front), look: 0 }
   return [step, step]
 }
+/**
+ * The Batusi (same-bat-time-build.md, section 5): an arm up, both arms overhead, the V at his nose,
+ * then the V drawn out to his temples and held. The show changes pose every two beats (about seven
+ * ticks), so each step holds a few of the clock's.
+ */
 const THE_BATUSI: Script = [
-  ...twoBeats(raisedArm(13, [], 0, 5)),
-  ...twoBeats([...raisedArm(2, [], 0, 5), ...raisedArm(13, [], 0, 5)]),
+  ...twoBeats(armsUp(-0.4, 'right')),
+  ...twoBeats(armsUp(-0.4)),
   ...twoBeats(AT_THE_NOSE),
   { pose: HELD_V, look: 0 },
 ]
