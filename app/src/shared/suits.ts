@@ -4,7 +4,7 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
+import { EMBLEM_1966, EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -1975,5 +1975,169 @@ export const SILENT_PREDATOR_SUIT: Suit = {
   ]),
   signature: THE_GARGOYLE,
   // Amber is the Alarm color and never shows at rest.
+  aura: 'alarmed',
+}
+
+// --- SAME BAT-TIME: Batman as Adam West wore him in the 1966 series (adam-west.md, section 8;
+// same-bat-time-build.md, section 4): a lavender suit; cowl, cape, gloves, trunks and boots in one
+// violet satin with a sheen down the cowl and a neutral rim, as the TV's flat light gives; a satin
+// collar under his jaw; the yellow oval with no rim, which never lights; a yellow belt with a square
+// buckle; the cape to mid-calf, three points a side. On the perch he does the Batusi. ---
+
+/** His map: the head, the satin collar's half-row, the suit with his arms on its second unit. */
+const westMap = (arms = SUIT, below: readonly string[] = WEST_BELOW) =>
+  map([arms], [SUIT, SUIT, ...below], LEGEND, [...HEAD, COLLAR, SUIT])
+/** The belt and its buckle, a full unit; the high-cut satin trunks; his legs; his short satin boots. */
+const WEST_BELOW = [
+  ...twice(['...bbbbkkbbbb...']),
+  '....c.c..c.c....',
+  '....S.S..S.S....',
+  ...twice(['....g.g..g.g....']),
+]
+const WEST_STANDING = westMap()
+const WEST_SEATED = westMap(SUIT, twice([SUIT, SUIT]))
+/** Running, one knee up (the left, then the right): its boot a unit higher. */
+const westRunning = (side: 'left' | 'right') =>
+  westMap(SUIT, [
+    ...WEST_BELOW.slice(0, 4),
+    '....g.g..g.g....',
+    side === 'left' ? '.........g.g....' : '....g.g.........',
+  ])
+
+/** The square buckle, a little taller than the belt [21] [48]. */
+const BUCKLE: Layer = { kind: 'rects', px: [[7, 7.85, 2, 1.3]], fill: 'var(--buckle)' }
+/** The 1966 oval on his chest, no rim, clear of the collar and the belt. */
+const WEST_CHEST = [...chestPlate(EMBLEM_1966, { cx: 8, cy: 6.65, rx: 1.9 }), BUCKLE]
+
+/** The satin cape's halves (the left; mirrored for the right), each hem in three points. */
+const WEST_CAPE = {
+  /** Hanging just past his sides to mid-calf. */
+  hanging: 'M3 4.8 L2.2 5.3 L1.6 10.6 L2.4 10 L3.2 10.8 L4 10.1 L4.8 10.8 L5.4 10.2 L5.4 5 Z',
+  /** Flung back and open behind his raised fists. */
+  open: 'M3.4 5 L0.6 5.2 L-2.6 10.8 L-1.4 10.2 L-0.4 11 L0.8 10.3 L2 11 L3.4 10.4 Z',
+  /** Streaming out behind him as he runs, to the left, its points trailing. */
+  streaming: 'M3 5 L-1 4.6 L-4.8 5.2 L-3.8 6.2 L-4.6 7.2 L-3.2 7.8 L-3.6 8.8 L-1.2 8.8 L3 9.6 Z',
+}
+/** Its back between his legs, its hem in points. */
+const WEST_BACK: Layer = {
+  kind: 'path',
+  d: 'M4.5 8.8 L11.5 8.8 L11.5 10.2 L10.8 10.8 L9.9 10.1 L8 10.8 L6.1 10.1 L5.2 10.8 L4.5 10.2 Z',
+  className: 'clawd__cape',
+}
+/** Closed round him, asleep, its hem in points. */
+const WEST_WRAPPED =
+  'M2.6 6.2 L13.4 6.2 L14.2 10.6 L12.8 10 L11.4 10.8 L9.6 10 L8 10.8 L6.4 10 L4.6 10.8 L3.2 10 L1.8 10.6 Z'
+const WEST_HANGING: Layer[] = [WEST_BACK, { kind: 'cape', d: WEST_CAPE.hanging, mirrored: true }]
+
+const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, behind, front, { chest: WEST_CHEST })
+
+/** An arm in the suit's lavender, outlined so it reads on the cowl's violet, then its satin glove. */
+const satinArm = (arm: string, glove: Px, mirrored = false): Layer[] => [
+  { kind: 'path', d: arm, className: 'clawd__cowl-edge', mirrored },
+  { kind: 'path', d: arm, fill: 'var(--suit)', mirrored },
+  { kind: 'rects', px: [glove], fill: 'var(--gloves)' },
+]
+
+/** Running (flying), the opening's run [03]: a knee up and the other fist forward, the cape streaming. */
+const westRun = (side: 'left' | 'right') =>
+  westPose(
+    westRunning(side),
+    [{ kind: 'cape', d: WEST_CAPE.streaming }],
+    side === 'left' ? raisedArm(13, [], 3, 2) : raisedArm(2, [], 3, 2),
+  )
+
+/** The fight's burst [04] [30], behind his head in the Alarm color: eight points, no word at this size. */
+const FIGHT_BURST: Layer = {
+  kind: 'path',
+  d: 'M8.0 -1.0 L9.5 0.9 L13.4 0.1 L11.5 1.9 L15.6 2.6 L11.5 3.3 L13.4 5.1 L9.5 4.3 L8.0 6.2 L6.5 4.3 L2.6 5.1 L4.5 3.3 L0.4 2.6 L4.5 1.9 L2.6 0.1 L6.5 0.9 Z',
+  fill: 'var(--signal-hot)',
+}
+/** A fist raised beside his head (the left; mirrored for the right), outlined so it reads on the cowl. */
+const FIST_UP: Layer[] = [
+  { kind: 'rects', px: [[1.2, 1.2, 2, 4.4]], className: 'clawd__cowl-edge' },
+  { kind: 'rects', px: [[1.5, 2.8, 1.4, 2.6]], fill: 'var(--suit)' },
+  { kind: 'rects', px: [[1.4, 1.4, 1.6, 1.5]], fill: 'var(--gloves)' },
+]
+const mirroredRects = (layers: Layer[]): Layer[] =>
+  layers.map((l) =>
+    l.kind === 'rects' ? { ...l, px: l.px.map(([x, y, w = 1, h = 1]) => [16 - x - w, y, w, h] as const) } : l,
+  )
+/** Alarmed, the fight: both fists up beside his head, the cape flung back, the burst lit behind him. */
+const westAlarmed = westPose(
+  WEST_STANDING,
+  [FIGHT_BURST, WEST_BACK, { kind: 'cape', d: WEST_CAPE.open, mirrored: true }],
+  [...FIST_UP, ...mirroredRects(FIST_UP)],
+)
+
+/**
+ * The Batusi's held step, the V across his eyes [21] (adam-west.md, section 8.3): his upper arms out
+ * from the shoulders to elbows at eye height, his forearms back in to the gloves beside the cowl,
+ * the eyes left clear between them. Left half, mirrored.
+ */
+const V_ARM = 'M3 5.2 L3 6.2 L0.4 4.6 L-0.6 3.6 L-0.2 2.9 L2.6 2.4 L3.6 2.4 L3.6 3.6 L2.6 3.6 L0.8 3.9 Z'
+/** The V drawn out to the temples: the gloves beside the cowl, or a unit further out on the beat. */
+const theV = (out = 0): Layer[] => [
+  ...satinArm(V_ARM, [2.4 - out, 2.2, 1.6, 1.6], true).slice(0, 2),
+  {
+    kind: 'rects',
+    px: [
+      [2.4 - out, 2.2, 1.6, 1.6],
+      [12 + out, 2.2, 1.6, 1.6],
+    ],
+    fill: 'var(--gloves)',
+  },
+]
+/** The V meeting at his nose, a beat before it is drawn out: the gloves together under his eyes. */
+const V_AT_NOSE_ARM = 'M3 5.2 L3 6.2 L1 5.4 L0.6 4.4 L1.4 3.8 L6.4 4 L7.4 4 L7.4 5 L6.4 5 L2.2 4.8 Z'
+const AT_THE_NOSE: Layer[] = [
+  ...satinArm(V_AT_NOSE_ARM, [6.4, 4, 1, 1], true).slice(0, 2),
+  {
+    kind: 'rects',
+    px: [
+      [6.4, 4, 1.2, 1],
+      [8.4, 4, 1.2, 1],
+    ],
+    fill: 'var(--gloves)',
+  },
+]
+const batusi = (front: Layer[]) => westPose(WEST_STANDING, WEST_HANGING, front)
+const HELD_V = batusi(theV())
+
+/**
+ * The Batusi (same-bat-time-build.md, section 5): an arm up, both arms overhead, the V at his nose,
+ * then the V drawn out to his temples and held. The show changes pose every two beats (about seven
+ * ticks), so each step holds a few of the clock's.
+ */
+/** A step of the dance, held two ticks of the reveal's clock. */
+const twoBeats = (front: Layer[]): [Step, Step] => {
+  const step = { pose: batusi(front), look: 0 }
+  return [step, step]
+}
+const THE_BATUSI: Script = [
+  ...twoBeats(raisedArm(13, [], 0, 5)),
+  ...twoBeats([...raisedArm(2, [], 0, 5), ...raisedArm(13, [], 0, 5)]),
+  ...twoBeats(AT_THE_NOSE),
+  { pose: HELD_V, look: 0 },
+]
+
+export const SAME_BAT_TIME_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [seated(WEST_SEATED, WEST_WRAPPED)],
+    flying: [westRun('left'), westRun('right')],
+    alarmed: [westAlarmed],
+  },
+  // On the perch he holds the V, glances along the street, and draws it out once more on the beat.
+  watch: watchOn(
+    THE_BATUSI,
+    [{ look: -GAZE }, { look: GAZE }],
+    [
+      { pose: batusi(theV(0.6)), look: 0 },
+      { pose: HELD_V, look: 0 },
+    ],
+  ),
+  signature: THE_BATUSI,
+  // Violet is the Alarm color: the satin is its unlit relative, so the aura shows only when alarmed.
   aura: 'alarmed',
 }
