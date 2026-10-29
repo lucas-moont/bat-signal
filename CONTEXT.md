@@ -47,7 +47,7 @@ A Theme's own names for Case, Needs you, the words inside a Stamp and the other 
 _Avoid_: Translation, aliases, slang
 
 **Atmosphere**:
-A Theme's ambient effect behind the panel, such as rain, snow, ash (or bats or a calendar's torn pages in its place), smoke (or fog banks on a wind, or cloud banks across the sky), a screen's noise, a skyline's lit windows or police blimps hovering with their beams; and, under its motion, a backdrop if it has one: a still drawing, such as HOLIDAY's pumpkin moon, DARK DECO's red sky over a black skyline or SAME BAT-TIME's Bat-Signal glowing in its sky, that stays while the Atmosphere is on.
+A Theme's ambient effect behind the panel, such as rain, snow, ash (or bats or a calendar's torn pages in its place), smoke (or fog banks on a wind), a screen's noise, a skyline's lit windows or police blimps hovering with their beams; and, under its motion, a backdrop if it has one: a still drawing, such as HOLIDAY's pumpkin moon, DARK DECO's red sky over a black skyline or SAME BAT-TIME's Bat-Signal glowing in its sky, that stays while the Atmosphere is on.
 _Avoid_: Weather, particles, rain (as the general name)
 
 **Bat-Clawd**:

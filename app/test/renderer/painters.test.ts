@@ -992,45 +992,6 @@ describe('the smoke', () => {
         for (const { discs } of frame) for (const d of discs) expect(d.ry).toBeCloseTo(d.r * FOG.aspect!)
     })
   })
-
-  // SAME BAT-TIME's clouds (LUC-118's comment on LUC-89): banks across a navy sky, not off the street.
-  describe('born in a band of the sky', () => {
-    /** Cloud banks born 40 to 120px down, rising not at all, blown 1px a tick. */
-    const CLOUDS: SmokeAtmosphere = {
-      ...SMOKE,
-      life: 30,
-      rise: 0,
-      sway: 0,
-      wind: 1,
-      aspect: 1 / 4,
-      band: [40, 120],
-    }
-
-    it('keeps every bank that never rises in its band, each at a height of its own', () => {
-      const ys = frames(3 * CLOUDS.life * FPS, 1 / FPS, smoke(CLOUDS))
-        .flat()
-        .map((p) => p.y)
-      for (const y of ys) {
-        expect(y).toBeGreaterThanOrEqual(40)
-        expect(y).toBeLessThanOrEqual(120)
-      }
-      expect(new Set(ys).size).toBeGreaterThan(CLOUDS.puffs)
-    })
-
-    it('rises from where it is born, as far as it asks', () => {
-      const [first, next] = frames(1, 1 / FPS, smoke({ ...CLOUDS, rise: 2 }))
-      first!.forEach((a, i) => {
-        const b = next![i]!
-        if (b.y > a.y) return // gone, and born again lower in the band
-        expect(a.y - b.y).toBeCloseTo(2)
-      })
-    })
-
-    it('is born again at a new height in its band once it is gone', () => {
-      const lives = frames(2 * CLOUDS.life * FPS - 1, 1 / FPS, smoke(CLOUDS)).map((frame) => frame[0]!)
-      expect(new Set(lives.map((p) => p.y)).size).toBe(2)
-    })
-  })
 })
 
 describe('the noise', () => {
