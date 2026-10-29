@@ -7,6 +7,8 @@
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
 
+import { BAT_1966 } from './emblems'
+
 /** What every kind has. */
 interface Scene {
   /**
@@ -541,4 +543,32 @@ export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
   density: 0.4,
   angle: 0.06,
   depths: [0.1, 0.16, 0.25],
+}
+
+/**
+ * SAME BAT-TIME's night (adam-west.md, section 10; same-bat-time-build.md, section 6): soft cloud
+ * banks, wide and flat, crossing the upper sky so slowly they almost hang, past the Bat-Signal pale
+ * and still behind them [17], never lit as the alarm; the credits' blue from above.
+ */
+export const SAME_BAT_TIME_CLOUDS: SmokeAtmosphere = {
+  kind: 'smoke',
+  color: '--clouds',
+  puffs: 4,
+  size: [150, 190],
+  alpha: 0.32,
+  rise: 0,
+  life: 50,
+  sway: 0,
+  wind: 0.35,
+  aspect: 0.24,
+  band: [40, 190],
+  backdrop: {
+    kind: 'signal',
+    color: '--sky-signal',
+    alpha: 0.12,
+    at: [0.64, 96],
+    radius: 34,
+    aspect: 1 / 1.6,
+    bat: { d: BAT_1966, width: 0.8 },
+  },
 }
