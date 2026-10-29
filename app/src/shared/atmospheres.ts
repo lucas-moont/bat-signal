@@ -86,31 +86,8 @@ export interface SkylineBackdrop {
   mist: { color: string; alpha: number; height: number }
 }
 
-/**
- * The Bat-Signal on the clouds (SAME BAT-TIME's, after the 1966 series [17]): a pale ellipse of
- * light high in the sky, never lit as the alarm, with the bat cut out of it so the sky shows through.
- */
-export interface SignalBackdrop {
-  kind: 'signal'
-  /** The variable its light is filled in. */
-  color: string
-  /** Its strength (alpha), from 0 to 1. */
-  alpha: number
-  /** Its centre: across the panel as a share of its width (0 to 1), and down from its top in px. */
-  at: readonly [number, number]
-  /** Its half-width, in px. */
-  radius: number
-  /** Its height for its width. */
-  aspect: number
-  /**
-   * The bat cut out of it: a traced outline on the emblems' 120x48 grid (shared/emblems.ts), in
-   * straight lines only, and the share of the light's width it spans.
-   */
-  bat: { d: string; width: number }
-}
-
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
-export type Backdrop = MoonBackdrop | SkylineBackdrop | SignalBackdrop
+export type Backdrop = MoonBackdrop | SkylineBackdrop
 
 /** Rain slanting in the wind, in depths that differ in strength, length and speed. */
 export interface RainAtmosphere extends Scene {
