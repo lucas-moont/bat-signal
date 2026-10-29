@@ -10,6 +10,7 @@ import type {
   MoonBackdrop,
   NoiseAtmosphere,
   RainAtmosphere,
+  SignalBackdrop,
   SkylineBackdrop,
   SmokeAtmosphere,
   SnowAtmosphere,
@@ -91,6 +92,59 @@ export function backdropFor(backdrop: Backdrop): Painter {
       return moon(backdrop)
     case 'skyline':
       return skyline(backdrop)
+    case 'signal':
+      return signal(backdrop)
+  }
+}
+
+/** A number in a traced outline. */
+const NUMBER = String.raw`-?\d+(?:\.\d+)?`
+/** One traced outline: a move, at least two lines, each point after its own L, and a close. */
+const OUTLINE = new RegExp(
+  String.raw`^M\s*${NUMBER}[\s,]+${NUMBER}(?:\s*L\s*${NUMBER}[\s,]+${NUMBER}){2,}\s*Z$`,
+)
+
+/**
+ * A traced outline (an emblem's, on its 120x48 grid) as points about its own middle, in shares of its
+ * own width. One outline in straight lines only: anything else would be drawn as another shape.
+ */
+function outlineOf(d: string): Points {
+  if (!OUTLINE.test(d.trim())) throw new Error(`not one traced outline in straight lines: ${d}`)
+  const points = [...d.matchAll(new RegExp(String.raw`(${NUMBER})[\s,]+(${NUMBER})`, 'g'))].map(
+    ([, x, y]) => [Number(x), Number(y)] as const,
+  )
+  const xs = points.map(([x]) => x)
+  const ys = points.map(([, y]) => y)
+  const [left, right] = [Math.min(...xs), Math.max(...xs)]
+  const [middle, width] = [(left + right) / 2, right - left]
+  const centre = (Math.min(...ys) + Math.max(...ys)) / 2
+  return points.map(([x, y]) => [(x - middle) / width, (y - centre) / width] as const)
+}
+
+/** The Bat-Signal on the clouds: painted whole on every paint, since it never moves. */
+function signal({ color: variable, alpha, at, radius, aspect, bat }: SignalBackdrop): Painter {
+  const outline = outlineOf(bat.d)
+  let width = 0
+  let height = 0
+  let color = ''
+  return {
+    recolor(colorOf) {
+      color = colorOf(variable)
+    },
+    resize(w, h) {
+      ;[width, height] = [w, h]
+    },
+    paint(ctx) {
+      const [cx, cy] = [at[0] * width, at[1]]
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalAlpha = alpha
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.ellipse(cx, cy, radius, radius * aspect, 0, 0, 2 * Math.PI)
+      // The bat inside the light, left empty by the even-odd rule.
+      trace(ctx, outline, cx, cy, 2 * radius * bat.width)
+      ctx.fill('evenodd')
+    },
   }
 }
 
