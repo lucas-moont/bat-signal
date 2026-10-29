@@ -103,6 +103,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
   'the-long-halloween-1996': {},
   'batman-the-animated-series-1992': {},
   'batman-arkham-2009': {},
+  'batman-1966': {},
 }
 
 const colors = textColors()

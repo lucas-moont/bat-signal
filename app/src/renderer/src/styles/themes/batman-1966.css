@@ -1,0 +1,202 @@
+/*
+ * SAME BAT-TIME, after the Batman television series (ABC, 1966–68) with Adam West: its palette and
+ * faces (docs/research/themes/adam-west.md, section 4.5; the decisions in jury-wave-3.md, section 9).
+ * Gotham under the Bat-Signal on night clouds: the closing credits' navy for the ground, the satin
+ * of the cowl and cape for what needs you, the fight cards' green for what waits on you, Bone, the
+ * Signal's pale light, for what runs.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss, --surface, --raised: the credits' navy [18] [19] (decision 7), more saturated than
+ *   any navy shipped, so it clears WATCHFUL PROTECTOR's and BLUE COLLAR's.
+ * - --signal, --signal-hot: the satin's violet [26] [38], lifted (decision 6): its unlit relative
+ *   dresses Bat-Clawd's cowl and cape, at least 15 ΔE00 from the fill, the aura only when alarmed.
+ * - --emblem-plate: the yellow oval, with no rim, which never lights (decision 2).
+ */
+:root[data-theme='batman-1966'],
+[data-theme='batman-1966'] {
+  --abyss: #040e21;
+  --smoke: #051329;
+  --surface: #011c3a;
+  --raised: #012a54;
+  --line: #2b4775;
+  --surface-deep: #04152e;
+  --frame: #012042;
+  --header-fade: #04152e;
+  --sheet-top: #022245;
+  --shadow: #000000;
+
+  /* The Alarm color, the satin's violet, and the cape's shadow, which marks only the waiting rule
+     and the lit lens's rim. */
+  --blood: #3a2363;
+  --signal: #8a3fe0;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 40%, transparent);
+  --signal-hot: #bb76ff;
+  --on-signal: var(--bone);
+  --ink-hot: var(--signal-hot);
+  /* The fight cards' green [41] [27]: what waits on you. */
+  --ink-soft: #38c886;
+  /* Bone marks what runs: the stamp word carries the tier. */
+  --ink-live: var(--bone);
+  --ink: #cac6da;
+
+  /* Emphasis that is not an alarm is Bone: nothing at rest is violet but the satin he wears. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--line);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  /* Stamp inks by tier: MAY I? and the error in violet, WHAT NOW? and NEW CLUE in green. */
+  --stamp-hot: var(--ink-hot);
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 40%, transparent);
+
+  /* Quit's hover stays a shadow: violet is an alarm, and its tooltip says what it does. */
+  --danger: var(--raised);
+  --waiting-rule: var(--blood);
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+  --bare-veil: none;
+
+  --clawd: #d77757;
+
+  /* Bone, the Signal's pale light on the clouds [18]; the greys, the suit's lavender. */
+  --bone: #f2e8ec;
+  --bone-dim: var(--ink);
+  --ash: #9a97b4;
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in the 1966 suit (adam-west.md, section 8.1): a lavender suit; cowl, cape, gloves,
+     trunks and boots in one violet satin with a sheen down the cowl; a neutral rim, as the TV's flat
+     light gives; the yellow oval with no rim; a yellow belt with a square buckle. */
+  --clawd-eye: var(--bone);
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #4a3480;
+  --cowl-edge: color-mix(in srgb, var(--ink) 30%, transparent);
+  /* The satin's sheen [38], greyed so it stays 16 from the alarm. */
+  --cowl-shine: #8a82b0;
+  --suit: #837b9c;
+  --gloves: var(--cowl);
+  --belt: #c99a2e;
+  --buckle: #8a6a1c;
+  --cape: var(--cowl);
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: #0a0914;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+
+  /* The emblem: the 1966 bat, black across the yellow oval, in the masthead as on his chest; the oval
+     has no rim and never lights. */
+  --emblem: var(--chest);
+  --emblem-plate: #d4a845;
+  --emblem-plate-rim: var(--emblem-plate);
+
+  /* The Signal disc. Unlit: navy glass, the bat a shade in it. Lit: the Signal as a fight card's
+     balloon, a pale violet heart through the satin to its shadow at the rim, an eight-point burst
+     behind the bat. */
+  --disc-bat: var(--line);
+  --glass-shine: #0b2a52;
+  --glass: var(--abyss);
+  --disc-rim-inner: var(--chest);
+  --disc-rim-outer: var(--line);
+  --lens-core: #e9d2ff;
+  --lens-rim: var(--blood);
+  --lens-bat: var(--chest);
+  --lens-bat-edge: transparent;
+  --lens-shade: 0 0 transparent;
+  --notice-top: var(--surface);
+  --notice-foot: var(--smoke);
+  --notice-hover-top: #022850;
+  --notice-hover-foot: #041a35;
+
+  /* The Atmosphere: cloud banks crossing a navy sky past the Bat-Signal [17], the credits' blue from
+     above [18]. The clouds and the Signal are drawn on a canvas, which reads --clouds and
+     --sky-signal at run time. */
+  --clouds: #2b4f80;
+  --sky-signal: var(--bone);
+  --haze: color-mix(in srgb, #13487b 18%, transparent);
+  --haze-edge: color-mix(in srgb, #13487b 6%, transparent);
+  --haze-inset: -10% -10% auto -10%;
+  --grain-opacity: 0.03;
+  --searchlight: var(--bone);
+
+  /* Luckiest Guy, round cartoon capitals near the closing credits [19] and the film's POW! [37],
+     sets the wordmark and the stamps; Bowlby One SC, wide heavy small caps after the cliffhanger
+     cards [31]–[34], the narrator's headlines and dateline; Barlow does the work and the report. */
+  --font-display: 'Luckiest Guy', 'Segoe UI Black', sans-serif;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-body);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: var(--font-body);
+  --font-headline: 'Bowlby One SC', 'Segoe UI Black', sans-serif;
+  --headline-weight: 400;
+  --font-dateline: var(--font-headline);
+  --dateline-weight: 400;
+  --font-stamp: var(--font-display);
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.3px;
+  --wordmark-size: 18px;
+  --wordmark-tracking: 1px;
+  --wordmark-glow: transparent;
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23bb76ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%2338c886' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* The villains' lairs, shot with the camera tilted (adam-west.md, section 3.4): the stamps lean. */
+  --stamp-tilt: -4deg;
+  --stamp-tilt-slight: -2deg;
+  --stamp-border: 1.5px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+  /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
+     on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
+  --card-paper: transparent;
+  --card-edge: none;
+  --stamp-lift: 0px;
+  --stamp-paper: transparent;
+  --stamp-rule: currentColor;
+  --hatch: none;
+  --stamp-arrow: none;
+  --stamp-arrow-room: 0px;
+  --tab-pad: 0px;
+  --caption-edge: transparent;
+  --caption-tilt: 0deg;
+  --spatter: none;
+  /* Arkham Asylum's decay (#147; Atmosphere.css, Cards.css, Mark.css): no decor,
+     failing light, grime, lock or mark. */
+  --decor: none;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
+
+  /* Lit: the Signal as a POW! balloon, an eight-point burst in the satin's lit violet behind the bat,
+     over a lens from its pale heart through the satin to its shadow. */
+  --disc-lens:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2L61 22L84 16L78 39L98 50L78 61L84 84L61 78L50 98L39 78L16 84L22 61L2 50L22 39L16 16L39 22Z' fill='%23bb76ff'/%3E%3C/svg%3E")
+      center / 86% no-repeat,
+    radial-gradient(
+      circle at 50% 50% in srgb,
+      var(--lens-core) 0%,
+      var(--signal-hot) 40%,
+      var(--signal) 78%,
+      var(--blood) 100%
+    );
+}

@@ -10,6 +10,7 @@ import {
   HOLIDAY_NIGHT,
   KNIGHTMARE_ASH,
   PALE_MOONLIGHT_SNOW,
+  SAME_BAT_TIME_CLOUDS,
   SILENT_PREDATOR_RAIN,
   VENGEANCE_RAIN,
   WATCHFUL_PROTECTOR_WINDOWS,
@@ -24,6 +25,7 @@ import {
   BAT_2016,
   BLOCK_2024,
   emblem,
+  EMBLEM_1966,
   EMBLEM_1989,
   EMBLEM_1992,
   WINGS,
@@ -37,6 +39,7 @@ import {
   HOLIDAY_SUIT,
   KNIGHTMARE_SUIT,
   PALE_MOONLIGHT_SUIT,
+  SAME_BAT_TIME_SUIT,
   SILENT_PREDATOR_SUIT,
   VENGEANCE_SUIT,
   WATCHFUL_PROTECTOR_SUIT,
@@ -50,6 +53,7 @@ import {
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   PALE_MOONLIGHT_WORDS,
+  SAME_BAT_TIME_WORDS,
   SILENT_PREDATOR_WORDS,
   STANDARD_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
@@ -68,6 +72,7 @@ export const THEME_IDS = [
   'the-long-halloween-1996',
   'batman-the-animated-series-1992',
   'batman-arkham-2009',
+  'batman-1966',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -192,6 +197,18 @@ export const THEMES: Record<ThemeId, Theme> = {
     suit: SILENT_PREDATOR_SUIT,
     atmosphere: SILENT_PREDATOR_RAIN,
     mark: true,
+  },
+  /**
+   * The Batman television series (ABC, 1966–68) with Adam West, SAME BAT-TIME: the closing credits'
+   * navy, clouds past the Bat-Signal, the satin's violet for what needs you, the Batusi on the perch.
+   */
+  'batman-1966': {
+    flag: 'batusi',
+    ground: '#040e21',
+    words: SAME_BAT_TIME_WORDS,
+    emblem: EMBLEM_1966,
+    suit: SAME_BAT_TIME_SUIT,
+    atmosphere: SAME_BAT_TIME_CLOUDS,
   },
 }
 
