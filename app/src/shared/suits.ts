@@ -2165,6 +2165,8 @@ const THE_BATUSI: Script = [
 
 /** The cape on the climb, hanging from his side toward the street, its hem in three points. */
 const CLIMB_CAPE = 'M13 4.8 L16.4 4.4 L17.6 5.6 L16.8 6.4 L18 7.4 L17 8.2 L17.8 9.4 L13 9.6 Z'
+/** The rope's line through his collar, between his jaw and his chest, in the frame he is drawn in. */
+const ROPE_Y = 5.3
 /** The Bat-climb's turn: nearly lying out from the wall, as the series shot it (picked on screen). */
 const CLIMB_ANGLE = 80
 /**
@@ -2182,21 +2184,34 @@ const westClimb = (side: 'left' | 'right', angle = CLIMB_ANGLE, scale = 0.72): P
     const [nx, ny] = [-uy * w, ux * w]
     return `M${at(x + nx, y + ny, from)} L${at(x + nx, y + ny, to)} L${at(x - nx, y - ny, to)} L${at(x - nx, y - ny, from)} Z`
   }
+  // Each arm from its own shoulder to the rope (up on screen): the near one reaching up it past him,
+  // the far one holding it at his chest (the maintainer, on screen); the rope crossing in front of him
+  // and running on past him above and below.
+  const arms = [
+    { x: 3.2, reach: 2.6 },
+    { x: 12.8, reach: 4.2 },
+  ]
+  const grips = arms.map(({ x, reach }) => {
+    const [gx, gy] = [x + ux * reach, ROPE_Y + uy * reach]
+    return [gx - 0.7, gy - 0.6, 1.4, 1.2] as const
+  })
   const climb = westPose(
     westStepping(side),
     [],
     [
-      ...satinGloves([
-        [6.6, 6.2, 1.2, 1.2],
-        [8.2, 6.2, 1.2, 1.2],
+      // In front of him, so his gloves close on it.
+      { kind: 'path', d: line(8, ROPE_Y, -14, 20, 0.14), fill: 'var(--bone)' },
+      ...arms.flatMap(({ x, reach }): Layer[] => [
+        { kind: 'path', d: line(x, ROPE_Y, 0, reach, 0.75), className: 'clawd__cowl-edge' },
+        { kind: 'path', d: line(x, ROPE_Y, 0, reach, 0.5), fill: 'var(--suit)' },
       ]),
+      ...satinGloves(grips),
     ],
   )
   return {
     ...climb,
     behind: [
       { kind: 'path', d: line(8, 11.3, -12, 14, 0.5), fill: 'var(--ash)' },
-      { kind: 'path', d: line(8, 6.8, 0, 16, 0.12), fill: 'var(--bone)' },
       { kind: 'cape', d: CLIMB_CAPE },
       ...climb.behind,
     ],
