@@ -20,10 +20,11 @@ describe('the Themes', () => {
   })
 
   // The picker names each Theme by its display name and credits the film or comic it follows
-  // (jury §10: names allude to the film; the credit says which). Words, so they are its Voice's.
+  // (jury §10: names allude to the film; the credit says which). Words, so they are its Voice's: in
+  // capitals, a hyphen only inside a word (SAME BAT-TIME's).
   it.each(THEME_IDS)('%s has a display name and the film it follows', (id) => {
     const { name, film } = THEMES[id].words.voice.theme
-    expect(name).toMatch(/^[A-Z][A-Z ]+$/)
+    expect(name).toMatch(/^[A-Z]+(?:-[A-Z]+)?(?: [A-Z]+(?:-[A-Z]+)?)*$/)
     expect(film).not.toBe('')
   })
 

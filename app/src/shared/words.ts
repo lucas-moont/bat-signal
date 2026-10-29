@@ -1068,3 +1068,70 @@ export const SILENT_PREDATOR_WORDS: Words = {
     mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd on a gargoyle' },
   },
 }
+
+/**
+ * SAME BAT-TIME's words (docs/research/themes/adam-west.md, sections 6 and 7; jury-wave-3.md,
+ * section 4): the 1966 series' narrator, breathless and earnest, who sets the scene, asks what will
+ * happen and promises the answer tomorrow. Camp played straight: never news (ANCIENT GRACE's), never
+ * a wink. The fight cards' words only pop as balloons beside a stamp that says what came.
+ */
+export const SAME_BAT_TIME_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    // BATPHONE is DC's live mark in the EU and the UK, software and entertainment among its classes
+    // (same-bat-time-build.md): the dossier's fallback says it plainly.
+    needsYou: { label: 'Hotline', count: (n) => `${n} call${n === 1 ? '' : 's'} on the hotline` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      permission: 'May I?',
+      // FOILED reads as good news in Batman's mouth (jury-wave-3.md, section 4).
+      error: 'Fiasco',
+      waiting: 'What now?',
+      reply: 'New clue',
+      stalled: 'Hanging',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // No-break spaces keep the series' name whole, as BECOME A BAT's credit does.
+    theme: { name: 'SAME BAT-TIME', film: 'the 1966 Batman\u00a0series' },
+    tagline: 'Meanwhile, in Gotham City…',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: 'All quiet at stately Wayne Manor.' },
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `The Batpoles are idle. No ${lower(t.case.many)}.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: "Tonight's adventure",
+      dateline: datelineOf('MEANWHILE'),
+      signature: 'Will Claude get an answer?',
+      nil: (t) => `All quiet. Every ${lower(t.case.one)} carries on without you.`,
+      caseNotes: () => 'Meanwhile…',
+      // The serial's promise, cut before "Channel" (ANCIENT GRACE's word).
+      end: (waiting) => (waiting ? 'Same Bat-time tomorrow!' : "And so, another night's work is done."),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) =>
+        (lit ? 'The hotline is ringing. ' : 'All quiet. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'Utility belt',
+      // The Batcave labels its gadgets [43]: one Bat- label on the screen.
+      title: 'Bat-Settings',
+      atmosphere: {
+        label: 'Opening titles',
+        hint: (t) => `The Bat-Signal over the opening's Gotham behind the ${lower(t.case.many)}`,
+      },
+    },
+    // On the perch he does the Batusi, as in the first episode.
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd doing the Batusi' },
+    // The fight cards' words [27]–[30] [37]: POW! for what needs you now, BAM! for news.
+    balloon: { permission: 'POW!', error: 'POW!', waiting: 'BAM!', reply: 'BAM!' },
+  },
+}

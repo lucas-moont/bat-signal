@@ -7,6 +7,8 @@
 // Each kind names the Theme variables it is painted in; its painter reads them from the page by
 // name (a canvas can't use a variable).
 
+import { BAT_1966_SIGNAL } from './emblems'
+
 /** What every kind has. */
 interface Scene {
   /**
@@ -87,8 +89,9 @@ export interface SkylineBackdrop {
 }
 
 /**
- * The Bat-Signal on the clouds (SAME BAT-TIME's, after the 1966 series [17]): a pale ellipse of
- * light high in the sky, never lit as the alarm, with the bat cut out of it so the sky shows through.
+ * The Bat-Signal in the sky (SAME BAT-TIME's, after the 1966 series [17]): a pale ellipse of light
+ * high in the sky, glowing if it has a halo, never lit as the alarm, with the bat cut out of it so
+ * the sky shows through.
  */
 export interface SignalBackdrop {
   kind: 'signal'
@@ -107,6 +110,8 @@ export interface SignalBackdrop {
    * straight lines only, and the share of the light's width it spans.
    */
   bat: { d: string; width: number }
+  /** How far a soft halo spreads round the light, in px, fainter as it goes: glowing. None by default. */
+  glow?: number
 }
 
 /** The still drawings a backdrop may be; each kind has its painter (renderer/src/painters.ts). */
@@ -246,11 +251,6 @@ export interface SmokeAtmosphere extends Scene {
   wind?: number
   /** A puff's height for its width: under 1, a flat bank of fog or cloud. Round by default. */
   aspect?: number
-  /**
-   * The band of the sky it is born in, its top and bottom in px from the panel's top: each puff at
-   * a height of its own in it, again each time it is born. Off the street, by default.
-   */
-  band?: readonly [number, number]
 }
 
 /**
@@ -316,7 +316,16 @@ export interface NoiseAtmosphere extends Scene {
   band?: { height: number; alpha: number; fall: number }
 }
 
+/**
+ * A still sky (SAME BAT-TIME's): nothing crosses it, so it is only its backdrop, still while the
+ * Atmosphere is on.
+ */
+export interface SkyAtmosphere extends Scene {
+  kind: 'sky'
+}
+
 export type Atmosphere =
+  | SkyAtmosphere
   | RainAtmosphere
   | SnowAtmosphere
   | LitWindowsAtmosphere
@@ -541,4 +550,23 @@ export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
   density: 0.4,
   angle: 0.06,
   depths: [0.1, 0.16, 0.25],
+}
+
+/**
+ * SAME BAT-TIME's sky (same-bat-time-pop.md; picked on screen): over the animated opening's flat
+ * fields, the Theme's decor, nothing crosses it; the series' Bat-Signal glows low over the skyline
+ * [17] (picked on screen), pale, never lit as the alarm.
+ */
+export const SAME_BAT_TIME_SKY: SkyAtmosphere = {
+  kind: 'sky',
+  backdrop: {
+    kind: 'signal',
+    color: '--sky-signal',
+    alpha: 0.6,
+    at: [0.5, 292],
+    radius: 62,
+    aspect: 1 / 1.67,
+    bat: { d: BAT_1966_SIGNAL, width: 0.63 },
+    glow: 14,
+  },
 }

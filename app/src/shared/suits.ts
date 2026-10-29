@@ -4,7 +4,7 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
+import { EMBLEM_1966, EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -1626,8 +1626,8 @@ const DECO_BELOW = [
  * His map: the head, the collar's half-row and the suit to the waist with his arms on its second
  * unit, then the belt, the trunks, his legs and boots (or, seated, the suit down to the cape's hem).
  */
-const decoMap = (arms = SUIT, below: readonly string[] = DECO_BELOW) =>
-  map([arms], [SUIT, SUIT, ...below], LEGEND, [...DECO_HEAD, COLLAR, SUIT])
+const decoMap = (arms = SUIT, below: readonly string[] = DECO_BELOW, head = DECO_HEAD) =>
+  map([arms], [SUIT, SUIT, ...below], LEGEND, [...head, COLLAR, SUIT])
 const DECO_STANDING = decoMap()
 const DECO_ARMS_OUT = decoMap('.gSSSSSSSSSSSSg.')
 const DECO_SEATED = decoMap(SUIT, twice([SUIT, SUIT]))
@@ -1975,5 +1975,262 @@ export const SILENT_PREDATOR_SUIT: Suit = {
   ]),
   signature: THE_GARGOYLE,
   // Amber is the Alarm color and never shows at rest.
+  aura: 'alarmed',
+}
+
+// --- SAME BAT-TIME: Batman as Adam West wore him in the 1966 series (adam-west.md, section 8;
+// same-bat-time-build.md, section 4): a lavender suit; cowl, cape, gloves, trunks and boots in one
+// violet satin with a sheen down the cowl and a neutral rim, as the TV's flat light gives; a satin
+// collar under his jaw; the yellow oval with no rim, which never lights; a yellow belt with a square
+// buckle; the cape to mid-calf, three points a side. On the perch he does the Batusi. ---
+
+/** His map: the head, the satin collar's half-row, the suit with his arms on its second unit. */
+const westMap = (arms = SUIT, below: readonly string[] = WEST_BELOW) => decoMap(arms, below, HEAD)
+/** The belt and its buckle, a full unit; the high-cut satin trunks; his legs; his short satin boots. */
+const WEST_BELOW = [
+  ...twice(['...bbbbkkbbbb...']),
+  '....c.c..c.c....',
+  '....S.S..S.S....',
+  ...twice(['....g.g..g.g....']),
+]
+const WEST_STANDING = westMap()
+const WEST_SEATED = westMap(SUIT, twice([SUIT, SUIT]))
+/** Walking up the wall, one knee up (the left, then the right): its boot half a unit shorter. */
+const westStepping = (side: 'left' | 'right') =>
+  westMap(SUIT, [...WEST_BELOW.slice(0, -1), side === 'left' ? '.........g.g....' : '....g.g.........'])
+
+/** The square buckle, a little taller than the belt [21] [48]. */
+const BUCKLE: Layer = { kind: 'rects', px: [[7, 7.85, 2, 1.3]], fill: 'var(--buckle)' }
+/** The 1966 oval on his chest, no rim, clear of the collar and the belt. */
+const WEST_CHEST = [...chestPlate(EMBLEM_1966, { cx: 8, cy: 6.65, rx: 1.9 }), BUCKLE]
+
+/** The satin cape's halves (the left; mirrored for the right), each hem in three points. */
+const WEST_CAPE = {
+  /** Hanging just past his sides to mid-calf. */
+  hanging: 'M3 4.8 L2.2 5.3 L1.6 10.6 L2.4 10 L3.2 10.8 L4 10.1 L4.8 10.8 L5.4 10.2 L5.4 5 Z',
+  /** Flung back and open behind his raised fists. */
+  open: 'M3.4 5 L0.6 5.2 L-2.6 10.8 L-1.4 10.2 L-0.4 11 L0.8 10.3 L2 11 L3.4 10.4 Z',
+}
+/** Its back between his legs, its hem in points. */
+const WEST_BACK: Layer = {
+  kind: 'path',
+  d: 'M4.5 8.8 L11.5 8.8 L11.5 10.2 L10.8 10.8 L9.9 10.1 L8 10.8 L6.1 10.1 L5.2 10.8 L4.5 10.2 Z',
+  className: 'clawd__cape',
+}
+/** Closed round him, asleep, its hem in points. */
+const WEST_WRAPPED =
+  'M2.6 6.2 L13.4 6.2 L14.2 10.6 L12.8 10 L11.4 10.8 L9.6 10 L8 10.8 L6.4 10 L4.6 10.8 L3.2 10 L1.8 10.6 Z'
+/**
+ * The cowl's painted brows [38] [47]: pale strokes rising outward from beside the nose, over the eyes
+ * (picked on screen, in every pose).
+ */
+const BROWS: Layer = {
+  kind: 'path',
+  d: 'M7.1 2.85 L4.8 2.05 L4.6 1.7 L5 1.75 L7.2 2.45 Z',
+  fill: 'var(--ink)',
+  mirrored: true,
+}
+/** A Zzz rising beside him, the letters growing as they go. */
+const ZZZ =
+  'M13.40 1.60 L14.40 1.60 L14.40 1.82 L13.76 2.38 L14.40 2.38 L14.40 2.60 L13.40 2.60 L13.40 2.38 L14.04 1.82 L13.40 1.82 Z M15.20 -0.20 L16.50 -0.20 L16.50 0.09 L15.67 0.81 L16.50 0.81 L16.50 1.10 L15.20 1.10 L15.20 0.81 L16.03 0.09 L15.20 0.09 Z M17.40 -1.00 L19.00 -1.00 L19.00 -0.65 L17.98 0.25 L19.00 0.25 L19.00 0.60 L17.40 0.60 L17.40 0.25 L18.42 -0.65 L17.40 -0.65 Z'
+/**
+ * Asleep, played for laughs (picked on screen): wrapped in his cape under a long satin nightcap with a
+ * pompom over the cowl, and a Zzz rising beside him.
+ */
+const WEST_ASLEEP: Pose = (() => {
+  const seat = seated(WEST_SEATED, WEST_WRAPPED)
+  return {
+    ...seat,
+    front: [
+      ...seat.front,
+      BROWS,
+      {
+        kind: 'path',
+        d: 'M3.6 1.4 Q8 -1.6 13.6 -0.4 Q15.8 0.4 16 2.4 L15.2 2.4 Q14.6 1.2 12.4 1.2 L12.4 1.6 Z',
+        fill: 'var(--cowl-shine)',
+      },
+      { kind: 'rects', px: [[3.2, 1.2, 9.6, 0.8]], fill: 'var(--bone)' },
+      { kind: 'path', d: 'M14.8 2.6 a0.8 0.8 0 1 0 1.6 0 a0.8 0.8 0 1 0 -1.6 0', fill: 'var(--bone)' },
+      { kind: 'path', d: ZZZ, fill: 'var(--bone)' },
+    ],
+  }
+})()
+const WEST_HANGING: Layer[] = [WEST_BACK, { kind: 'cape', d: WEST_CAPE.hanging, mirrored: true }]
+
+const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, behind, [...front, BROWS], { chest: WEST_CHEST })
+
+/** An arm in the suit's lavender, outlined so it reads on the cowl's violet (left; mirrored). */
+const satinArm = (arm: string): Layer[] =>
+  outlined(arm, 'var(--suit)').map((layer) => ({ ...layer, mirrored: true }))
+/** Satin gloves, each edged in the neutral rim so they stand off the cowl of the same violet. */
+const satinGloves = (gloves: Px[]): Layer[] => [
+  {
+    kind: 'rects',
+    px: gloves.map(([x, y, w = 1, h = 1]) => [x - 0.25, y - 0.25, w + 0.5, h + 0.5] as const),
+    className: 'clawd__cowl-edge',
+  },
+  { kind: 'rects', px: gloves, fill: 'var(--gloves)' },
+]
+
+/**
+ * The fight's burst [04] [30], behind him in the Alarm color, its lit heart over its shade: eight
+ * points past his head and sides, no word at this size (picked on screen over a smaller and a
+ * larger one).
+ */
+const FIGHT_BURST: Layer[] = [
+  {
+    kind: 'path',
+    d: 'M8.0 -1.8 L10.0 0.8 L14.8 -0.3 L12.9 2.3 L17.6 3.4 L12.9 4.5 L14.8 7.1 L10.0 6.0 L8.0 8.6 L6.0 6.0 L1.2 7.1 L3.1 4.5 L-1.6 3.4 L3.1 2.3 L1.2 -0.3 L6.0 0.8 Z',
+    fill: 'var(--signal)',
+  },
+  {
+    kind: 'path',
+    d: 'M8.0 -0.2 L9.3 1.7 L12.7 0.9 L11.0 2.7 L14.6 3.4 L11.0 4.1 L12.7 5.9 L9.3 5.1 L8.0 7.0 L6.7 5.1 L3.3 5.9 L5.0 4.1 L1.4 3.4 L5.0 2.7 L3.3 0.9 L6.7 1.7 Z',
+    fill: 'var(--signal-hot)',
+  },
+]
+/**
+ * His arms raised from the shoulders to fists at `top` beside or over his head, outlined so they read
+ * on the cowl.
+ */
+const armsUp = (top: number, sides: 'left' | 'right' | 'both' = 'both'): Layer[] => {
+  const xs = { left: [1.5], right: [13.1], both: [1.5, 13.1] }[sides]
+  return [
+    {
+      kind: 'rects',
+      px: xs.map((x) => [x - 0.3, top + 1, 2, 5.4 - top - 1] as const),
+      className: 'clawd__cowl-edge',
+    },
+    { kind: 'rects', px: xs.map((x) => [x, top + 1.4, 1.4, 5.4 - top - 1.4] as const), fill: 'var(--suit)' },
+    ...satinGloves(xs.map((x) => [x - 0.1, top, 1.6, 1.5] as const)),
+  ]
+}
+/** Alarmed, the fight: both fists up beside his head, the cape flung back, the burst lit behind him. */
+const westAlarmed = westPose(
+  WEST_STANDING,
+  [...FIGHT_BURST, WEST_BACK, { kind: 'cape', d: WEST_CAPE.open, mirrored: true }],
+  armsUp(1.4),
+)
+
+/**
+ * The Batusi's held step, the V across his eyes [21] (adam-west.md, section 8.3): his upper arms out
+ * from the shoulders to elbows at eye height, his forearms back in to the gloves beside the cowl,
+ * the eyes left clear between them. Left half, mirrored.
+ */
+const V_ARM = 'M3 5.2 L3 6.2 L0.4 4.6 L-0.6 3.6 L-0.2 2.9 L2.6 2.4 L3.6 2.4 L3.6 3.6 L2.6 3.6 L0.8 3.9 Z'
+/** The V drawn out to the temples: the gloves beside the cowl, or a unit further out on the beat. */
+const theV = (out = 0): Layer[] => [
+  ...satinArm(V_ARM),
+  ...satinGloves([
+    [2.4 - out, 2.2, 1.6, 1.6],
+    [12 + out, 2.2, 1.6, 1.6],
+  ]),
+]
+/** The V meeting at his nose, a beat before it is drawn out: the gloves together under his eyes. */
+const V_AT_NOSE_ARM = 'M3 5.2 L3 6.2 L1 5.4 L0.6 4.4 L1.4 3.8 L6.4 4 L7.4 4 L7.4 5 L6.4 5 L2.2 4.8 Z'
+const AT_THE_NOSE: Layer[] = [
+  ...satinArm(V_AT_NOSE_ARM),
+  ...satinGloves([
+    [6.4, 4, 1.2, 1],
+    [8.4, 4, 1.2, 1],
+  ]),
+]
+const batusi = (front: Layer[]) => westPose(WEST_STANDING, WEST_HANGING, front)
+const HELD_V = batusi(theV())
+
+/** A step of the dance, held two ticks of the reveal's clock. */
+const twoBeats = (front: Layer[]): [Step, Step] => {
+  const step = { pose: batusi(front), look: 0 }
+  return [step, step]
+}
+/**
+ * The Batusi (same-bat-time-build.md, section 5): an arm up, both arms overhead, the V at his nose,
+ * then the V drawn out to his temples and held. Each step holds two ticks of the reveal's clock,
+ * half a second: quicker than the show's two beats, as picked on screen.
+ */
+const THE_BATUSI: Script = [
+  ...twoBeats(armsUp(-0.4, 'right')),
+  ...twoBeats(armsUp(-0.4)),
+  ...twoBeats(AT_THE_NOSE),
+  { pose: HELD_V, look: 0 },
+]
+
+/** The cape on the climb, hanging from his side toward the street, its hem in three points. */
+const CLIMB_CAPE = 'M13 4.8 L16.4 4.4 L17.6 5.6 L16.8 6.4 L18 7.4 L17 8.2 L17.8 9.4 L13 9.6 Z'
+/** The rope's line through his collar, between his jaw and his chest, in the frame he is drawn in. */
+const ROPE_Y = 5.3
+/** The Bat-climb's turn: nearly lying out from the wall, as the series shot it (picked on screen). */
+const CLIMB_ANGLE = 80
+/** Turned that far, he is scaled down to stay inside his frame. */
+const CLIMB_SCALE = 0.72
+/**
+ * The Bat-climb [63] [64] (flying): up the side of a building on a rope, his body out from the wall,
+ * his boots on it, walking up (the set lay on its side), the cape hanging down toward the street.
+ * Drawn upright and turned as a whole, so the rope and the wall are drawn to stand upright on
+ * screen, and the cape to hang from his side that faces the street.
+ */
+const westClimb = (side: 'left' | 'right'): Pose => {
+  const t = (CLIMB_ANGLE * Math.PI) / 180
+  // Straight up on screen, in the turned frame he is drawn in.
+  const [ux, uy] = [-Math.sin(t), -Math.cos(t)]
+  const at = (x: number, y: number, d: number) => `${(x + ux * d).toFixed(2)} ${(y + uy * d).toFixed(2)}`
+  const line = (x: number, y: number, from: number, to: number, w: number) => {
+    const [nx, ny] = [-uy * w, ux * w]
+    return `M${at(x + nx, y + ny, from)} L${at(x + nx, y + ny, to)} L${at(x - nx, y - ny, to)} L${at(x - nx, y - ny, from)} Z`
+  }
+  // Each arm from its own shoulder to the rope (up on screen): the near one reaching up it past him,
+  // the far one holding it at his chest (the maintainer, on screen); the rope crossing in front of him
+  // and running on past him above and below.
+  const arms = [
+    { x: 3.2, reach: 2.6 },
+    { x: 12.8, reach: 4.2 },
+  ]
+  const grips = arms.map(({ x, reach }) => {
+    const [gx, gy] = [x + ux * reach, ROPE_Y + uy * reach]
+    return [gx - 0.7, gy - 0.6, 1.4, 1.2] as const
+  })
+  const climb = westPose(
+    westStepping(side),
+    [],
+    [
+      // In front of him, so his gloves close on it.
+      { kind: 'path', d: line(8, ROPE_Y, -14, 20, 0.14), fill: 'var(--bone)' },
+      ...arms.flatMap(({ x, reach }): Layer[] => [
+        { kind: 'path', d: line(x, ROPE_Y, 0, reach, 0.75), className: 'clawd__cowl-edge' },
+        { kind: 'path', d: line(x, ROPE_Y, 0, reach, 0.5), fill: 'var(--suit)' },
+      ]),
+      ...satinGloves(grips),
+    ],
+  )
+  return {
+    ...climb,
+    behind: [
+      { kind: 'path', d: line(8, 11.3, -12, 14, 0.5), fill: 'var(--ash)' },
+      { kind: 'cape', d: CLIMB_CAPE },
+      ...climb.behind,
+    ],
+    transform: `rotate(${CLIMB_ANGLE}deg) scale(${CLIMB_SCALE})`,
+  }
+}
+
+export const SAME_BAT_TIME_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [WEST_ASLEEP],
+    flying: [westClimb('left'), westClimb('right')],
+    alarmed: [westAlarmed],
+  },
+  // On the perch he holds the V, glances along the street, and draws it out once more on the beat.
+  watch: watchOn(
+    THE_BATUSI,
+    [{ look: -GAZE }, { look: GAZE }],
+    [
+      { pose: batusi(theV(0.6)), look: 0 },
+      { pose: HELD_V, look: 0 },
+    ],
+  ),
+  signature: THE_BATUSI,
+  // Violet is the Alarm color: the satin is its unlit relative, so the aura shows only when alarmed.
   aura: 'alarmed',
 }

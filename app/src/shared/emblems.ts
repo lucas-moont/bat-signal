@@ -220,3 +220,49 @@ export const OVAL_1992 = { box: { x: 17.85, y: 0, width: 84.3, height: 48 }, rim
 
 /** DARK DECO's emblem: the 1992 bat on its oval, in the masthead, on the disc and on his chest. */
 export const EMBLEM_1992 = emblem(BAT_1992, 'none', OVAL_1992)
+
+/**
+ * SAME BAT-TIME's bat, after the Batman television series (1966–68), on the same 120x48 grid: the
+ * sticker on Adam West's chest, traced from the Treasury's Savings Bonds short (ca. 1966, public
+ * domain) [54], sixty front-on frames median-stacked, its outline followed pixel by pixel and its
+ * halves averaged (same-bat-time-build.md, section 3; picked on the boards). About 1.88:1: two short
+ * pointed ears over a round notch, a round scoop each side, wingtips pointing straight up nearly as
+ * high as the ears, two round lobes a side underneath and a pointed tail. Symmetric about x = 60.
+ */
+export const BAT_1966 =
+  'M60 14.5 L59.4 14.5 L58.1 13.9 L55.7 11.6 L55.3 11.9 L54.2 14.4 L52.1 16.5 L50.1 17.2 ' +
+  'L46.9 17.3 L45.6 16.9 L43.4 15.6 L42.4 14.5 L41.3 12.7 L40.9 12.3 L40.3 12.4 L38.2 14.4 ' +
+  'L36.1 17.6 L34.1 22.3 L33.7 24.9 L33.7 27.9 L34.1 30 L34.4 31 L35.1 31.9 L35.7 31.9 L36.1 31.6 ' +
+  'L36.7 30.2 L38.2 28.8 L39.3 28.2 L40.7 27.9 L42.4 28.2 L44.1 29.1 L45.2 30.1 L46.2 31.7 ' +
+  'L46.6 33.4 L47.1 33.7 L47.8 33.4 L49.2 32.2 L50.9 31.5 L52.8 31.6 L55 32.5 L57.8 35 L58.9 37 ' +
+  'L59.6 39.3 L60 39.6 L60.4 39.3 L61.1 37 L62.2 35 L65 32.5 L67.2 31.6 L69.1 31.5 L70.8 32.2 ' +
+  'L72.2 33.4 L72.9 33.7 L73.4 33.4 L73.8 31.7 L74.8 30.1 L75.9 29.1 L77.6 28.2 L79.3 27.9 ' +
+  'L80.7 28.2 L81.8 28.8 L83.3 30.2 L83.9 31.6 L84.3 31.9 L84.9 31.9 L85.6 31 L85.9 30 L86.3 27.9 ' +
+  'L86.3 24.9 L85.9 22.3 L83.9 17.6 L81.8 14.4 L79.7 12.4 L79.1 12.3 L78.7 12.7 L77.6 14.5 ' +
+  'L76.6 15.6 L74.4 16.9 L73.1 17.3 L69.9 17.2 L67.9 16.5 L65.8 14.4 L64.7 11.9 L64.3 11.6 ' +
+  'L61.9 13.9 L60.6 14.5 Z'
+
+/** The 1966 oval as filmed, about 1.39:1, centred, with no rim: a bright yellow that never lights. */
+export const OVAL_1966 = { box: { x: 26.62, y: 0, width: 66.76, height: 48 }, rim: 0, lights: false }
+
+/** SAME BAT-TIME's emblem: the 1966 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_1966 = emblem(BAT_1966, 'none', OVAL_1966)
+
+/**
+ * The bat of the 1966 series' Bat-Signal on the clouds [17], on the same 120x48 grid: not the chest's
+ * sticker, a small square head with short ears between wingtips that are its highest points, long
+ * sagging tops, two scallops a side and a pointed tail. Traced from sixty frames of the locked shot,
+ * stacked to lift the clouds' passing shadows, levelled, its halves averaged (same-bat-time-pop.md).
+ * Straight lines only, as the Signal backdrop draws it. Symmetric about x = 60.
+ */
+export const BAT_1966_SIGNAL =
+  'M60 3.8 L57.7 3.7 L55.7 2.1 L53.8 2 L53.6 3.8 L54.1 8.2 L53.7 10.5 L52.1 11.3 L48.2 11.1 ' +
+  'L41.6 9.9 L36.9 8.4 L32.7 6.4 L29 3.4 L26.9 3.2 L25.4 2.5 L23.1 0.2 L22.3 0 L19.6 2.4 ' +
+  'L18.9 3.6 L17.2 13 L17.2 15.9 L18.4 22 L20 27.1 L21.5 30 L24.8 34.5 L29.9 39.1 L33.9 41.9 ' +
+  'L35.4 42.4 L36 41.5 L36.6 36.7 L37.2 35.7 L38.6 35 L40.6 35 L43.1 36.1 L47.3 41.1 L47.9 41 ' +
+  'L49.2 38.6 L50.5 37.5 L52 37.1 L53.9 37.4 L55.9 38.7 L57.3 40.6 L58.7 43.6 L59.3 47.3 L60 47.9 ' +
+  'L60.7 47.3 L61.3 43.6 L62.7 40.6 L64.1 38.7 L66.1 37.4 L68 37.1 L69.5 37.5 L70.8 38.6 L72.1 41 ' +
+  'L72.7 41.1 L76.9 36.1 L79.4 35 L81.4 35 L82.8 35.7 L83.4 36.7 L84 41.5 L84.6 42.4 L86.1 41.9 ' +
+  'L90.1 39.1 L95.2 34.5 L98.5 30 L100 27.1 L101.6 22 L102.8 15.9 L102.8 13 L101.1 3.6 L100.4 2.4 ' +
+  'L97.7 0 L96.9 0.2 L94.6 2.5 L93.1 3.2 L91 3.4 L87.3 6.4 L83.1 8.4 L78.4 9.9 L71.8 11.1 ' +
+  'L67.9 11.3 L66.3 10.5 L65.9 8.2 L66.4 3.8 L66.2 2 L64.3 2.1 L62.3 3.7 Z'

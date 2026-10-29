@@ -23,7 +23,8 @@
   padding: 0.55em 1.1em;
   font-family: var(--font-stamp);
   font-weight: var(--stamp-weight);
-  font-size: var(--stamp-size);
+  /* A size above the stamp's, so it reads as a shout beside it, not a second stamp. */
+  font-size: calc(var(--stamp-size) + 3px);
   line-height: 1;
   white-space: nowrap;
   color: var(--abyss);

@@ -168,3 +168,20 @@ describe('an Atmosphere with a backdrop', () => {
     expect(draw(false)).not.toContain('atmosphere__backdrop')
   })
 })
+
+// A still sky (SAME BAT-TIME's): nothing crosses it, so no canvas moves on the clock, ever; its
+// backdrop stays while the Atmosphere is on.
+describe('a still sky', () => {
+  standInTheme({
+    atmosphere: {
+      kind: 'sky',
+      backdrop: { kind: 'moon', color: '--bone', alpha: 0.2, at: [0.75, 80], radius: 30 },
+    },
+  })
+
+  it('paints only its backdrop, with no motion layer, even while it would move', () => {
+    const page = draw(true)
+    expect(page).toContain('atmosphere__backdrop')
+    expect(page).not.toContain('atmosphere__layer')
+  })
+})

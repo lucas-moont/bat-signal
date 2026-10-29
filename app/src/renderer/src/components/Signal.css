@@ -157,6 +157,8 @@
   background: linear-gradient(180deg in srgb, var(--notice-hover-top), var(--notice-hover-foot));
 }
 .notice--urgent {
+  /* A Theme may tilt what needs you (none, by default: no transform, no stacking of its own). */
+  rotate: var(--notice-tilt);
   border-left-color: var(--signal-hot);
   box-shadow:
     0 10px 28px color-mix(in srgb, var(--shadow) 80%, transparent),

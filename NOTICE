@@ -30,10 +30,10 @@ app/src/renderer/src/styles/themes/batman-arkham-2009.css, worn by the SILENT PR
 pictures in docs/screenshots/ that show it.
 
 The fonts are bundled from Fontsource under their own licences, not the MIT License:
-- Anton, Archivo, Bangers, Barlow Semi Condensed, Big Shoulders Stencil, Bungee, Federo, Grenze
-  Gotisch, JetBrains Mono, Josefin Sans, Limelight, Marcellus SC, Neucha, Shantell Sans and
-  Staatliches: SIL Open Font License 1.1;
-- Permanent Marker, Special Elite and Syncopate: Apache License 2.0.
+- Anton, Archivo, Bangers, Barlow Semi Condensed, Big Shoulders Stencil, Bowlby One SC, Bungee,
+  Federo, Grenze Gotisch, JetBrains Mono, Josefin Sans, Limelight, Marcellus SC, Neucha, Shantell
+  Sans and Staatliches: SIL Open Font License 1.1;
+- Luckiest Guy, Permanent Marker, Special Elite and Syncopate: Apache License 2.0.
 Each licence ships with the app (resources/licenses/<family>.txt), beside this notice and the
 MIT License, and with its package (app/node_modules/@fontsource/<family>/LICENSE).
 

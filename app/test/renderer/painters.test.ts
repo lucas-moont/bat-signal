@@ -992,45 +992,6 @@ describe('the smoke', () => {
         for (const { discs } of frame) for (const d of discs) expect(d.ry).toBeCloseTo(d.r * FOG.aspect!)
     })
   })
-
-  // SAME BAT-TIME's clouds (LUC-118's comment on LUC-89): banks across a navy sky, not off the street.
-  describe('born in a band of the sky', () => {
-    /** Cloud banks born 40 to 120px down, rising not at all, blown 1px a tick. */
-    const CLOUDS: SmokeAtmosphere = {
-      ...SMOKE,
-      life: 30,
-      rise: 0,
-      sway: 0,
-      wind: 1,
-      aspect: 1 / 4,
-      band: [40, 120],
-    }
-
-    it('keeps every bank that never rises in its band, each at a height of its own', () => {
-      const ys = frames(3 * CLOUDS.life * FPS, 1 / FPS, smoke(CLOUDS))
-        .flat()
-        .map((p) => p.y)
-      for (const y of ys) {
-        expect(y).toBeGreaterThanOrEqual(40)
-        expect(y).toBeLessThanOrEqual(120)
-      }
-      expect(new Set(ys).size).toBeGreaterThan(CLOUDS.puffs)
-    })
-
-    it('rises from where it is born, as far as it asks', () => {
-      const [first, next] = frames(1, 1 / FPS, smoke({ ...CLOUDS, rise: 2 }))
-      first!.forEach((a, i) => {
-        const b = next![i]!
-        if (b.y > a.y) return // gone, and born again lower in the band
-        expect(a.y - b.y).toBeCloseTo(2)
-      })
-    })
-
-    it('is born again at a new height in its band once it is gone', () => {
-      const lives = frames(2 * CLOUDS.life * FPS - 1, 1 / FPS, smoke(CLOUDS)).map((frame) => frame[0]!)
-      expect(new Set(lives.map((p) => p.y)).size).toBe(2)
-    })
-  })
 })
 
 describe('the noise', () => {
@@ -1478,6 +1439,19 @@ describe('the moon behind the motion', () => {
   })
 })
 
+// A still sky (SAME BAT-TIME's, picked on screen): nothing crosses it; it carries only its backdrop.
+describe('a still sky', () => {
+  it('paints nothing of its own, tick after tick', () => {
+    const painter = painterFor({ kind: 'sky' }, seeded())
+    painter.recolor(namedColor)
+    painter.resize(320, 440)
+    for (const frame of framesOver(painter, 5)) {
+      expect(frame.fills).toEqual([])
+      expect(frame.strokes).toEqual([])
+    }
+  })
+})
+
 // SAME BAT-TIME's Signal on the clouds, after the 1966 series [17]: a pale ellipse of light, high in
 // the sky and never lit as the alarm, with the bat cut out of it so the sky shows through.
 describe('the Signal behind the motion', () => {
@@ -1526,6 +1500,25 @@ describe('the Signal behind the motion', () => {
     expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(64 * 0.6)
     expect((Math.max(...xs) + Math.min(...xs)) / 2).toBeCloseTo(0.6 * 320)
     expect((Math.max(...ys) + Math.min(...ys)) / 2).toBeCloseTo(90)
+  })
+
+  // Glowing (SAME BAT-TIME's, picked on screen): a soft halo round the light, fainter as it spreads.
+  it('glows in a soft halo round its light, if asked, under it', () => {
+    const { fills } = signal({ ...SIGNAL, glow: 12 })
+    const light = fills.at(-1)!
+    expect(light.rule).toBe('evenodd')
+    const halo = fills.slice(0, -1)
+    expect(halo.length).toBeGreaterThan(1)
+    for (const ring of halo) {
+      expect(ring.color).toBe('#sky-signal')
+      expect(ring.alpha).toBeLessThan(SIGNAL.alpha)
+      expect(ring.discs[0]!.r).toBeGreaterThan(SIGNAL.radius)
+      expect(ring.discs[0]!.r).toBeLessThanOrEqual(SIGNAL.radius + 12)
+      // A ring round the light, not a disc under it: the bat cut out of the light stays the sky.
+      expect(ring.rule).toBe('evenodd')
+      expect(ring.discs[1]).toEqual(light.discs[0])
+    }
+    expect(signal().fills).toHaveLength(1)
   })
 
   it('paints the same picture every time', () => {
