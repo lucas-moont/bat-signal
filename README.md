@@ -43,8 +43,8 @@ The look is inspired by the reds and blacks of *The Batman* (2022): every sessio
 
 | SAME BAT-TIME<br><sub>after the 1966<br><i>Batman</i> series</sub> |
 |:---:|
-| <img src="docs/screenshots/batusi-needs-you.png" width="170" alt="SAME BAT-TIME: the same requests on dark navy cards over the animated opening's flat fields of cel blue, green and teal, a black skyline with two henchmen in hats at the foot, MAY I? and FIASCO in the satin's violet, WHAT NOW? and NEW CLUE in the fight cards' green, in round cartoon capitals, the tab reading HOTLINE"> |
-| <img src="docs/screenshots/batusi-night-report.png" width="170" alt="SAME BAT-TIME's report, Tonight's adventure, dated MEANWHILE: Will Claude get an answer? on a yellow label plate, violet and green stamps in the margin, the opening's fields and henchmen behind it"> |
+| <img src="docs/screenshots/batusi-needs-you.png" width="170" alt="SAME BAT-TIME: the same requests on dark navy cards over the animated opening's flat fields of cel blue, green and teal, a black skyline with two henchmen in fedoras rising behind it and the series' Bat-Signal glowing over the city, MAY I? and FIASCO in the satin's violet, WHAT NOW? and NEW CLUE in the fight cards' green, in round cartoon capitals, the tab reading HOTLINE"> |
+| <img src="docs/screenshots/batusi-night-report.png" width="170" alt="SAME BAT-TIME's report, Tonight's adventure, dated MEANWHILE: Will Claude get an answer? on a yellow label plate, violet and green stamps in the margin, the opening's fields, the henchmen and the glowing Signal behind it"> |
 | <img src="docs/screenshots/batusi-clawd-alarmed.png" width="170" alt="SAME BAT-TIME's Bat-Clawd in the 1966 satin suit, a violet cowl with painted brows, a lavender suit with the yellow oval and its black bat, a yellow belt with a square buckle, both fists up and his cape flung back over a violet fight burst, in a violet glow"> |
 
 ## A closer look
