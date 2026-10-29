@@ -200,7 +200,7 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
   /**
    * The Batman television series (ABC, 1966–68) with Adam West, SAME BAT-TIME: the closing credits'
-   * navy, clouds past the Bat-Signal, the satin's violet for what needs you, the Batusi on the perch.
+   * navy over the animated opening's fields, the satin's violet for what needs you, the Batusi on the perch.
    */
   'batman-1966': {
     flag: 'batusi',

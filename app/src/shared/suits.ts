@@ -1626,8 +1626,8 @@ const DECO_BELOW = [
  * His map: the head, the collar's half-row and the suit to the waist with his arms on its second
  * unit, then the belt, the trunks, his legs and boots (or, seated, the suit down to the cape's hem).
  */
-const decoMap = (arms = SUIT, below: readonly string[] = DECO_BELOW) =>
-  map([arms], [SUIT, SUIT, ...below], LEGEND, [...DECO_HEAD, COLLAR, SUIT])
+const decoMap = (arms = SUIT, below: readonly string[] = DECO_BELOW, head = DECO_HEAD) =>
+  map([arms], [SUIT, SUIT, ...below], LEGEND, [...head, COLLAR, SUIT])
 const DECO_STANDING = decoMap()
 const DECO_ARMS_OUT = decoMap('.gSSSSSSSSSSSSg.')
 const DECO_SEATED = decoMap(SUIT, twice([SUIT, SUIT]))
@@ -1985,8 +1985,7 @@ export const SILENT_PREDATOR_SUIT: Suit = {
 // buckle; the cape to mid-calf, three points a side. On the perch he does the Batusi. ---
 
 /** His map: the head, the satin collar's half-row, the suit with his arms on its second unit. */
-const westMap = (arms = SUIT, below: readonly string[] = WEST_BELOW) =>
-  map([arms], [SUIT, SUIT, ...below], LEGEND, [...HEAD, COLLAR, SUIT])
+const westMap = (arms = SUIT, below: readonly string[] = WEST_BELOW) => decoMap(arms, below, HEAD)
 /** The belt and its buckle, a full unit; the high-cut satin trunks; his legs; his short satin boots. */
 const WEST_BELOW = [
   ...twice(['...bbbbkkbbbb...']),
@@ -1998,11 +1997,7 @@ const WEST_STANDING = westMap()
 const WEST_SEATED = westMap(SUIT, twice([SUIT, SUIT]))
 /** Walking up the wall, one knee up (the left, then the right): its boot a unit higher. */
 const westStepping = (side: 'left' | 'right') =>
-  westMap(SUIT, [
-    ...WEST_BELOW.slice(0, 4),
-    '....g.g..g.g....',
-    side === 'left' ? '.........g.g....' : '....g.g.........',
-  ])
+  westMap(SUIT, [...WEST_BELOW.slice(0, -1), side === 'left' ? '.........g.g....' : '....g.g.........'])
 
 /** The square buckle, a little taller than the belt [21] [48]. */
 const BUCKLE: Layer = { kind: 'rects', px: [[7, 7.85, 2, 1.3]], fill: 'var(--buckle)' }
@@ -2066,10 +2061,8 @@ const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, behind, [...front, BROWS], { chest: WEST_CHEST })
 
 /** An arm in the suit's lavender, outlined so it reads on the cowl's violet (left; mirrored). */
-const satinArm = (arm: string): Layer[] => [
-  { kind: 'path', d: arm, className: 'clawd__cowl-edge', mirrored: true },
-  { kind: 'path', d: arm, fill: 'var(--suit)', mirrored: true },
-]
+const satinArm = (arm: string): Layer[] =>
+  outlined(arm, 'var(--suit)').map((layer) => ({ ...layer, mirrored: true }))
 /** Satin gloves, each edged in the neutral rim so they stand off the cowl of the same violet. */
 const satinGloves = (gloves: Px[]): Layer[] => [
   {
@@ -2169,14 +2162,16 @@ const CLIMB_CAPE = 'M13 4.8 L16.4 4.4 L17.6 5.6 L16.8 6.4 L18 7.4 L17 8.2 L17.8 
 const ROPE_Y = 5.3
 /** The Bat-climb's turn: nearly lying out from the wall, as the series shot it (picked on screen). */
 const CLIMB_ANGLE = 80
+/** Turned that far, he is scaled down to stay inside his frame. */
+const CLIMB_SCALE = 0.72
 /**
  * The Bat-climb [63] [64] (flying): up the side of a building on a rope, his body out from the wall,
  * his boots on it, walking up (the set lay on its side), the cape hanging down toward the street.
  * Drawn upright and turned as a whole, so the rope and the wall are drawn to stand upright on
  * screen, and the cape to hang from his side that faces the street.
  */
-const westClimb = (side: 'left' | 'right', angle = CLIMB_ANGLE, scale = 0.72): Pose => {
-  const t = (angle * Math.PI) / 180
+const westClimb = (side: 'left' | 'right'): Pose => {
+  const t = (CLIMB_ANGLE * Math.PI) / 180
   // Straight up on screen, in the turned frame he is drawn in.
   const [ux, uy] = [-Math.sin(t), -Math.cos(t)]
   const at = (x: number, y: number, d: number) => `${(x + ux * d).toFixed(2)} ${(y + uy * d).toFixed(2)}`
@@ -2215,7 +2210,7 @@ const westClimb = (side: 'left' | 'right', angle = CLIMB_ANGLE, scale = 0.72): P
       { kind: 'cape', d: CLIMB_CAPE },
       ...climb.behind,
     ],
-    transform: `rotate(${angle}deg) scale(${scale})`,
+    transform: `rotate(${CLIMB_ANGLE}deg) scale(${CLIMB_SCALE})`,
   }
 }
 
