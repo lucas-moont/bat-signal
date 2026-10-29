@@ -1006,7 +1006,7 @@ interface Puff {
   /** Where in the sway it starts, so the puffs don't sway in step. */
   phase: number
   /** How far down the panel it was born, in a band of the sky; on the bottom edge without one. */
-  born?: number
+  bornY?: number
 }
 
 /** A puff's soft edge: the discs it is painted as, each a share of its width, the widest first. */
@@ -1064,7 +1064,7 @@ function smoke(
         x: random() * width,
         age: (i * lifeTicks) / count,
         phase: Math.floor(random() * SWAY.length),
-        born: bornAt(),
+        bornY: bornAt(),
       }))
     },
     paint(ctx, dt) {
@@ -1077,14 +1077,14 @@ function smoke(
         while (p.age >= lifeTicks) {
           p.age -= lifeTicks
           p.x = random() * width
-          p.born = bornAt()
+          p.bornY = bornAt()
         }
         const t = p.age / lifeTicks
         const radius = (size[0] + (size[1] - size[0]) * t) / 2
         // Blown along by the wind, and round again once past a side.
         const x = wrapAcross(p.x + wind * p.age + swayAt(sway, ticks, p.phase), width, reach)
         // Born in its band, or off the street with its center on the bottom edge, half of it below.
-        const y = (p.born ?? height) - rise * p.age
+        const y = (p.bornY ?? height) - rise * p.age
         // On a wind a bank is born wide, so it fades in as well as out, rather than blink on.
         const fade = wind ? Math.min(1, t / FADE_IN) * (1 - t) : 1 - t
         ctx.globalAlpha = (alpha * fade) / PUFF_RINGS.length
