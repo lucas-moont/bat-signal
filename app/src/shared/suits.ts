@@ -1995,7 +1995,7 @@ const WEST_BELOW = [
 ]
 const WEST_STANDING = westMap()
 const WEST_SEATED = westMap(SUIT, twice([SUIT, SUIT]))
-/** Walking up the wall, one knee up (the left, then the right): its boot a unit higher. */
+/** Walking up the wall, one knee up (the left, then the right): its boot half a unit shorter. */
 const westStepping = (side: 'left' | 'right') =>
   westMap(SUIT, [...WEST_BELOW.slice(0, -1), side === 'left' ? '.........g.g....' : '....g.g.........'])
 
@@ -2146,8 +2146,8 @@ const twoBeats = (front: Layer[]): [Step, Step] => {
 }
 /**
  * The Batusi (same-bat-time-build.md, section 5): an arm up, both arms overhead, the V at his nose,
- * then the V drawn out to his temples and held. The show changes pose every two beats (about seven
- * ticks), so each step holds a few of the clock's.
+ * then the V drawn out to his temples and held. Each step holds two ticks of the reveal's clock,
+ * half a second: quicker than the show's two beats, as picked on screen.
  */
 const THE_BATUSI: Script = [
   ...twoBeats(armsUp(-0.4, 'right')),
