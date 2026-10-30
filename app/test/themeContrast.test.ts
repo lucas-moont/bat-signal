@@ -142,12 +142,10 @@ describe.each(THEME_IDS)("%s's hot stamps", (theme) => {
   // A clear plate leaves the hot inks on the dark grounds, where the tests above hold them.
   const clear = resolved(variables, 'var(--stamp-hot-paper)') === 'transparent'
 
-  it.skipIf(clear).each(['--stamp-hot', '--ink-hot'].filter((ink) => !(ink in EXCEPTIONS[theme])))(
-    '%s reads at 4.5:1 or better on their paper',
-    (ink) => {
-      expect(ratio(rgb(variables, ink), rgb(variables, '--stamp-hot-paper'))).toBeGreaterThanOrEqual(4.5)
-    },
-  )
+  // An exception excuses an ink on the dark grounds, never on a plate of its own.
+  it.skipIf(clear).each(['--stamp-hot', '--ink-hot'])('%s reads at 4.5:1 or better on their paper', (ink) => {
+    expect(ratio(rgb(variables, ink), rgb(variables, '--stamp-hot-paper'))).toBeGreaterThanOrEqual(4.5)
+  })
 })
 
 /** What an ink sits on: its own paper, or the dark grounds when it has none or that paper is clear. */
@@ -160,7 +158,10 @@ describe.each(THEME_IDS)("%s's inks on their own paper", (theme) => {
   const variables = themeVariables(theme)
   const exceptions = EXCEPTIONS[theme]
 
-  it.each(Object.keys(PAPERS).filter((ink) => !(ink in exceptions)))(
+  // An exception excuses an ink on the dark grounds, never on a paper of its own.
+  const excused = (ink: string) => ink in exceptions && groundsOf(variables, ink) === GROUNDS
+
+  it.each(Object.keys(PAPERS).filter((ink) => !excused(ink)))(
     '%s reads at 4.5:1 or better on its paper',
     (ink) => {
       for (const ground of groundsOf(variables, ink))
