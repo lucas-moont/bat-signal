@@ -187,6 +187,15 @@
   background: currentColor;
   clip-path: polygon(0 28%, 55% 28%, 55% 0, 100% 50%, 55% 100%, 55% 72%, 0 72%);
 }
+/* What needs the user may be stamped on a plate of its own, under its rule (a lit header, white
+   letters on red); the paper and rule every stamp has otherwise. */
+.card--urgent .stamp,
+.notice--urgent .stamp,
+.report .stamp--hot,
+.watch-row--hot .watch-row__stamp {
+  background-color: var(--stamp-hot-paper);
+  border-color: var(--stamp-hot-rule);
+}
 .card--waiting .stamp,
 .card--reply .stamp {
   color: var(--stamp-soft);

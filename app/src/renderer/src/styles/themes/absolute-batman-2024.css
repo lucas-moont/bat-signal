@@ -177,6 +177,9 @@
   --stamp-lift: 0px;
   --stamp-paper: transparent;
   --stamp-rule: currentColor;
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: none;
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;

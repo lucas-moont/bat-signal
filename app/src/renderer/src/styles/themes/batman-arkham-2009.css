@@ -189,6 +189,9 @@
   --stamp-lift: 24px;
   --stamp-paper: #000000;
   --stamp-rule: var(--bone);
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: repeating-linear-gradient(-55deg in srgb, #262626 0 3px, transparent 3px 6px);
   --stamp-arrow: '';
   --stamp-arrow-room: 13px;

@@ -135,6 +135,20 @@ describe.each(THEME_IDS)("%s's text colors", (theme) => {
   })
 })
 
+// What needs the user may be stamped on a plate of its own (--stamp-hot-paper): the hot stamp inks
+// then read on it, in the files layout and in the Night Report.
+describe.each(THEME_IDS)("%s's hot stamps", (theme) => {
+  const variables = themeVariables(theme)
+
+  it.each(['--stamp-hot', '--ink-hot'].filter((ink) => !(ink in EXCEPTIONS[theme])))(
+    '%s reads at 4.5:1 or better on their paper',
+    (ink) => {
+      if (resolved(variables, 'var(--stamp-hot-paper)') === 'transparent') return
+      expect(ratio(rgb(variables, ink), rgb(variables, '--stamp-hot-paper'))).toBeGreaterThanOrEqual(4.5)
+    },
+  )
+})
+
 /** What an ink sits on: its own paper, or the dark grounds when it has none or that paper is clear. */
 function groundsOf(variables: Map<string, string>, ink: string): string[] {
   const paper = PAPERS[ink]
