@@ -102,9 +102,9 @@
   --lens-rim: var(--chest);
   --lens-bat: var(--chest);
   --lens-bat-edge: transparent;
-  /* Lit, the field prints flat: no inner shading over it, Martin's flat colour. */
   /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
   --disc-edge: 0 0 transparent;
+  /* Lit, the field prints flat: no inner shading over it, Martin's flat colour. */
   --lens-shade: 0 0 transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);

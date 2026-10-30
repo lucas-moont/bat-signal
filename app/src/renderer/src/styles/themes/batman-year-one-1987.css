@@ -110,9 +110,9 @@
   --lens-rim: var(--blood);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
-  /* Lit, the lens prints flat: no inner shading over it (picked on screen, #122). */
   /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
   --disc-edge: 0 0 transparent;
+  /* Lit, the lens prints flat: no inner shading over it (picked on screen, #122). */
   --lens-shade: 0 0 transparent;
   --notice-top: #17190a;
   --notice-foot: var(--smoke);

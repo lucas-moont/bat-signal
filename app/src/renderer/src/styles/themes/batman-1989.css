@@ -144,7 +144,6 @@
      16px, checked at 1x: its thin strokes hold in the one word it sets). */
   --wordmark-size: 16px;
   --wordmark-tracking: 1.5px;
-  /* Bone with no glow: the only light here is the oval's (burton-1989.md, section 3). */
   /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
   --masthead-paper: transparent;
   --masthead-sheen: none;
@@ -154,6 +153,7 @@
   --masthead-hover: var(--surface);
   --wordmark-ink: var(--accent);
   /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  /* Bone with no glow: the only light here is the oval's (burton-1989.md, section 3). */
   --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: transparent;
 
