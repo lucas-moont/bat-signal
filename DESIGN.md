@@ -252,13 +252,13 @@ The system is lit rather than stacked. Surfaces are flat at rest. Depth comes fr
 - **Desk float** (`box-shadow: 0 10px 28px rgb(0 0 0 / 80%)`): the notice card over the desktop; urgent notices add `0 0 22px -6px var(--signal-glow)`.
 
 ### Named Rules
-**The Light Not Lift Rule.** Elevation is shown with red light, not material. Black shadows are reserved for elements floating over the user's desktop.
+**The Light Not Lift Rule.** Elevation is shown with red light, not material. Black shadows are reserved for elements floating over the user's desktop. A Theme whose work is made of material may show it (VERY DARK GREY's plastic pieces: a tile's lit top edge and dark side, `--tile-edge`, the masthead's plate and the disc's edge); every other Theme sets those empty.
 
 **The One Clock Rule.** Anything that loops (breathing glow, heartbeat dots, mascot poses, rain) is sampled from the single 8 fps ticker and pauses when the window is hidden. Infinite CSS animations are not allowed.
 
 ## Shapes
 
-Corners are barely softened. The base radius is 4px (cards, buttons, rows, alerts, mono fields). Stamps and chips use 2px, and the needs-you count is a 2px rectangle tilted -5 degrees. Only three things are round: bottom sheets (10px top corners), toggles (9px pill), and the signal disc and status dots (circles). Borders are 1px Line almost everywhere; stamps use a 1.5px border in their own ink.
+Corners are barely softened. The base radius is 4px (cards, buttons, rows, alerts, mono fields), set by each Theme as `--radius`. Stamps and chips use 2px, and the needs-you count is a 2px rectangle tilted -5 degrees. Only three things are round: bottom sheets (10px top corners), toggles (9px pill), and the signal disc and status dots (circles). Borders are 1px Line almost everywhere; stamps use a 1.5px border in their own ink.
 
 The recurring silhouette is the ink stamp: a boxed typewriter word rotated -2.5 degrees (-1.5 degrees for working and quiet stamps in the report), worn through by a fractal-noise mask. The files layout marks cards with a 3px colored rule on the left edge, 8px from top and bottom, colored by what the case is about. The Night Report uses no side rules. Its forms are the vertical margin rule, a 4px pen bracket that holds an open case, and the hand-drawn red pen stroke.
 
