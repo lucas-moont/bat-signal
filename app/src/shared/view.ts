@@ -200,6 +200,9 @@ export const ALERT_INK: Record<AttentionItem['kind'], 'hot' | 'soft' | 'quiet'> 
   stalled: 'quiet',
 }
 
+/** Whether a stamp for this kind is hot: blocked work only, never waiting work or a note about a case. */
+export const isHot = (kind: string): boolean => ALERT_INK[kind as AttentionItem['kind']] === 'hot'
+
 /** One row of the watch strip: what a glance at the corner should tell about a session. */
 export function watchRow(session: SessionSnapshot, attention: AttentionItem[], words: Words): WatchRow {
   const { title, progress } = caseHeader(session, words)
