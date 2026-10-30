@@ -162,6 +162,12 @@
   opacity: 0.92;
   mask-image: var(--stamp-mask);
 }
+/* What needs the user may be stamped on a plate of its own, under its rule (a lit header, white
+   letters on red); the paper and rule every stamp has otherwise. */
+.stamp--hot {
+  background-color: var(--stamp-hot-paper);
+  border-color: var(--stamp-hot-rule);
+}
 /* On a card, a Theme may lift the stamp over the card's top edge, a title tab over its corner. */
 .card .stamp {
   translate: 0 calc(-1 * var(--stamp-lift));
@@ -174,7 +180,7 @@
    it, in the stamp's own ink (the Alarm color, on these cards). */
 .card--urgent .stamp {
   padding-left: calc(6px + var(--stamp-arrow-room));
-  background: var(--hatch), var(--stamp-paper);
+  background: var(--hatch), var(--stamp-hot-paper);
 }
 .card--urgent .stamp::before {
   content: var(--stamp-arrow);
@@ -186,15 +192,6 @@
   margin-top: -4.5px;
   background: currentColor;
   clip-path: polygon(0 28%, 55% 28%, 55% 0, 100% 50%, 55% 100%, 55% 72%, 0 72%);
-}
-/* What needs the user may be stamped on a plate of its own, under its rule (a lit header, white
-   letters on red); the paper and rule every stamp has otherwise. */
-.card--urgent .stamp,
-.notice--urgent .stamp,
-.report .stamp--hot,
-.watch-row--hot .watch-row__stamp {
-  background-color: var(--stamp-hot-paper);
-  border-color: var(--stamp-hot-rule);
 }
 .card--waiting .stamp,
 .card--reply .stamp {

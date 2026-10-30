@@ -72,7 +72,7 @@ export function AttentionList({
               >
                 {URGENT.has(item.kind) && <Glow />}
                 <span className="card__top">
-                  <span className="stamp">{stamp}</span>
+                  <span className={`stamp${URGENT.has(item.kind) ? ' stamp--hot' : ''}`}>{stamp}</span>
                   <span className="card__time">{relativeTime(item.at, now)}</span>
                 </span>
                 <span className="card__title">

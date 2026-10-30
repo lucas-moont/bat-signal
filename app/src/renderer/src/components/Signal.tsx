@@ -192,7 +192,7 @@ function NoticeCard({
         title={voice.signal.openCase(terms)}
       >
         <span className="notice__stamp">
-          <span className="stamp">{notice.stamp}</span>
+          <span className={`stamp${isUrgent(notice.kind) ? ' stamp--hot' : ''}`}>{notice.stamp}</span>
           <Balloon kind={notice.kind} />
         </span>
         <strong className="notice__title">{notice.title}</strong>
