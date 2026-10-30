@@ -35,7 +35,7 @@
 .header .icon-button {
   color: var(--masthead-ink);
 }
-.header .icon-button:hover {
+.header .icon-button:not(.icon-button--danger):hover {
   color: var(--masthead-ink-hot);
   background: var(--masthead-hover);
 }
