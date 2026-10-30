@@ -19,9 +19,25 @@
   height: 54px;
   padding: 0 8px 0 14px;
   /* A Theme's spatter by the masthead, a background layer with its own place and size (white ink
-     drops), or none, over the fade. */
-  background: var(--spatter), linear-gradient(180deg in srgb, var(--header-fade), transparent);
+     drops), or none; then its plate, a sheen over a paper and an edge under it (a title card's
+     plastic plate; none and transparent otherwise), over the fade. On top of what follows, so the
+     plate's edge falls on the tabs. */
+  position: relative;
+  z-index: 1;
+  background:
+    var(--spatter), var(--masthead-sheen),
+    linear-gradient(in srgb, var(--masthead-paper), var(--masthead-paper)),
+    linear-gradient(180deg in srgb, var(--header-fade), transparent);
+  box-shadow: var(--masthead-edge);
   -webkit-app-region: drag;
+}
+/* The masthead's buttons in its plate's own inks. */
+.header .icon-button {
+  color: var(--masthead-ink);
+}
+.header .icon-button:hover {
+  color: var(--masthead-ink-hot);
+  background: var(--masthead-hover);
 }
 .header__title {
   margin: 0;
@@ -30,7 +46,7 @@
   font-size: var(--wordmark-size);
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;
-  color: var(--accent);
+  color: var(--wordmark-ink);
   text-shadow: 0 0 14px var(--wordmark-glow);
 }
 .header__brand {

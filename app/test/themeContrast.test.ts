@@ -50,12 +50,16 @@ function textColors(): string[] {
 
 /**
  * Inks held to a paper of their own, not to the dark grounds: the count on the Alarm color's chip,
- * and the Night Report's headings in a caption box. A paper that is transparent leaves its ink on
- * the dark grounds after all.
+ * the Night Report's headings in a caption box, and the masthead's wordmark and buttons on its plate
+ * (a button's hover on its own tint). A paper that is transparent leaves its ink on the dark grounds
+ * after all.
  */
 const PAPERS: Record<string, string> = {
   '--on-signal': '--signal',
   '--caption-ink': '--caption-paper',
+  '--wordmark-ink': '--masthead-paper',
+  '--masthead-ink': '--masthead-paper',
+  '--masthead-ink-hot': '--masthead-hover',
 }
 
 /** Every dark ground text sits on: the page, the panels, the sheet and the notice card. */
@@ -82,6 +86,7 @@ const GROUNDS = [
 const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
   'the-batman-2022': {
     '--accent': 'the wordmark, in the red measured from the film title logo, at display size',
+    '--wordmark-ink': 'the same red, as the masthead wordmark, on no plate of its own',
     '--signal-hot': 'small lit marks and warnings; the files-layout stamp ink',
     '--in-progress': 'a running task in the files layout, lit in Hot Signal like the live dots',
     '--stamp-hot': 'the approved files-layout stamp ink (the Night Report lifts it to --ink-hot)',
@@ -123,19 +128,30 @@ describe.each(THEME_IDS)("%s's text colors", (theme) => {
 
   // A stale exception would hide a color that no longer needs one, or no longer exists.
   it.each(Object.keys(exceptions))('%s is a text color that still needs its exception', (color) => {
-    expect(colors).toContain(color)
-    expect(Math.min(...GROUNDS.map((ground) => contrast(color, ground)))).toBeLessThan(4.5)
+    expect([...colors, ...Object.keys(PAPERS)]).toContain(color)
+    expect(Math.min(...groundsOf(variables, color).map((ground) => contrast(color, ground)))).toBeLessThan(
+      4.5,
+    )
   })
 })
 
+/** What an ink sits on: its own paper, or the dark grounds when it has none or that paper is clear. */
+function groundsOf(variables: Map<string, string>, ink: string): string[] {
+  const paper = PAPERS[ink]
+  return paper && resolved(variables, `var(${paper})`) !== 'transparent' ? [paper] : GROUNDS
+}
+
 describe.each(THEME_IDS)("%s's inks on their own paper", (theme) => {
   const variables = themeVariables(theme)
+  const exceptions = EXCEPTIONS[theme]
 
-  it.each(Object.entries(PAPERS))('%s reads at 4.5:1 or better on %s', (ink, paper) => {
-    const grounds = resolved(variables, `var(${paper})`) === 'transparent' ? GROUNDS : [paper]
-    for (const ground of grounds)
-      expect(ratio(rgb(variables, ink), rgb(variables, ground)), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
-  })
+  it.each(Object.keys(PAPERS).filter((ink) => !(ink in exceptions)))(
+    '%s reads at 4.5:1 or better on its paper',
+    (ink) => {
+      for (const ground of groundsOf(variables, ink))
+        expect(ratio(rgb(variables, ink), rgb(variables, ground)), `on ${ground}`).toBeGreaterThanOrEqual(4.5)
+    },
+  )
 })
 
 // A Theme's stamp paper (black title tabs, after Arkham Asylum) sits under the stamp inks the grounds

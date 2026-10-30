@@ -151,6 +151,14 @@
   --folder-name-tracking: 0.5px;
   --wordmark-size: 20px;
   --wordmark-tracking: 1.5px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
   --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
 
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%233fdcff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");

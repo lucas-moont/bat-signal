@@ -173,6 +173,14 @@
   /* The masthead's wordmark: a face sets its own size and tracking. */
   --wordmark-size: 21px;
   --wordmark-tracking: 2.5px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
   --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
 
   /* The Night Report's pen strokes, drawn in their inks (an SVG can't read a variable): Pen Hot

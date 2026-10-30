@@ -154,6 +154,14 @@
      leave Bat-Clawd's open cape clear of the menu button. */
   --wordmark-size: 15px;
   --wordmark-tracking: 2px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
   --wordmark-glow: color-mix(in srgb, var(--bone) 25%, transparent);
 
   /* The Night Report's pen, in Blue Flame pressed hard for blocked work and sodium for waiting work. */

@@ -140,6 +140,14 @@
   --folder-name-tracking: 0.3px;
   --wordmark-size: 16px;
   --wordmark-tracking: 1px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
   --wordmark-glow: transparent;
 
   /* A heavier, straighter pen: Dragotta's line. */

@@ -150,6 +150,14 @@
   --folder-name-tracking: 0.6px;
   --wordmark-size: 19px;
   --wordmark-tracking: 1px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
   --wordmark-glow: transparent;
 
   /* A HUD's underline, not a pen: straight strokes. */
