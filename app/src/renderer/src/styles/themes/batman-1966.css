@@ -176,6 +176,9 @@
   --stamp-mask: none;
   /* The corners of cards, buttons and fields. */
   --radius: 4px;
+  /* A plastic piece's lit edge and side on cards, notices, the watch strip and sheets: none (an
+     empty shadow, as it joins a shadow list). */
+  --tile-edge: 0 0 transparent;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, the plates straight. */
   --card-paper: transparent;

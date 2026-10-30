@@ -36,6 +36,8 @@
      white edge), or none: under the card's words and its lifted stamp, square at the corners. */
   border-image: var(--card-edge);
   border-radius: var(--radius);
+  /* A Theme's tile edge: a plastic piece's lit top and its side below (none as an empty shadow). */
+  box-shadow: var(--tile-edge);
   cursor: pointer;
   transition:
     transform 0.18s var(--ease-out),
@@ -52,7 +54,9 @@
       color-mix(in srgb, var(--raised) 95%, transparent),
       color-mix(in srgb, var(--surface) 95%, transparent)
     );
-  box-shadow: 0 6px 18px -8px var(--accent-glow);
+  box-shadow:
+    var(--tile-edge),
+    0 6px 18px -8px var(--accent-glow);
   border-color: var(--accent-glow);
 }
 .card:focus-visible {
