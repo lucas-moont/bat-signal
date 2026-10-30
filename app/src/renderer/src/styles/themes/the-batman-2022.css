@@ -181,6 +181,8 @@
   --masthead-ink-hot: var(--bone);
   --masthead-hover: var(--surface);
   --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: color-mix(in srgb, var(--accent) 35%, transparent);
 
   /* The Night Report's pen strokes, drawn in their inks (an SVG can't read a variable): Pen Hot

@@ -47,7 +47,10 @@
   letter-spacing: var(--wordmark-tracking);
   line-height: 1;
   color: var(--wordmark-ink);
-  text-shadow: 0 0 14px var(--wordmark-glow);
+  /* A Theme's relief on the letters (a title card's bevel), then its glow. */
+  text-shadow:
+    var(--wordmark-extrude),
+    0 0 14px var(--wordmark-glow);
 }
 .header__brand {
   position: relative;

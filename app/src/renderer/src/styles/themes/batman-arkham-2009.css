@@ -158,6 +158,8 @@
   --masthead-ink-hot: var(--bone);
   --masthead-hover: var(--surface);
   --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: transparent;
 
   /* A HUD's underline, not a pen: straight strokes. */
