@@ -3,7 +3,6 @@
  * [data-theme="<id>"]: <html>, which main.tsx sets before the first render, and a preview's box.
  */
 :root {
-  --radius: 4px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: dark;

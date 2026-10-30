@@ -155,6 +155,8 @@
   --stamp-size: 9.5px;
   --stamp-weight: 400;
   --stamp-mask: none;
+  /* The corners of cards, buttons and fields. */
+  --radius: 4px;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
