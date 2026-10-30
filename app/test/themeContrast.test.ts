@@ -41,11 +41,16 @@ function ratio(a: Rgb, b: Rgb): number {
 const BALLOON_WORD = /\.balloon__word\s*\{[^}]*\}/
 
 /** Every variable the renderer's CSS paints text (or an icon) with. */
-function textColors(): string[] {
+function paintedColors(): string[] {
   const used = rendererSources('.css').flatMap(({ text }) =>
     [...text.replace(BALLOON_WORD, '').matchAll(/(?:^|[\s;{])color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]!),
   )
-  return [...new Set(used)].filter((c) => !(c in PAPERS)).sort()
+  return [...new Set(used)].sort()
+}
+
+/** The text colors held to the dark grounds: every painted one but the inks with a paper of their own. */
+function textColors(): string[] {
+  return paintedColors().filter((c) => !(c in PAPERS))
 }
 
 /**
@@ -112,6 +117,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
 }
 
 const colors = textColors()
+const painted = paintedColors()
 
 describe.each(THEME_IDS)("%s's text colors", (theme) => {
   const variables = themeVariables(theme)
@@ -128,7 +134,7 @@ describe.each(THEME_IDS)("%s's text colors", (theme) => {
 
   // A stale exception would hide a color that no longer needs one, or no longer exists.
   it.each(Object.keys(exceptions))('%s is a text color that still needs its exception', (color) => {
-    expect([...colors, ...Object.keys(PAPERS)]).toContain(color)
+    expect(painted).toContain(color)
     expect(Math.min(...groundsOf(variables, color).map((ground) => contrast(color, ground)))).toBeLessThan(
       4.5,
     )
