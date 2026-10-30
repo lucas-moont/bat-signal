@@ -51,10 +51,12 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  /* Unlit: a dead lamp, dark glass with a warm rim. */
+  /* Unlit: a dead lamp, dark glass with a warm rim, and a Theme's edge on it (a moulded piece's lit
+     top and its side). */
   background: radial-gradient(circle at 40% 35% in srgb, var(--glass-shine), var(--glass) 62%, var(--abyss));
   border: 1.5px solid var(--line);
   box-shadow:
+    var(--disc-edge),
     inset 0 0 0 4px var(--disc-rim-inner),
     inset 0 0 0 5px var(--disc-rim-outer),
     0 4px 14px color-mix(in srgb, var(--shadow) 70%, transparent);

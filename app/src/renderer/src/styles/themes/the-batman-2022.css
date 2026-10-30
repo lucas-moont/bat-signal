@@ -127,6 +127,8 @@
   --lens-bat: #050000;
   /* An outline round the lit disc's bat, for a lens too pale to hold its shape alone: none here. */
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade:
     inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
     inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);

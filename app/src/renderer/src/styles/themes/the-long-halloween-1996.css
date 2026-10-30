@@ -108,6 +108,8 @@
   --lens-rim: var(--blood);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade: 0 0 transparent;
   --notice-top: #1a0a12;
   --notice-foot: var(--smoke);

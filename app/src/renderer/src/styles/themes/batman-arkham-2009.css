@@ -109,6 +109,8 @@
   --lens-rim: var(--signal-hot);
   --lens-bat: var(--abyss);
   --lens-bat-edge: var(--signal-hot);
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade: inset 0 0 0 3px color-mix(in srgb, var(--shadow) 35%, transparent);
   --notice-top: #0f2216;
   --notice-foot: var(--smoke);
