@@ -2315,8 +2315,6 @@ const LEG_EDGES: Layer = {
   px: [4, 6, 9, 11].map((x) => [x - 0.25, 9, 1.5, 2.25] as const),
   className: 'clawd__cowl-edge',
 }
-/** A black edge round the yellow belt's ends, so it never runs into a yellow ground (the masthead). */
-const BELT_EDGE: Layer = { kind: 'rects', px: [[2.7, 7.85, 10.6, 1.3]], fill: 'var(--cowl)' }
 /** Closed round him, asleep, its hem in points. */
 const LEGO_WRAPPED =
   'M2.6 6.2 L13.4 6.2 L14.4 10.6 L13 10 L11.6 10.9 L9.8 10.1 L8 10.9 L6.2 10.1 L4.4 10.9 L3 10 L1.6 10.6 Z'
@@ -2333,7 +2331,7 @@ const legoAsleep = seated(PREDATOR_SEATED, LEGO_WRAPPED, [...LEGO_EARS, DECO_EDG
 const legoSpread = (cape: string, arm: string, glove: string) =>
   legoPose(
     LEGO_STANDING,
-    [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: cape, mirrored: true }],
+    [LEGO_BACK, LEG_EDGES, { kind: 'cape', d: cape, mirrored: true }],
     [...edgedArm(arm), ...edgedArm(glove, 'var(--gloves)')],
   )
 /** Flying, the glide [65]: his arms straight out, the cape spread under them as two bat wings. */
