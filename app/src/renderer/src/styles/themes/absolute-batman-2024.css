@@ -73,6 +73,8 @@
   /* Bat-Clawd in the working suit (absolute-batman.md, section 7): the #1 cover's cold teal, ink
      cowl, gloves and cape, an olive belt the chest block rests on, and the block itself in ink. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0a10;
   --cowl-edge: color-mix(in srgb, var(--ink-live) 28%, transparent);

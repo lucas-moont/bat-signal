@@ -21,7 +21,9 @@ icons drawn from them in app/resources/icons/, and the pictures in docs/screensh
 - the bat in the yellow oval on Batman's chest in Batman: The Animated Series (1992), as it aired,
   worn by the DARK DECO Theme;
 - the bat symbol of Rocksteady's Batman: Arkham games (2009-2015), as their logos and Arkham City's
-  title screen draw it (never their lettering), worn by the SILENT PREDATOR Theme.
+  title screen draw it (never their lettering), worn by the SILENT PREDATOR Theme;
+- the bat in the yellow oval printed on Batman's chest in The LEGO® Batman Movie (2017), worn by the
+  VERY DARK GREY Theme.
 
 The medallion of the Chronicles of Arkham in Rocksteady's Batman: Arkham Asylum (2009) is the art of
 Warner Bros. Games, used here as fan art and not covered by the MIT License. It is our vector redrawing
@@ -31,10 +33,15 @@ pictures in docs/screenshots/ that show it.
 
 The fonts are bundled from Fontsource under their own licences, not the MIT License:
 - Anton, Archivo, Bangers, Barlow Semi Condensed, Big Shoulders Stencil, Bowlby One SC, Bungee,
-  Federo, Grenze Gotisch, JetBrains Mono, Josefin Sans, Limelight, Marcellus SC, Neucha, Shantell
-  Sans and Staatliches: SIL Open Font License 1.1;
+  Changa One, Federo, Grenze Gotisch, JetBrains Mono, Josefin Sans, Limelight, Marcellus SC, Neucha,
+  Rubik, Russo One, Shantell Sans and Staatliches: SIL Open Font License 1.1;
 - Luckiest Guy, Permanent Marker, Special Elite and Syncopate: Apache License 2.0.
 Each licence ships with the app (resources/licenses/<family>.txt), beside this notice and the
 MIT License, and with its package (app/node_modules/@fontsource/<family>/LICENSE).
 
-Bat-Signal is a fan project, not affiliated with Warner Bros., DC Comics or Anthropic.
+The VERY DARK GREY Theme follows The LEGO® Batman Movie (2017), by Warner Animation Group and DC
+Entertainment with the LEGO Group. LEGO® is a trademark of the LEGO Group of companies, which does
+not sponsor, authorize or endorse this project. Its studs, tiles and plastic are drawn here as plain
+textures; no LEGO logo, minifigure or brick is drawn, and Bat-Clawd keeps his own body.
+
+Bat-Signal is a fan project, not affiliated with Warner Bros., DC Comics, the LEGO Group or Anthropic.

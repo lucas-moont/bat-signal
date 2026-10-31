@@ -1,0 +1,320 @@
+/*
+ * VERY DARK GREY, after The LEGO® Batman Movie (2017): the whole app as plastic pieces in the film's
+ * black and yellow (docs/research/themes/lego-batman.md; very-dark-grey-build.md; jury-wave-3.md,
+ * section 9, decision 21, all picked on screen). The teaser's cards say it: IN BLACK... AND YELLOW.
+ * Scoped like every Theme: the page (as :root too) and the Theme's own folder in the picker.
+ * - --abyss: a black plate, under the Batcave's walkway (--decor) the panel stands over.
+ * - --surface, --raised: the cards as dark grey plastic tiles, a lit top edge and a side under them.
+ * - --signal, --signal-hot: the Batcomputer's red [31] [33] [36], white letters on red plates; red
+ *   is worn nowhere else (its cost against VENGEANCE and BECOME A BAT is recorded in the jury).
+ * - --masthead-paper: the title cards' yellow as the masthead's plate, its letters black.
+ */
+:root[data-theme='the-lego-batman-movie-2017'],
+[data-theme='the-lego-batman-movie-2017'] {
+  --abyss: #141517;
+  --smoke: #1b1c1f;
+  --surface: #2e3035;
+  --raised: #34363b;
+  --line: #26282c;
+  --surface-deep: #27292d;
+  --frame: #0b0c0e;
+  --header-fade: #1d1f23;
+  --sheet-top: #303237;
+  --shadow: #000000;
+
+  /* The Alarm color, the Batcomputer's red, and its dark side under a lit plate. */
+  --blood: #5a0c06;
+  --signal: #c91a09;
+  --signal-glow: color-mix(in srgb, var(--signal-hot) 45%, transparent);
+  --signal-hot: #ff7f71;
+  --on-signal: #ffffff;
+  /* The hot stamps' letters, white on their red plate. */
+  --ink-hot: #ffffff;
+  /* The Batcomputer's blue screens [36] [40]: what waits on you. */
+  --ink-soft: #7fd3ff;
+  --ink-live: var(--bone);
+  --ink: #c9ccd3;
+
+  /* Emphasis that is not an alarm is Bone, as white plastic. */
+  --accent: var(--bone);
+  --accent-hot: var(--bone);
+  --accent-deep: var(--line);
+  --accent-glow: color-mix(in srgb, var(--bone) 12%, transparent);
+  --selection: var(--raised);
+  --progress-deep: var(--line);
+  --progress-hot: var(--ink-live);
+  --thumb: var(--abyss);
+
+  --brick: var(--ink-soft);
+  --stamp-hot: #ffffff;
+  --stamp-soft: var(--ink-soft);
+  --stamp-quiet: var(--ash);
+
+  --in-progress: var(--ink-live);
+  --in-progress-glow: color-mix(in srgb, var(--ink-live) 40%, transparent);
+
+  --danger: var(--raised);
+  --waiting-rule: var(--ink-soft);
+  --report-rule: var(--line);
+  --caption-paper: transparent;
+  --caption-ink: var(--ash);
+  --caption-rule: underline;
+  --caption-edge: none;
+  /* Words with no card under them (the night report, an empty list) sit on a smooth dark tile laid
+     over the walkway, so they never read on its lit floor. */
+  --bare-veil: linear-gradient(180deg in srgb, var(--surface), var(--surface-deep));
+
+  --clawd: #d77757;
+
+  --bone: #f4f5f7;
+  --bone-dim: var(--ink);
+  --ash: #b3b6be;
+  --ash-dim: var(--ash);
+  --chevron: var(--ash);
+
+  /* Bat-Clawd in the film's suit (lego-batman.md, section 8): a black moulded cowl with a hard shine,
+     the film's white lenses; the torso black too, IN BLACK [44]; a yellow pouch belt, its grooves
+     darker; the cape black cloth; a neutral rim. */
+  --clawd-eye: var(--bone);
+  /* His eyes stay white (the Costume Rule), lit like the film's lenses: a neon blue glow hugging
+     them [06] [24] [33] (picked on screen), clear of his orange jaw. */
+  --eye-glow: drop-shadow(0 0 0.25px var(--ink-soft)) drop-shadow(0 0 0.5px var(--ink-soft));
+  --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
+  --cowl: #141519;
+  --cowl-edge: color-mix(in srgb, var(--ash) 34%, transparent);
+  --cowl-shine: #6b6f7a;
+  --suit: #1b1c21;
+  --gloves: var(--cowl);
+  --belt: #f2cd37;
+  --buckle: #9a7410;
+  --cape: var(--cowl);
+  --cape-rim: var(--cowl-edge);
+  --thread: var(--cowl-edge);
+  --chest: #0d0d10;
+  --aura-core: color-mix(in srgb, var(--signal-hot) 90%, transparent);
+  --aura-glow: color-mix(in srgb, var(--signal-hot) 55%, transparent);
+  /* Dinner for one: the long table and its lit edge, and the cloche. */
+  --table: #3a2f28;
+  --table-shine: #6e5a4a;
+
+  /* The emblem: the 2017 print's bat across its yellow oval, in the masthead as on his chest. */
+  --emblem: var(--chest);
+  --emblem-plate: var(--belt);
+  --emblem-plate-rim: var(--chest);
+
+  /* The Signal disc: the LEGO Bat-Signal [853651], its dome smoky unlit and lit yellow (below). */
+  --disc-bat: var(--line);
+  --glass-shine: #4a4d55;
+  --glass: #232529;
+  --disc-rim-inner: var(--abyss);
+  --disc-rim-outer: var(--line);
+  --lens-core: #fff3c2;
+  --lens-rim: #ffe680;
+  --lens-bat: var(--chest);
+  --lens-bat-edge: transparent;
+  --disc-edge: 0 4px 0 #050607;
+  /* Inset only, as the unlit disc's rims are, so the light fades in pair by pair. */
+  --lens-shade: inset 0 0 0 3px rgb(255 255 255 / 0.25), inset 0 -3px 0 rgb(0 0 0 / 0.25);
+  --notice-top: var(--surface);
+  --notice-foot: var(--line);
+  --notice-hover-top: var(--raised);
+  --notice-hover-foot: #2b2d31;
+
+  /* The Atmosphere: the Batcave's walkway (--decor), still; no haze over it. */
+  --haze: transparent;
+  --haze-edge: transparent;
+  --haze-inset: -10% -10% auto -10%;
+  --grain-opacity: 0;
+  --searchlight: var(--bone);
+
+  /* Russo One, squared heavy capitals near the title cards [16] [43], for the intro's wordmark;
+     Changa One for the stamps; Rubik, the Batcomputer's rounded grotesque [36], for the headlines and
+     the report; Barlow does the work. */
+  --font-display: 'Russo One', 'Segoe UI Black', sans-serif;
+  --display-weight: 400;
+  --font-body: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  --font-type: var(--font-body);
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', monospace;
+  --font-report: 'Rubik', 'Segoe UI', sans-serif;
+  --font-headline: 'Rubik', 'Segoe UI', sans-serif;
+  --headline-weight: 800;
+  --font-dateline: 'Rubik', 'Segoe UI', sans-serif;
+  --dateline-weight: 700;
+  --font-stamp: 'Changa One', 'Segoe UI Black', sans-serif;
+  --font-label: var(--font-body);
+  --heading-case: none;
+  --font-case-title: var(--font-body);
+  --case-title-weight: 600;
+  --folder-name-size: 14px;
+  --folder-name-tracking: 0.3px;
+  --wordmark-size: 17px;
+  --wordmark-tracking: 1px;
+  /* The masthead as a title card [44] [45]: a yellow plate, its letters black and pressed in, its
+     side under it; the buttons black, a darker yellow under the pointer. */
+  --masthead-paper: var(--belt);
+  --masthead-sheen: linear-gradient(
+    180deg in srgb,
+    rgb(255 255 255 / 0.3),
+    transparent 45%,
+    rgb(0 0 0 / 0.1)
+  );
+  --masthead-edge: 0 4px 0 #8a6a0a, 0 7px 10px rgb(0 0 0 / 0.55);
+  --masthead-ink: var(--abyss);
+  --masthead-ink-hot: var(--abyss);
+  --masthead-hover: #d9b21f;
+  --wordmark-ink: var(--abyss);
+  --wordmark-extrude: 0 1px 0 rgb(255 255 255 / 0.45);
+  --wordmark-glow: transparent;
+
+  --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%23ff7f71' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+  --pen-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3H28' fill='none' stroke='%237fd3ff' stroke-width='1.1' stroke-linecap='square'/%3E%3C/svg%3E");
+
+  /* Pieces sit square on the grid. */
+  --stamp-tilt: 0deg;
+  --stamp-tilt-slight: 0deg;
+  --notice-tilt: 0deg;
+  --stamp-border: 1.5px;
+  --stamp-size: 11px;
+  --stamp-weight: 400;
+  --stamp-mask: none;
+  /* A piece's corners, barely softened. */
+  --radius: 2px;
+  /* Every card, notice, strip and sheet a plastic tile: a lit top edge, a dark one under it, its
+     side, and its shadow on what it is laid on. */
+  --tile-edge:
+    inset 0 1px 0 rgb(255 255 255 / 0.26), inset 0 -1px 0 rgb(0 0 0 / 0.45), 0 4px 0 #1a1b1e,
+    0 7px 10px rgb(0 0 0 / 0.55);
+  /* Solid plastic: the walkway never shows through a card. */
+  --card-paper: var(--surface);
+  --card-edge: none;
+  --stamp-lift: 0px;
+  --stamp-paper: transparent;
+  --stamp-rule: currentColor;
+  /* What needs you on a red plate, as the Batcomputer heads its warnings [31] [36]. */
+  --stamp-hot-paper: var(--signal);
+  --stamp-hot-rule: var(--signal);
+  --hatch: none;
+  --stamp-arrow: none;
+  --stamp-arrow-room: 0px;
+  --tab-pad: 0px;
+  --caption-tilt: 0deg;
+  --spatter: none;
+  /* The Batcave's walkway as the film shows it [40] [39], built of pieces (very-dark-grey-build.md;
+     picked on screen): lit floor tiles either side of a dark lane with gold bat plates down it,
+     ribbed yellow rails, studded platforms, stepped walls and consoles, and at its far end the
+     Batcomputer's wall of screens in a bat's shape. A still drawing, held to the panel's foot. */
+  --decor: url('../../assets/decor/batcave-walkway.svg') center bottom / cover no-repeat;
+  --flicker: none;
+  --card-grime: none;
+  --lock-mark: none;
+  --mark: none;
+  --mark-lit: none;
+
+  /* Lit: the LEGO Bat-Signal [853651] lit from inside like neon, in the Theme's own yellow (the
+     masthead's and the belt's): a white heart, the yellow round it, a brighter rim (picked on screen
+     over the red button, the Batcomputer's cyan, gold and amber). The one place the Theme lights in
+     another color than its alarm: a recorded exception (jury-wave-3.md, section 9, decision 21). */
+  --disc-lens:
+    radial-gradient(ellipse 26% 14% at 34% 22% in srgb, rgb(255 255 255 / 0.9), transparent 70%),
+    radial-gradient(
+      circle at 50% 50% in srgb,
+      #ffffff 0%,
+      var(--lens-core) 22%,
+      var(--belt) 52%,
+      #a67c00 78%,
+      var(--lens-rim) 90%,
+      #a67c00 100%
+    );
+}
+
+/* Each card's rule is a round translucent piece lit in its tier's color, as the console's buttons
+   are [33] [81]: red for what needs you, blue for what waits, grey for what stalled. A shape no
+   variable can carry, so it is this Theme's own rule (DESIGN.md, Theme variables). */
+[data-theme='the-lego-batman-movie-2017'] .card--attention {
+  --bead-core: #d8f2ff;
+  --bead: var(--ink-soft);
+  --bead-edge: #1f6fb8;
+  --bead-shine: rgb(255 255 255 / 0.85);
+  padding-left: 26px;
+}
+[data-theme='the-lego-batman-movie-2017'] .card--urgent {
+  --bead-core: #ffd0c4;
+  --bead: var(--signal-hot);
+  --bead-edge: var(--signal);
+}
+[data-theme='the-lego-batman-movie-2017'] .card--stalled {
+  --bead-core: var(--ash);
+  --bead: #6e717a;
+  --bead-edge: #3d4044;
+  --bead-shine: rgb(255 255 255 / 0.4);
+}
+[data-theme='the-lego-batman-movie-2017'] .card--attention::before {
+  left: 8px;
+  top: 12px;
+  bottom: auto;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 32% in srgb, var(--bead-shine) 0 14%, transparent 30%),
+    radial-gradient(circle in srgb, var(--bead-core) 0 20%, var(--bead) 50%, var(--bead-edge) 100%);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.6);
+}
+[data-theme='the-lego-batman-movie-2017'] .card--urgent::before {
+  box-shadow:
+    0 0 9px var(--signal-hot),
+    0 2px 0 var(--blood);
+}
+/* The cards as tiles: no border line, the tile edge carries them. */
+[data-theme='the-lego-batman-movie-2017'] .card,
+[data-theme='the-lego-batman-movie-2017'] .card:hover {
+  border-color: transparent;
+}
+/* The tabs on a black bar under the yellow plate, as the title cards' black [44]. */
+[data-theme='the-lego-batman-movie-2017'] .tabs {
+  background: var(--abyss);
+}
+/* The masthead's keyboard focus in its black ink, as Bone would vanish on the yellow plate. */
+[data-theme='the-lego-batman-movie-2017'] .header .icon-button:focus-visible {
+  outline-color: var(--masthead-ink);
+}
+/* Unlit, the disc is the LEGO Bat-Signal's dome [853651]: smoky, see-through plastic over the
+   desktop, a ring inside it, a hard highlight, its grey housing as the rim (picked on screen). */
+[data-theme='the-lego-batman-movie-2017'] .disc:not(.disc--lit) .disc__face {
+  background:
+    radial-gradient(ellipse 30% 18% at 34% 24% in srgb, rgb(255 255 255 / 0.55), transparent 70%),
+    radial-gradient(circle at 50% 50% in srgb, transparent 0 58%, rgb(0 0 0 / 0.18) 59% 61%, transparent 62%),
+    radial-gradient(
+      circle at 50% 50% in srgb,
+      rgb(120 125 135 / 0.25),
+      rgb(60 64 72 / 0.55) 70%,
+      rgb(40 42 48 / 0.75) 100%
+    );
+  border-color: #9ea3a8;
+  box-shadow:
+    inset 0 0 0 3px #6c6e68,
+    inset 0 0 0 4px #4b4e52,
+    0 4px 0 #2a2c30,
+    0 6px 8px rgb(0 0 0 / 0.5);
+}
+/* Lit, its neon spills past it: the rim's light, then the yellow's bloom, inside the 16px the disc's
+   own window leaves round it (a wider bloom is cut square by the window's edges). */
+[data-theme='the-lego-batman-movie-2017'] .disc--lit .disc__face {
+  box-shadow:
+    inset 0 0 6px var(--lens-rim),
+    inset 0 0 0 2px var(--lens-rim),
+    0 0 3px var(--lens-rim),
+    0 0 8px var(--belt),
+    0 0 14px color-mix(in srgb, var(--belt) 70%, transparent);
+}
+[data-theme='the-lego-batman-movie-2017'] .disc__halo {
+  background: radial-gradient(
+    circle in srgb,
+    color-mix(in srgb, var(--belt) 45%, transparent) 40%,
+    transparent 70%
+  );
+}
+/* On the Bat-Signal the bat is alone, without its oval, in both states (picked on screen). */
+[data-theme='the-lego-batman-movie-2017'] .disc .emblem__plate {
+  display: none;
+}

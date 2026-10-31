@@ -79,6 +79,8 @@
      cape, gloves, boots and trunks, a full unit of solid canary capsule belt, and Year One's own
      small black bat on the chest. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #141412;
   --cowl-edge: color-mix(in srgb, var(--bone) 24%, transparent);

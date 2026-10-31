@@ -89,6 +89,8 @@
      trunks and boots in one violet satin with a sheen down the cowl; a neutral rim, as the TV's flat
      light gives; the yellow oval with no rim; a yellow belt with a square buckle. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #4a3480;
   --cowl-edge: color-mix(in srgb, var(--ink) 30%, transparent);

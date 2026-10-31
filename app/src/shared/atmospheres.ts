@@ -317,8 +317,9 @@ export interface NoiseAtmosphere extends Scene {
 }
 
 /**
- * A still sky (SAME BAT-TIME's): nothing crosses it, so it is only its backdrop, still while the
- * Atmosphere is on.
+ * A still scene: nothing crosses it, so it is only its backdrop (SAME BAT-TIME's sky and its Signal)
+ * or nothing at all, the Theme's decor carrying the scene (VERY DARK GREY's walkway), still while
+ * the Atmosphere is on.
  */
 export interface SkyAtmosphere extends Scene {
   kind: 'sky'
@@ -551,6 +552,12 @@ export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
   angle: 0.06,
   depths: [0.1, 0.16, 0.25],
 }
+
+/**
+ * VERY DARK GREY's Batcave: nothing moves. Its walkway, built of pieces, is a still drawing in the
+ * Theme's decor (--decor), so its canvas paints nothing.
+ */
+export const VERY_DARK_GREY_CAVE: SkyAtmosphere = { kind: 'sky' }
 
 /**
  * SAME BAT-TIME's sky (same-bat-time-pop.md; picked on screen): over the animated opening's flat

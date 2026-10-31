@@ -114,6 +114,7 @@ const EXCEPTIONS: Record<ThemeId, Record<string, string>> = {
   'batman-the-animated-series-1992': {},
   'batman-arkham-2009': {},
   'batman-1966': {},
+  'the-lego-batman-movie-2017': {},
 }
 
 const colors = textColors()

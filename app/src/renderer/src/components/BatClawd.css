@@ -18,9 +18,11 @@
   overflow: visible;
 }
 
-/* His eyes stay white in every Theme (the Costume Rule), dimmer for a frame mid-blink. */
+/* His eyes stay white in every Theme (the Costume Rule), dimmer for a frame mid-blink; a Theme may
+   light them like its lenses (a glow round them, none otherwise). */
 .clawd__eyes {
   fill: var(--clawd-eye);
+  filter: var(--eye-glow);
 }
 .clawd__eyes--blink {
   fill: var(--clawd-eye-dim);
