@@ -1164,7 +1164,7 @@ export const VERY_DARK_GREY_WORDS: Words = {
     tagline: 'Batman. Also in this app.',
     empty: {
       ...STANDARD_VOICE.empty,
-      quiet: { ...STANDARD_VOICE.empty.quiet, title: "Nothing needs a hero. Gotham's fine. You're welcome." },
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: "Nobody needs Batman. Gotham's fine. You're welcome." },
       // The loneliness under the ego, once [46] [60].
       noCases: {
         ...STANDARD_VOICE.empty.noCases,
@@ -1183,7 +1183,7 @@ export const VERY_DARK_GREY_WORDS: Words = {
     signal: {
       ...STANDARD_VOICE.signal,
       openTip: (lit) =>
-        (lit ? 'Someone needs a hero. ' : 'All quiet. Because of me. ') + STANDARD_VOICE.signal.openTip(lit),
+        (lit ? 'Someone needs Batman. ' : 'All quiet. Because of me. ') + STANDARD_VOICE.signal.openTip(lit),
     },
     settings: {
       ...STANDARD_VOICE.settings,
