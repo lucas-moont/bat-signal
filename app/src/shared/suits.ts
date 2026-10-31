@@ -2293,12 +2293,23 @@ const LEGO_CAPE = {
   /** Spread flat as a bat's wing from wrist to hip, its edge in points [65]. */
   wing: 'M3 5.2 L-4.6 4.8 L-4 6.2 L-2.8 5.9 L-2.5 7.4 L-1.2 7 L-0.8 8.5 L0.6 8.1 L1 9.4 L3 9.2 Z',
 }
-/** Its back, between his legs, its hem in points. */
+/**
+ * Its back, the stiff bell seen behind him from the belt to below his boots, wider than his legs and
+ * its hem in points, so the cape carries on behind them (the maintainer, on screen).
+ */
 const LEGO_BACK: Layer = {
   kind: 'path',
-  d: 'M4.5 8.8 L11.5 8.8 L11.5 10.6 L10.7 10 L9.8 10.9 L8 10.1 L6.2 10.9 L5.3 10 L4.5 10.6 Z',
+  d: 'M2.6 8.2 L13.4 8.2 L13.8 11.3 L12.7 10.6 L11.4 11.5 L10 10.7 L8 11.5 L6 10.7 L4.6 11.5 L3.3 10.6 L2.2 11.3 Z',
   className: 'clawd__cape',
 }
+/** Each leg edged in the neutral rim, so his legs read on the black cape behind them. */
+const LEG_EDGES: Layer = {
+  kind: 'rects',
+  px: [4, 6, 9, 11].map((x) => [x - 0.25, 9, 1.5, 2.25] as const),
+  className: 'clawd__cowl-edge',
+}
+/** A black edge round the yellow belt's ends, so it never runs into a yellow ground (the masthead). */
+const BELT_EDGE: Layer = { kind: 'rects', px: [[2.7, 7.85, 10.6, 1.3]], fill: 'var(--cowl)' }
 /** Closed round him, asleep, its hem in points. */
 const LEGO_WRAPPED =
   'M2.6 6.2 L13.4 6.2 L14.4 10.6 L13 10 L11.6 10.9 L9.8 10.1 L8 10.9 L6.2 10.1 L4.4 10.9 L3 10 L1.6 10.6 Z'
@@ -2321,13 +2332,13 @@ const legoGlove = (d: string): Layer[] =>
 /** Flying, the glide [65]: his arms straight out, the cape spread under them as two bat wings. */
 const legoGlide = legoPose(
   LEGO_STANDING,
-  [{ kind: 'cape', d: LEGO_CAPE.wing, mirrored: true }],
+  [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: LEGO_CAPE.wing, mirrored: true }],
   [...legoArm('M3 5.4 L0.2 5.4 L0.2 6.4 L3 6.4 Z'), ...legoGlove('M0.4 5.2 L-0.9 5.2 L-0.9 6.6 L0.4 6.6 Z')],
 )
 /** Alarmed, the leap facing us [69]: arms out low from his shoulders, the cape spread wide behind them. */
 const legoAlarmed = legoPose(
   LEGO_STANDING,
-  [LEGO_BACK, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }],
+  [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }],
   [...legoArm('M3.2 5.2 L3.2 6.4 L1.4 8.2 L0.6 7.4 Z'), ...legoGlove('M1.2 7.2 L0.1 8.4 L1 9.3 L2.1 8.1 Z')],
 )
 
