@@ -114,11 +114,11 @@
   /* Inset only, as the unlit disc's rims are, so the light fades in pair by pair. */
   --lens-shade: inset 0 0 0 3px rgb(255 255 255 / 0.25), inset 0 -3px 0 rgb(0 0 0 / 0.25);
   --notice-top: var(--surface);
-  --notice-foot: #26282c;
-  --notice-hover-top: #34363b;
+  --notice-foot: var(--line);
+  --notice-hover-top: var(--raised);
   --notice-hover-foot: #2b2d31;
 
-  /* The Atmosphere: the Batcave's walkway (--decor), still; a faint blue from the cave. */
+  /* The Atmosphere: the Batcave's walkway (--decor), still; no haze over it. */
   --haze: transparent;
   --haze-edge: transparent;
   --haze-inset: -10% -10% auto -10%;
@@ -236,8 +236,8 @@
   --bead-edge: var(--signal);
 }
 [data-theme='the-lego-batman-movie-2017'] .card--stalled {
-  --bead-core: #6c6e68;
-  --bead: #545650;
+  --bead-core: var(--ash);
+  --bead: #6e717a;
   --bead-edge: #3d4044;
   --bead-shine: rgb(255 255 255 / 0.4);
 }
