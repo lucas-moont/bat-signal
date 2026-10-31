@@ -110,6 +110,8 @@
   --lens-rim: #10305a;
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade:
     inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
     inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);
@@ -154,6 +156,16 @@
      leave Bat-Clawd's open cape clear of the menu button. */
   --wordmark-size: 15px;
   --wordmark-tracking: 2px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: color-mix(in srgb, var(--bone) 25%, transparent);
 
   /* The Night Report's pen, in Blue Flame pressed hard for blocked work and sodium for waiting work. */
@@ -168,6 +180,11 @@
   --stamp-size: 12px;
   --stamp-weight: 700;
   --stamp-mask: none;
+  /* The corners of cards, buttons and fields. */
+  --radius: 4px;
+  /* A plastic piece's lit edge and side on cards, notices, the watch strip and sheets: none (an
+     empty shadow, as it joins a shadow list). */
+  --tile-edge: 0 0 transparent;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
@@ -175,6 +192,9 @@
   --stamp-lift: 0px;
   --stamp-paper: transparent;
   --stamp-rule: currentColor;
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: none;
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;

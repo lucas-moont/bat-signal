@@ -36,6 +36,8 @@
      white edge), or none: under the card's words and its lifted stamp, square at the corners. */
   border-image: var(--card-edge);
   border-radius: var(--radius);
+  /* A Theme's tile edge: a plastic piece's lit top and its side below (none as an empty shadow). */
+  box-shadow: var(--tile-edge);
   cursor: pointer;
   transition:
     transform 0.18s var(--ease-out),
@@ -52,7 +54,9 @@
       color-mix(in srgb, var(--raised) 95%, transparent),
       color-mix(in srgb, var(--surface) 95%, transparent)
     );
-  box-shadow: 0 6px 18px -8px var(--accent-glow);
+  box-shadow:
+    var(--tile-edge),
+    0 6px 18px -8px var(--accent-glow);
   border-color: var(--accent-glow);
 }
 .card:focus-visible {
@@ -158,6 +162,12 @@
   opacity: 0.92;
   mask-image: var(--stamp-mask);
 }
+/* What needs the user may be stamped on a plate of its own, under its rule (a lit header, white
+   letters on red); the paper and rule every stamp has otherwise. */
+.stamp--hot {
+  background-color: var(--stamp-hot-paper);
+  border-color: var(--stamp-hot-rule);
+}
 /* On a card, a Theme may lift the stamp over the card's top edge, a title tab over its corner. */
 .card .stamp {
   translate: 0 calc(-1 * var(--stamp-lift));
@@ -170,7 +180,7 @@
    it, in the stamp's own ink (the Alarm color, on these cards). */
 .card--urgent .stamp {
   padding-left: calc(6px + var(--stamp-arrow-room));
-  background: var(--hatch), var(--stamp-paper);
+  background: var(--hatch), var(--stamp-hot-paper);
 }
 .card--urgent .stamp::before {
   content: var(--stamp-arrow);

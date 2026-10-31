@@ -111,6 +111,8 @@
   --lens-rim: var(--signal);
   --lens-bat: var(--abyss);
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade:
     inset 0 0 0 4px color-mix(in srgb, var(--shadow) 35%, transparent),
     inset 0 0 18px color-mix(in srgb, var(--shadow) 55%, transparent);
@@ -153,6 +155,16 @@
   --folder-name-tracking: 0.3px;
   --wordmark-size: 18px;
   --wordmark-tracking: 1.5px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: color-mix(in srgb, var(--bone) 18%, transparent);
 
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23ff5c72' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -167,6 +179,11 @@
   --stamp-size: 10.5px;
   --stamp-weight: var(--display-weight);
   --stamp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* The corners of cards, buttons and fields. */
+  --radius: 4px;
+  /* A plastic piece's lit edge and side on cards, notices, the watch strip and sheets: none (an
+     empty shadow, as it joins a shadow list). */
+  --tile-edge: 0 0 transparent;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
@@ -174,6 +191,9 @@
   --stamp-lift: 0px;
   --stamp-paper: transparent;
   --stamp-rule: currentColor;
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: none;
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;

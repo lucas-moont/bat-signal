@@ -127,6 +127,8 @@
   --lens-rim: var(--blood);
   --lens-bat: var(--chest);
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   --lens-shade: 0 0 transparent;
   --notice-top: var(--surface);
   --notice-foot: var(--smoke);
@@ -178,6 +180,16 @@
   --folder-name-tracking: 1.5px;
   --wordmark-size: 19px;
   --wordmark-tracking: 1px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: color-mix(in srgb, var(--bone) 14%, transparent);
 
   --pen-hot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 5'%3E%3Cpath d='M0 3.1C5 2.2 9 3.7 14 2.9S23 2.1 28 3' fill='none' stroke='%23fee06b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -192,6 +204,11 @@
   --stamp-size: 11px;
   --stamp-weight: 400;
   --stamp-mask: none;
+  /* The corners of cards, buttons and fields. */
+  --radius: 4px;
+  /* A plastic piece's lit edge and side on cards, notices, the watch strip and sheets: none (an
+     empty shadow, as it joins a shadow list). */
+  --tile-edge: 0 0 transparent;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
@@ -199,6 +216,9 @@
   --stamp-lift: 0px;
   --stamp-paper: transparent;
   --stamp-rule: currentColor;
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: none;
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;

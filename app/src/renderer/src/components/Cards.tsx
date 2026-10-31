@@ -1,6 +1,14 @@
 import { motion, AnimatePresence } from 'motion/react'
 import type { AttentionItem, SessionSnapshot } from '@shared/types'
-import { ALERT_INK, attentionCopy, caseHeader, folderName, orderCases, relativeTime } from '@shared/view'
+import {
+  ALERT_INK,
+  attentionCopy,
+  caseHeader,
+  folderName,
+  isHot,
+  orderCases,
+  relativeTime,
+} from '@shared/view'
 import { useWords } from '../words'
 import { BatClawd } from './BatClawd'
 import { Beat, Glow } from './Live'
@@ -72,7 +80,7 @@ export function AttentionList({
               >
                 {URGENT.has(item.kind) && <Glow />}
                 <span className="card__top">
-                  <span className="stamp">{stamp}</span>
+                  <span className={`stamp${isHot(item.kind) ? ' stamp--hot' : ''}`}>{stamp}</span>
                   <span className="card__time">{relativeTime(item.at, now)}</span>
                 </span>
                 <span className="card__title">

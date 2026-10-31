@@ -102,6 +102,8 @@
   --lens-rim: var(--chest);
   --lens-bat: var(--chest);
   --lens-bat-edge: transparent;
+  /* No edge on the unlit disc (an empty shadow, as it joins the rims). */
+  --disc-edge: 0 0 transparent;
   /* Lit, the field prints flat: no inner shading over it, Martin's flat colour. */
   --lens-shade: 0 0 transparent;
   --notice-top: var(--surface);
@@ -140,6 +142,16 @@
   --folder-name-tracking: 0.3px;
   --wordmark-size: 16px;
   --wordmark-tracking: 1px;
+  /* The masthead's plate: none, so the wordmark and the buttons keep their inks on the fade. */
+  --masthead-paper: transparent;
+  --masthead-sheen: none;
+  --masthead-edge: none;
+  --masthead-ink: var(--ash);
+  --masthead-ink-hot: var(--bone);
+  --masthead-hover: var(--surface);
+  --wordmark-ink: var(--accent);
+  /* No relief on the wordmark's letters (an empty shadow, as it joins the glow). */
+  --wordmark-extrude: 0 0 transparent;
   --wordmark-glow: transparent;
 
   /* A heavier, straighter pen: Dragotta's line. */
@@ -155,6 +167,11 @@
   --stamp-size: 9.5px;
   --stamp-weight: 400;
   --stamp-mask: none;
+  /* The corners of cards, buttons and fields. */
+  --radius: 4px;
+  /* A plastic piece's lit edge and side on cards, notices, the watch strip and sheets: none (an
+     empty shadow, as it joins a shadow list). */
+  --tile-edge: 0 0 transparent;
   /* Arkham Asylum's menu language (#147; Cards.css, App.css, NightReport.css): no paper or edge
      on the cards, stamps in place in their own ink, no hatch, arrow or spatter, captions straight. */
   --card-paper: transparent;
@@ -162,6 +179,9 @@
   --stamp-lift: 0px;
   --stamp-paper: transparent;
   --stamp-rule: currentColor;
+  /* What needs the user is stamped on the paper and rule every stamp has. */
+  --stamp-hot-paper: var(--stamp-paper);
+  --stamp-hot-rule: var(--stamp-rule);
   --hatch: none;
   --stamp-arrow: none;
   --stamp-arrow-room: 0px;

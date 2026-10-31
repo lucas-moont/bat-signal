@@ -51,13 +51,16 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  /* Unlit: a dead lamp, dark glass with a warm rim. */
+  /* Unlit: a dead lamp, dark glass with a warm rim, and a Theme's edge on it (a moulded piece's lit
+     top and its side), last: shadows fade into the lit disc's pair by pair, so the rims must keep
+     the lit lens's places for the light to fade in rather than snap. */
   background: radial-gradient(circle at 40% 35% in srgb, var(--glass-shine), var(--glass) 62%, var(--abyss));
   border: 1.5px solid var(--line);
   box-shadow:
     inset 0 0 0 4px var(--disc-rim-inner),
     inset 0 0 0 5px var(--disc-rim-outer),
-    0 4px 14px color-mix(in srgb, var(--shadow) 70%, transparent);
+    0 4px 14px color-mix(in srgb, var(--shadow) 70%, transparent),
+    var(--disc-edge);
   transition:
     background 0.4s,
     border-color 0.4s,
@@ -149,8 +152,10 @@
   background: linear-gradient(180deg in srgb, var(--notice-top), var(--notice-foot));
   border: 1px solid var(--line);
   border-left: 3px solid var(--ash);
-  border-radius: 4px;
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--shadow) 80%, transparent);
+  border-radius: var(--radius);
+  box-shadow:
+    var(--tile-edge),
+    0 10px 28px color-mix(in srgb, var(--shadow) 80%, transparent);
   cursor: pointer;
 }
 .notice:hover {
@@ -161,6 +166,7 @@
   rotate: var(--notice-tilt);
   border-left-color: var(--signal-hot);
   box-shadow:
+    var(--tile-edge),
     0 10px 28px color-mix(in srgb, var(--shadow) 80%, transparent),
     0 0 22px -6px var(--signal-glow);
 }

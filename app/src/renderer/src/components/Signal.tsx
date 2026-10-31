@@ -14,7 +14,7 @@ import { CalmContext, useCalm } from '../calm'
 import { Wearing } from '../theme'
 import { useSettings, useSnapshotState, useWindowMode } from '../hooks'
 import { useWords } from '../words'
-import { mascotMood } from '@shared/view'
+import { isHot, mascotMood } from '@shared/view'
 import { Balloon } from './Balloon'
 import { BatClawd } from './BatClawd'
 import { BatEmblem } from './BatEmblem'
@@ -192,7 +192,7 @@ function NoticeCard({
         title={voice.signal.openCase(terms)}
       >
         <span className="notice__stamp">
-          <span className="stamp">{notice.stamp}</span>
+          <span className={`stamp${isHot(notice.kind) ? ' stamp--hot' : ''}`}>{notice.stamp}</span>
           <Balloon kind={notice.kind} />
         </span>
         <strong className="notice__title">{notice.title}</strong>

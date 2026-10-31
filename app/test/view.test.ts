@@ -5,6 +5,7 @@ import {
   attentionCopy,
   caseHeader,
   folderName,
+  isHot,
   lastReply,
   mascotMood,
   orderCases,
@@ -373,5 +374,19 @@ describe('pluginSilent', () => {
   it('is not silent when every session has been heard, or in demos that do not say', () => {
     expect(pluginSilent({ sessions: [], attention: [], unheard: [] })).toBe(false)
     expect(pluginSilent({ sessions: [], attention: [] })).toBe(false)
+  })
+})
+
+// What needs the user is stamped hot wherever it shows (cards, notices, the case detail): blocked
+// work, never what only waits, and never a note about a case.
+describe('isHot', () => {
+  it('stamps blocked work hot', () => {
+    expect(isHot('permission')).toBe(true)
+    expect(isHot('error')).toBe(true)
+  })
+
+  it('leaves waiting, replies, stalls and case notes plain', () => {
+    for (const kind of ['waiting', 'reply', 'stalled', 'session-opened', 'task-done'])
+      expect(isHot(kind), kind).toBe(false)
   })
 })

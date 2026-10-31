@@ -1,5 +1,5 @@
 import type { AttentionItem, SessionSnapshot, TaskStatus } from '@shared/types'
-import { attentionCopy, caseHeader, plainPreview, relativeTime, taskLabel } from '@shared/view'
+import { attentionCopy, caseHeader, isHot, plainPreview, relativeTime, taskLabel } from '@shared/view'
 import { useWords } from '../words'
 import { Icon, type IconName } from './Icon'
 import { Section } from './Section'
@@ -66,7 +66,7 @@ export function CaseDetail({
           const { stamp, line } = attentionCopy(a, words)
           return (
             <div key={`${a.kind}:${a.taskId ?? ''}`} className={`alert alert--${a.kind}`}>
-              <span className="stamp">{stamp}</span>
+              <span className={`stamp${isHot(a.kind) ? ' stamp--hot' : ''}`}>{stamp}</span>
               <span className="alert__line">{line}</span>
               <span className="card__time">{relativeTime(a.at, now)}</span>
             </div>

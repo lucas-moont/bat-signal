@@ -123,7 +123,7 @@ function Folder({
     >
       <span className="folder__preview" aria-hidden="true">
         <BatClawdStill size={58} />
-        <span className="stamp">{terms.stamp.permission}</span>
+        <span className="stamp stamp--hot">{terms.stamp.permission}</span>
       </span>
       <span className="folder__name">{voice.theme.name}</span>
       <span className="folder__credit">{credit(voice.theme.film)}</span>

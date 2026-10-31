@@ -110,7 +110,9 @@ function Row({ sessionId, row }: { sessionId: string; row: WatchRow }) {
         aria-busy={busy}
         title={voice.terminal.go}
       >
-        <span className="watch-row__stamp stamp">{row.stamp}</span>
+        <span className={`watch-row__stamp stamp${row.tone === 'hot' ? ' stamp--hot' : ''}`}>
+          {row.stamp}
+        </span>
         <span className="watch-row__title">{row.title}</span>
         {row.progress && <span className="watch-row__progress">{row.progress}</span>}
         {(copied || row.line) && (
