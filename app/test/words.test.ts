@@ -549,8 +549,22 @@ describe("VERY DARK GREY's words", () => {
   // The LEGO word only in the credit, as the title of the work (lego-batman.md, section 3.2).
   it('names the LEGO Group only in its credit', () => {
     expect(voice.theme.film).toMatch(/LEGO®/)
-    const { film, ...rest } = voice.theme
-    expect(JSON.stringify(rest) + voice.tagline + voice.report.name).not.toMatch(/lego/i)
-    expect(film).not.toBe('')
+    // Every string of its Voice and Lexicon but the credit, and every line its functions write.
+    const lines: string[] = []
+    const walk = (value: unknown): void => {
+      if (typeof value === 'string') lines.push(value)
+      else if (typeof value === 'function')
+        // Its lines take the terms, a count, a flag or the time: each tried in turn.
+        for (const arg of [STANDARD_TERMS, 1, true, new Date(2026, 9, 31, 21, 40)])
+          try {
+            lines.push(String(value(arg)))
+          } catch {
+            // Not this one's argument.
+          }
+      else if (value && typeof value === 'object') Object.values(value).forEach(walk)
+    }
+    walk({ terms, voice: { ...voice, theme: { ...voice.theme, film: '' } } })
+    expect(lines.length).toBeGreaterThan(20)
+    expect(lines.filter((line) => /lego/i.test(line))).toEqual([])
   })
 })
