@@ -317,8 +317,9 @@ export interface NoiseAtmosphere extends Scene {
 }
 
 /**
- * A still sky (SAME BAT-TIME's): nothing crosses it, so it is only its backdrop, still while the
- * Atmosphere is on.
+ * A still scene: nothing crosses it, so it is only its backdrop (SAME BAT-TIME's sky and its Signal)
+ * or nothing at all, the Theme's decor carrying the scene (VERY DARK GREY's walkway), still while
+ * the Atmosphere is on.
  */
 export interface SkyAtmosphere extends Scene {
   kind: 'sky'
