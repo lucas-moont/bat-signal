@@ -239,7 +239,7 @@
   padding-left: 26px;
 }
 [data-theme='the-lego-batman-movie-2017'] .card--urgent {
-  --bead-core: var(--lens-core);
+  --bead-core: #ffd0c4;
   --bead: var(--signal-hot);
   --bead-edge: var(--signal);
 }
