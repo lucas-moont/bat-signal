@@ -79,6 +79,8 @@
      shoulders, the lit chest blue-grey, the classic bat of the book's Signal small on it, a gold capsule
      belt, and a huge blue bell of a cape. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #2b5770;
   --cowl-edge: color-mix(in srgb, var(--bone) 24%, transparent);

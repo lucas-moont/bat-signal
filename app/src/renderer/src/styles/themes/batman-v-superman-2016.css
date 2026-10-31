@@ -73,6 +73,8 @@
      sleeves so both arms read on it, its dark lining, a rust scarf, goggles up on the cowl, olive
      pants, a brass buckle, and the BvS bat on the charcoal suit between the lapels. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #1f150d;
   --cowl-edge: color-mix(in srgb, #e8e1d9 22%, transparent);

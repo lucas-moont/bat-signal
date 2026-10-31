@@ -90,6 +90,8 @@
      boots, a faint bone rim on cowl and cape. Its blacks match the disc's and --shadow today but are
      written out, not aliased: the disc and the shadows must not follow the suit. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0908;
   --cowl-edge: color-mix(in srgb, var(--bone) 22%, transparent);

@@ -1135,3 +1135,65 @@ export const SAME_BAT_TIME_WORDS: Words = {
     balloon: { permission: 'POW!', error: 'POW!', waiting: 'BAM!', reply: 'BAM!' },
   },
 }
+
+/**
+ * VERY DARK GREY's words, after The LEGO Batman Movie (2017) (lego-batman.md, sections 6 and 7):
+ * Batman narrating his own app, in the first person, aloud, sure every case is about him, and lonely
+ * under it once, in the empty list. Self-aware where SAME BAT-TIME's narrator is sincere; a
+ * performance where VENGEANCE's journal is private.
+ */
+export const VERY_DARK_GREY_WORDS: Words = {
+  terms: {
+    ...STANDARD_TERMS,
+    // I NEED A HERO is a live game-software mark (very-dark-grey-build.md, section 8): the hero suits up.
+    needsYou: { label: 'Cape up', count: (n) => `${n} to cape up for` },
+    stamp: {
+      ...STANDARD_TERMS.stamp,
+      // Everyone wants his signature: an approval. Kept by the maintainer, a common word (section 8).
+      permission: 'Autograph?',
+      error: 'Epic fail',
+      // HELLO is many others' live software mark: he waits, loudly.
+      waiting: 'Any day now',
+      reply: 'Fan mail',
+    },
+  },
+  voice: {
+    ...STANDARD_VOICE,
+    // The work's title as the LEGO Group's Fair Play asks: the word as an adjective, with ®, only here.
+    theme: { name: 'VERY DARK GREY', film: 'The LEGO® Batman Movie (2017)' },
+    tagline: 'Batman. Also in this app.',
+    empty: {
+      ...STANDARD_VOICE.empty,
+      quiet: { ...STANDARD_VOICE.empty.quiet, title: "Nobody needs Batman. Gotham's fine. You're welcome." },
+      // The loneliness under the ego, once [46] [60].
+      noCases: {
+        ...STANDARD_VOICE.empty.noCases,
+        title: (t) => `No ${lower(t.case.many)}. Just me, the cave and a microwave dinner.`,
+      },
+    },
+    report: {
+      ...STANDARD_VOICE.report,
+      name: 'Highlights',
+      dateline: datelineOf('STARRING BATMAN'),
+      signature: 'These pieces still need you.',
+      nil: (t) => `Nothing waits on you. Every ${lower(t.case.one)} is handled. By me.`,
+      caseNotes: () => 'Parts list',
+      end: (waiting) => (waiting ? 'Some assembly required.' : 'Built. By me. Mostly by me.'),
+    },
+    signal: {
+      ...STANDARD_VOICE.signal,
+      openTip: (lit) =>
+        (lit ? 'Someone needs Batman. ' : 'All quiet. Because of me. ') + STANDARD_VOICE.signal.openTip(lit),
+    },
+    settings: {
+      ...STANDARD_VOICE.settings,
+      kicker: 'The Batcomputer',
+      atmosphere: {
+        label: 'The Batcave',
+        hint: (t) => `The Batcave's walkway behind the ${lower(t.case.many)}`,
+      },
+    },
+    // On the perch he dines alone, a covered plate at his side [46] [60].
+    mascot: { ...STANDARD_VOICE.mascot, watching: 'Bat-Clawd, dining alone' },
+  },
+}
