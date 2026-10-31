@@ -74,6 +74,8 @@
   /* Bat-Clawd's suit (outfit I, #95): Burton's black rubber lifted to a plum-grey so it reads on
      the smog, a steel sheen on the cowl, the brass belt, and a black cape rimmed in the snow's steel. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #0b0a0b;
   --cowl-edge: color-mix(in srgb, var(--ink-live) 35%, transparent);

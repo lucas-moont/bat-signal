@@ -91,6 +91,8 @@
      touches his cape and mask, the rim of light on cowl and cape muted to a neutral blue, a blue-grey
      suit, the yellow oval, the gold belt, black gloves and boots. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #07080e;
   --cowl-edge: #4a66b0;

@@ -80,6 +80,8 @@
      big black bat on his chest, a suit-grey belt so the bat never merges with it, a black cowl and
      a heavy black cape with two long tails, over his shoulders when something needs you. */
   --clawd-eye: var(--bone);
+  /* No glow round his eyes. */
+  --eye-glow: none;
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #081114;
   --cowl-edge: color-mix(in srgb, var(--bone) 22%, transparent);

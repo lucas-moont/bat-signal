@@ -76,6 +76,9 @@
      the film's white lenses; the torso black too, IN BLACK [44]; a yellow pouch belt, its grooves
      darker; the cape black cloth; a neutral rim. */
   --clawd-eye: var(--bone);
+  /* His eyes stay white (the Costume Rule), lit like the film's lenses: a neon blue glow hugging
+     them [06] [24] [33] (picked on screen), clear of his orange jaw. */
+  --eye-glow: drop-shadow(0 0 0.25px var(--ink-soft)) drop-shadow(0 0 0.5px var(--ink-soft));
   --clawd-eye-dim: color-mix(in srgb, var(--clawd-eye) 18%, transparent);
   --cowl: #141519;
   --cowl-edge: color-mix(in srgb, var(--ash) 34%, transparent);
@@ -265,9 +268,4 @@
 /* The tabs on a black bar under the yellow plate, as the title cards' black [44]. */
 [data-theme='the-lego-batman-movie-2017'] .tabs {
   background: var(--header-fade);
-}
-/* His eyes stay white (the Costume Rule), lit like the film's lenses: a neon blue glow round them
-   [06] [24] [33] (picked on screen). */
-[data-theme='the-lego-batman-movie-2017'] .clawd__eyes {
-  filter: drop-shadow(0 0 0.25px var(--ink-soft)) drop-shadow(0 0 0.5px var(--ink-soft));
 }
