@@ -2270,8 +2270,6 @@ const LEGO_BELOW = [
 const legoMap = (chest: readonly string[], rows: readonly string[] = LEGO_BELOW) =>
   map(chest, rows, LEGEND, DECO_HEAD)
 const LEGO_STANDING = legoMap([SUIT, SUIT, SUIT])
-/** His arms out low from his sides, the leap facing us [69]. */
-const LEGO_ARMS_OUT = legoMap([SUIT, SUIT, '.gSSSSSSSSSSSSg.'])
 const LEGO_SEATED = legoMap([SUIT, SUIT, SUIT, SUIT], [])
 
 /** The pouch belt [62] [75]: two pouches each side of a plain block, dark grooves between them. */
@@ -2313,31 +2311,25 @@ const legoAsleep: Pose = (() => {
   return { ...seat, front: [...seat.front, LEGO_SHINE] }
 })()
 
+/** An arm outlined in the neutral rim so it reads on the black cape, left; mirrored for the right. */
+const legoArm = (d: string): Layer[] =>
+  outlined(d, 'var(--suit)').map((layer) => ({ ...layer, mirrored: true }))
+/** A glove at the end of an arm, edged the same way, left; mirrored for the right. */
+const legoGlove = (d: string): Layer[] =>
+  outlined(d, 'var(--gloves)').map((layer) => ({ ...layer, mirrored: true }))
+
 /** Flying, the glide [65]: his arms straight out, the cape spread under them as two bat wings. */
 const legoGlide = legoPose(
   LEGO_STANDING,
   [{ kind: 'cape', d: LEGO_CAPE.wing, mirrored: true }],
-  [
-    {
-      kind: 'rects',
-      px: [
-        [0, 5.4, 3, 1],
-        [13, 5.4, 3, 1],
-      ],
-      fill: 'var(--suit)',
-    },
-    {
-      kind: 'rects',
-      px: [
-        [-0.8, 5.3, 1, 1.2],
-        [15.8, 5.3, 1, 1.2],
-      ],
-      fill: 'var(--gloves)',
-    },
-  ],
+  [...legoArm('M3 5.4 L0.2 5.4 L0.2 6.4 L3 6.4 Z'), ...legoGlove('M0.4 5.2 L-0.9 5.2 L-0.9 6.6 L0.4 6.6 Z')],
 )
-/** Alarmed, the leap facing us [69]: arms out low, the cape spread wide either side. */
-const legoAlarmed = legoPose(LEGO_ARMS_OUT, [LEGO_BACK, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }])
+/** Alarmed, the leap facing us [69]: arms out low from his shoulders, the cape spread wide behind them. */
+const legoAlarmed = legoPose(
+  LEGO_STANDING,
+  [LEGO_BACK, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }],
+  [...legoArm('M3.2 5.2 L3.2 6.4 L1.4 8.2 L0.6 7.4 Z'), ...legoGlove('M1.2 7.2 L0.1 8.4 L1 9.3 L2.1 8.1 Z')],
+)
 
 /**
  * Dinner for one [46] [60] (lego-batman.md, section 8.4): seated alone at a long low table, wider
