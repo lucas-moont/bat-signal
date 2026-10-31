@@ -557,6 +557,12 @@ export const SILENT_PREDATOR_RAIN: RainAtmosphere = {
  * fields, the Theme's decor, nothing crosses it; the series' Bat-Signal glows low over the skyline
  * [17] (picked on screen), pale, never lit as the alarm.
  */
+/**
+ * VERY DARK GREY's Batcave: nothing moves. Its walkway, built of pieces, is a still drawing in the
+ * Theme's decor (--decor), so its canvas paints nothing.
+ */
+export const VERY_DARK_GREY_CAVE: SkyAtmosphere = { kind: 'sky' }
+
 export const SAME_BAT_TIME_SKY: SkyAtmosphere = {
   kind: 'sky',
   backdrop: {

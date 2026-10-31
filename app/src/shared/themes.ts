@@ -13,6 +13,7 @@ import {
   SAME_BAT_TIME_SKY,
   SILENT_PREDATOR_RAIN,
   VENGEANCE_RAIN,
+  VERY_DARK_GREY_CAVE,
   WATCHFUL_PROTECTOR_WINDOWS,
   type Atmosphere,
 } from './atmospheres'
@@ -28,6 +29,7 @@ import {
   EMBLEM_1966,
   EMBLEM_1989,
   EMBLEM_1992,
+  EMBLEM_2017,
   WINGS,
   type Emblem,
 } from './emblems'
@@ -42,6 +44,7 @@ import {
   SAME_BAT_TIME_SUIT,
   SILENT_PREDATOR_SUIT,
   VENGEANCE_SUIT,
+  VERY_DARK_GREY_SUIT,
   WATCHFUL_PROTECTOR_SUIT,
   type Suit,
 } from './suits'
@@ -56,6 +59,7 @@ import {
   SAME_BAT_TIME_WORDS,
   SILENT_PREDATOR_WORDS,
   STANDARD_WORDS,
+  VERY_DARK_GREY_WORDS,
   WATCHFUL_PROTECTOR_WORDS,
   withLexicon,
   type Words,
@@ -73,6 +77,7 @@ export const THEME_IDS = [
   'batman-the-animated-series-1992',
   'batman-arkham-2009',
   'batman-1966',
+  'the-lego-batman-movie-2017',
 ] as const
 export type ThemeId = (typeof THEME_IDS)[number]
 
@@ -209,6 +214,18 @@ export const THEMES: Record<ThemeId, Theme> = {
     emblem: EMBLEM_1966,
     suit: SAME_BAT_TIME_SUIT,
     atmosphere: SAME_BAT_TIME_SKY,
+  },
+  /**
+   * The LEGO® Batman Movie (2017), VERY DARK GREY: the whole app built of plastic pieces in the film's
+   * black and yellow, the Batcomputer's red for what needs you, dinner for one on the perch.
+   */
+  'the-lego-batman-movie-2017': {
+    flag: 'brick',
+    ground: '#141517',
+    words: VERY_DARK_GREY_WORDS,
+    emblem: EMBLEM_2017,
+    suit: VERY_DARK_GREY_SUIT,
+    atmosphere: VERY_DARK_GREY_CAVE,
   },
 }
 
