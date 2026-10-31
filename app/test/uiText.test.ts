@@ -86,7 +86,9 @@ function inlineText(path: string, text: string): string[] {
 describe('the UI text', () => {
   // A Theme's Voice and Lexicon swap words in the catalogue (shared/words.ts); a word written in a
   // component would stay the same under every Theme.
-  it('all comes from the catalogue', () => {
+  // It parses every renderer source with TypeScript: about 5 seconds on Windows, so it gets more room
+  // than the default 5 (it timed out on CI and on slower machines).
+  it('all comes from the catalogue', { timeout: 30_000 }, () => {
     const files = rendererSources('.tsx', '.ts').filter(({ path }) => path !== 'bridge.ts')
     expect(files.flatMap(({ path, text }) => inlineText(path, text))).toEqual([])
   })
