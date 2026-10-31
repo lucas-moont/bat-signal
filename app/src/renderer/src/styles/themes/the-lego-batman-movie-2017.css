@@ -262,7 +262,8 @@
     0 2px 0 var(--blood);
 }
 /* The cards as tiles: no border line, the tile edge carries them. */
-[data-theme='the-lego-batman-movie-2017'] .card {
+[data-theme='the-lego-batman-movie-2017'] .card,
+[data-theme='the-lego-batman-movie-2017'] .card:hover {
   border-color: transparent;
 }
 /* The tabs on a black bar under the yellow plate, as the title cards' black [44]. */
