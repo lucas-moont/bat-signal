@@ -213,7 +213,13 @@ const pose = (
 })
 
 /** Sitting, wrapped in a cape closed in front of him: only his gloved hands and boots show. */
-const seated = (map: OutfitMap, wrapped: string, behind: Layer[] = [COWL_EDGE]): Pose => ({
+const seated = (
+  map: OutfitMap,
+  wrapped: string,
+  behind: Layer[] = [COWL_EDGE],
+  /** More in front of the cape (a cowl's shine). */
+  front: Layer[] = [],
+): Pose => ({
   map,
   behind,
   front: [
@@ -236,6 +242,7 @@ const seated = (map: OutfitMap, wrapped: string, behind: Layer[] = [COWL_EDGE]):
       ],
       fill: 'var(--gloves)',
     },
+    ...front,
   ],
   eyes: 'shut',
 })
@@ -2068,9 +2075,12 @@ const WEST_HANGING: Layer[] = [WEST_BACK, { kind: 'cape', d: WEST_CAPE.hanging, 
 const westPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, behind, [...front, BROWS], { chest: WEST_CHEST })
 
-/** An arm in the suit's lavender, outlined so it reads on the cowl's violet (left; mirrored). */
-const satinArm = (arm: string): Layer[] =>
-  outlined(arm, 'var(--suit)').map((layer) => ({ ...layer, mirrored: true }))
+/**
+ * An arm (or a glove) in the suit's color, outlined in the neutral rim so it reads on a cowl or cape
+ * of the same dark (left; mirrored): SAME BAT-TIME's satin, VERY DARK GREY's black.
+ */
+const edgedArm = (arm: string, fill = 'var(--suit)'): Layer[] =>
+  outlined(arm, fill).map((layer) => ({ ...layer, mirrored: true }))
 /** Satin gloves, each edged in the neutral rim so they stand off the cowl of the same violet. */
 const satinGloves = (gloves: Px[]): Layer[] => [
   {
@@ -2129,7 +2139,7 @@ const westAlarmed = westPose(
 const V_ARM = 'M3 5.2 L3 6.2 L0.4 4.6 L-0.6 3.6 L-0.2 2.9 L2.6 2.4 L3.6 2.4 L3.6 3.6 L2.6 3.6 L0.8 3.9 Z'
 /** The V drawn out to the temples: the gloves beside the cowl, or a unit further out on the beat. */
 const theV = (out = 0): Layer[] => [
-  ...satinArm(V_ARM),
+  ...edgedArm(V_ARM),
   ...satinGloves([
     [2.4 - out, 2.2, 1.6, 1.6],
     [12 + out, 2.2, 1.6, 1.6],
@@ -2138,7 +2148,7 @@ const theV = (out = 0): Layer[] => [
 /** The V meeting at his nose, a beat before it is drawn out: the gloves together under his eyes. */
 const V_AT_NOSE_ARM = 'M3 5.2 L3 6.2 L1 5.4 L0.6 4.4 L1.4 3.8 L6.4 4 L7.4 4 L7.4 5 L6.4 5 L2.2 4.8 Z'
 const AT_THE_NOSE: Layer[] = [
-  ...satinArm(V_AT_NOSE_ARM),
+  ...edgedArm(V_AT_NOSE_ARM),
   ...satinGloves([
     [6.4, 4, 1.2, 1],
     [8.4, 4, 1.2, 1],
@@ -2266,11 +2276,8 @@ const LEGO_BELOW = [
   ...twice(['....S.S..S.S....']),
   ...twice(['....g.g..g.g....']),
 ]
-/** His map under the earless head the ears stand behind. */
-const legoMap = (chest: readonly string[], rows: readonly string[] = LEGO_BELOW) =>
-  map(chest, rows, LEGEND, DECO_HEAD)
-const LEGO_STANDING = legoMap([SUIT, SUIT, SUIT])
-const LEGO_SEATED = legoMap([SUIT, SUIT, SUIT, SUIT], [])
+/** Under the earless head the ears stand behind, as SILENT PREDATOR's; seated, the same as his. */
+const LEGO_STANDING = predatorMap([SUIT, SUIT, SUIT], LEGO_BELOW)
 
 /** The pouch belt [62] [75]: two pouches each side of a plain block, dark grooves between them. */
 const LEGO_POUCHES: Layer = {
@@ -2317,46 +2324,43 @@ const LEGO_WRAPPED =
 const legoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
   pose(map, [...LEGO_EARS, ...behind], [LEGO_SHINE, ...front], { chest: LEGO_CHEST, edge: DECO_EDGE })
 
-const legoAsleep: Pose = (() => {
-  const seat = seated(LEGO_SEATED, LEGO_WRAPPED, [...LEGO_EARS, DECO_EDGE])
-  return { ...seat, front: [...seat.front, LEGO_SHINE] }
-})()
+const legoAsleep = seated(PREDATOR_SEATED, LEGO_WRAPPED, [...LEGO_EARS, DECO_EDGE], [LEGO_SHINE])
 
-/** An arm outlined in the neutral rim so it reads on the black cape, left; mirrored for the right. */
-const legoArm = (d: string): Layer[] =>
-  outlined(d, 'var(--suit)').map((layer) => ({ ...layer, mirrored: true }))
-/** A glove at the end of an arm, edged the same way, left; mirrored for the right. */
-const legoGlove = (d: string): Layer[] =>
-  outlined(d, 'var(--gloves)').map((layer) => ({ ...layer, mirrored: true }))
-
+/**
+ * Standing in the air, the cape spread from his shoulders (one half; mirrored) and carried on behind
+ * his legs, his arm and glove edged so they read on it.
+ */
+const legoSpread = (cape: string, arm: string, glove: string) =>
+  legoPose(
+    LEGO_STANDING,
+    [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: cape, mirrored: true }],
+    [...edgedArm(arm), ...edgedArm(glove, 'var(--gloves)')],
+  )
 /** Flying, the glide [65]: his arms straight out, the cape spread under them as two bat wings. */
-const legoGlide = legoPose(
-  LEGO_STANDING,
-  [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: LEGO_CAPE.wing, mirrored: true }],
-  [...legoArm('M3 5.4 L0.2 5.4 L0.2 6.4 L3 6.4 Z'), ...legoGlove('M0.4 5.2 L-0.9 5.2 L-0.9 6.6 L0.4 6.6 Z')],
+const legoGlide = legoSpread(
+  LEGO_CAPE.wing,
+  'M3 5.4 L0.2 5.4 L0.2 6.4 L3 6.4 Z',
+  'M0.4 5.2 L-0.9 5.2 L-0.9 6.6 L0.4 6.6 Z',
 )
 /** Alarmed, the leap facing us [69]: arms out low from his shoulders, the cape spread wide behind them. */
-const legoAlarmed = legoPose(
-  LEGO_STANDING,
-  [BELT_EDGE, LEGO_BACK, LEG_EDGES, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }],
-  [...legoArm('M3.2 5.2 L3.2 6.4 L1.4 8.2 L0.6 7.4 Z'), ...legoGlove('M1.2 7.2 L0.1 8.4 L1 9.3 L2.1 8.1 Z')],
+const legoAlarmed = legoSpread(
+  LEGO_CAPE.open,
+  'M3.2 5.2 L3.2 6.4 L1.4 8.2 L0.6 7.4 Z',
+  'M1.2 7.2 L0.1 8.4 L1 9.3 L2.1 8.1 Z',
 )
 
 /**
  * Dinner for one [46] [60] (lego-batman.md, section 8.4): seated alone at a long low table, wider
  * than he is, a covered plate at his side. The table's top with its lit edge, its two legs.
  */
+const TABLE_TOP = [-3.4, 7.5, 22.8, 1.2] as const
 const TABLE: Layer[] = [
-  { kind: 'rects', px: [[-3.4, 7.5, 22.8, 1.2]], fill: 'var(--table)' },
-  { kind: 'rects', px: [[-3.4, 7.5, 22.8, 0.3]], fill: 'var(--table-shine)' },
   {
     kind: 'rects',
-    px: [
-      [-2.8, 8.7, 0.8, 2.3],
-      [18, 8.7, 0.8, 2.3],
-    ],
+    px: [TABLE_TOP, [-2.8, 8.7, 0.8, 2.3], [18, 8.7, 0.8, 2.3]],
     fill: 'var(--table)',
   },
+  { kind: 'rects', px: [[TABLE_TOP[0], TABLE_TOP[1], TABLE_TOP[2], 0.3]], fill: 'var(--table-shine)' },
 ]
 /** The cloche on its plate at his left, lifted `lift` units off it. */
 const cloche = (lift = 0): Layer[] => {
@@ -2378,7 +2382,7 @@ const cloche = (lift = 0): Layer[] => {
 /** Seated at the table, his gloves on it, and whatever is laid in front. */
 const atTable = (front: Layer[]): Pose =>
   legoPose(
-    LEGO_SEATED,
+    PREDATOR_SEATED,
     [],
     [
       ...TABLE,
@@ -2393,7 +2397,7 @@ const atTable = (front: Layer[]): Pose =>
       ...front,
     ],
   )
-const SEATED_ALONE = legoPose(LEGO_SEATED, [])
+const SEATED_ALONE = legoPose(PREDATOR_SEATED, [])
 const DINNER_HELD = atTable(cloche())
 /** He sits; the table snaps in under his hands; the cloche lands; held, his eyes down to it. */
 const DINNER_FOR_ONE: Script = [
