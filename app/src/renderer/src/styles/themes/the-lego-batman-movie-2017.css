@@ -182,7 +182,8 @@
   --tile-edge:
     inset 0 1px 0 rgb(255 255 255 / 0.26), inset 0 -1px 0 rgb(0 0 0 / 0.45), 0 4px 0 #1a1b1e,
     0 7px 10px rgb(0 0 0 / 0.55);
-  --card-paper: transparent;
+  /* Solid plastic: the walkway never shows through a card. */
+  --card-paper: var(--surface);
   --card-edge: none;
   --stamp-lift: 0px;
   --stamp-paper: transparent;
@@ -254,4 +255,8 @@
 /* The cards as tiles: a sheen across their top, no border line, the tile edge carrying them. */
 [data-theme='the-lego-batman-movie-2017'] .card {
   border-color: transparent;
+}
+/* The tabs on a black bar under the yellow plate, as the title cards' black [44]. */
+[data-theme='the-lego-batman-movie-2017'] .tabs {
+  background: var(--header-fade);
 }
