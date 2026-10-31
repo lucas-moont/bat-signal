@@ -102,15 +102,14 @@
   --emblem-plate: var(--belt);
   --emblem-plate-rim: var(--chest);
 
-  /* The Signal disc. Unlit: a round dark plastic piece, a lit top and its side. Lit: the big red
-     button [33], a translucent piece lit from inside, a highlight on its dome. */
+  /* The Signal disc: the LEGO Bat-Signal [853651], its dome smoky unlit and lit yellow (below). */
   --disc-bat: var(--line);
   --glass-shine: #4a4d55;
   --glass: #232529;
   --disc-rim-inner: var(--abyss);
   --disc-rim-outer: var(--line);
-  --lens-core: #cdf3fb;
-  --lens-rim: #7fe3f5;
+  --lens-core: #fff3c2;
+  --lens-rim: #ffe680;
   --lens-bat: var(--chest);
   --lens-bat-edge: transparent;
   --disc-edge: 0 4px 0 #050607;
@@ -211,20 +210,20 @@
   --mark: none;
   --mark-lit: none;
 
-  /* Lit: the LEGO Bat-Signal [853651] lit from inside like neon, in the Batcomputer's cyan as measured
-     [36]: a white heart, the cyan round it, a brighter rim (picked on screen over the red button, the
-     neon bat, gold, blue and warm white). The one place the Theme lights in another color than its
-     alarm: a recorded exception (jury-wave-3.md, section 9, decision 21). */
+  /* Lit: the LEGO Bat-Signal [853651] lit from inside like neon, in the Theme's own yellow (the
+     masthead's and the belt's): a white heart, the yellow round it, a brighter rim (picked on screen
+     over the red button, the Batcomputer's cyan, gold and amber). The one place the Theme lights in
+     another color than its alarm: a recorded exception (jury-wave-3.md, section 9, decision 21). */
   --disc-lens:
     radial-gradient(ellipse 26% 14% at 34% 22% in srgb, rgb(255 255 255 / 0.9), transparent 70%),
     radial-gradient(
       circle at 50% 50% in srgb,
       #ffffff 0%,
       var(--lens-core) 22%,
-      #2fbad8 52%,
-      #0a6f8c 78%,
+      var(--belt) 52%,
+      #a67c00 78%,
       var(--lens-rim) 90%,
-      #0a6f8c 100%
+      #a67c00 100%
     );
 }
 
@@ -298,16 +297,24 @@
     0 4px 0 #2a2c30,
     0 7px 12px rgb(0 0 0 / 0.5);
 }
-/* Lit, its neon spills past it: the rim's light, then the cyan's bloom. */
+/* Lit, its neon spills past it: the rim's light, then the yellow's bloom. */
 [data-theme='the-lego-batman-movie-2017'] .disc--lit .disc__face {
   box-shadow:
     inset 0 0 6px var(--lens-rim),
     inset 0 0 0 2px var(--lens-rim),
     0 0 6px var(--lens-rim),
-    0 0 16px #2fbad8,
-    0 0 34px #2fbad8,
-    0 0 60px #0a6f8c;
+    0 0 16px var(--belt),
+    0 0 34px var(--belt),
+    0 0 60px #a67c00;
 }
 [data-theme='the-lego-batman-movie-2017'] .disc__halo {
-  background: radial-gradient(circle in srgb, rgb(47 186 216 / 0.45) 40%, transparent 70%);
+  background: radial-gradient(
+    circle in srgb,
+    color-mix(in srgb, var(--belt) 45%, transparent) 40%,
+    transparent 70%
+  );
+}
+/* On the Bat-Signal the bat is alone, without its oval, in both states (picked on screen). */
+[data-theme='the-lego-batman-movie-2017'] .disc .emblem__plate {
+  display: none;
 }
