@@ -249,6 +249,35 @@ export const OVAL_1966 = { box: { x: 26.62, y: 0, width: 66.76, height: 48 }, ri
 export const EMBLEM_1966 = emblem(BAT_1966, 'none', OVAL_1966)
 
 /**
+ * The bat printed on the minifigure in The LEGO Batman Movie (2017), on the same 120x48 grid: the
+ * 1989 logo's construction, flattened, its wings running out to the yellow ring, 2.39:1. Traced pixel
+ * by pixel from the LEGO Group's own front-on photograph of the figure [62], its halves averaged, and
+ * checked against the key chain [63] and sixty stacked frames of the film's chest [61]
+ * (very-dark-grey-build.md, section 3).
+ */
+export const BAT_2017 =
+  'M60 8 L58.1 8 L56.7 6.9 L56.5 6.3 L55.4 7.1 L54.9 8.4 L54.7 12.7 L54 15 L51.5 17.9 L48.8 18.6 ' +
+  'L45.6 18 L42.5 16.7 L40.5 14.3 L40.1 13 L40.1 10.9 L40.6 8.3 L41.4 7.1 L40.9 5.9 L39.9 5.7 ' +
+  'L34.8 7.4 L33.2 8.5 L28.3 10.5 L21.6 15.6 L18.5 19.8 L17.8 24 L18.2 26.4 L19.3 29 L22.5 32.9 ' +
+  'L27.2 36.5 L31.9 39.1 L33 38.8 L31.8 35.5 L32 32.7 L32.5 31.6 L33.7 30.7 L36.5 30.7 L39.4 31.8 ' +
+  'L42.9 34.1 L44.2 34.6 L45.3 34.2 L47.5 31.9 L49.2 31.2 L51.1 31.2 L53.8 32.2 L56.1 34.6 L60 41 ' +
+  'L63.9 34.6 L66.2 32.2 L68.9 31.2 L70.8 31.2 L72.5 31.9 L74.7 34.2 L75.8 34.6 L77.1 34.1 ' +
+  'L80.6 31.8 L83.5 30.7 L86.3 30.7 L87.5 31.6 L88 32.7 L88.2 35.5 L87 38.8 L88.1 39.1 L92.8 36.5 ' +
+  'L97.5 32.9 L100.7 29 L101.8 26.4 L102.2 24 L101.5 19.8 L98.4 15.6 L91.7 10.5 L86.8 8.5 L85.2 7.4 ' +
+  'L80.1 5.7 L79.1 5.9 L78.6 7.1 L79.4 8.3 L79.9 10.9 L79.9 13 L79.5 14.3 L77.5 16.7 L74.4 18 ' +
+  'L71.2 18.6 L68.5 17.9 L66 15 L65.3 12.7 L65.1 8.4 L64.6 7.1 L63.5 6.3 L63.3 6.9 L61.9 8 Z'
+
+/**
+ * The 2017 oval as the photograph measures it: 1.96:1, a bright yellow that never lights. The print
+ * has no rim of its own (the black torso is its edge), so a thin black line stands in for it on the
+ * yellow masthead plate and the disc, invisible on his chest (jury-wave-3.md, section 9, decision 2).
+ */
+export const OVAL_2017 = { box: { x: 13.02, y: 0, width: 93.95, height: 48 }, rim: 1.2, lights: false }
+
+/** VERY DARK GREY's emblem: the 2017 bat on its oval, in the masthead, on the disc and on his chest. */
+export const EMBLEM_2017 = emblem(BAT_2017, 'none', OVAL_2017)
+
+/**
  * The bat of the 1966 series' Bat-Signal on the clouds [17], on the same 120x48 grid: not the chest's
  * sticker, a small square head with short ears between wingtips that are its highest points, long
  * sagging tops, two scallops a side and a pointed tail. Traced from sixty frames of the locked shot,
