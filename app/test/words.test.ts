@@ -14,6 +14,7 @@ import {
   HOLIDAY_WORDS,
   KNIGHTMARE_WORDS,
   SAME_BAT_TIME_WORDS,
+  VERY_DARK_GREY_WORDS,
   SILENT_PREDATOR_WORDS,
   STANDARD_TERMS,
   STANDARD_VOICE,
@@ -511,5 +512,45 @@ describe("SAME BAT-TIME's words", () => {
   it('names its Atmosphere after the opening titles, apart from the report', () => {
     expect(voice.settings.atmosphere.label).toBe('Opening titles')
     expect(voice.settings.atmosphere.label).not.toBe(voice.report.name)
+  })
+})
+
+describe("VERY DARK GREY's words", () => {
+  const { terms, voice } = VERY_DARK_GREY_WORDS
+
+  // Batman narrating his own app (lego-batman.md, sections 6 and 7; very-dark-grey-build.md, section
+  // 8.1): CAPE UP for what needs you, as I NEED A HERO is a live game mark; AUTOGRAPH? kept by the
+  // maintainer; ANY DAY NOW for waiting, as HELLO is many others' mark; Stalled standard.
+  it("speak the ego's Lexicon", () => {
+    expect(terms.case).toEqual(STANDARD_TERMS.case)
+    expect(terms.needsYou.label).toBe('Cape up')
+    expect(terms.needsYou.count(1)).toBe('1 to cape up for')
+    expect(terms.needsYou.count(3)).toBe('3 to cape up for')
+    expect(terms.stamp).toEqual({
+      ...STANDARD_TERMS.stamp,
+      permission: 'Autograph?',
+      error: 'Epic fail',
+      waiting: 'Any day now',
+      reply: 'Fan mail',
+    })
+  })
+
+  // A performance for an audience, never a journal (VENGEANCE) and never a narrator (SAME
+  // BAT-TIME): first person, vain, and lonely once, in the empty list.
+  it('narrates its own app, in the first person', () => {
+    expect(voice.theme.name).toBe('VERY DARK GREY')
+    expect(voice.tagline).toBe('Batman. Also in this app.')
+    expect(voice.report.end(1)).toBe('Some assembly required.')
+    expect(voice.report.end(0)).toBe('Built. By me. Mostly by me.')
+    for (const line of [voice.tagline, voice.report.name, voice.empty.quiet.title])
+      expect(line).not.toMatch(/\b(meanwhile|bat-time|pow)\b/i)
+  })
+
+  // The LEGO word only in the credit, as the title of the work (lego-batman.md, section 3.2).
+  it('names the LEGO Group only in its credit', () => {
+    expect(voice.theme.film).toMatch(/LEGO®/)
+    const { film, ...rest } = voice.theme
+    expect(JSON.stringify(rest) + voice.tagline + voice.report.name).not.toMatch(/lego/i)
+    expect(film).not.toBe('')
   })
 })
