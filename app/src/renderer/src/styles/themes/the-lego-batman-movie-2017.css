@@ -260,3 +260,8 @@
 [data-theme='the-lego-batman-movie-2017'] .tabs {
   background: var(--header-fade);
 }
+/* His eyes stay white (the Costume Rule), lit like the film's lenses: a neon blue glow round them
+   [06] [24] [33] (picked on screen). */
+[data-theme='the-lego-batman-movie-2017'] .clawd__eyes {
+  filter: drop-shadow(0 0 0.5px #7fd3ff) drop-shadow(0 0 1.2px #2a9df4) drop-shadow(0 0 2px #2a9df4);
+}
