@@ -4,7 +4,15 @@
 // one, his Signature pose. Every Theme keeps Clawd's shape, white eyes, orange jaw and three Moods
 // (CONTEXT.md, Bat-Clawd); the Bat-Clawd Costume Rule is in DESIGN.md.
 import { flock, type BatAt } from './bats'
-import { EMBLEM_1966, EMBLEM_1989, EMBLEM_1992, plateGlows, type Plate, type PlatedEmblem } from './emblems'
+import {
+  EMBLEM_1966,
+  EMBLEM_1989,
+  EMBLEM_1992,
+  EMBLEM_2017,
+  plateGlows,
+  type Plate,
+  type PlatedEmblem,
+} from './emblems'
 import type { OutfitMap } from './outfits'
 import type { MascotMood } from './view'
 
@@ -2232,5 +2240,183 @@ export const SAME_BAT_TIME_SUIT: Suit = {
   ),
   signature: THE_BATUSI,
   // Violet is the Alarm color: the satin is its unlit relative, so the aura shows only when alarmed.
+  aura: 'alarmed',
+}
+
+// --- VERY DARK GREY: Batman as The LEGO Batman Movie (2017) builds him (lego-batman.md, section 8;
+// very-dark-grey-build.md, section 6): a black moulded cowl with a hard shine and tall ears set on its
+// corners, the film's white lenses and Clawd's jaw; a black torso (jury decision 11) with the yellow
+// oval; a yellow pouch belt; black legs; a stiff cloth cape in a bell to his shins, its hem in points.
+// His body stays Clawd's: no minifigure head, hands or legs (section 3.2). On the perch he dines
+// alone. ---
+
+/** The film's ears [73] [74]: tall, set on the cowl's corners, the outer edge nearly straight up. */
+const LEGO_EARS = earsOf(
+  'M3 2 L3.4 -1.2 L4 -1.2 L5.2 1.4 L5.2 2 Z M13 2 L12.6 -1.2 L12 -1.2 L10.8 1.4 L10.8 2 Z',
+)
+/** A hard shine on the near ear and along the cowl's dome, as the moulded plastic catches the light [74]. */
+const LEGO_SHINE: Layer = {
+  kind: 'path',
+  d: 'M3.6 -0.6 L3.9 -0.6 L4.3 1 L4 1 Z M5.2 1.3 L7.4 1.3 L7.4 1.7 L5.2 1.7 Z',
+  fill: 'var(--cowl-shine)',
+}
+/** The belt a unit tall, then his black legs and boots. */
+const LEGO_BELOW = [
+  ...twice(['...bbbbbbbbbb...']),
+  ...twice(['....S.S..S.S....']),
+  ...twice(['....g.g..g.g....']),
+]
+/** His map under the earless head the ears stand behind. */
+const legoMap = (chest: readonly string[], rows: readonly string[] = LEGO_BELOW) =>
+  map(chest, rows, LEGEND, DECO_HEAD)
+const LEGO_STANDING = legoMap([SUIT, SUIT, SUIT])
+/** His arms out low from his sides, the leap facing us [69]. */
+const LEGO_ARMS_OUT = legoMap([SUIT, SUIT, '.gSSSSSSSSSSSSg.'])
+const LEGO_SEATED = legoMap([SUIT, SUIT, SUIT, SUIT], [])
+
+/** The pouch belt [62] [75]: two pouches each side of a plain block, dark grooves between them. */
+const LEGO_POUCHES: Layer = {
+  kind: 'rects',
+  px: [
+    [4.6, 8, 0.25, 1],
+    [6.4, 8, 0.25, 1],
+    [9.35, 8, 0.25, 1],
+    [11.15, 8, 0.25, 1],
+  ],
+  fill: 'var(--buckle)',
+}
+/** The 2017 oval on his chest, between his jaw and the belt. */
+const LEGO_CHEST = [...chestPlate(EMBLEM_2017, { cx: 8, cy: 6.6, rx: 2.3 }), LEGO_POUCHES]
+
+/** The stiff cape's halves (the left; mirrored for the right), each hem in three points [76] [77]. */
+const LEGO_CAPE = {
+  /** Spread from his shoulders as he leaps at us, wider at the hem [69]. */
+  open: 'M3.4 5 L0.4 5 L-3.4 10.4 L-2 9.9 L-1 10.8 L0.2 10 L1.4 10.8 L2.4 10 L3.4 10.6 Z',
+  /** Spread flat as a bat's wing from wrist to hip, its edge in points [65]. */
+  wing: 'M3 5.2 L-4.6 4.8 L-4 6.2 L-2.8 5.9 L-2.5 7.4 L-1.2 7 L-0.8 8.5 L0.6 8.1 L1 9.4 L3 9.2 Z',
+}
+/** Its back, between his legs, its hem in points. */
+const LEGO_BACK: Layer = {
+  kind: 'path',
+  d: 'M4.5 8.8 L11.5 8.8 L11.5 10.6 L10.7 10 L9.8 10.9 L8 10.1 L6.2 10.9 L5.3 10 L4.5 10.6 Z',
+  className: 'clawd__cape',
+}
+/** Closed round him, asleep, its hem in points. */
+const LEGO_WRAPPED =
+  'M2.6 6.2 L13.4 6.2 L14.4 10.6 L13 10 L11.6 10.9 L9.8 10.1 L8 10.9 L6.2 10.1 L4.4 10.9 L3 10 L1.6 10.6 Z'
+
+const legoPose = (map: OutfitMap, behind: Layer[], front: Layer[] = []) =>
+  pose(map, [...LEGO_EARS, ...behind], [LEGO_SHINE, ...front], { chest: LEGO_CHEST, edge: DECO_EDGE })
+
+const legoAsleep: Pose = (() => {
+  const seat = seated(LEGO_SEATED, LEGO_WRAPPED, [...LEGO_EARS, DECO_EDGE])
+  return { ...seat, front: [...seat.front, LEGO_SHINE] }
+})()
+
+/** Flying, the glide [65]: his arms straight out, the cape spread under them as two bat wings. */
+const legoGlide = legoPose(
+  LEGO_STANDING,
+  [{ kind: 'cape', d: LEGO_CAPE.wing, mirrored: true }],
+  [
+    {
+      kind: 'rects',
+      px: [
+        [0, 5.4, 3, 1],
+        [13, 5.4, 3, 1],
+      ],
+      fill: 'var(--suit)',
+    },
+    {
+      kind: 'rects',
+      px: [
+        [-0.8, 5.3, 1, 1.2],
+        [15.8, 5.3, 1, 1.2],
+      ],
+      fill: 'var(--gloves)',
+    },
+  ],
+)
+/** Alarmed, the leap facing us [69]: arms out low, the cape spread wide either side. */
+const legoAlarmed = legoPose(LEGO_ARMS_OUT, [LEGO_BACK, { kind: 'cape', d: LEGO_CAPE.open, mirrored: true }])
+
+/**
+ * Dinner for one [46] [60] (lego-batman.md, section 8.4): seated alone at a long low table, wider
+ * than he is, a covered plate at his side. The table's top with its lit edge, its two legs.
+ */
+const TABLE: Layer[] = [
+  { kind: 'rects', px: [[-3.4, 7.5, 22.8, 1.2]], fill: 'var(--table)' },
+  { kind: 'rects', px: [[-3.4, 7.5, 22.8, 0.3]], fill: 'var(--table-shine)' },
+  {
+    kind: 'rects',
+    px: [
+      [-2.8, 8.7, 0.8, 2.3],
+      [18, 8.7, 0.8, 2.3],
+    ],
+    fill: 'var(--table)',
+  },
+]
+/** The cloche on its plate at his left, lifted `lift` units off it. */
+const cloche = (lift = 0): Layer[] => {
+  const y = (v: number) => (v - lift).toFixed(1)
+  return [
+    { kind: 'rects', px: [[12.4, 7.2, 6, 0.3]], fill: 'var(--ash)' },
+    {
+      kind: 'path',
+      d: `M12.6 ${y(7.5)} Q12.8 ${y(4.6)} 15.4 ${y(4.4)} Q18 ${y(4.6)} 18.2 ${y(7.5)} Z M15 ${y(4.4)} L15.8 ${y(4.4)} L15.8 ${y(3.8)} L15 ${y(3.8)} Z`,
+      fill: 'var(--ash)',
+    },
+    {
+      kind: 'path',
+      d: `M13.4 ${y(6.4)} Q13.8 ${y(5.2)} 15 ${y(5)} L14.8 ${y(5.4)} Q14 ${y(5.6)} 13.8 ${y(6.4)} Z`,
+      fill: 'var(--bone)',
+    },
+  ]
+}
+/** Seated at the table, his gloves on it, and whatever is laid in front. */
+const atTable = (front: Layer[]): Pose =>
+  legoPose(
+    LEGO_SEATED,
+    [],
+    [
+      ...TABLE,
+      {
+        kind: 'rects',
+        px: [
+          [4.2, 7, 1.4, 0.8],
+          [10.4, 7, 1.4, 0.8],
+        ],
+        fill: 'var(--gloves)',
+      },
+      ...front,
+    ],
+  )
+const SEATED_ALONE = legoPose(LEGO_SEATED, [])
+const DINNER_HELD = atTable(cloche())
+/** He sits; the table snaps in under his hands; the cloche lands; held, his eyes down to it. */
+const DINNER_FOR_ONE: Script = [
+  { pose: SEATED_ALONE, look: 0 },
+  { pose: atTable([]), look: 0 },
+  { pose: DINNER_HELD, look: 0 },
+  { pose: DINNER_HELD, look: GAZE, lookY: 0.6 },
+]
+
+export const VERY_DARK_GREY_SUIT: Suit = {
+  eyes: EYES,
+  poses: {
+    sleeping: [legoAsleep],
+    flying: [legoGlide, { ...legoGlide, transform: 'rotate(-4deg)' }],
+    alarmed: [legoAlarmed],
+  },
+  // On the perch he dines alone; at the end of his watch the cloche lifts a unit and settles.
+  watch: watchOn(
+    DINNER_FOR_ONE,
+    [{ look: -GAZE }, { look: GAZE, lookY: 0.6 }],
+    [
+      { pose: atTable(cloche(1)), look: GAZE, lookY: 0.6 },
+      { pose: DINNER_HELD, look: GAZE, lookY: 0.6 },
+    ],
+  ),
+  signature: DINNER_FOR_ONE,
+  // Red is the Alarm color and is worn nowhere at rest: the aura only while something needs you.
   aura: 'alarmed',
 }
