@@ -270,3 +270,7 @@
 [data-theme='the-lego-batman-movie-2017'] .tabs {
   background: var(--abyss);
 }
+/* The masthead's keyboard focus in its black ink, as Bone would vanish on the yellow plate. */
+[data-theme='the-lego-batman-movie-2017'] .header .icon-button:focus-visible {
+  outline-color: var(--masthead-ink);
+}
